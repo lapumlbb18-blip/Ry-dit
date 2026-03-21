@@ -1,85 +1,37 @@
-# 🛡️ RyDit Motor gaming Language scripting  - v0.1.9 Checkpoint 110 Tests
+# 🛡️ RyDit - Motor de Videojuegos 2D + Lenguaje de Scripting en Rust para Android/Termux
 
-**Versión:** v0.1.9 (Sesión 26 - Checkpoint 100 Tests - COMPLETADA)
-**Fecha:** 2026-03-20
-**Sesión:** 26 - Fix Bugs y 100 Tests Checkpoint
-**Estado:** ✅ **110 TESTS - 0 WARNINGS - CHECKPOINT SUPERADO**
+<div align="center">
 
----
+**"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-## 🎯 Resumen Ejecutivo
+[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
+[![raylib](https://img.shields.io/badge/raylib-5.0-purple.svg)](https://www.raylib.com/)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/my_app/blob/main/LICENSE)
 
-### Sesiones Completadas (v0.0.1 → v0.1.8)
+[📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
 
-| Sesión | Versión | Fecha | Logro Principal | Tests | Estado |
-|--------|---------|-------|-----------------|-------|--------|
-| **1-7** | v0.0.1-v0.0.9 | 2026-03-14 | CLI → Snake Game | 48 | ✅ |
-| **8** | v0.0.10 | 2026-03-16 | Parser Bug Fix | 59 | ✅ |
-| **9** | v0.0.11 | 2026-03-16 | Scopes y Argumentos | 59 | ✅ |
-| **10** | v0.0.12 | 2026-03-16 | Aritmética Completa | 59 | ✅ |
-| **11** | v0.0.13 | 2026-03-16 | Funciones con Retorno | 60 | ✅ |
-| **12** | v0.0.14 | 2026-03-16 | Funciones en Expresiones | 60 | ✅ |
-| **13-15** | v0.1.0 | 2026-03-17 | **Snake Game Completo** | 60 | ✅ |
-| **16** | v0.1.1 | 2026-03-17 | **Sistema de Módulos** | 61 | ✅ |
-| **17** | v0.1.3 | 2026-03-17 | **Bug Fixes Críticos** | 63 | ✅ |
-| **18** | v0.1.4 | 2026-03-18 | **Strings + IO + Arrays** | 63 | ✅ |
-| **19** | v0.1.5 | 2026-03-18 | **Soporte JSON** | 63 | ✅ |
-| **20** | v0.1.6 | 2026-03-18 | **Random + Time Ligero** | 65 | ✅ |
-| **21-24** | v0.1.7 | 2026-03-19 | **Test de Demos (5/5)** | 65 | ✅ |
-| **25** | v0.1.8 | 2026-03-19 | **Maduración Lenguaje** | 75 | ✅ |
-| **26** | v0.1.8 | 2026-03-20 | **Gráficos + IndexAssign + Snake** | 75 | ✅ |
-| **26** | v0.1.9 | 2026-03-20 | **CHECKPOINT 100 TESTS** | 110 | ✅ |
+</div>
 
 ---
 
-## 📊 Métricas Actuales (v0.1.9)
+## 🎯 ¿Qué es RyDit?
 
-### Código
-```
-Líneas totales:     ~6,600 líneas
-├── Rust:           ~5,000 líneas
-└── RyDit:          ~1,600 líneas (demos + módulos + tests)
+**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux** sin necesidad de desktop, emuladores o IDEs pesados.
 
-Crates:             5
-├── lizer:          ~2,452 líneas (Lexer + Parser + UTF-8 + escapes + tests)
-├── blast-core:     ~465 líneas (Executor + Memoria + tests)
-├── rydit-gfx:      ~481 líneas (Gráficos + tests)
-├── rydit-rs:       ~2,491 líneas (Binario + stdlib + tests)
-└── v-shield:       ~120 líneas (Wrapper raylib + tests)
-```
+**No es solo un lenguaje** - es un motor completo con:
+- 🎮 Game loop integrado
+- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto)
+- 🎹 Input de teclado en tiempo real
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json)
+- 🧪 110 tests automáticos
+- 📦 Snake Game completo como demo
 
-### Tests
-```
-Tests automáticos:  110 pasando ✅ (CHECKPOINT SUPERADO)
-├── blast-core:     20 tests (+2)
-├── lizer:          65 tests (+10)
-├── rydit-gfx:      5 tests (+2)
-├── rydit-rs:       12 tests (+10)
-├── v-shield:       3 tests (+2)
-└── doc-tests:      5 tests (+4)
+---
 
-Demos funcionales:  8/8 ✅
-├── demo_random.rydit
-├── demo_time.rydit
-├── demo_json.rydit
-├── demo_strings.rydit
-├── demo_arrays.rydit
-├── demo_maduracion_v0.1.8.rydit
-├── demo_shapes.rydit
-└── snake_v0.1.8.rydit
-
-Warnings activos:   0 ✅
-```
-
-### Rendimiento
-```
-Build (caché):      ~1.5s ⚡
-Build (sin caché):  60-90s
-Tests (110):         ~14s ⚡
-RAM build:          ~2 GB pico
-RAM runtime:        ~11 MB
-
-Binarios:
+## 🎮 Snake Game - Demo FuncionalBinarios:
 ├── rydit-rs:       ~735 KB (release)
 └── snake:          ~494 KB
 ```

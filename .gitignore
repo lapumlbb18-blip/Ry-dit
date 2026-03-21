@@ -1,28 +1,13 @@
 # ============================================================================
-# RYDIT - .GITIGNORE ESTRATÉGICO
+# RYDIT - .GITIGNORE
 # ============================================================================
-# Protege el código core y la metodología industrial
-# Permite solo lo demostrativo y documentos públicos
+# Código core AHORA SÍ se sube (open source)
+# Se mantiene protección solo para metodología y diagnósticos
 # ============================================================================
 
 # ============================================================================
-# CÓDIGO RUST CORE (NO SUBIR - PROPIEDAD INDUSTRIAL)
+# METODOLOGÍA Y DIAGNÓSTICOS (NO SUBIR - SOLO INTERNO)
 # ============================================================================
-# Estos crates contienen el Lexer, Parser, Executor y Memoria
-# Son el cerebro del lenguaje - PROTEGER
-crates/lizer/src/
-crates/rydit-rs/src/
-crates/blast-core/src/
-crates/rydit-gfx/src/
-crates/v-shield/src/
-
-# Mantener solo Cargo.toml de cada crate (configuración pública)
-!crates/*/Cargo.toml
-
-# ============================================================================
-# METODOLOGÍA Y DIAGNÓSTICOS (NO SUBIR - SECRETO INDUSTRIAL)
-# ============================================================================
-# Contienen la filosofía, procesos y metodología de desarrollo
 diagnostico/
 DIAGNOSTICO_*.md
 DIAGNOSTICO_*.txt
@@ -33,9 +18,9 @@ CIERRE_SESION_*.txt
 RESUMEN_SESION_*.txt
 LOG_ERRORES_*.txt
 LOGROS_*.txt
-QWEN.md
 SESSION_STATE*.md
 CONTEXT*.md
+QWEN.md
 
 # ============================================================================
 # BUILD ARTIFACTS (NO SUBIR - GENERADOS)
