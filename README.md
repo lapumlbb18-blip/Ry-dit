@@ -75,7 +75,7 @@ Warnings activos:   0 ✅
 ```
 Build (caché):      ~1.5s ⚡
 Build (sin caché):  60-90s
-Tests (75):         ~14s ⚡
+Tests (110):         ~14s ⚡
 RAM build:          ~2 GB pico
 RAM runtime:        ~11 MB
 
