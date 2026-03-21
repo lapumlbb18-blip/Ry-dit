@@ -538,7 +538,7 @@ cargo run --bin rydit-rs -- demos/demo_maduracion_v0.1.8.rydit
 
 ### General
 - ✅ **25 sesiones en 6 días** (v0.0.1 → v0.1.8)
-- ✅ **75 tests automáticos** pasando
+- ✅ **110 tests automáticos** pasando
 - ✅ **0 warnings activos**
 - ✅ **5 crates funcionales**
 - ✅ **Documentación completa** actualizada
