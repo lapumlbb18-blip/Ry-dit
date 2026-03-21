@@ -29,7 +29,10 @@
 - 🧪 110 tests automáticos
 - 📦 Snake Game completo como demo
 
----
+--- 🛡️🕹️Resume Descripcion
+Rydit es un motor hecho en rust con rayilib libreria todo en uno, esta en proceso, pero con potencial de crecimiento, desarrollo y madurez, la finalidad es crear escenas,y mas ,como video juegos, donde se experimente a travez de android en termux es donde nace, pero con mira a windows ,linux y android ,rust la base segura y moderna y raylib el todo terreno con herramientas ligeras hacen este motor viable y portable en todo tipo de hardware, sencillo ligero seguro. observa las capturas como en versiones anteriores ya iba funcionando , y a futuro se espera fortalecer, si es posible y queda camino,seria genial su apoyo y consejos para que disfruten de sus creaciones y experiencias en anime, tv , films, historia, etc
+
+
 
 ## 🎮 Snake Game - Demo FuncionalBinarios:
 ├── rydit-rs:       ~735 KB (release)
