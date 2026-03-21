@@ -1,42 +1,176 @@
-# Rust
-/target/
-**/target/
-*.rlib
-*.dylib
-*.so
-*.pdb
+# ============================================================================
+# RYDIT - .GITIGNORE ESTRATÉGICO
+# ============================================================================
+# Protege el código core y la metodología industrial
+# Permite solo lo demostrativo y documentos públicos
+# ============================================================================
 
-# Cargo
-Cargo.lock
+# ============================================================================
+# CÓDIGO RUST CORE (NO SUBIR - PROPIEDAD INDUSTRIAL)
+# ============================================================================
+# Estos crates contienen el Lexer, Parser, Executor y Memoria
+# Son el cerebro del lenguaje - PROTEGER
+crates/lizer/src/
+crates/rydit-rs/src/
+crates/blast-core/src/
+crates/rydit-gfx/src/
+crates/v-shield/src/
+
+# Mantener solo Cargo.toml de cada crate (configuración pública)
+!crates/*/Cargo.toml
+
+# ============================================================================
+# METODOLOGÍA Y DIAGNÓSTICOS (NO SUBIR - SECRETO INDUSTRIAL)
+# ============================================================================
+# Contienen la filosofía, procesos y metodología de desarrollo
+diagnostico/
+DIAGNOSTICO_*.md
+DIAGNOSTICO_*.txt
+ANALISIS_*.txt
+ANALISIS_*.md
+BREAK_SESION_*.txt
+CIERRE_SESION_*.txt
+RESUMEN_SESION_*.txt
+LOG_ERRORES_*.txt
+LOGROS_*.txt
+QWEN.md
+SESSION_STATE*.md
+CONTEXT*.md
+
+# ============================================================================
+# BUILD ARTIFACTS (NO SUBIR - GENERADOS)
+# ============================================================================
+target/
+**/target/
+**/*.rs.bk
+*.o
+*.so
+*.dll
+*.dylib
+*.exe
+*.pdb
+*.ilk
+*.a
+*.lib
+
+# ============================================================================
+# CARGO (PARCIAL - SOLO LOCK)
+# ============================================================================
+# Cargo.lock puede subirse para reproducibilidad
+# Cargo.toml se mantiene (configuración pública)
 **/Cargo.lock
 
-# Build artifacts
-*.o
-*.a
-*.out
+# ============================================================================
+# EJEMPLOS COMPILADOS (NO SUBIR - GENERADOS)
+# ============================================================================
+target/debug/examples/
+target/release/examples/
+*.d
 
-# Examples compiled
-examples/*-*.rs
-examples/*.d
-
-# Test files temporales
+# ============================================================================
+# ARCHIVOS TEMPORALES DE PRUEBA
+# ============================================================================
 test_*.rydit
+test_*.rs
 *.tmp
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
+*.temp
 *.swp
 *.swo
 *~
 
-# Logs
-*.log
+# ============================================================================
+# IDE / EDITORES (NO SUBIR - CONFIGURACIÓN LOCAL)
+# ============================================================================
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.nvim/
+.vs/
 
-# Screenshots (opcional - incluir o no según prefieras)
+# ============================================================================
+# SISTEMA OPERATIVO (NO SUBIR - BASURA)
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ============================================================================
+# LOGS Y REPORTES (NO SUBIR - LOCALES)
+# ============================================================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================================================
+# CLAVES Y SECRETOS (NUNCA SUBIR - SEGURIDAD)
+# ============================================================================
+*.pem
+*.key
+*.env
+.env
+.env.local
+.env.*.local
+secrets/
+credentials/
+*.credentials
+*.password
+
+# ============================================================================
+# BACKUPS (NO SUBIR - LOCALES)
+# ============================================================================
+*.bak
+*.backup
+*.old
+backup/
+backups/
+
+# ============================================================================
+# DOCUMENTACIÓN INTERNA (NO SUBIR - SOLO EQUIPO)
+# ============================================================================
+internal/
+private/
+confidential/
+
+# ============================================================================
+# SCREENSHOTS OPCIONALES (DECIDIR SI SUBIR)
+# ============================================================================
+# Descomentar si NO quieres subir screenshots
 # screenshots/*.jpg
 # screenshots/*.png
+# screenshots/*.jpeg
+
+# ============================================================================
+# NOTAS DEL DESARROLLADOR (NO SUBIR - PERSONAL)
+# ============================================================================
+notas/
+notes/
+TODO.md
+ROADMAP_INTERNAL.md
+
+# ============================================================================
+# FIN DEL .GITIGNORE
+# ============================================================================
+# Lo que SÍ se sube:
+# - README.md (presentación)
+# - LICENSE (licencia)
+# - CONTRIBUTING.md (contribución)
+# - screenshots/ (evidencia visual)
+# - demos/*.rydit (scripts de usuario)
+# - crates/modules/*.rydit (stdlib público)
+# - scripts/ (utilidades)
+# - docs/ (documentación pública)
+# ============================================================================

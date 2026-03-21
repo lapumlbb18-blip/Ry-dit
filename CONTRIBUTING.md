@@ -1,74 +1,198 @@
-# 🤝 Contributing to RyDit / Contribuir a RyDit
+# 🤝 Contribuyendo a RyDit
 
-**EN:** Contributions are welcome! This is an experimental project built entirely on mobile (Android/Termux).
-
-**ES:** ¡Las contribuciones son bienvenidas! Este es un proyecto experimental construido completamente en móvil (Android/Termux).
+¡Gracias por tu interés en contribuir a RyDit!
 
 ---
 
-## 📋 How to Contribute / Cómo Contribuir
+## 🎯 ¿Cómo Puedes Contribuir?
 
-### EN:
-1. **Report bugs** - Open an issue with steps to reproduce
-2. **Suggest features** - Open an issue describing the feature
-3. **Improve docs** - PRs for documentation improvements welcome
-4. **Add examples** - Share your RyDit scripts
+### 1. 📝 Documentación
+- Mejorar el README
+- Agregar ejemplos
+- Corregir errores ortográficos
+- Traducir a otros idiomas
 
-### ES:
-1. **Reportar bugs** - Abre un issue con pasos para reproducir
-2. **Sugerir features** - Abre un issue describiendo el feature
-3. **Mejorar docs** - PRs para mejoras de documentación bienvenidas
-4. **Agregar ejemplos** - Comparte tus scripts de RyDit
+### 2. 🧪 Tests
+- Agregar nuevos tests
+- Mejorar cobertura
+- Reportar bugs encontrados
+
+### 3. 🎨 Demos y Ejemplos
+- Crear nuevos demos
+- Mejorar demos existentes
+- Compartir tus proyectos
+
+### 4. 🐛 Bug Reports
+- Reportar bugs en Issues
+- Incluir pasos para reproducir
+- Adjuntar screenshots si aplica
+
+### 5. 💡 Features
+- Sugerir nuevas features
+- Discutir implementación
+- Proveer casos de uso
 
 ---
 
-## 🧪 Testing / Tests
+## 🚀 Primeros Pasos
 
+### 1. Fork el Repositorio
 ```bash
-# Run all tests / Ejecutar todos los tests
-cargo test
+# En GitHub, click en "Fork"
+# Luego clona tu fork
+git clone https://github.com/TU_USUARIO/my_app.git
+cd my_app
+```
 
-# Run specific test / Ejecutar test específico
-cargo test test_sumar
+### 2. Crea una Rama
+```bash
+# Para features
+git checkout -b feature/nueva-feature
+
+# Para bugs
+git checkout -b fix/correcion-bug
+
+# Para documentación
+git checkout -b docs/mejora-readme
+```
+
+### 3. Haz tus Cambios
+```bash
+# Edita los archivos
+# Agrega demos en demos/
+# Agrega tests en tests/
+```
+
+### 4. Commit
+```bash
+# Mensajes claros y descriptivos
+git add .
+git commit -m "feat: agregar nuevo demo de snake"
+git commit -m "fix: corregir bug en concatenación"
+git commit -m "docs: mejorar README con ejemplos"
+```
+
+### 5. Push
+```bash
+git push origin feature/nueva-feature
+```
+
+### 6. Pull Request
+- Ve a tu fork en GitHub
+- Click en "Pull Request"
+- Describe tus cambios
+- Espera review
+
+---
+
+## 📋 Estándares de Código
+
+### Demos (.rydit)
+```rydit
+# Usar nombres descriptivos
+dark.slot puntuacion = 0  # ✅
+dark.slot p = 0           # ❌
+
+# Comentarios útiles
+# Calcular posición del jugador
+dark.slot jugador_x = ancho / 2
+
+# Evitar código muy largo en una línea
+```
+
+### Tests (Rust)
+```rust
+#[test]
+fn test_nombre_descriptivo() {
+    // Arrange
+    let valor = 10;
+    
+    // Act
+    let resultado = valor * 2;
+    
+    // Assert
+    assert_eq!(resultado, 20);
+}
+```
+
+### Documentación (Markdown)
+```markdown
+# Títulos claros
+## Subsecciones
+### Más específico
+
+- Listas con guiones
+1. Listas numeradas para pasos
+`código inline` para comandos
 ```
 
 ---
 
-## 📁 Project Structure / Estructura del Proyecto
+## 🎨 Ideas para Contribuir
 
-```
-shield-project/
-├── crates/
-│   ├── lizer/          # Lexer + Parser
-│   ├── blast-core/     # Executor + Memory
-│   ├── rydit-gfx/      # Graphics (raylib)
-│   ├── rydit-rs/       # Main binary
-│   └── v-shield/       # Raylib wrapper
-├── diagnostico/        # Session logs
-├── LIBRO_RYDIT.md      # Language guide
-└── *.rydit             # Example scripts
-```
+### Demos Nuevos
+- [ ] Juego de plataformas simple
+- [ ] Visualizador de partículas
+- [ ] Reloj analógico
+- [ ] Calculadora gráfica
+- [ ] Juego de memoria
+- [ ] Animación de rebote
+- [ ] Simulación de gravedad
 
----
+### Mejoras de Documentación
+- [ ] Ejemplos para cada feature
+- [ ] Tutorial paso a paso
+- [ ] FAQ de problemas comunes
+- [ ] Traducción a inglés
+- [ ] Videos tutoriales
 
-## 💬 Communication / Comunicación
-
-- **Issues:** Bug reports, feature requests
-- **PRs:** Code improvements, docs, examples
-- **Discussions:** General questions, ideas
-
----
-
-## 📜 Code of Conduct / Código de Conducta
-
-**EN:** Be respectful. This is a learning project built by someone developing entirely on mobile.
-
-**ES:** Sé respetuoso. Este es un proyecto de aprendizaje construido por alguien que desarrolla completamente en móvil.
+### Tests
+- [ ] Tests para cada módulo stdlib
+- [ ] Tests de integración
+- [ ] Tests de rendimiento
+- [ ] Tests en múltiples plataformas
 
 ---
 
-## 🙏 Acknowledgments / Agradecimientos
+## ❓ Preguntas Frecuentes
 
-Every contribution helps! This project proves that mobile development is viable.
+### ¿Necesito saber Rust?
+**No.** Puedes contribuir con:
+- Demos .rydit
+- Documentación
+- Tests de funcionalidad
+- Reporte de bugs
 
-¡Cada contribución ayuda! Este proyecto demuestra que el desarrollo en móvil es viable.
+### ¿Puedo compartir mis demos?
+**¡Sí!** Crea un demo en `demos/` y haz un PR.
+
+### ¿Cómo reporto un bug?
+1. Ve a Issues en GitHub
+2. Click en "New Issue"
+3. Selecciona "Bug Report"
+4. Describe el problema
+
+### ¿Puedo sugerir features?
+**¡Claro!** Crea un Issue con la etiqueta "enhancement".
+
+---
+
+## 📬 Contacto
+
+¿Tienes preguntas? Abre un Issue o discute en:
+- [GitHub Discussions](https://github.com/lapumlbb18-blip/my_app/discussions)
+- [MoureDev Discord](https://discord.gg/mouredev)
+
+---
+
+## 🙏 Gracias
+
+¡Cada contribución cuenta! No importa si es pequeña o grande.
+
+**Juntos hacemos RyDit mejor.** 🛡️
+
+---
+
+<p align="center">
+  <em>Construido con ❤️ en Android/Termux</em>
+</p>

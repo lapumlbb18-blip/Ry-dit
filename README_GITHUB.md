@@ -1,419 +1,349 @@
 # 🛡️ RyDit Language
 
-**Version:** v0.1.0 (Release Alpha)  
-**Date:** 2026-03-17  
-**Session:** 15 - Snake Game Complete + Release Alpha  
-**Status:** ✅ **60 TESTS - 0 WARNINGS - SNAKE FUNCTIONAL**
+**Scripting para Juegos y Escenas Interactivas**
 
-[![Tests](https://img.shields.io/badge/tests-60%20passing-brightgreen)]()
-[![Warnings](https://img.shields.io/badge/warnings-0-brightgreen)]()
-[![Platform](https://img.shields.io/badge/platform-Android%2FTermux-blue)]()
+[![Tests](https://img.shields.io/badge/tests-110%20passing-brightgreen)]()
+[![Platform](https://img.shields.io/badge/platform-Android%2FLinux%2FWindows-blue)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 
 ---
 
-## 🎯 What is RyDit?
+## 🎯 ¿Qué es RyDit?
 
-**EN:** A scripting language built **entirely on mobile** (Android/Termux) with native graphics integration and a fully playable Snake game demo.
+**RyDit** es un lenguaje de scripting diseñado para crear juegos y escenas interactivas de manera sencilla y expresiva.
 
-**ES:** Un lenguaje de scripting construido **completamente en móvil** (Android/Termux) con integración gráfica nativa y una demo completamente jugable del Snake game.
-
----
-
-## 📊 Quick Stats / Estadísticas Rápidas
-
-| Metric / Métrica | Value / Valor |
-|-----------------|---------------|
-| **Version / Versión** | v0.1.0 (Release Alpha) |
-| **Tests** | ✅ 60 passing / pasando |
-| **Warnings** | ✅ 0 |
-| **Build Time (cached)** | ⚡ ~1.2s |
-| **Lines of Code** | 📝 5,258 (4,021 Rust + 1,237 RyDit) |
-| **Crates** | 🏗️ 5 (lizer, blast-core, rydit-gfx, rydit-rs, v-shield) |
-| **Development Time** | ⏱️ 4 days / 4 días |
-| **Platform** | 📱 Android/Termux |
-
----
-
-## 🚀 Features / Características
-
-### EN:
-- ✅ Variables and scopes
-- ✅ Functions with return values
-- ✅ **Function composition** `f1(f2(x))`
-- ✅ Control flow (if/while/for)
-- ✅ Arrays and indexing
-- ✅ Arithmetic operations + parentheses
-- ✅ Built-in functions (sum, subtract, multiply, divide)
-- ✅ Graphics (circles, rectangles, lines, text)
-- ✅ Input handling (keyboard)
-- ✅ **Snake Game** - Fully playable demo
-
-### ES:
-- ✅ Variables y scopes
-- ✅ Funciones con retorno
-- ✅ **Composición de funciones** `f1(f2(x))`
-- ✅ Control de flujo (if/while/for)
-- ✅ Arrays e indexación
-- ✅ Operaciones aritméticas + paréntesis
-- ✅ Funciones builtin (suma, resta, multiplicación, división)
-- ✅ Gráficos (círculos, rectángulos, líneas, texto)
-- ✅ Manejo de input (teclado)
-- ✅ **Snake Game** - Demo completamente jugable
-
----
-
-## 🎮 Snake Game Demo
-
-**Fully playable Snake game built with RyDit!**
-
-![Snake Gameplay](screenshots/snake-gameplay.png)
-![Game Over](screenshots/snake-gameover.png)
-
-**Run / Ejecutar:**
-```bash
-# With dedicated binary / Con binario dedicado
-cargo run --bin snake
-
-# Or with .rydit script / O con script .rydit
-cargo run -- --gfx snake_limpio.rydit
-```
-
-**Features Demonstrated / Features Demostradas:**
-- ✅ Arrays and indexing / Arrays e indexación
-- ✅ Functions with return values / Funciones con retorno
-- ✅ Function composition / Composición de funciones
-- ✅ Game loop with input / Game loop con input
-- ✅ Collision detection / Detección de colisiones
-- ✅ Scoring system / Sistema de puntuación
-- ✅ Restart without recompiling / Restart sin recompilar
-
-**Controls / Controles:**
-| Key / Tecla | Action / Acción |
-|-------------|-----------------|
-| `↑` | Move up / Mover arriba |
-| `→` | Move right / Mover derecha |
-| `↓` | Move down / Mover abajo |
-| `←` | Move left / Mover izquierda |
-| `SPACE` | Restart (Game Over) / Reiniciar |
-| `ESC` | Exit / Salir |
-
----
-
-## 📱 Mobile Development Story / Historia de Desarrollo Móvil
-
-### EN:
-**This project was built entirely on an Android device using Termux.**
-
-No laptop. No desktop. No IDE. Just:
-- 📱 Android phone
-- ⌨️ Termux terminal
-- 🦀 Rust + Cargo
-- 🎨 Raylib (native)
-
-**Why?** To prove that serious development is possible on mobile devices when you have:
-- Clear architecture
-- Automated tests
-- Good documentation
-- Determination
-
-### ES:
-**Este proyecto fue construido completamente en un dispositivo Android usando Termux.**
-
-Sin laptop. Sin escritorio. Sin IDE. Solo:
-- 📱 Teléfono Android
-- ⌨️ Terminal Termux
-- 🦀 Rust + Cargo
-- 🎨 Raylib (nativo)
-
-**¿Por qué?** Para demostrar que el desarrollo serio es posible en dispositivos móviles cuando tienes:
-- Arquitectura clara
-- Tests automatizados
-- Buena documentación
-- Determinación
-
----
-
-## 🛠️ Installation / Instalación
-
-### EN:
-```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/rydit-language.git
-cd rydit-language
-
-# Build
-cargo build
-
-# Run tests
-cargo test
-
-# Run Snake game
-cargo run --bin snake
-```
-
-### ES:
-```bash
-# Clonar el repositorio
-git clone https://github.com/TU_USUARIO/rydit-language.git
-cd rydit-language
-
-# Compilar
-cargo build
-
-# Ejecutar tests
-cargo test
-
-# Ejecutar Snake game
-cargo run --bin snake
-```
-
----
-
-## 📖 Documentation / Documentación
-
-| Document / Documento | Description / Descripción |
-|---------------------|--------------------------|
-| **[LIBRO_RYDIT.md](LIBRO_RYDIT.md)** | Complete language guide / Guía completa del lenguaje (~400 líneas) |
-| **[BENCHMARK_v0.1.0.md](BENCHMARK_v0.1.0.md)** | Performance metrics / Métricas de rendimiento |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to contribute / Cómo contribuir |
-| **[FLUJO_TRABAJO.md](FLUJO_TRABAJO.md)** | Recommended workflow / Flujo de trabajo recomendado |
-| **[diagnostico/](diagnostico/)** | Session logs / Logs de sesiones (24 archivos) |
-
----
-
-## 📈 Roadmap / Hoja de Ruta
-
-| Version | Feature / Feature | ETA |
-|---------|------------------|-----|
-| **v0.1.0** | Snake game + Release Alpha | ✅ DONE |
-| **v0.1.1** | Module system (import) / Sistema de módulos | 2-3 weeks |
-| **v0.1.2** | Standard library basics / Librería estándar básica | 1 month |
-| **v0.1.3** | Optional type system / Sistema de tipos opcional | 2-3 months |
-| **v0.2.0** | Higher-order functions / Funciones de orden superior | 3-4 months |
-| **v1.0.0** | Standard library + docs / Librería estándar + docs | 6 months |
-
----
-
-## 🧪 Testing / Tests
-
-```bash
-# Run all tests / Ejecutar todos los tests
-cargo test
-
-# Expected output / Resultado esperado:
-# blast-core:  18 tests ✅
-# lizer:       35 tests ✅
-# rydit-gfx:    3 tests ✅
-# rydit-rs:     2 tests ✅
-# v-shield:     1 test  ✅
-# doc-tests:    1 test  ✅
-# ────────────────────────────
-# TOTAL:       60 tests ✅
-```
-
----
-
-## 🧪 Usage Examples / Ejemplos de Uso
-
-### EN: Basic Functions
 ```rydit
-rytmo greet {
-    voz "Hello World"
-    return 1
-}
-
-greet()
-```
-
-### ES: Funciones Básicas
-```rydit
-rytmo saludar {
-    voz "Hola Mundo"
-    return 1
-}
-
-saludar()
-```
-
-### EN: Functions with Parameters
-```rydit
-rytmo greet(name) {
-    voz "Hello " + name
-}
-
-greet("World")
-```
-
-### ES: Funciones con Parámetros
-```rydit
-rytmo saludar(nombre) {
-    voz "Hola " + nombre
-}
-
-saludar("Mundo")
-```
-
-### EN: Function Composition
-```rydit
-rytmo sum(a, b) { return a + b }
-rytmo square(x) { return x * x }
-
-# Function composition
-dark.slot x = square(sum(2, 3))
-voz x  # 25 (2+3=5, 5*5=25)
-```
-
-### ES: Composición de Funciones
-```rydit
-rytmo sumar(a, b) { return a + b }
-rytmo cuadrado(x) { return x * x }
-
-# Composición de funciones
-dark.slot x = cuadrado(sumar(2, 3))
-voz x  # 25 (2+3=5, 5*5=25)
-```
-
-### EN: Arrays
-```rydit
-# Basic array
-dark.slot lista = [1, 2, 3]
-
-# Multidimensional (board)
-dark.slot tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-
-# With expressions
-dark.slot suma = [1 + 2, 3 * 4, 10 / 2]
-```
-
-### ES: Arrays
-```rydit
-# Array básico
-dark.slot lista = [1, 2, 3]
-
-# Multidimensional (tablero)
-dark.slot tablero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-
-# Con expresiones
-dark.slot suma = [1 + 2, 3 * 4, 10 / 2]
-```
-
-### EN: Graphics (Window Mode)
-```rydit
+# Ejemplo simple
 shield.init
 
-# Draw shapes
-draw.circle(400, 300, 50, "red")
-draw.rect(100, 100, 100, 100, "green")
-draw.line(0, 0, 800, 600, "blue")
-draw.text("RyDit v0.1.0", 300, 50, 30, "white")
-```
+dark.slot mensaje = "Hola RyDit"
+voz mensaje
 
-### ES: Gráficos (Modo Ventana)
-```rydit
-shield.init
-
-# Dibujar formas
+# Gráficos
 draw.circle(400, 300, 50, "rojo")
 draw.rect(100, 100, 100, 100, "verde")
-draw.line(0, 0, 800, 600, "azul")
-draw.text("RyDit v0.1.0", 300, 50, 30, "blanco")
 ```
 
 ---
 
-## 🤝 Community / Comunidad
+## 🎮 Demos en Ejecución
 
-### EN:
-**This is an experimental project built entirely on mobile.**
+### Snake Game
+![Snake Gameplay](screenshots/04_snake_gameplay.jpg)
+*Snake Game completo con game loop, colisiones y puntuación*
 
-**Contributions welcome:**
-- Bug reports
-- Feature suggestions
-- Documentation improvements
-- Examples
+### Game Over Screen
+![Snake Game Over](screenshots/05_snake_gameover.jpg)
+*Pantalla de Game Over con restart*
 
-### ES:
-**Este es un proyecto experimental construido completamente en móvil.**
+### Demo Gráfica
+![Demo rydit-gfx](screenshots/02_demo_rydit_gfx_completo.jpg)
+*Círculo rojo animado, rectángulo verde, línea azul - 60 FPS*
 
-**Contribuciones bienvenidas:**
-- Reportes de bugs
-- Sugerencias de features
-- Mejoras de documentación
-- Ejemplos
+### Demo Shapes
+![Demo Shapes](screenshots/03_demo_shapes_circulos.jpg)
+*Círculos concéntricos animados y formas geométricas*
 
 ---
 
-## 💭 Honest Opinion / Opinión Honesta
+## ✨ Features Principales
 
-### EN:
-**What's impressive:**
-- ⚡ 60 tests in 4 days
-- 🧱 Solid architecture (5 crates)
-- 📖 Complete documentation
-- 🎯 Zero warnings policy
-- 📱 Built entirely on mobile
-- 🎮 Fully playable Snake game
+### Sintaxis Expresiva
+```rydit
+# Variables con símbolos
+dark.slot $precio = 99.99
+dark.slot @usuario = "alucard18"
+dark.slot %porcentaje = 50
 
-**What's challenging:**
-- 📚 No standard library yet
-- 🔧 Limited ecosystem (no packages)
-- 🎨 Graphics need more work
-- 📖 English docs need improvement
+# Concatenación automática
+voz "Precio: $" + $precio  # Precio: $99.99
 
-**The truth:** This project proves that **constraints breed creativity**. Developing on mobile forced me to write better code, automate more, and document everything.
+# Arrays y indexación
+dark.slot lista = [1, 2, 3]
+dark.slot lista[0] = 10
 
-### ES:
-**Lo que impresiona:**
-- ⚡ 60 tests en 4 días
-- 🧱 Arquitectura sólida (5 crates)
-- 📖 Documentación completa
-- 🎯 Política de cero warnings
-- 📱 Construido completamente en móvil
-- 🎮 Snake game completamente jugable
+# Módulos importables
+import random
+dark.slot numero = random::int(1, 100)
+```
 
-**Lo que es un desafío:**
-- 📚 Sin librería estándar aún
-- 🔧 Ecosistema limitado (sin paquetes)
-- 🎨 Gráficos necesitan más trabajo
-- 📖 Docs en inglés necesitan mejorar
+### Gráficos Integrados
+```rydit
+shield.init
 
-**La verdad:** Este proyecto demuestra que **las limitaciones generan creatividad**. Desarrollar en móvil me forzó a escribir mejor código, automatizar más, y documentar todo.
+# Game loop
+ryda true {
+    draw.circle(400, 300, 50, "rojo")
+    draw.rect(100, 100, 100, 100, "verde")
+    draw.line(0, 0, 800, 600, "azul")
+    draw.text("RyDit v0.1.9", 300, 50, 30, "blanco")
+}
+```
 
----
+### Sistema de Módulos
+```rydit
+import random
+import arrays
+import strings
+import io
+import time
 
-## 📜 License / Licencia
-
-[MIT License](LICENSE) - Feel free to use, learn, and build upon this.
-
----
-
-## 🙏 Acknowledgments / Agradecimientos
-
-### EN:
-- **Rust community** - For the amazing compiler and error messages
-- **Raylib** - For the simple and powerful graphics library
-- **Termux** - For making Android development possible
-- **You** - For reading this and considering contributing
-
-### ES:
-- **Comunidad Rust** - Por el increíble compilador y mensajes de error
-- **Raylib** - Por la librería gráfica simple y poderosa
-- **Termux** - Por hacer posible el desarrollo en Android
-- **Tú** - Por leer esto y considerar contribuir
+# Uso
+dark.slot numero = random::int(1, 10)
+dark.slot texto = strings::upper("hola")
+dark.slot longitud = arrays::length([1, 2, 3])
+```
 
 ---
 
-## 🚀 Final Words / Palabras Finales
+## 🚀 Quick Start
 
-### EN:
-> "This project started as a learning exercise. It became proof that **mobile development is viable** for serious projects. The constraints of mobile (small screen, limited RAM, no mouse) forced me to write better code, automate more, and document everything. If you're developing on mobile too: **you're not alone, keep going**."
+### Requisitos
+- Rust (opcional, para compilar)
+- raylib 5.5 (para gráficos)
+- Android/Termux O Linux O Windows
 
-### ES:
-> "Este proyecto comenzó como un ejercicio de aprendizaje. Se volvió prueba de que **el desarrollo en móvil es viable** para proyectos serios. Las limitaciones del móvil (pantalla pequeña, RAM limitada, sin mouse) me forzaron a escribir mejor código, automatizar más, y documentar todo. Si estás desarrollando en móvil también: **no estás solo, sigue avanzando**."
+### En Android/Termux
+```bash
+# Instalar dependencias
+pkg install rust raylib
+
+# Clonar repositorio
+git clone https://github.com/lapumlbb18-blip/my_app.git
+cd my_app
+
+# Compilar (si tienes Rust)
+cargo build --release
+
+# Ejecutar demo
+./target/release/rydit-rs --gfx demos/snake_perfect.rydit
+```
+
+### En Linux (Ubuntu/Debian)
+```bash
+# Instalar dependencias
+sudo apt install rustc cargo libraylib-dev
+
+# Clonar repositorio
+git clone https://github.com/lapumlbb18-blip/my_app.git
+cd my_app
+
+# Compilar
+cargo build --release
+
+# Ejecutar demo
+./target/release/rydit-rs --gfx demos/snake_perfect.rydit
+```
+
+### En Windows
+```powershell
+# Instalar Rust desde rustup.rs
+# Instalar raylib desde vcpkg o build manual
+
+# Clonar repositorio
+git clone https://github.com/lapumlbb18-blip/my_app.git
+cd my_app
+
+# Compilar
+cargo build --release
+
+# Ejecutar demo
+.\target\release\rydit-rs.exe --gfx demos\snake_perfect.rydit
+```
 
 ---
 
-**Built with ❤️ on Android | Construido con ❤️ en Android**
+## 📊 Métricas
 
-*v0.1.0 - Release Alpha*
+| Métrica | Valor |
+|---------|-------|
+| **Tests** | 110 passing |
+| **Warnings** | 0 |
+| **Errors** | 0 |
+| **Demos** | 8 funcionales |
+| **FPS** | 60 (vsync) |
+| **Módulos** | 6 (random, arrays, strings, io, time, json) |
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+my_app/
+├── README.md              # Este archivo
+├── LICENSE                # Licencia MIT
+├── CONTRIBUTING.md        # Cómo contribuir
+│
+├── demos/                 # Demos y ejemplos
+│   ├── snake_perfect.rydit
+│   ├── demo_shapes.rydit
+│   └── ejemplo_gfx.rydit
+│
+├── crates/modules/        # Módulos stdlib
+│   ├── random.rydit
+│   ├── arrays.rydit
+│   ├── strings.rydit
+│   ├── io.rydit
+│   ├── time.rydit
+│   └── json.rydit
+│
+├── screenshots/           # Capturas de pantalla
+│   ├── 01_demo_rydit_gfx_menu.jpg
+│   ├── 02_demo_rydit_gfx_completo.jpg
+│   ├── 03_demo_shapes_circulos.jpg
+│   ├── 04_snake_gameplay.jpg
+│   └── 05_snake_gameover.jpg
+│
+├── scripts/               # Scripts de utilidad
+│   ├── test_demos_x11.sh
+│   └── jugar_snake.sh
+│
+└── docs/                  # Documentación
+    ├── GUIA_RAPIDA.md
+    └── FEATURES.md
+```
+
+---
+
+## 🎯 Casos de Uso
+
+### 1. Prototipado Rápido de Juegos
+```rydit
+shield.init
+
+dark.slot jugador_x = 400
+dark.slot jugador_y = 300
+
+ryda true {
+    # Input
+    onif tecla_presionada("arrow_right") {
+        dark.slot jugador_x = jugador_x + 5
+    }
+    
+    # Draw
+    draw.circle(jugador_x, jugador_y, 20, "azul")
+}
+```
+
+### 2. Visualización de Datos
+```rydit
+shield.init
+
+dark.slot datos = [10, 25, 15, 30, 45]
+dark.slot x = 50
+
+ryda i < arrays::length(datos) {
+    dark.slot alto = datos[i] * 5
+    draw.rect(x, 500 - alto, 40, alto, "verde")
+    dark.slot x = x + 50
+    dark.slot i = i + 1
+}
+```
+
+### 3. Animaciones Simples
+```rydit
+shield.init
+
+dark.slot frame = 0
+
+ryda true {
+    dark.slot radio = 50 + (frame % 20)
+    draw.circle(400, 300, radio, "rojo")
+    dark.slot frame = frame + 1
+}
+```
+
+---
+
+## 🛠️ Desarrollo
+
+### Compilar desde Fuente
+```bash
+# Asegurar tener Rust y raylib instalados
+cargo build --release
+
+# Verificar tests
+cargo test
+
+# Ejecutar en modo gráfico
+cargo run -- --gfx demos/snake_perfect.rydit
+```
+
+### Ejecutar Tests
+```bash
+# Todos los tests
+cargo test
+
+# Tests de un crate específico
+cargo test -p lizer
+
+# Tests con output detallado
+cargo test -- --nocapture
+```
+
+---
+
+## 📚 Documentación
+
+- [Guía Rápida](docs/GUIA_RAPIDA.md) - Inicio rápido
+- [Features](docs/FEATURES.md) - Lista completa de features
+- [Contributing](CONTRIBUTING.md) - Cómo contribuir al proyecto
+
+---
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas!
+
+### Áreas donde puedes ayudar:
+- 📝 Documentación
+- 🧪 Tests adicionales
+- 🎨 Nuevos demos y ejemplos
+- 🌍 Traducciones
+- 🐛 Reporte de bugs
+
+Ver [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles.
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
+
+### Uso
+- ✅ Uso personal permitido
+- ✅ Uso educativo permitido
+- ✅ Modificación permitida
+- ⚠️ Uso comercial requiere notificación
+
+---
+
+## 🙏 Agradecimientos
+
+- [raylib](https://www.raylib.com/) - Motor gráfico
+- [Rust](https://www.rust-lang.org/) - Lenguaje base
+- [Termux](https://termux.dev/) - Entorno en Android
+
+---
+
+## 📬 Contacto
+
+**Repositorio:** [github.com/lapumlbb18-blip/my_app](https://github.com/lapumlbb18-blip/my_app)
+
+**Demo en vivo:**
+```bash
+git clone https://github.com/lapumlbb18-blip/my_app.git
+cd my_app
+cargo run -- --gfx demos/snake_perfect.rydit
+```
+
+---
+
+<p align="center">
+  <strong>Construido con ❤️ en Android/Termux</strong><br>
+  <em>100% mobile development - No laptop used</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Built%20on-Android%2FTermux-blue?style=for-the-badge" alt="Built on Android/Termux">
+</p>
