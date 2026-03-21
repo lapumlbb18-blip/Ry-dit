@@ -1,15 +1,15 @@
-# 🛡️ RyDit - Rust Gaming & Scripting Engine for Android/Termux
+# 🛡️ RyDit - Motor de Videojuegos 2D + Lenguaje de Scripting en Rust para Android/Termux
 
 <div align="center">
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/alucard18/shield-project)
-[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/alucard18/shield-project)
+[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/lapumlbb18-blip/my_app)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.0-purple.svg)](https://www.raylib.com/)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/alucard18/shield-project)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/alucard18/shield-project/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/my_app/blob/main/LICENSE)
 
 [📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
 
@@ -19,7 +19,15 @@
 
 ## 🎯 ¿Qué es RyDit?
 
-**RyDit** es un **motor de scripting para videojuegos 2D** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux** sin necesidad de desktop, emuladores o IDEs pesados.
+**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux** sin necesidad de desktop, emuladores o IDEs pesados.
+
+**No es solo un lenguaje** - es un motor completo con:
+- 🎮 Game loop integrado
+- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto)
+- 🎹 Input de teclado en tiempo real
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json)
+- 🧪 110 tests automáticos
+- 📦 Snake Game completo como demo
 
 ```rydit
 # Tu primer juego en RyDit (3 líneas)
