@@ -7,31 +7,9 @@
 
 ---
 
-## 🎯 Resumen Ejecutivo
-
-### Sesiones Completadas (v0.0.1 → v0.1.8)
-
-| Sesión | Versión | Fecha | Logro Principal | Tests | Estado |
-|--------|---------|-------|-----------------|-------|--------|
-| **1-7** | v0.0.1-v0.0.9 | 2026-03-14 | CLI → Snake Game | 48 | ✅ |
-| **8** | v0.0.10 | 2026-03-16 | Parser Bug Fix | 59 | ✅ |
-| **9** | v0.0.11 | 2026-03-16 | Scopes y Argumentos | 59 | ✅ |
-| **10** | v0.0.12 | 2026-03-16 | Aritmética Completa | 59 | ✅ |
-| **11** | v0.0.13 | 2026-03-16 | Funciones con Retorno | 60 | ✅ |
-| **12** | v0.0.14 | 2026-03-16 | Funciones en Expresiones | 60 | ✅ |
-| **13-15** | v0.1.0 | 2026-03-17 | **Snake Game Completo** | 60 | ✅ |
-| **16** | v0.1.1 | 2026-03-17 | **Sistema de Módulos** | 61 | ✅ |
-| **17** | v0.1.3 | 2026-03-17 | **Bug Fixes Críticos** | 63 | ✅ |
-| **18** | v0.1.4 | 2026-03-18 | **Strings + IO + Arrays** | 63 | ✅ |
-| **19** | v0.1.5 | 2026-03-18 | **Soporte JSON** | 63 | ✅ |
-| **20** | v0.1.6 | 2026-03-18 | **Random + Time Ligero** | 65 | ✅ |
-| **21-24** | v0.1.7 | 2026-03-19 | **Test de Demos (5/5)** | 65 | ✅ |
-| **25** | v0.1.8 | 2026-03-19 | **Maduración Lenguaje** | 75 | ✅ |
-| **26** | v0.1.8 | 2026-03-20 | **Gráficos + IndexAssign + Snake** | 75 | ✅ |
-| **26** | v0.1.9 | 2026-03-20 | **CHECKPOINT 100 TESTS** | 110 | ✅ |
-
----
-
+## 🎯 Resumen Descriptivo
+Rydit es un motor hecho en rust con rayilib libreria todo en uno, esta en proceso, pero con potencial de crecimiento, desarrollo y madurez, la finalidad es crear escenas,y mas ,como  video juegos, donde se experimente a travez de android en termux es donde nace, pero con mira a windows ,linux y android ,rust la base segura y moderna y raylib el todo terreno con herramientas ligeras hacen este motor viable y portable en todo tipo de hardware, sencillo ligero seguro. observa las capturas como en versiones anteriores ya iba funcionando , y a futuro se espera fortalecer, si es posible y queda camino,seria genial su apoyo y consejos para que disfruten de sus creaciones y experiencias en anime, tv , films, historia, etc
+#
 ## 📊 Métricas Actuales (v0.1.9)
 
 ### Código
@@ -495,30 +473,8 @@ cargo run --bin rydit-rs -- demos/demo_maduracion_v0.1.8.rydit
 
 ---
 
-## 📖 Documentación
-
-| Documento | Descripción |
-|-----------|-------------|
-| **[DIAGNOSTICO_SESION_26_V0.1.8.md](DIAGNOSTICO_SESION_26_V0.1.8.md)** | 🆕 Diagnóstico completo Sesión 26 (errores + soluciones) |
-| **[CHANGELOG_v0.1.8.md](CHANGELOG_v0.1.8.md)** | Cambios de la versión v0.1.8 |
-| **[ANALISIS_CRITICO_V0.1.8.txt](ANALISIS_CRITICO_V0.1.8.txt)** | Análisis técnico crítico (7.2/10) |
-| **[LOG_ERRORES_SESION_0.1.7.txt](LOG_ERRORES_SESION_0.1.7.txt)** | Log de errores sesión anterior |
-| **[LIBRO_RYDIT.md](LIBRO_RYDIT.md)** | Guía completa del lenguaje (~400 líneas) |
-| **[BENCHMARK_v0.1.2.md](BENCHMARK_v0.1.2.md)** | Métricas oficiales de rendimiento |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Guía de contribuciones |
-| **[ROADMAP.md](ROADMAP.md)** | Planificación futura |
-| **[diagnostico/](diagnostico/)** | Logs detallados de cada sesión (25 archivos) |
 
 ---
-
-## 💾 Backup
-
-- **Google Drive:** `alucard18:/shield-project-rydit`
-- **Archivos:** 100+
-- **Tamaño:** ~150 KB (sin `target/`)
-- **Última sync:** 2026-03-20 (v0.1.8 Sesión 26)
-- **Excluir:** `target/**` (con `.rcloneignore`)
-
 ---
 
 ## 🏆 Logros v0.1.8
@@ -551,7 +507,7 @@ Proyecto desarrollado para Android/Termux con Rust y raylib.
 
 **Filosofía:** David vs Goliat - Ligero pero poderoso
 
-**Historia:** Este proyecto fue construido **completamente en un dispositivo Android** usando Termux, sin laptop, sin escritorio, sin IDE. Solo:
+**Historia:** Este proyecto se esta  construyendo  **completamente en un dispositivo Android** usando Termux, sin laptop, sin escritorio, sin IDE. Solo:
 - 📱 Teléfono Android
 - ⌨️ Terminal Termux
 - 🦀 Rust + Cargo
