@@ -157,6 +157,46 @@ pub enum DrawCommand {
 }
 
 // ============================================================================
+// BACKEND TRAIT
+// ============================================================================
+
+/// Trait para backends de renderizado
+///
+/// Permite conectar migui con diferentes sistemas gráficos:
+/// - Raylib (rydit-gfx)
+/// - Terminal (futuro)
+/// - Web (futuro)
+pub trait MiguiBackend {
+    /// Limpiar pantalla con un color
+    fn clear(&mut self, color: Color);
+
+    /// Dibujar rectángulo
+    fn draw_rect(&mut self, rect: Rect, color: Color);
+
+    /// Dibujar texto
+    fn draw_text(&mut self, text: &str, x: f32, y: f32, size: f32, color: Color);
+
+    /// Dibujar línea
+    fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, color: Color, thickness: f32);
+
+    /// Ejecutar todos los comandos de dibujo de un frame
+    fn render_commands(&mut self, commands: &[DrawCommand]) {
+        for cmd in commands {
+            match cmd {
+                DrawCommand::Clear { color } => self.clear(*color),
+                DrawCommand::DrawRect { rect, color } => self.draw_rect(*rect, *color),
+                DrawCommand::DrawText { text, x, y, size, color } => {
+                    self.draw_text(text, *x, *y, *size as f32, *color);
+                }
+                DrawCommand::DrawLine { x1, y1, x2, y2, color, thickness } => {
+                    self.draw_line(*x1, *y1, *x2, *y2, *color, *thickness);
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
 // MIGUI - MAIN STRUCT
 // ============================================================================
 

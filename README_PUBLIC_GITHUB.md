@@ -4,12 +4,12 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/lapumlbb18-blip/my_app)
-[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Version](https://img.shields.io/badge/version-v0.4.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-93%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
-[![raylib](https://img.shields.io/badge/raylib-5.0-purple.svg)](https://www.raylib.com/)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/my_app)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/my_app/blob/main/LICENSE)
+[![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
 [📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
 
@@ -112,6 +112,11 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 |--------------|--------------|
 | ![Game Over](screenshots/05_snake_gameover.jpg) | ![Menú](screenshots/01_demo_rydit_gfx_menu.jpg) |
 | Pantalla de Game Over, puntuación, high score | Menú de selección de demos Termux-X11 |
+
+| **Migui GUI v0.4.1** |
+|--------------|
+| ![Migui GUI](screenshots/06_migui_backend_v0.4.1.jpg) |
+| **Immediate Mode GUI con backend raylib** - Botones, slider, checkbox, textbox, ventana arrastrable |
 
 </div>
 
@@ -228,17 +233,25 @@ draw.text("RyDit v0.1.9", 300, 50, "blanco")
 
 ### Métricas del Proyecto
 ```
-Líneas totales:     ~6,600 líneas
-├── Rust:           ~5,000 líneas
-└── RyDit:          ~1,600 líneas (demos + módulos + tests)
+Líneas totales:     ~9,420 líneas
+├── Rust:           ~7,200 líneas
+└── RyDit:          ~2,220 líneas (demos + módulos + tests)
 
-Tests automáticos:  110 pasando ✅
-Demos funcionales:  8/8 ✅
+Tests automáticos:  93 pasando ✅
+Demos funcionales:  14/14 ✅
 Warnings activos:   0 ✅
 
 Binarios:
-├── rydit-rs:       ~735 KB (release)
+├── rydit-rs:       ~835 KB (release)
 └── snake:          ~494 KB
+
+Crates:
+├── lizer:          Lexer + Parser + AST (~2,452 líneas)
+├── blast-core:     Executor + Memoria (~465 líneas)
+├── rydit-gfx:      Gráficos raylib (~560 líneas)
+├── rydit-rs:       Binario + stdlib (~2,500 líneas)
+├── v-shield:       Wrapper raylib (~120 líneas)
+└── migui:          Immediate Mode GUI (~600 líneas)
 ```
 
 ---
@@ -282,11 +295,12 @@ Binarios:
 | **v0.1.6** | ✅ | Random + Time | 2026-03-18 |
 | **v0.1.8** | ✅ | Maduración + Gráficos | 2026-03-20 |
 | **v0.1.9** | ✅ | **110 Tests Checkpoint** | 2026-03-20 |
-| **v0.2.0** | 🔜 | Module System Avanzado + CI/CD | Próxima |
-| **v0.3.0** | 🔮 | Chatbot Asistente + Regex + Date | 2-3 semanas |
-| **v0.4.0** | 🔮 | **migui** (Immediate Mode GUI) | 1 mes |
-| **v0.5.0** | 🔮 | **Ecosistema Maduro** (integración) | 2 meses |
-| **v0.6.0** | 🔮 | **Motor de Escenas** (nodos, señales) | 3 meses |
+| **v0.2.0** | ✅ | Module System Avanzado + CI/CD | 2026-03-21 |
+| **v0.3.0** | ✅ | Tank Combat + Colisiones + Math | 2026-03-21 |
+| **v0.4.0** | ✅ | **migui** (Immediate Mode GUI ~600 líneas) | 2026-03-22 |
+| **v0.4.1** | ✅ | **migui backend raylib** (renderizado real) | 2026-03-22 |
+| **v0.5.0** | 🔜 | **Ecosistema Maduro** (integración) | Próxima |
+| **v0.6.0** | 🔮 | **Motor de Escenas** (nodos, señales) | 2-3 meses |
 | **v1.0.0** | 🔮 | Production Ready | 4-6 meses |
 
 </div>
@@ -295,12 +309,12 @@ Binarios:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.1.9)
+### ✅ Completado (v0.4.1)
 - [x] Lexer + Parser con AST
 - [x] Executor con memoria y scopes
 - [x] Sistema de módulos (import)
-- [x] 110 tests automáticos
-- [x] 8 demos funcionales
+- [x] 93 tests automáticos
+- [x] 14 demos funcionales
 - [x] Snake Game completo
 - [x] Gráficos con raylib
 - [x] Strings, IO, Arrays maduros
@@ -309,11 +323,14 @@ Binarios:
 - [x] UTF-8 completo
 - [x] Escapes en strings
 - [x] Símbolos en identificadores
+- [x] Tank Combat + colisiones
+- [x] **migui** (Immediate Mode GUI ~600 líneas)
+- [x] **migui backend raylib** (renderizado real 60 FPS)
 
-### 🔜 Próximamente (v0.2.0 - v0.6.0)
-- [ ] Module system avanzado (cache, cíclicos)
-- [ ] Chatbot asistente de código
-- [ ] migui (Immediate Mode GUI ~1000 líneas)
+### 🔜 Próximamente (v0.5.0 - v1.0.0)
+- [ ] Más widgets (dropdown, listbox, progress bar)
+- [ ] Layout automático (vertical, horizontal, grid)
+- [ ] Estilos y temas personalizables
 - [ ] Ecosistema maduro (integración con otras herramientas)
 - [ ] Motor de escenas (nodos, señales, prefabs)
 - [ ] Editor visual de escenas
@@ -440,27 +457,30 @@ ryda frame < 500 {
 
 ## 🏆 Logros
 
-### Sesión 26 (v0.1.9) - Checkpoint 100 Tests
-- ✅ **110 tests pasando** (meta 100 superada)
+### Sesión v0.4.1 - Migui Backend Raylib
+- ✅ **Migui con renderizado real** (backend raylib funcional)
+- ✅ **93 tests pasando** (sin regresiones)
 - ✅ **0 warnings, 0 errors**
-- ✅ **8/8 demos funcionales**
-- ✅ **Termux-X11 activado** (5 screenshots)
-- ✅ **Backup Google Drive sincronizado**
+- ✅ **14/14 demos funcionales**
+- ✅ **60 FPS** en game loop migui
+- ✅ **~220 líneas Rust** agregadas
 
 ### General
-- ✅ **26 sesiones en 7 días** (v0.0.1 → v0.1.9)
-- ✅ **5 crates funcionales**
-- ✅ **~6,600 líneas de código**
+- ✅ **30+ sesiones en 9 días** (v0.0.1 → v0.4.1)
+- ✅ **6 crates funcionales**
+- ✅ **~9,420 líneas de código**
 - ✅ **Documentación completa**
+- ✅ **GitHub público** (Rydit_Engine)
 
 ---
 
 ## 💾 Backup
 
 - **Google Drive:** `alucard18:/shield-project-rydit`
-- **Archivos:** 100+
-- **Tamaño:** ~150 KB (sin `target/`)
-- **Última sync:** 2026-03-20 (v0.1.9)
+- **Backup Histórico:** `alucard18:/shield-project-rydit-historial` (archivos antiguos)
+- **Archivos:** 150+
+- **Tamaño:** ~200 KB (sin `target/`)
+- **Última sync:** 2026-03-22 (v0.4.1)
 
 ---
 
@@ -491,11 +511,11 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Próxima actualización:* v0.2.0 con evaluaciones detalladas de la comunidad y asistentes de IA
+*Próxima actualización:* v0.5.0 con ecosistema maduro y más widgets migui
 
-*Última actualización:* 2026-03-20 (v0.1.9 - Checkpoint 100 Tests)  
-*Próxima versión:* v0.2.0 (Module System + CI/CD)  
-*Estado:* ✅ **110 TESTS - 0 WARNINGS - CHECKPOINT SUPERADO**
+*Última actualización:* 2026-03-22 (v0.4.1 - Migui Backend Raylib)
+*Próxima versión:* v0.5.0 (Ecosistema Maduro)
+*Estado:* ✅ **93 TESTS - 0 WARNINGS - MIGUI FUNCIONAL**
 
 [⬆️ Volver arriba](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
 

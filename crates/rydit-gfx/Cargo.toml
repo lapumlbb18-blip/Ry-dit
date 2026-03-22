@@ -7,6 +7,7 @@ links = "raylib"
 
 [dependencies]
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
+migui = { path = "../migui" }
 
 [build-dependencies]
 pkg-config = "0.3"

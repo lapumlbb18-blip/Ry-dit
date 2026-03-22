@@ -139,6 +139,8 @@ fn main() {
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
         let mut gui = Migui::new();
+        let mut gfx = RyditGfx::new("RyDit migui v0.4.1", 800, 600);
+        gfx.set_target_fps(60);
 
         let tokens = Lizer::new(&script).scan();
         let mut parser = Parser::new(tokens);
@@ -146,7 +148,7 @@ fn main() {
         match parser.parse() {
             Ok(program) => {
                 println!("[RYDIT] {} statements en AST", program.statements.len());
-                ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui);
+                ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
             }
             Err(e) => {
                 println!("[ERROR] {}", e);
@@ -236,7 +238,10 @@ fn ejecutar_programa_gfx(program: &Program, executor: &mut Executor, funcs: &mut
     }
 }
 
-fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, gui: &mut Migui) {
+fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, gui: &mut Migui, gfx: &mut RyditGfx) {
+    use migui::{Event, MouseButton};
+    use rydit_gfx::Key as GfxKey;
+
     let mut loaded_modules: HashSet<String> = HashSet::new();
     let mut importing_stack: Vec<String> = Vec::new();
     let mut checkbox_states: HashMap<String, bool> = HashMap::new();
@@ -244,19 +249,63 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
     let mut textbox_states: HashMap<String, String> = HashMap::new();
     let mut window_states: HashMap<String, bool> = HashMap::new();
 
-    // Loop principal - migui puro no tiene ventana, el backend lo maneja
-    // Para esta versión, ejecutamos una vez y mostramos los comandos
-    gui.begin_frame();
-    
+    // Primero, ejecutar statements iniciales (definiciones de funciones, variables)
     for stmt in &program.statements {
-        ejecutar_stmt_migui(stmt, executor, funcs, gui, &mut loaded_modules, &mut importing_stack,
-                           &mut checkbox_states, &mut slider_states, &mut textbox_states, &mut window_states);
+        match stmt {
+            Stmt::Function { name, params, body } => {
+                funcs.insert(name.clone(), (params.clone(), body.clone()));
+            }
+            Stmt::Assign { name, value } => {
+                let valor = evaluar_expr_migui(value, executor, gui, &mut checkbox_states, &mut slider_states, &mut textbox_states, &mut window_states, funcs);
+                executor.guardar(name, valor);
+            }
+            _ => {}
+        }
     }
-    
-    gui.end_frame();
-    
-    // Mostrar comandos generados (para debug)
-    println!("[MIGUI] {} comandos de dibujo generados", gui.draw_commands().len());
+
+    // Guardar el bloque de código para ejecutar en cada frame
+    let frame_stmts: Vec<&Stmt> = program.statements.iter()
+        .filter(|s| matches!(s, Stmt::Block(_)))
+        .flat_map(|s| if let Stmt::Block(stmts) = s { stmts.iter().collect() } else { vec![] })
+        .collect();
+
+    // Game loop principal con migui + backend
+    while !gfx.should_close() {
+        // Input de teclado para salir
+        if gfx.is_key_pressed(GfxKey::Escape) {
+            break;
+        }
+
+        // Input de mouse para migui
+        let (mx, my) = gfx.get_mouse_position();
+        gui.handle_event(Event::MouseMove { x: mx as f32, y: my as f32 });
+
+        if gfx.is_mouse_button_pressed(0) {
+            gui.handle_event(Event::MouseDown { button: MouseButton::Left, x: mx as f32, y: my as f32 });
+        }
+        if gfx.is_mouse_button_pressed(0) == false && gui.is_mouse_down() {
+            gui.handle_event(Event::MouseUp { button: MouseButton::Left, x: mx as f32, y: my as f32 });
+        }
+
+        // Iniciar frame de migui
+        gui.begin_frame();
+
+        // Ejecutar statements del bloque en cada frame
+        for stmt in &frame_stmts {
+            ejecutar_stmt_migui(stmt, executor, funcs, gui, &mut loaded_modules, &mut importing_stack,
+                               &mut checkbox_states, &mut slider_states, &mut textbox_states, &mut window_states);
+        }
+
+        gui.end_frame();
+
+        // Debug: mostrar comandos generados
+        if gui.draw_commands().len() > 0 {
+            println!("[MIGUI] {} comandos generados", gui.draw_commands().len());
+        }
+
+        // Renderizar con el backend optimizado
+        gfx.render_migui_frame(gui.draw_commands());
+    }
 }
 
 fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, 
@@ -2684,6 +2733,7 @@ fn evaluar_expr_migui(
             }
         }
         Expr::Call { name, args } => {
+            println!("[MIGUI DEBUG] Llamada a funcion: {}", name);
             // ========================================================================
             // FUNCIONES MIGUI - V0.4.0 (Immediate Mode GUI)
             // ========================================================================
@@ -2948,7 +2998,7 @@ fn evaluar_expr_migui(
 
                 let mut return_value: Option<Valor> = None;
                 for s in &body {
-                    match ejecutar_stmt(s, executor, funcs, &mut empty_loaded, &mut empty_stack) {
+                    match ejecutar_stmt_migui(s, executor, funcs, gui, &mut empty_loaded, &mut empty_stack, checkbox_states, slider_states, textbox_states, window_states) {
                         (Some(true), _) => {
                             executor.pop_scope();
                             return Valor::Error("Break no permitido en función de expresión".to_string());
@@ -3079,7 +3129,7 @@ fn ejecutar_stmt_migui(
     slider_states: &mut HashMap<String, f32>,
     textbox_states: &mut HashMap<String, String>,
     window_states: &mut HashMap<String, bool>,
-) {
+) -> (Option<bool>, Option<Valor>) {
     match stmt {
         Stmt::Init => {}
         Stmt::Command(cmd) => {
@@ -3098,13 +3148,13 @@ fn ejecutar_stmt_migui(
                     Valor::Num(n) => n as usize,
                     _ => {
                         println!("[ERROR] Índice debe ser número");
-                        return;
+                        return (None, None);
                     }
                 };
 
                 if idx >= arr.len() {
                     println!("[ERROR] Índice {} fuera de límites (array de {} elementos)", idx, arr.len());
-                    return;
+                    return (None, None);
                 }
 
                 let mut nuevo_arr = arr.clone();
@@ -3166,19 +3216,32 @@ fn ejecutar_stmt_migui(
             }
         }
         Stmt::Block(stmts) => {
-            for s in stmts {
+            println!("[MIGUI DEBUG] Ejecutando bloque con {} statements", stmts.len());
+            for (i, s) in stmts.iter().enumerate() {
+                println!("[MIGUI DEBUG] Statement {}: {:?}", i, match s {
+                    Stmt::Expr(_) => "Expr",
+                    Stmt::Assign { .. } => "Assign",
+                    Stmt::Call { .. } => "Call",
+                    Stmt::Function { .. } => "Function",
+                    _ => "Other",
+                });
                 ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
             }
         }
         Stmt::Function { name, params, body } => {
             funcs.insert(name.clone(), (params.clone(), body.clone()));
         }
+        Stmt::Call { name, args } => {
+            // Para migui, evaluar como expresión (las funciones migui generan draw commands)
+            let _ = evaluar_expr_migui(&Expr::Call { name: name.clone(), args: args.clone() }, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            return (None, None);
+        }
         Stmt::Import { module, alias } => {
             let module_path = format!("crates/modules/{}.rydit", module);
 
             if importing_stack.contains(&module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
-                return;
+                return (None, None);
             }
 
             if loaded_modules.contains(module.as_str()) {
@@ -3202,7 +3265,7 @@ fn ejecutar_stmt_migui(
                         funcs.insert(new_name, func_data.clone());
                     }
                 }
-                return;
+                return (None, None);
             }
 
             if let Ok(content) = std::fs::read_to_string(&module_path) {
@@ -3216,7 +3279,7 @@ fn ejecutar_stmt_migui(
                     Err(e) => {
                         println!("[ERROR] Error parseando módulo '{}': {}", module, e);
                         importing_stack.pop();
-                        return;
+                        return (None, None);
                     }
                 };
 
@@ -3283,6 +3346,7 @@ fn ejecutar_stmt_migui(
         }
         _ => {}
     }
+    (None, None)
 }
 
 // ==================== TESTS DE WARNINGS ====================

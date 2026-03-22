@@ -38,6 +38,9 @@
 use raylib::prelude::*;
 use raylib::consts::KeyboardKey;
 
+// Importar migui para implementar el backend
+use migui::{MiguiBackend, Color as MiguiColor, Rect as MiguiRect};
+
 // Colores manuales (raylib nobuild no incluye colors::prelude)
 pub const RED: Color = Color { r: 230, g: 41, b: 55, a: 255 };
 pub const GREEN: Color = Color { r: 117, g: 203, b: 100, a: 255 };
@@ -181,6 +184,53 @@ impl ColorRydit {
             "vino" | "maroon" | "granate" => ColorRydit::Vino,
             _ => ColorRydit::Blanco,
         }
+    }
+
+    /// Crear desde Color de migui
+    pub fn from_migui(color: MiguiColor) -> Self {
+        // Convertir componentes RGB directamente
+        // migui::Color tiene campos públicos: r, g, b, a
+        // Usamos aproximación a los colores RyDit más cercanos
+        let r = color.r;
+        let g = color.g;
+        let b = color.b;
+
+        // Calcular distancia a cada color RyDit y elegir el más cercano
+        let colores = vec![
+            (ColorRydit::Rojo, RED),
+            (ColorRydit::Verde, GREEN),
+            (ColorRydit::Azul, BLUE),
+            (ColorRydit::Amarillo, YELLOW),
+            (ColorRydit::Blanco, WHITE),
+            (ColorRydit::Negro, BLACK),
+            (ColorRydit::Gris, GRAY),
+            (ColorRydit::Naranja, ORANGE),
+            (ColorRydit::Cyan, CYAN),
+            (ColorRydit::Morado, PURPLE),
+            (ColorRydit::Cafe, BROWN),
+            (ColorRydit::Lima, LIME),
+            (ColorRydit::AzulOscuro, NAVY),
+            (ColorRydit::Oliva, OLIVE),
+            (ColorRydit::Turquesa, TEAL),
+            (ColorRydit::Vino, MAROON),
+        ];
+
+        let mut mejor_color = ColorRydit::Blanco;
+        let mut mejor_distancia = f32::MAX;
+
+        for (rydit_color, raylib_color) in colores {
+            let dr = (r as i32 - raylib_color.r as i32).pow(2) as f32;
+            let dg = (g as i32 - raylib_color.g as i32).pow(2) as f32;
+            let db = (b as i32 - raylib_color.b as i32).pow(2) as f32;
+            let distancia = dr + dg + db;
+
+            if distancia < mejor_distancia {
+                mejor_distancia = distancia;
+                mejor_color = rydit_color;
+            }
+        }
+
+        mejor_color
     }
 }
 
@@ -625,5 +675,103 @@ mod tests {
         assert_eq!(0, 0);  // Left button index
         assert_eq!(1, 1);  // Right button index
         assert_eq!(2, 2);  // Middle button index
+    }
+
+    // ========================================================================
+    // TESTS V0.4.1 - MIGUI BACKEND
+    // ========================================================================
+
+    #[test]
+    fn test_migui_backend_exists() {
+        // Verificar que RyditGfx implementa MiguiBackend
+        let _ = RyditGfx::new("Test", 800, 600);
+        // El backend existe y compila
+    }
+}
+
+// ============================================================================
+// MIGUI BACKEND IMPLEMENTATION
+// ============================================================================
+
+/// Implementación de MiguiBackend para RyditGfx
+///
+/// Conecta los DrawCommand de migui con las funciones de dibujo de raylib
+/// 
+/// Nota: Las funciones asumen que begin_draw() ya fue llamado.
+/// Usar con render_commands_frame() que maneja el begin/end draw.
+impl MiguiBackend for RyditGfx {
+    fn clear(&mut self, color: MiguiColor) {
+        let color_rydit = ColorRydit::from_migui(color);
+        let mut d = self.begin_draw();
+        d.clear(color_rydit);
+    }
+
+    fn draw_rect(&mut self, rect: MiguiRect, color: MiguiColor) {
+        let color_rydit = ColorRydit::from_migui(color);
+        let mut d = self.begin_draw();
+        d.draw_rectangle(
+            rect.x as i32,
+            rect.y as i32,
+            rect.w as i32,
+            rect.h as i32,
+            color_rydit,
+        );
+    }
+
+    fn draw_text(&mut self, text: &str, x: f32, y: f32, size: f32, color: MiguiColor) {
+        let color_rydit = ColorRydit::from_migui(color);
+        let mut d = self.begin_draw();
+        d.draw_text(text, x as i32, y as i32, size as i32, color_rydit);
+    }
+
+    fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, color: MiguiColor, thickness: f32) {
+        let color_rydit = ColorRydit::from_migui(color);
+        let mut d = self.begin_draw();
+        d.draw.draw_line_ex(
+            Vector2::new(x1, y1),
+            Vector2::new(x2, y2),
+            thickness,
+            color_rydit.to_color(),
+        );
+    }
+}
+
+// ============================================================================
+// FUNCIONES DE RENDERIZADO MIGUI OPTIMIZADAS
+// ============================================================================
+
+impl RyditGfx {
+    /// Renderizar comandos migui en un frame (con begin/end draw único)
+    pub fn render_migui_frame(&mut self, commands: &[migui::DrawCommand]) {
+        let mut d = self.begin_draw();
+        d.clear(ColorRydit::Negro);
+        
+        for cmd in commands {
+            match cmd {
+                migui::DrawCommand::Clear { color } => {
+                    d.clear(ColorRydit::from_migui(*color));
+                }
+                migui::DrawCommand::DrawRect { rect, color } => {
+                    d.draw_rectangle(
+                        rect.x as i32,
+                        rect.y as i32,
+                        rect.w as i32,
+                        rect.h as i32,
+                        ColorRydit::from_migui(*color),
+                    );
+                }
+                migui::DrawCommand::DrawText { text, x, y, size, color } => {
+                    d.draw_text(text, *x as i32, *y as i32, *size as i32, ColorRydit::from_migui(*color));
+                }
+                migui::DrawCommand::DrawLine { x1, y1, x2, y2, color, thickness } => {
+                    d.draw.draw_line_ex(
+                        Vector2::new(*x1, *y1),
+                        Vector2::new(*x2, *y2),
+                        *thickness,
+                        ColorRydit::from_migui(*color).to_color(),
+                    );
+                }
+            }
+        }
     }
 }
