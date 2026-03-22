@@ -66,6 +66,11 @@ pub enum Token {
     DrawRect,   // draw.rect
     DrawLine,   // draw.line
     DrawText,   // draw.text
+    DrawTriangle,      // draw.triangle
+    DrawRing,          // draw.ring
+    DrawRectangleLines,// draw.rectangle_lines
+    DrawEllipse,       // draw.ellipse
+    DrawLineThick,     // draw.line_thick
     Import,     // import modulo
     As,         // as alias - para alias de módulos
     // Input se maneja como identificador especial "input"
@@ -246,6 +251,45 @@ pub enum Stmt {
         tamano: Expr,
         color: String,
     },  // draw.text("Hola", x, y, tamano, "red")
+    // Statements v0.2.0 - Nuevas formas
+    DrawTriangle {
+        v1_x: Expr,
+        v1_y: Expr,
+        v2_x: Expr,
+        v2_y: Expr,
+        v3_x: Expr,
+        v3_y: Expr,
+        color: String,
+    },  // draw.triangle(x1, y1, x2, y2, x3, y3, "red")
+    DrawRing {
+        center_x: Expr,
+        center_y: Expr,
+        inner_radius: Expr,
+        outer_radius: Expr,
+        color: String,
+    },  // draw.ring(x, y, inner, outer, "red")
+    DrawRectangleLines {
+        x: Expr,
+        y: Expr,
+        ancho: Expr,
+        alto: Expr,
+        color: String,
+    },  // draw.rectangle_lines(x, y, w, h, "red")
+    DrawEllipse {
+        center_x: Expr,
+        center_y: Expr,
+        radius_h: Expr,
+        radius_v: Expr,
+        color: String,
+    },  // draw.ellipse(x, y, radius_h, radius_v, "red")
+    DrawLineThick {
+        x1: Expr,
+        y1: Expr,
+        x2: Expr,
+        y2: Expr,
+        thick: Expr,
+        color: String,
+    },  // draw.line_thick(x1, y1, x2, y2, thick, "red")
 }
 
 /// Programa completo
@@ -434,6 +478,11 @@ impl<'a> Lizer<'a> {
                     "draw.rect" => Token::DrawRect,
                     "draw.line" => Token::DrawLine,
                     "draw.text" => Token::DrawText,
+                    "draw.triangle" => Token::DrawTriangle,
+                    "draw.ring" => Token::DrawRing,
+                    "draw.rectangle_lines" => Token::DrawRectangleLines,
+                    "draw.ellipse" => Token::DrawEllipse,
+                    "draw.line_thick" => Token::DrawLineThick,
                     // "input" se maneja como Ident especial
                     "and" => Token::And,
                     "or" => Token::Or,
@@ -964,6 +1013,21 @@ impl Parser {
             Token::DrawText => {
                 self.parse_draw_text()
             }
+            Token::DrawTriangle => {
+                self.parse_draw_triangle()
+            }
+            Token::DrawRing => {
+                self.parse_draw_ring()
+            }
+            Token::DrawRectangleLines => {
+                self.parse_draw_rectangle_lines()
+            }
+            Token::DrawEllipse => {
+                self.parse_draw_ellipse()
+            }
+            Token::DrawLineThick => {
+                self.parse_draw_line_thick()
+            }
             Token::Break => {
                 self.pos += 1;
                 Ok(Some(Stmt::Break))
@@ -1432,6 +1496,191 @@ impl Parser {
         }
 
         Ok(Some(Stmt::DrawText { texto, x, y, tamano, color }))
+    }
+
+    // ========================================================================
+    // FUNCIONES DE PARSING V0.2.0 - NUEVAS FORMAS
+    // ========================================================================
+
+    fn parse_draw_triangle(&mut self) -> Result<Option<Stmt>> {
+        // draw.triangle(x1, y1, x2, y2, x3, y3, "color")
+        self.pos += 1;
+        if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
+            return Err(self.error_syntax("Se esperaba '(' después de draw.triangle"));
+        }
+        self.pos += 1;
+
+        let v1_x = self.parse_expression()?;
+        self.skip_comma();
+        let v1_y = self.parse_expression()?;
+        self.skip_comma();
+        let v2_x = self.parse_expression()?;
+        self.skip_comma();
+        let v2_y = self.parse_expression()?;
+        self.skip_comma();
+        let v3_x = self.parse_expression()?;
+        self.skip_comma();
+        let v3_y = self.parse_expression()?;
+        self.skip_comma();
+
+        let color = if self.pos < self.tokens.len() {
+            if let Token::Texto(c) = &self.tokens[self.pos] {
+                self.pos += 1;
+                c.clone()
+            } else {
+                "negro".to_string()
+            }
+        } else {
+            "negro".to_string()
+        };
+
+        if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
+            self.pos += 1;
+        }
+
+        Ok(Some(Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color }))
+    }
+
+    fn parse_draw_ring(&mut self) -> Result<Option<Stmt>> {
+        // draw.ring(x, y, inner_radius, outer_radius, "color")
+        self.pos += 1;
+        if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
+            return Err(self.error_syntax("Se esperaba '(' después de draw.ring"));
+        }
+        self.pos += 1;
+
+        let center_x = self.parse_expression()?;
+        self.skip_comma();
+        let center_y = self.parse_expression()?;
+        self.skip_comma();
+        let inner_radius = self.parse_expression()?;
+        self.skip_comma();
+        let outer_radius = self.parse_expression()?;
+        self.skip_comma();
+
+        let color = if self.pos < self.tokens.len() {
+            if let Token::Texto(c) = &self.tokens[self.pos] {
+                self.pos += 1;
+                c.clone()
+            } else {
+                "negro".to_string()
+            }
+        } else {
+            "negro".to_string()
+        };
+
+        if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
+            self.pos += 1;
+        }
+
+        Ok(Some(Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color }))
+    }
+
+    fn parse_draw_rectangle_lines(&mut self) -> Result<Option<Stmt>> {
+        // draw.rectangle_lines(x, y, ancho, alto, "color")
+        self.pos += 1;
+        if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
+            return Err(self.error_syntax("Se esperaba '(' después de draw.rectangle_lines"));
+        }
+        self.pos += 1;
+
+        let x = self.parse_expression()?;
+        self.skip_comma();
+        let y = self.parse_expression()?;
+        self.skip_comma();
+        let ancho = self.parse_expression()?;
+        self.skip_comma();
+        let alto = self.parse_expression()?;
+        self.skip_comma();
+
+        let color = if self.pos < self.tokens.len() {
+            if let Token::Texto(c) = &self.tokens[self.pos] {
+                self.pos += 1;
+                c.clone()
+            } else {
+                "negro".to_string()
+            }
+        } else {
+            "negro".to_string()
+        };
+
+        if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
+            self.pos += 1;
+        }
+
+        Ok(Some(Stmt::DrawRectangleLines { x, y, ancho, alto, color }))
+    }
+
+    fn parse_draw_ellipse(&mut self) -> Result<Option<Stmt>> {
+        // draw.ellipse(x, y, radius_h, radius_v, "color")
+        self.pos += 1;
+        if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
+            return Err(self.error_syntax("Se esperaba '(' después de draw.ellipse"));
+        }
+        self.pos += 1;
+
+        let center_x = self.parse_expression()?;
+        self.skip_comma();
+        let center_y = self.parse_expression()?;
+        self.skip_comma();
+        let radius_h = self.parse_expression()?;
+        self.skip_comma();
+        let radius_v = self.parse_expression()?;
+        self.skip_comma();
+
+        let color = if self.pos < self.tokens.len() {
+            if let Token::Texto(c) = &self.tokens[self.pos] {
+                self.pos += 1;
+                c.clone()
+            } else {
+                "negro".to_string()
+            }
+        } else {
+            "negro".to_string()
+        };
+
+        if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
+            self.pos += 1;
+        }
+
+        Ok(Some(Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color }))
+    }
+
+    fn parse_draw_line_thick(&mut self) -> Result<Option<Stmt>> {
+        // draw.line_thick(x1, y1, x2, y2, thick, "color")
+        self.pos += 1;
+        if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::ParentIzq) {
+            return Err(self.error_syntax("Se esperaba '(' después de draw.line_thick"));
+        }
+        self.pos += 1;
+
+        let x1 = self.parse_expression()?;
+        self.skip_comma();
+        let y1 = self.parse_expression()?;
+        self.skip_comma();
+        let x2 = self.parse_expression()?;
+        self.skip_comma();
+        let y2 = self.parse_expression()?;
+        self.skip_comma();
+        let thick = self.parse_expression()?;
+        self.skip_comma();
+
+        let color = if self.pos < self.tokens.len() {
+            if let Token::Texto(c) = &self.tokens[self.pos] {
+                self.pos += 1;
+                c.clone()
+            } else {
+                "negro".to_string()
+            }
+        } else {
+            "negro".to_string()
+        };
+
+        if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
+            self.pos += 1;
+        }
+
+        Ok(Some(Stmt::DrawLineThick { x1, y1, x2, y2, thick, color }))
     }
 
     fn skip_comma(&mut self) {

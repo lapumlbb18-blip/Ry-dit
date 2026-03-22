@@ -5,7 +5,8 @@ members = [
     "crates/v-shield",
     "crates/blast-core",
     "crates/rydit-rs",
-    "crates/rydit-gfx"
+    "crates/rydit-gfx",
+    "crates/migui"
 ]
 
 # =============================================================================

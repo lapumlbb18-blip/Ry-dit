@@ -47,3 +47,48 @@ rytmo max(a, b) {
     }
     return b
 }
+
+# =============================================================================
+# FUNCIONES MATH AVANZADAS - V0.3.0 (Tank Combat)
+# =============================================================================
+
+# sqrt(x) - Raíz cuadrada (builtin)
+# Usar: math::sqrt(x)
+
+# sin(x) - Seno (x en radianes) (builtin)
+# Usar: math::sin(x)
+
+# cos(x) - Coseno (x en radianes) (builtin)
+# Usar: math::cos(x)
+
+# tan(x) - Tangente (x en radianes) (builtin)
+# Usar: math::tan(x)
+
+# atan2(y, x) - Arcotangente (retorna radianes) (builtin)
+# Usar: math::atan2(y, x)
+
+# deg2rad(x) - Convertir grados a radianes (builtin)
+# Usar: math::deg2rad(x)
+
+# rad2deg(x) - Convertir radianes a grados (builtin)
+# Usar: math::rad2deg(x)
+
+# Funciones helper para Tank Combat
+rytmo distancia(x1, y1, x2, y2) {
+    dark.slot dx = x2 - x1
+    dark.slot dy = y2 - y1
+    return sqrt(dx*dx + dy*dy)
+}
+
+rytmo angulo_hacia(x1, y1, x2, y2) {
+    dark.slot dx = x2 - x1
+    dark.slot dy = y2 - y1
+    return atan2(dy, dx)
+}
+
+rytmo rotar_hacia(x, y, angulo, distancia) {
+    return [
+        x + cos(angulo) * distancia,
+        y + sin(angulo) * distancia
+    ]
+}

@@ -4,14 +4,14 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.1.9-blue.svg)](https://github.com/lapumlbb18-blip/my_app)
-[![Tests](https://img.shields.io/badge/tests-110%20passing-green.svg)](https://github.com/lapumlbb18-blip/my_app)
+[![Version](https://img.shields.io/badge/version-v0.4.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-93%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
-[![raylib](https://img.shields.io/badge/raylib-5.0-purple.svg)](https://www.raylib.com/)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/my_app)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/my_app/blob/main/LICENSE)
+[![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
-[📖 Documentación](#-documentación) • [🎮 Demo Snake](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
+[📖 Documentación](#-documentación) • [🎨 migui GUI](#-migui---immediate-mode-gui-v040) • [🎮 Tank Combat](#-tank-combat---demo-v030) • [🐍 Snake Game](#-snake-game---demo-funcional) • [🚀 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux) • [💬 Comunidad](#-comunidad)
 
 </div>
 
@@ -23,11 +23,15 @@
 
 **No es solo un lenguaje** - es un motor completo con:
 - 🎮 Game loop integrado
-- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto)
+- 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, triángulos, elipses)
+- 🖱️ Input de mouse (posición, botones, wheel)
 - 🎹 Input de teclado en tiempo real
-- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json)
-- 🧪 110 tests automáticos
-- 📦 Snake Game completo como demo
+- 📐 Math avanzado (sin, cos, tan, atan2, sqrt)
+- 💥 Detección de colisiones 2D
+- 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones)
+- 🎨 **migui - Immediate Mode GUI** (botones, sliders, checkboxes, ventanas)
+- 🧪 93 tests automáticos
+- 📦 Snake Game + Tank Combat + Demo migui como demos
 
 ```rydit
 # Tu primer juego en RyDit (3 líneas)
@@ -84,6 +88,156 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 | `P` | Pausa |
 | `SPACE` | Reiniciar |
 | `ESC` | Salir |
+
+---
+
+## 🎨 migui - Immediate Mode GUI (v0.4.0)
+
+<div align="center">
+
+**¡NUEVO EN v0.4.0!** Sistema de GUI estilo raygui para interfaces rápidas
+
+</div>
+
+### Características de migui
+- ✅ **Immediate Mode** - Sin estado complejo, fácil de usar
+- ✅ **Backend agnóstico** - Funciona con raylib, terminal, web
+- ✅ **8 widgets** - button, label, checkbox, slider, panel, textbox, window, message_box
+- ✅ **Ventanas arrastrables** - Headers con drag-and-drop
+- ✅ **Input de mouse** - Posición, clicks, estado
+- ✅ **Colores personalizables** - 14 colores predefinidos
+- ✅ **~600 líneas Rust** - Ligero y sin dependencias
+
+### Ejecutar Demo migui
+```bash
+# En Termux (Android)
+cargo run --bin rydit-rs -- --migui demos/demo_migui.rydit
+
+# O con binario directo
+./target/release/rydit-rs --migui demos/demo_migui.rydit
+```
+
+### Ejecutar Editor de Escenas
+```bash
+cargo run --bin rydit-rs -- --migui demos/editor_escenas.rydit
+```
+
+### Código de Ejemplo
+```rydit
+# demo_migui.rydit
+contador = 0
+slider_valor = 50
+checkbox_estado = false
+
+{
+    # Panel de fondo
+    migui::panel("fondo", 10, 10, 300, 400, "panel")
+    
+    # Botón
+    si = migui::button("btn_inc", "Incrementar", 120, 60, 100, 40)
+    si {
+        contador = contador + 1
+    }
+    
+    # Label
+    migui::label("lbl_cont", str("Contador: ") + str(contador), 120, 110, 100, 30)
+    
+    # Slider
+    slider_valor = migui::slider("slider", slider_valor, 0, 100, 120, 160, 160, 30)
+    
+    # Checkbox
+    cambio = migui::checkbox("chk", "Activar", checkbox_estado, 120, 210, 150, 30)
+    si cambio {
+        checkbox_estado = !checkbox_estado
+    }
+    
+    # Ventana arrastrable
+    migui::window("ventana", "Mi Ventana", true, 350, 50, 300, 200)
+}
+```
+
+### API Completa
+| Función | Parámetros | Retorna | Descripción |
+|---------|------------|---------|-------------|
+| `migui::button` | id, text, x, y, w, h | bool | Botón clickeable |
+| `migui::label` | id, text, x, y, w, h | - | Texto estático |
+| `migui::checkbox` | id, text, checked, x, y, w, h | bool | Checkbox toggle |
+| `migui::slider` | id, value, min, max, x, y, w, h | f32 | Slider numérico |
+| `migui::panel` | id, x, y, w, h, color | - | Panel contenedor |
+| `migui::textbox` | id, x, y, w, h | String | Input de texto |
+| `migui::window` | id, title, open, x, y, w, h | bool | Ventana arrastrable |
+| `migui::message_box` | title, message, buttons, x, y, w, h | i32 | Diálogo con botones |
+| `migui::mouse_x` | - | f64 | Posición X del mouse |
+| `migui::mouse_y` | - | f64 | Posición Y del mouse |
+| `migui::mouse_position` | - | [x, y] | Posición completa |
+| `migui::is_mouse_pressed` | - | bool | Estado del click |
+
+---
+
+## 🎮 Tank Combat - Demo v0.3.0
+
+<div align="center">
+
+**¡NUEVO EN v0.3.0!** Tanque de combate con seguimiento de mouse y disparos
+
+</div>
+
+### Características de Tank Combat
+- ✅ **Input de mouse** - La torreta sigue el cursor
+- ✅ **Disparos** - Click izquierdo para disparar
+- ✅ **Matemáticas avanzadas** - atan2, sin, cos para trayectorias
+- ✅ **Colisiones** - Detección bala-enemigo
+- ✅ **IA enemiga** - Tanque enemigo que persigue al jugador
+- ✅ **Health bars** - Sistema de vida
+- ✅ **Victory/Game Over** - Pantallas de fin de juego
+
+### Ejecutar Tank Combat
+```bash
+# En Termux (Android)
+cargo run --bin rydit-rs -- --gfx demos/tank_combat.rydit
+
+# O con binario directo
+./target/release/rydit-rs --gfx demos/tank_combat.rydit
+```
+
+### Controles
+| Control | Acción |
+|---------|--------|
+| `Mouse` | Apuntar torreta |
+| `Click Izquierdo` | Disparar |
+| `ESC` | Salir |
+
+### Código de Ejemplo
+```rydit
+shield.init
+import math
+import colisiones
+
+dark.slot tanque_x = 400
+dark.slot tanque_y = 300
+
+ryda frame < 10000 {
+    # Input de mouse
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    
+    # Calcular ángulo hacia mouse
+    dark.slot angulo = math::atan2(mouse_y - tanque_y, mouse_x - tanque_x)
+    
+    # Dibujar tanque
+    draw.circle(tanque_x, tanque_y, 30, "verde")
+    
+    # Disparar con click
+    onif input::is_mouse_button_pressed(0) == 1 {
+        # Lógica de disparo...
+    }
+    
+    # Colisiones
+    onif colisiones::circulo_circulo(...) == 1 {
+        # Impacto detectado
+    }
+}
+```
 
 ---
 
@@ -228,17 +382,17 @@ draw.text("RyDit v0.1.9", 300, 50, "blanco")
 
 ### Métricas del Proyecto
 ```
-Líneas totales:     ~6,600 líneas
-├── Rust:           ~5,000 líneas
-└── RyDit:          ~1,600 líneas (demos + módulos + tests)
+Líneas totales:     ~8,000 líneas (+800 en v0.3.0)
+├── Rust:           ~6,200 líneas
+└── RyDit:          ~1,800 líneas (demos + módulos + tests)
 
-Tests automáticos:  110 pasando ✅
-Demos funcionales:  8/8 ✅
+Tests automáticos:  90 pasando ✅
+Demos funcionales:  12/12 ✅ (Snake + Tank Combat + Math Demo)
 Warnings activos:   0 ✅
 
 Binarios:
-├── rydit-rs:       ~735 KB (release)
-└── snake:          ~494 KB
+├── rydit-rs:       ~760 KB (release)
+└── snake:          ~505 KB
 ```
 
 ---
@@ -282,9 +436,9 @@ Binarios:
 | **v0.1.6** | ✅ | Random + Time | 2026-03-18 |
 | **v0.1.8** | ✅ | Maduración + Gráficos | 2026-03-20 |
 | **v0.1.9** | ✅ | **110 Tests Checkpoint** | 2026-03-20 |
-| **v0.2.0** | 🔜 | Module System Avanzado + CI/CD | Próxima |
-| **v0.3.0** | 🔮 | Chatbot Asistente + Regex + Date | 2-3 semanas |
-| **v0.4.0** | 🔮 | **migui** (Immediate Mode GUI) | 1 mes |
+| **v0.2.0** | ✅ | +12 Colores + 5 Formas + rybot.sh | 2026-03-21 |
+| **v0.3.0** | ✅ | **Tank Combat** (Mouse + Math + Colisiones) | 2026-03-21 |
+| **v0.4.0** | 🔜 | **migui** (Immediate Mode GUI) | Próxima |
 | **v0.5.0** | 🔮 | **Ecosistema Maduro** (integración) | 2 meses |
 | **v0.6.0** | 🔮 | **Motor de Escenas** (nodos, señales) | 3 meses |
 | **v1.0.0** | 🔮 | Production Ready | 4-6 meses |
@@ -295,19 +449,33 @@ Binarios:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.1.9)
+### ✅ Completado (v0.3.0 - Tank Combat)
 - [x] Lexer + Parser con AST
 - [x] Executor con memoria y scopes
 - [x] Sistema de módulos (import)
-- [x] 110 tests automáticos
-- [x] 8 demos funcionales
+- [x] 90 tests automáticos
+- [x] 12 demos funcionales
 - [x] Snake Game completo
-- [x] Gráficos con raylib
+- [x] **Tank Combat** (input mouse, math, colisiones)
+- [x] Gráficos con raylib (9 formas)
+- [x] **Input de mouse** (posición, botones, wheel)
+- [x] **Math avanzado** (atan2, sin, cos, tan, sqrt)
+- [x] **Módulo colisiones** (5 funciones)
 - [x] Strings, IO, Arrays maduros
 - [x] Soporte JSON
 - [x] Random + Time ligeros
 - [x] UTF-8 completo
 - [x] Escapes en strings
+- [x] Símbolos en identificadores
+- [x] +12 colores (18 totales)
+- [x] rybot.sh (bot de ayuda)
+
+### 🔜 Próximamente (v0.4.0 - migui)
+- [ ] migui (Immediate Mode GUI ~1000 líneas)
+- [ ] Ventanas arrastrables
+- [ ] Botones, sliders, labels
+- [ ] Message boxes, paneles
+- [ ] Editor de escenas visual
 - [x] Símbolos en identificadores
 
 ### 🔜 Próximamente (v0.2.0 - v0.6.0)
@@ -448,19 +616,20 @@ ryda frame < 500 {
 - ✅ **Backup Google Drive sincronizado**
 
 ### General
-- ✅ **26 sesiones en 7 días** (v0.0.1 → v0.1.9)
-- ✅ **5 crates funcionales**
-- ✅ **~6,600 líneas de código**
+- ✅ **27 sesiones en 8 días** (v0.0.1 → v0.4.0)
+- ✅ **6 crates funcionales** (lizer, blast-core, rydit-gfx, v-shield, rydit-rs, migui)
+- ✅ **~9,200 líneas de código**
 - ✅ **Documentación completa**
+- ✅ **93 tests automáticos**
 
 ---
 
 ## 💾 Backup
 
 - **Google Drive:** `alucard18:/shield-project-rydit`
-- **Archivos:** 100+
-- **Tamaño:** ~150 KB (sin `target/`)
-- **Última sync:** 2026-03-20 (v0.1.9)
+- **Archivos:** 120+
+- **Tamaño:** ~200 KB (sin `target/`)
+- **Última sync:** 2026-03-22 (v0.4.0)
 
 ---
 
@@ -491,11 +660,11 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Próxima actualización:* v0.2.0 con evaluaciones detalladas de la comunidad y asistentes de IA
+*Próxima actualización:* v0.4.1 con backend raylib para migui y más widgets
 
-*Última actualización:* 2026-03-20 (v0.1.9 - Checkpoint 100 Tests)  
-*Próxima versión:* v0.2.0 (Module System + CI/CD)  
-*Estado:* ✅ **110 TESTS - 0 WARNINGS - CHECKPOINT SUPERADO**
+*Última actualización:* 2026-03-22 (v0.4.0 - migui Immediate Mode GUI)
+*Próxima versión:* v0.4.1 (migui backend raylib + más widgets)
+*Estado:* ✅ **93 TESTS - 0 WARNINGS - v0.4.0 COMPLETADA**
 
 [⬆️ Volver arriba](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
 
