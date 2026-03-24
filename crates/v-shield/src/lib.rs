@@ -2,37 +2,142 @@
 //! Usa raylib para dibujar primitivas
 
 pub use raylib;
-pub use raylib::prelude::*;
 pub use raylib::consts::KeyboardKey::*;
+pub use raylib::prelude::*;
 
 // Definir colores manualmente (raylib nobuild no incluye colors::prelude)
-pub const RED: Color = Color { r: 230, g: 41, b: 55, a: 255 };
-pub const GREEN: Color = Color { r: 117, g: 203, b: 100, a: 255 };
-pub const BLUE: Color = Color { r: 51, g: 122, b: 206, a: 255 };
-pub const YELLOW: Color = Color { r: 253, g: 249, b: 0, a: 255 };
-pub const WHITE: Color = Color { r: 255, g: 255, b: 255, a: 255 };
-pub const BLACK: Color = Color { r: 0, g: 0, b: 0, a: 255 };
+pub const RED: Color = Color {
+    r: 230,
+    g: 41,
+    b: 55,
+    a: 255,
+};
+pub const GREEN: Color = Color {
+    r: 117,
+    g: 203,
+    b: 100,
+    a: 255,
+};
+pub const BLUE: Color = Color {
+    r: 51,
+    g: 122,
+    b: 206,
+    a: 255,
+};
+pub const YELLOW: Color = Color {
+    r: 253,
+    g: 249,
+    b: 0,
+    a: 255,
+};
+pub const WHITE: Color = Color {
+    r: 255,
+    g: 255,
+    b: 255,
+    a: 255,
+};
+pub const BLACK: Color = Color {
+    r: 0,
+    g: 0,
+    b: 0,
+    a: 255,
+};
 
 // Colores adicionales v0.2.0
-pub const CYAN: Color = Color { r: 0, g: 255, b: 255, a: 255 };
-pub const MAGENTA: Color = Color { r: 255, g: 0, b: 255, a: 255 };
-pub const ORANGE: Color = Color { r: 255, g: 165, b: 0, a: 255 };
-pub const PINK: Color = Color { r: 255, g: 192, b: 203, a: 255 };
-pub const PURPLE: Color = Color { r: 128, g: 0, b: 128, a: 255 };
-pub const BROWN: Color = Color { r: 165, g: 42, b: 42, a: 255 };
-pub const GRAY: Color = Color { r: 128, g: 128, b: 128, a: 255 };
-pub const LIME: Color = Color { r: 0, g: 255, b: 0, a: 255 };
-pub const NAVY: Color = Color { r: 0, g: 0, b: 128, a: 255 };
-pub const OLIVE: Color = Color { r: 128, g: 128, b: 0, a: 255 };
-pub const TEAL: Color = Color { r: 0, g: 128, b: 128, a: 255 };
-pub const MAROON: Color = Color { r: 128, g: 0, b: 0, a: 255 };
+pub const CYAN: Color = Color {
+    r: 0,
+    g: 255,
+    b: 255,
+    a: 255,
+};
+pub const MAGENTA: Color = Color {
+    r: 255,
+    g: 0,
+    b: 255,
+    a: 255,
+};
+pub const ORANGE: Color = Color {
+    r: 255,
+    g: 165,
+    b: 0,
+    a: 255,
+};
+pub const PINK: Color = Color {
+    r: 255,
+    g: 192,
+    b: 203,
+    a: 255,
+};
+pub const PURPLE: Color = Color {
+    r: 128,
+    g: 0,
+    b: 128,
+    a: 255,
+};
+pub const BROWN: Color = Color {
+    r: 165,
+    g: 42,
+    b: 42,
+    a: 255,
+};
+pub const GRAY: Color = Color {
+    r: 128,
+    g: 128,
+    b: 128,
+    a: 255,
+};
+pub const LIME: Color = Color {
+    r: 0,
+    g: 255,
+    b: 0,
+    a: 255,
+};
+pub const NAVY: Color = Color {
+    r: 0,
+    g: 0,
+    b: 128,
+    a: 255,
+};
+pub const OLIVE: Color = Color {
+    r: 128,
+    g: 128,
+    b: 0,
+    a: 255,
+};
+pub const TEAL: Color = Color {
+    r: 0,
+    g: 128,
+    b: 128,
+    a: 255,
+};
+pub const MAROON: Color = Color {
+    r: 128,
+    g: 0,
+    b: 0,
+    a: 255,
+};
 
 /// Colores básicos para RyDit
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ColorRyDit {
-    Rojo, Verde, Azul, Amarillo, Blanco, Negro,
-    Cyan, Magenta, Naranja, Rosa, Morado, Cafe, Gris,
-    Lima, AzulOscuro, Oliva, Turquesa, Vino,
+    Rojo,
+    Verde,
+    Azul,
+    Amarillo,
+    Blanco,
+    Negro,
+    Cyan,
+    Magenta,
+    Naranja,
+    Rosa,
+    Morado,
+    Cafe,
+    Gris,
+    Lima,
+    AzulOscuro,
+    Oliva,
+    Turquesa,
+    Vino,
 }
 
 impl ColorRyDit {
@@ -86,10 +191,7 @@ impl ColorRyDit {
 
 /// Inicializar ventana
 pub fn init_window(titulo: &str, w: i32, h: i32) -> (RaylibHandle, RaylibThread) {
-    raylib::init()
-        .size(w, h)
-        .title(titulo)
-        .build()
+    raylib::init().size(w, h).title(titulo).build()
 }
 
 #[cfg(test)]
@@ -105,7 +207,7 @@ mod tests {
         assert_eq!(ColorRyDit::from_str("amarillo"), ColorRyDit::Amarillo);
         assert_eq!(ColorRyDit::from_str("blanco"), ColorRyDit::Blanco);
         assert_eq!(ColorRyDit::from_str("otro"), ColorRyDit::Negro);
-        
+
         // Tests v0.2.0 - Nuevos colores
         assert_eq!(ColorRyDit::from_str("cyan"), ColorRyDit::Cyan);
         assert_eq!(ColorRyDit::from_str("magenta"), ColorRyDit::Magenta);
@@ -169,52 +271,52 @@ mod tests {
         assert_eq!(BLACK.g, 0);
         assert_eq!(BLACK.b, 0);
         assert_eq!(BLACK.a, 255);
-        
+
         // Tests v0.2.0 - Nuevos colores
         assert_eq!(CYAN.r, 0);
         assert_eq!(CYAN.g, 255);
         assert_eq!(CYAN.b, 255);
-        
+
         assert_eq!(MAGENTA.r, 255);
         assert_eq!(MAGENTA.g, 0);
         assert_eq!(MAGENTA.b, 255);
-        
+
         assert_eq!(ORANGE.r, 255);
         assert_eq!(ORANGE.g, 165);
         assert_eq!(ORANGE.b, 0);
-        
+
         assert_eq!(PINK.r, 255);
         assert_eq!(PINK.g, 192);
         assert_eq!(PINK.b, 203);
-        
+
         assert_eq!(PURPLE.r, 128);
         assert_eq!(PURPLE.g, 0);
         assert_eq!(PURPLE.b, 128);
-        
+
         assert_eq!(BROWN.r, 165);
         assert_eq!(BROWN.g, 42);
         assert_eq!(BROWN.b, 42);
-        
+
         assert_eq!(GRAY.r, 128);
         assert_eq!(GRAY.g, 128);
         assert_eq!(GRAY.b, 128);
-        
+
         assert_eq!(LIME.r, 0);
         assert_eq!(LIME.g, 255);
         assert_eq!(LIME.b, 0);
-        
+
         assert_eq!(NAVY.r, 0);
         assert_eq!(NAVY.g, 0);
         assert_eq!(NAVY.b, 128);
-        
+
         assert_eq!(OLIVE.r, 128);
         assert_eq!(OLIVE.g, 128);
         assert_eq!(OLIVE.b, 0);
-        
+
         assert_eq!(TEAL.r, 0);
         assert_eq!(TEAL.g, 128);
         assert_eq!(TEAL.b, 128);
-        
+
         assert_eq!(MAROON.r, 128);
         assert_eq!(MAROON.g, 0);
         assert_eq!(MAROON.b, 0);
@@ -267,22 +369,22 @@ mod tests {
         assert_eq!(ColorRyDit::from_str("rojo"), ColorRyDit::Rojo);
         assert_eq!(ColorRyDit::from_str("RED"), ColorRyDit::Rojo);
         assert_eq!(ColorRyDit::from_str("Red"), ColorRyDit::Rojo);
-        
+
         assert_eq!(ColorRyDit::from_str("verde"), ColorRyDit::Verde);
         assert_eq!(ColorRyDit::from_str("GREEN"), ColorRyDit::Verde);
-        
+
         assert_eq!(ColorRyDit::from_str("azul"), ColorRyDit::Azul);
         assert_eq!(ColorRyDit::from_str("BLUE"), ColorRyDit::Azul);
-        
+
         assert_eq!(ColorRyDit::from_str("amarillo"), ColorRyDit::Amarillo);
         assert_eq!(ColorRyDit::from_str("yellow"), ColorRyDit::Amarillo);
-        
+
         assert_eq!(ColorRyDit::from_str("blanco"), ColorRyDit::Blanco);
         assert_eq!(ColorRyDit::from_str("WHITE"), ColorRyDit::Blanco);
-        
+
         assert_eq!(ColorRyDit::from_str("negro"), ColorRyDit::Negro);
         assert_eq!(ColorRyDit::from_str("BLACK"), ColorRyDit::Negro);
-        
+
         // Variantes con guiones y espacios
         assert_eq!(ColorRyDit::from_str("azuloscuro"), ColorRyDit::AzulOscuro);
         assert_eq!(ColorRyDit::from_str("azul oscuro"), ColorRyDit::AzulOscuro);
@@ -324,4 +426,3 @@ mod tests {
         }
     }
 }
-

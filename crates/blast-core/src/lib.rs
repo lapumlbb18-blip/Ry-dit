@@ -9,7 +9,7 @@ pub enum Valor {
     Num(f64),
     Texto(String),
     Bool(bool),
-    Array(Vec<Valor>),  // Array de valores
+    Array(Vec<Valor>), // Array de valores
     Vacio,
     Error(String),
 }
@@ -78,13 +78,19 @@ impl Executor {
     /// Empujar nuevo scope local (para funciones)
     pub fn push_scope(&mut self) {
         self.scope_stack.push(HashMap::new());
-        println!("[SCOPE] Nuevo scope local creado (nivel {})", self.scope_stack.len());
+        println!(
+            "[SCOPE] Nuevo scope local creado (nivel {})",
+            self.scope_stack.len()
+        );
     }
 
     /// Pop scope local (salir de función)
     pub fn pop_scope(&mut self) {
         if let Some(scope) = self.scope_stack.pop() {
-            println!("[SCOPE] Scope local eliminado (quedan {} niveles)", self.scope_stack.len());
+            println!(
+                "[SCOPE] Scope local eliminado (quedan {} niveles)",
+                self.scope_stack.len()
+            );
             // Opcional: mostrar variables locales que se van
             for (nombre, valor) in &scope {
                 println!("[SCOPE] {} = {} (eliminado)", nombre, valor);
@@ -201,7 +207,10 @@ mod tests {
     fn test_guardar_texto() {
         let mut executor = Executor::nuevo();
         executor.guardar("nombre", Valor::Texto("Heroe".to_string()));
-        assert_eq!(executor.leer("nombre"), Some(Valor::Texto("Heroe".to_string())));
+        assert_eq!(
+            executor.leer("nombre"),
+            Some(Valor::Texto("Heroe".to_string()))
+        );
     }
 
     #[test]
@@ -240,7 +249,7 @@ mod tests {
         let mut executor = Executor::nuevo();
         let array = Valor::Array(vec![Valor::Num(10.0), Valor::Num(20.0)]);
         executor.guardar("x", array);
-        
+
         if let Some(Valor::Array(arr)) = executor.leer("x") {
             assert_eq!(arr.len(), 2);
         } else {
@@ -299,10 +308,10 @@ mod tests {
     fn test_push_pop_scope() {
         let mut executor = Executor::nuevo();
         assert_eq!(executor.scope_stack.len(), 0);
-        
+
         executor.push_scope();
         assert_eq!(executor.scope_stack.len(), 1);
-        
+
         executor.pop_scope();
         assert_eq!(executor.scope_stack.len(), 0);
     }
@@ -310,22 +319,22 @@ mod tests {
     #[test]
     fn test_guardar_en_scope_local() {
         let mut executor = Executor::nuevo();
-        
+
         // Variable global
         executor.guardar("x", Valor::Num(100.0));
-        
+
         // Push scope local
         executor.push_scope();
-        
+
         // Guardar en scope local (debería ir al scope, no al global)
         executor.guardar("x", Valor::Num(200.0));
-        
+
         // Leer debería retornar el valor local
         assert_eq!(executor.leer("x"), Some(Valor::Num(200.0)));
-        
+
         // Pop scope
         executor.pop_scope();
-        
+
         // Leer debería retornar el valor global ahora
         assert_eq!(executor.leer("x"), Some(Valor::Num(100.0)));
     }
@@ -333,52 +342,52 @@ mod tests {
     #[test]
     fn test_scope_anidados() {
         let mut executor = Executor::nuevo();
-        
+
         // Global
         executor.guardar("nivel", Valor::Num(0.0));
-        
+
         // Scope 1
         executor.push_scope();
         executor.guardar("nivel", Valor::Num(1.0));
         executor.guardar("var1", Valor::Num(10.0));
-        
+
         // Scope 2
         executor.push_scope();
         executor.guardar("nivel", Valor::Num(2.0));
         executor.guardar("var2", Valor::Num(20.0));
-        
+
         // Debería leer del scope más interno
         assert_eq!(executor.leer("nivel"), Some(Valor::Num(2.0)));
         assert_eq!(executor.leer("var2"), Some(Valor::Num(20.0)));
         assert_eq!(executor.leer("var1"), Some(Valor::Num(10.0)));
-        
+
         // Pop scope 2
         executor.pop_scope();
         assert_eq!(executor.leer("nivel"), Some(Valor::Num(1.0)));
-        assert_eq!(executor.leer("var2"), None);  // Ya no existe
+        assert_eq!(executor.leer("var2"), None); // Ya no existe
         assert_eq!(executor.leer("var1"), Some(Valor::Num(10.0)));
-        
+
         // Pop scope 1
         executor.pop_scope();
         assert_eq!(executor.leer("nivel"), Some(Valor::Num(0.0)));
-        assert_eq!(executor.leer("var1"), None);  // Ya no existe
+        assert_eq!(executor.leer("var1"), None); // Ya no existe
     }
 
     #[test]
     fn test_guardar_local() {
         let mut executor = Executor::nuevo();
-        
+
         // Sin scope local, guardar_local usa global
         executor.guardar_local("x", Valor::Num(100.0));
         assert_eq!(executor.leer("x"), Some(Valor::Num(100.0)));
-        
+
         // Con scope local
         executor.push_scope();
         executor.guardar_local("y", Valor::Num(200.0));
         assert_eq!(executor.leer("y"), Some(Valor::Num(200.0)));
-        
+
         executor.pop_scope();
-        assert_eq!(executor.leer("y"), None);  // Ya no existe
+        assert_eq!(executor.leer("y"), None); // Ya no existe
     }
 
     // ========================================================================
@@ -389,21 +398,24 @@ mod tests {
     fn test_scope_anidados_con_simbolos() {
         // Variables con símbolos en scopes anidados
         let mut executor = Executor::nuevo();
-        
+
         // Scope global: $global = 100
         executor.guardar("$global", Valor::Num(100.0));
-        
+
         // Simular scope anidado (push/pop)
         executor.push_scope();
         executor.guardar("@local", Valor::Texto("interno".to_string()));
-        
+
         // Verificar que ambos existen
         assert_eq!(executor.leer("$global"), Some(Valor::Num(100.0)));
-        assert_eq!(executor.leer("@local"), Some(Valor::Texto("interno".to_string())));
-        
+        assert_eq!(
+            executor.leer("@local"),
+            Some(Valor::Texto("interno".to_string()))
+        );
+
         // Pop scope
         executor.pop_scope();
-        
+
         // $global debe seguir existiendo, @local no
         assert_eq!(executor.leer("$global"), Some(Valor::Num(100.0)));
         assert_eq!(executor.leer("@local"), None);
@@ -413,25 +425,25 @@ mod tests {
     fn test_memoria_variables_temporales() {
         // Variables temporales en memoria
         let mut executor = Executor::nuevo();
-        
+
         // Variables persistentes
         executor.guardar("x", Valor::Num(10.0));
         executor.guardar("$precio", Valor::Num(99.99));
-        
+
         // Verificar memoria global
         assert_eq!(executor.memoria.len(), 2);
-        
+
         // Simular variable temporal (scope)
         executor.push_scope();
         executor.guardar("__temp", Valor::Num(42.0));
-        
+
         // __temp debe existir en scope local
         assert_eq!(executor.leer("__temp"), Some(Valor::Num(42.0)));
-        
+
         // Pop scope elimina temporal
         executor.pop_scope();
         assert_eq!(executor.leer("__temp"), None);
-        
+
         // Persistentes siguen ahí
         assert_eq!(executor.leer("x"), Some(Valor::Num(10.0)));
         assert_eq!(executor.leer("$precio"), Some(Valor::Num(99.99)));
@@ -461,4 +473,3 @@ impl BlastCore {
         }
     }
 }
-

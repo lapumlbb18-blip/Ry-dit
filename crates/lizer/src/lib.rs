@@ -59,68 +59,153 @@ impl fmt::Display for RyDitError {
             ErrorKind::TextureNotFound => "Textura no encontrada",
             ErrorKind::SoundNotFound => "Sonido no encontrado",
         };
-        
+
         writeln!(f)?;
-        writeln!(f, "  ╔══════════════════════════════════════════════════════╗")?;
-        writeln!(f, "  ║  🔴 ERROR DE COMPILACIÓN                             ║")?;
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+        writeln!(
+            f,
+            "  ╔══════════════════════════════════════════════════════╗"
+        )?;
+        writeln!(
+            f,
+            "  ║  🔴 ERROR DE COMPILACIÓN                             ║"
+        )?;
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
         writeln!(f, "  ║  Tipo: {}", kind_str)?;
-        writeln!(f, "  ║  Ubicación: línea {}, columna {}", self.line, self.column)?;
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-        
+        writeln!(
+            f,
+            "  ║  Ubicación: línea {}, columna {}",
+            self.line, self.column
+        )?;
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
+
         // Mostrar código fuente con línea y marcador
         if !self.source.is_empty() {
-            writeln!(f, "  ║  Código:                                           ║")?;
+            writeln!(
+                f,
+                "  ║  Código:                                           ║"
+            )?;
             writeln!(f, "  ║    {}", self.source)?;
-            
+
             // Crear marcador visual
             let marker = "→".to_string() + &" ".repeat(self.column.saturating_sub(1)) + "^";
             writeln!(f, "  ║    {}", marker)?;
         }
-        
-        writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
+
+        writeln!(
+            f,
+            "  ╠══════════════════════════════════════════════════════╣"
+        )?;
         writeln!(f, "  ║  Mensaje: {}", self.message)?;
-        
+
         // Agregar sugerencias basadas en el tipo de error
         match self.kind {
             ErrorKind::UnterminatedString => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Agrega comillas al final del string  ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Agrega comillas al final del string  ║"
+                )?;
             }
             ErrorKind::MissingToken => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica que todos los paréntesis   ║")?;
-                writeln!(f, "  ║     y llaves estén cerrados correctamente            ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica que todos los paréntesis   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     y llaves estén cerrados correctamente            ║"
+                )?;
             }
             ErrorKind::UndefinedVariable => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica el nombre de la variable   ║")?;
-                writeln!(f, "  ║     o defínela antes de usarla                       ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica el nombre de la variable   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     o defínela antes de usarla                       ║"
+                )?;
             }
             ErrorKind::CircularImport => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Reestructura los módulos para       ║")?;
-                writeln!(f, "  ║     evitar dependencias circulares                   ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Reestructura los módulos para       ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     evitar dependencias circulares                   ║"
+                )?;
             }
             ErrorKind::ModuleNotFound => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Verifica que el archivo existe en   ║")?;
-                writeln!(f, "  ║     crates/modules/                                  ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Verifica que el archivo existe en   ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     crates/modules/                                  ║"
+                )?;
             }
             ErrorKind::TextureNotFound => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Carga la textura con                ║")?;
-                writeln!(f, "  ║     assets::load_texture() antes de usarla          ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Carga la textura con                ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     assets::load_texture() antes de usarla          ║"
+                )?;
             }
             ErrorKind::SoundNotFound => {
-                writeln!(f, "  ╠══════════════════════════════════════════════════════╣")?;
-                writeln!(f, "  ║  💡 Sugerencia: Carga el sonido con                 ║")?;
-                writeln!(f, "  ║     audio::load_sound() antes de reproducirlo       ║")?;
+                writeln!(
+                    f,
+                    "  ╠══════════════════════════════════════════════════════╣"
+                )?;
+                writeln!(
+                    f,
+                    "  ║  💡 Sugerencia: Carga el sonido con                 ║"
+                )?;
+                writeln!(
+                    f,
+                    "  ║     audio::load_sound() antes de reproducirlo       ║"
+                )?;
             }
             _ => {}
         }
-        
-        writeln!(f, "  ╚══════════════════════════════════════════════════════╝")?;
+
+        writeln!(
+            f,
+            "  ╚══════════════════════════════════════════════════════╝"
+        )?;
         writeln!(f)
     }
 }
@@ -138,66 +223,66 @@ pub enum Token {
     Onif,
     Blelse,
     RyPrime,
-    Ryda,       // while/ciclo
-    Cada,       // for/iteración
-    En,         // "en" - para cada x en lista
-    Rytmo,      // function/definición
-    Return,     // return valor
-    Voz,        // print/voz
-    DrawCircle, // draw.circle
-    DrawRect,   // draw.rect
-    DrawLine,   // draw.line
-    DrawText,   // draw.text
-    DrawTriangle,      // draw.triangle
-    DrawRing,          // draw.ring
-    DrawRectangleLines,// draw.rectangle_lines
-    DrawEllipse,       // draw.ellipse
-    DrawLineThick,     // draw.line_thick
-    Import,     // import modulo
-    As,         // as alias - para alias de módulos
+    Ryda,               // while/ciclo
+    Cada,               // for/iteración
+    En,                 // "en" - para cada x en lista
+    Rytmo,              // function/definición
+    Return,             // return valor
+    Voz,                // print/voz
+    DrawCircle,         // draw.circle
+    DrawRect,           // draw.rect
+    DrawLine,           // draw.line
+    DrawText,           // draw.text
+    DrawTriangle,       // draw.triangle
+    DrawRing,           // draw.ring
+    DrawRectangleLines, // draw.rectangle_lines
+    DrawEllipse,        // draw.ellipse
+    DrawLineThick,      // draw.line_thick
+    Import,             // import modulo
+    As,                 // as alias - para alias de módulos
     // Input se maneja como identificador especial "input"
 
     // Variables y valores
-    DarkSlot,           // dark.slot
-    Ident(String),      // nombres: delta.flow, x, jugador
-    Igual,              // =
-    Num(f64),           // números: 100, 0.5
-    Texto(String),      // strings: "hola"
-    
+    DarkSlot,      // dark.slot
+    Ident(String), // nombres: delta.flow, x, jugador
+    Igual,         // =
+    Num(f64),      // números: 100, 0.5
+    Texto(String), // strings: "hola"
+
     // Operadores
-    Mas,                // +
-    Menos,              // -
-    Por,                // *
-    Div,                // /
-    
+    Mas,   // +
+    Menos, // -
+    Por,   // *
+    Div,   // /
+
     // Comparación
-    Mayor,              // >
-    Menor,              // <
-    MayorIgual,         // >=
-    MenorIgual,         // <=
+    Mayor,      // >
+    Menor,      // <
+    MayorIgual, // >=
+    MenorIgual, // <=
 
     // Lógicos
-    And,                // and
-    Or,                 // or
-    Not,                // not
-    
+    And, // and
+    Or,  // or
+    Not, // not
+
     // Control de flujo
-    Break,              // break - salir de loop
+    Break, // break - salir de loop
 
     // Delimitadores de bloque
-    LlaveIzq,           // {
-    LlaveDer,           // }
-    ParentIzq,          // (
-    ParentDer,          // )
-    CorcheteIzq,        // [
-    CorcheteDer,        // ]
-    Punto,              // .
-    DobleDosPuntos,     // :: para namespaces
-    Coma,               // ,
-    
+    LlaveIzq,       // {
+    LlaveDer,       // }
+    ParentIzq,      // (
+    ParentDer,      // )
+    CorcheteIzq,    // [
+    CorcheteDer,    // ]
+    Punto,          // .
+    DobleDosPuntos, // :: para namespaces
+    Coma,           // ,
+
     // Comentarios
     Comentario(String), // # comentario
-    
+
     // Errores
     Error(String),
 }
@@ -213,11 +298,11 @@ pub enum Expr {
     Texto(String),
     Var(String),
     Bool(bool),
-    Array(Vec<Expr>),  // Array literal: [1, 2, 3]
+    Array(Vec<Expr>), // Array literal: [1, 2, 3]
     Index {
-        array: Box<Expr>,  // Expression del array
-        index: Box<Expr>,  // Expression del índice
-    },  // Indexación: lista[0]
+        array: Box<Expr>, // Expression del array
+        index: Box<Expr>, // Expression del índice
+    }, // Indexación: lista[0]
     BinOp {
         left: Box<Expr>,
         op: BinOp,
@@ -228,27 +313,27 @@ pub enum Expr {
         expr: Box<Expr>,
     },
     Call {
-        name: String,      // Nombre de la función
-        args: Vec<Expr>,   // Argumentos
-    },  // Llamada a función: tecla_presionada("arrow_up")
+        name: String,    // Nombre de la función
+        args: Vec<Expr>, // Argumentos
+    }, // Llamada a función: tecla_presionada("arrow_up")
 }
 
 /// Operadores binarios
 #[derive(Debug, Clone, PartialEq)]
 pub enum BinOp {
     // Aritméticos
-    Suma,       // +
-    Resta,      // -
-    Mult,       // *
-    Div,        // /
-    
+    Suma,  // +
+    Resta, // -
+    Mult,  // *
+    Div,   // /
+
     // Comparación
     Mayor,      // >
     Menor,      // <
     Igual,      // == o =
     MayorIgual, // >=
     MenorIgual, // <=
-    
+
     // Lógicos
     And,
     Or,
@@ -264,8 +349,8 @@ pub enum UnaryOp {
 /// Statements (declaraciones) en RyDit
 #[derive(Debug, Clone)]
 pub enum Stmt {
-    Init,                      // shield.init
-    Command(String),           // onda.core, ryprime
+    Init,            // shield.init
+    Command(String), // onda.core, ryprime
     Assign {
         name: String,
         value: Expr,
@@ -284,55 +369,55 @@ pub enum Stmt {
         condition: Expr,
         body: Vec<Stmt>,
     },
-    Block(Vec<Stmt>),          // { ... } - bloque de statements
+    Block(Vec<Stmt>), // { ... } - bloque de statements
     Function {
         name: String,
         params: Vec<String>,
         body: Vec<Stmt>,
-    },                       // rytmo nombre(params) { ... }
+    }, // rytmo nombre(params) { ... }
     Call {
         name: String,
         args: Vec<Expr>,
-    },              // nombre(args) - llamada a función
-    Return(Option<Expr>),      // return valor
-    Expr(Expr),                // Expresión como statement
+    }, // nombre(args) - llamada a función
+    Return(Option<Expr>), // return valor
+    Expr(Expr),       // Expresión como statement
     ForEach {
-        var: String,           // variable del iterador
-        iterable: Expr,        // expresión a iterar (array)
-        body: Vec<Stmt>,       // cuerpo del loop
-    },  // cada x en lista { ... }
-    Break,                     // break - salir de loop
+        var: String,     // variable del iterador
+        iterable: Expr,  // expresión a iterar (array)
+        body: Vec<Stmt>, // cuerpo del loop
+    }, // cada x en lista { ... }
+    Break,            // break - salir de loop
     Import {
         module: String,        // nombre del módulo
         alias: Option<String>, // alias opcional (import arrays as arr)
-    },  // import arrays [as arr]
+    }, // import arrays [as arr]
     DrawCircle {
         x: Expr,
         y: Expr,
         radio: Expr,
         color: String,
-    },  // draw.circle(x, y, radio, "red")
+    }, // draw.circle(x, y, radio, "red")
     DrawRect {
         x: Expr,
         y: Expr,
         ancho: Expr,
         alto: Expr,
         color: String,
-    },  // draw.rect(x, y, ancho, alto, "red")
+    }, // draw.rect(x, y, ancho, alto, "red")
     DrawLine {
         x1: Expr,
         y1: Expr,
         x2: Expr,
         y2: Expr,
         color: String,
-    },  // draw.line(x1, y1, x2, y2, "red")
+    }, // draw.line(x1, y1, x2, y2, "red")
     DrawText {
         texto: String,
         x: Expr,
         y: Expr,
         tamano: Expr,
         color: String,
-    },  // draw.text("Hola", x, y, tamano, "red")
+    }, // draw.text("Hola", x, y, tamano, "red")
     // Statements v0.2.0 - Nuevas formas
     DrawTriangle {
         v1_x: Expr,
@@ -342,28 +427,28 @@ pub enum Stmt {
         v3_x: Expr,
         v3_y: Expr,
         color: String,
-    },  // draw.triangle(x1, y1, x2, y2, x3, y3, "red")
+    }, // draw.triangle(x1, y1, x2, y2, x3, y3, "red")
     DrawRing {
         center_x: Expr,
         center_y: Expr,
         inner_radius: Expr,
         outer_radius: Expr,
         color: String,
-    },  // draw.ring(x, y, inner, outer, "red")
+    }, // draw.ring(x, y, inner, outer, "red")
     DrawRectangleLines {
         x: Expr,
         y: Expr,
         ancho: Expr,
         alto: Expr,
         color: String,
-    },  // draw.rectangle_lines(x, y, w, h, "red")
+    }, // draw.rectangle_lines(x, y, w, h, "red")
     DrawEllipse {
         center_x: Expr,
         center_y: Expr,
         radius_h: Expr,
         radius_v: Expr,
         color: String,
-    },  // draw.ellipse(x, y, radius_h, radius_v, "red")
+    }, // draw.ellipse(x, y, radius_h, radius_v, "red")
     DrawLineThick {
         x1: Expr,
         y1: Expr,
@@ -371,7 +456,7 @@ pub enum Stmt {
         y2: Expr,
         thick: Expr,
         color: String,
-    },  // draw.line_thick(x1, y1, x2, y2, thick, "red")
+    }, // draw.line_thick(x1, y1, x2, y2, thick, "red")
 }
 
 /// Programa completo
@@ -385,22 +470,22 @@ pub struct Program {
 // ============================================================================
 
 /// Lexer para RyDit
-/// 
+///
 /// Convierte código fuente en tokens.
-/// 
+///
 /// # Ejemplos
-/// 
+///
 /// ```
 /// use lizer::Lizer;
-/// 
+///
 /// // Tokenizar shield.init
 /// let tokens = Lizer::new("shield.init").scan();
 /// assert!(tokens.contains(&lizer::Token::ShieldInit));
 /// ```
-/// 
+///
 /// ```
 /// use lizer::Lizer;
-/// 
+///
 /// // Tokenizar dark.slot x = 10
 /// let tokens = Lizer::new("dark.slot x = 10").scan();
 /// assert!(tokens.contains(&lizer::Token::DarkSlot));
@@ -412,12 +497,12 @@ pub struct Lizer<'a> {
 
 impl<'a> Lizer<'a> {
     /// Crea un nuevo Lizer para el código fuente dado
-    /// 
+    ///
     /// # Ejemplos
-    /// 
+    ///
     /// ```
     /// use lizer::Lizer;
-    /// 
+    ///
     /// let lizer = Lizer::new("voz \"hola\"");
     /// let tokens = lizer.scan();
     /// assert!(tokens.contains(&lizer::Token::Voz));
@@ -433,7 +518,7 @@ impl<'a> Lizer<'a> {
         let mut i = 0;
         let mut line = 1;
         let mut column = 1;
-        
+
         while i < chars.len() {
             // Saltar whitespace
             if chars[i].is_whitespace() {
@@ -446,7 +531,7 @@ impl<'a> Lizer<'a> {
                 i += 1;
                 continue;
             }
-            
+
             // Comentario: # ...
             if chars[i] == '#' {
                 let mut comment = String::new();
@@ -458,10 +543,13 @@ impl<'a> Lizer<'a> {
                     i += 1;
                     column += 1;
                 }
-                tokens.push(Token::Comentario(format!("{} (col {})", comment, start_col)));
+                tokens.push(Token::Comentario(format!(
+                    "{} (col {})",
+                    comment, start_col
+                )));
                 continue;
             }
-            
+
             // String: "..." o '...'
             if chars[i] == '"' || chars[i] == '\'' {
                 let quote_char = chars[i];
@@ -474,12 +562,36 @@ impl<'a> Lizer<'a> {
                     // Soporte para escapes
                     if chars[i] == '\\' && i + 1 < chars.len() {
                         match chars[i + 1] {
-                            '\'' if quote_char == '\'' => { text.push('\''); i += 2; column += 2; }
-                            '"' if quote_char == '"' => { text.push('"'); i += 2; column += 2; }
-                            '\\' => { text.push('\\'); i += 2; column += 2; }
-                            'n' => { text.push('\n'); i += 2; column += 2; }
-                            't' => { text.push('\t'); i += 2; column += 2; }
-                            'r' => { text.push('\r'); i += 2; column += 2; }
+                            '\'' if quote_char == '\'' => {
+                                text.push('\'');
+                                i += 2;
+                                column += 2;
+                            }
+                            '"' if quote_char == '"' => {
+                                text.push('"');
+                                i += 2;
+                                column += 2;
+                            }
+                            '\\' => {
+                                text.push('\\');
+                                i += 2;
+                                column += 2;
+                            }
+                            'n' => {
+                                text.push('\n');
+                                i += 2;
+                                column += 2;
+                            }
+                            't' => {
+                                text.push('\t');
+                                i += 2;
+                                column += 2;
+                            }
+                            'r' => {
+                                text.push('\r');
+                                i += 2;
+                                column += 2;
+                            }
                             _ => {
                                 // Escape desconocido - tratar como carácter literal
                                 text.push(chars[i]);
@@ -506,9 +618,11 @@ impl<'a> Lizer<'a> {
                 tokens.push(Token::Texto(text));
                 continue;
             }
-            
+
             // Número: 100, 0.5, -5 (soporte UTF-8 para dígitos Unicode)
-            if chars[i].is_numeric() || (chars[i] == '-' && i + 1 < chars.len() && chars[i + 1].is_numeric()) {
+            if chars[i].is_numeric()
+                || (chars[i] == '-' && i + 1 < chars.len() && chars[i + 1].is_numeric())
+            {
                 let start_col = column;
                 let mut num_str = String::new();
                 if chars[i] == '-' {
@@ -534,14 +648,16 @@ impl<'a> Lizer<'a> {
 
             // Identificador o comando: shield.init, delta.flow, x (soporte UTF-8)
             if chars[i].is_alphabetic() || chars[i].is_alphanumeric() || chars[i] == '_' {
-                let _start_col = column;  // Reservado para futuros errores detallados
+                let _start_col = column; // Reservado para futuros errores detallados
                 let mut ident = String::new();
-                while i < chars.len() && (chars[i].is_alphanumeric() || chars[i] == '.' || chars[i] == '_') {
+                while i < chars.len()
+                    && (chars[i].is_alphanumeric() || chars[i] == '.' || chars[i] == '_')
+                {
                     ident.push(chars[i]);
                     i += 1;
                     column += 1;
                 }
-                
+
                 // Verificar si es comando especial
                 let token = match ident.as_str() {
                     "shield.init" => Token::ShieldInit,
@@ -572,24 +688,24 @@ impl<'a> Lizer<'a> {
                     "break" => Token::Break,
                     "import" => Token::Import,
                     "as" => Token::As,
-                    _ => Token::Ident(ident),  // Permitir identificadores genéricos
+                    _ => Token::Ident(ident), // Permitir identificadores genéricos
                 };
                 tokens.push(token);
                 continue;
             }
-            
+
             // Operadores y símbolos
             let start_col = column;
             match chars[i] {
                 '=' => {
                     // Verificar si es == (comparación)
                     if i + 1 < chars.len() && chars[i + 1] == '=' {
-                        tokens.push(Token::Igual);  // Token de comparación
+                        tokens.push(Token::Igual); // Token de comparación
                         i += 2;
                         column += 2;
                         continue;
                     } else {
-                        tokens.push(Token::Igual);  // Token de asignación (=)
+                        tokens.push(Token::Igual); // Token de asignación (=)
                         i += 1;
                         column += 1;
                     }
@@ -651,7 +767,7 @@ impl<'a> Lizer<'a> {
                 '!' => {
                     // Verificar si es != (diferente de)
                     if i + 1 < chars.len() && chars[i + 1] == '=' {
-                        tokens.push(Token::Menor);  // Usaremos Not + Igual para !=
+                        tokens.push(Token::Menor); // Usaremos Not + Igual para !=
                         i += 2;
                         column += 2;
                         continue;
@@ -668,7 +784,9 @@ impl<'a> Lizer<'a> {
                     i += 1;
                     column += 1;
                     // Continuar leyendo si está seguido de alfanuméricos
-                    while i < chars.len() && (chars[i].is_alphanumeric() || chars[i] == '.' || chars[i] == '_') {
+                    while i < chars.len()
+                        && (chars[i].is_alphanumeric() || chars[i] == '.' || chars[i] == '_')
+                    {
                         ident.push(chars[i]);
                         i += 1;
                         column += 1;
@@ -872,7 +990,7 @@ mod tests {
         // 2 + 3 * 4 = 14 (no 20)
         let mut parser = Parser::new(Lizer::new("dark.slot x = 2 + 3 * 4").scan());
         let program = parser.parse().unwrap();
-        
+
         // Verificar que parsea correctamente
         assert_eq!(program.statements.len(), 1);
     }
@@ -882,7 +1000,7 @@ mod tests {
         // (2 + 3) * 4 = 20
         let mut parser = Parser::new(Lizer::new("dark.slot x = (2 + 3) * 4").scan());
         let program = parser.parse().unwrap();
-        
+
         // Verificar que parsea correctamente
         assert_eq!(program.statements.len(), 1);
     }
@@ -892,7 +1010,7 @@ mod tests {
         // 10 - 2 * 3 + 8 / 4 = 6
         let mut parser = Parser::new(Lizer::new("dark.slot x = 10 - 2 * 3 + 8 / 4").scan());
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
     }
 
@@ -901,7 +1019,7 @@ mod tests {
         // Variables con símbolos deben parsear correctamente
         let mut parser = Parser::new(Lizer::new("dark.slot $precio = 100").scan());
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
     }
 
@@ -950,7 +1068,8 @@ mod tests {
     #[test]
     fn test_concatenacion_multiple() {
         // "a" + x + "b" + y
-        let mut parser = Parser::new(Lizer::new("dark.slot x = \"a\" + var1 + \"b\" + var2").scan());
+        let mut parser =
+            Parser::new(Lizer::new("dark.slot x = \"a\" + var1 + \"b\" + var2").scan());
         let program = parser.parse().unwrap();
         assert_eq!(program.statements.len(), 1);
     }
@@ -958,7 +1077,8 @@ mod tests {
     #[test]
     fn test_expresion_con_namespace() {
         // "valor: " + random::int(1, 10)
-        let mut parser = Parser::new(Lizer::new("dark.slot x = \"valor: \" + random::int(1, 10)").scan());
+        let mut parser =
+            Parser::new(Lizer::new("dark.slot x = \"valor: \" + random::int(1, 10)").scan());
         let program = parser.parse().unwrap();
         assert_eq!(program.statements.len(), 1);
     }
@@ -1001,14 +1121,14 @@ mod tests {
 // ============================================================================
 
 /// Parser para RyDit
-/// 
+///
 /// Convierte tokens en un AST (Program).
-/// 
+///
 /// # Ejemplos
-/// 
+///
 /// ```
 /// use lizer::{Lizer, Parser};
-/// 
+///
 /// // Parsear un programa simple
 /// let tokens = Lizer::new("shield.init").scan();
 /// let mut parser = Parser::new(tokens);
@@ -1059,64 +1179,28 @@ impl Parser {
                 self.pos += 1;
                 Ok(Some(Stmt::Command("ryprime".to_string())))
             }
-            Token::Ryda => {
-                self.parse_while()
-            }
-            Token::Cada => {
-                self.parse_foreach()
-            }
-            Token::Onif => {
-                self.parse_if()
-            }
-            Token::DarkSlot => {
-                self.parse_assignment()
-            }
-            Token::LlaveIzq => {
-                self.parse_block()
-            }
-            Token::Rytmo => {
-                self.parse_function()
-            }
-            Token::Return => {
-                self.parse_return()
-            }
-            Token::Voz => {
-                self.parse_voz()
-            }
-            Token::DrawCircle => {
-                self.parse_draw_circle()
-            }
-            Token::DrawRect => {
-                self.parse_draw_rect()
-            }
-            Token::DrawLine => {
-                self.parse_draw_line()
-            }
-            Token::DrawText => {
-                self.parse_draw_text()
-            }
-            Token::DrawTriangle => {
-                self.parse_draw_triangle()
-            }
-            Token::DrawRing => {
-                self.parse_draw_ring()
-            }
-            Token::DrawRectangleLines => {
-                self.parse_draw_rectangle_lines()
-            }
-            Token::DrawEllipse => {
-                self.parse_draw_ellipse()
-            }
-            Token::DrawLineThick => {
-                self.parse_draw_line_thick()
-            }
+            Token::Ryda => self.parse_while(),
+            Token::Cada => self.parse_foreach(),
+            Token::Onif => self.parse_if(),
+            Token::DarkSlot => self.parse_assignment(),
+            Token::LlaveIzq => self.parse_block(),
+            Token::Rytmo => self.parse_function(),
+            Token::Return => self.parse_return(),
+            Token::Voz => self.parse_voz(),
+            Token::DrawCircle => self.parse_draw_circle(),
+            Token::DrawRect => self.parse_draw_rect(),
+            Token::DrawLine => self.parse_draw_line(),
+            Token::DrawText => self.parse_draw_text(),
+            Token::DrawTriangle => self.parse_draw_triangle(),
+            Token::DrawRing => self.parse_draw_ring(),
+            Token::DrawRectangleLines => self.parse_draw_rectangle_lines(),
+            Token::DrawEllipse => self.parse_draw_ellipse(),
+            Token::DrawLineThick => self.parse_draw_line_thick(),
             Token::Break => {
                 self.pos += 1;
                 Ok(Some(Stmt::Break))
             }
-            Token::Import => {
-                self.parse_import()
-            }
+            Token::Import => self.parse_import(),
             Token::Ident(name) => {
                 // Verificar si es input() especial
                 if name == "input" {
@@ -1148,7 +1232,7 @@ impl Parser {
 
         // Parsear cuerpo del then: puede ser bloque { } o statements sueltos
         let mut then_body = Vec::new();
-        
+
         // Verificar si hay un bloque explícito { }
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
             // Es un bloque explícito
@@ -1163,7 +1247,10 @@ impl Parser {
                     break;
                 }
                 // Otros comandos de control también terminan el then
-                if matches!(self.tokens[self.pos], Token::Onif | Token::Ryda | Token::Cada) {
+                if matches!(
+                    self.tokens[self.pos],
+                    Token::Onif | Token::Ryda | Token::Cada
+                ) {
                     break;
                 }
                 if let Some(stmt) = self.parse_statement()? {
@@ -1175,9 +1262,11 @@ impl Parser {
         }
 
         // Parsear cuerpo del else (si existe)
-        let else_body = if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::Blelse) {
+        let else_body = if self.pos < self.tokens.len()
+            && matches!(self.tokens[self.pos], Token::Blelse)
+        {
             self.pos += 1; // consumir blelse
-            
+
             // Verificar si hay un bloque explícito { }
             if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
                 // Es un bloque explícito
@@ -1190,7 +1279,10 @@ impl Parser {
                 // Statements sueltos
                 let mut body = Vec::new();
                 while self.pos < self.tokens.len() {
-                    if matches!(self.tokens[self.pos], Token::Onif | Token::Ryda | Token::Cada | Token::Rytmo) {
+                    if matches!(
+                        self.tokens[self.pos],
+                        Token::Onif | Token::Ryda | Token::Cada | Token::Rytmo
+                    ) {
                         break;
                     }
                     if let Some(stmt) = self.parse_statement()? {
@@ -1220,26 +1312,24 @@ impl Parser {
         let condition = self.parse_expression()?;
 
         // Parsear cuerpo: puede ser un bloque { } o un solo statement
-        let body = if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
-            // Es un bloque - usar parse_block
-            if let Some(Stmt::Block(stmts)) = self.parse_block()? {
-                stmts
+        let body =
+            if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
+                // Es un bloque - usar parse_block
+                if let Some(Stmt::Block(stmts)) = self.parse_block()? {
+                    stmts
+                } else {
+                    vec![]
+                }
             } else {
-                vec![]
-            }
-        } else {
-            // Solo un statement
-            if let Some(stmt) = self.parse_statement()? {
-                vec![stmt]
-            } else {
-                vec![]
-            }
-        };
+                // Solo un statement
+                if let Some(stmt) = self.parse_statement()? {
+                    vec![stmt]
+                } else {
+                    vec![]
+                }
+            };
 
-        Ok(Some(Stmt::While {
-            condition,
-            body,
-        }))
+        Ok(Some(Stmt::While { condition, body }))
     }
 
     fn parse_foreach(&mut self) -> Result<Option<Stmt>> {
@@ -1286,21 +1376,22 @@ impl Parser {
         let iterable = self.parse_expression()?;
 
         // Parsear cuerpo { ... }
-        let body = if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
-            if let Some(Stmt::Block(stmts)) = self.parse_block()? {
-                stmts
+        let body =
+            if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
+                if let Some(Stmt::Block(stmts)) = self.parse_block()? {
+                    stmts
+                } else {
+                    vec![]
+                }
             } else {
-                vec![]
-            }
-        } else {
-            return Err(RyDitError {
-                kind: ErrorKind::SyntaxError,
-                message: "Se esperaba '{' para el cuerpo del cada".to_string(),
-                line: 1,
-                column: self.pos,
-                source: "cada".to_string(),
-            });
-        };
+                return Err(RyDitError {
+                    kind: ErrorKind::SyntaxError,
+                    message: "Se esperaba '{' para el cuerpo del cada".to_string(),
+                    line: 1,
+                    column: self.pos,
+                    source: "cada".to_string(),
+                });
+            };
 
         Ok(Some(Stmt::ForEach {
             var,
@@ -1373,15 +1464,16 @@ impl Parser {
         let mut params = vec![];
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq) {
             self.pos += 1; // consumir (
-            
+
             // Parsear parámetros hasta encontrar )
-            while self.pos < self.tokens.len() && !matches!(self.tokens[self.pos], Token::ParentDer) {
+            while self.pos < self.tokens.len() && !matches!(self.tokens[self.pos], Token::ParentDer)
+            {
                 if let Token::Ident(p) = &self.tokens[self.pos] {
                     params.push(p.clone());
                 }
                 self.pos += 1;
             }
-            
+
             // Consumir )
             if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
                 self.pos += 1;
@@ -1389,21 +1481,18 @@ impl Parser {
         }
 
         // Parsear cuerpo { ... }
-        let body = if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
-            if let Some(Stmt::Block(stmts)) = self.parse_block()? {
-                stmts
+        let body =
+            if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::LlaveIzq) {
+                if let Some(Stmt::Block(stmts)) = self.parse_block()? {
+                    stmts
+                } else {
+                    vec![]
+                }
             } else {
                 vec![]
-            }
-        } else {
-            vec![]
-        };
+            };
 
-        Ok(Some(Stmt::Function {
-            name,
-            params,
-            body,
-        }))
+        Ok(Some(Stmt::Function { name, params, body }))
     }
 
     fn parse_voz(&mut self) -> Result<Option<Stmt>> {
@@ -1413,7 +1502,7 @@ impl Parser {
         // Parsear expresión a imprimir
         if self.pos < self.tokens.len() {
             let expr = self.parse_expression()?;
-            return Ok(Some(Stmt::Expr(expr)));  // Reusamos Expr statement
+            return Ok(Some(Stmt::Expr(expr))); // Reusamos Expr statement
         }
 
         Ok(None)
@@ -1494,7 +1583,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawRect { x, y, ancho, alto, color }))
+        Ok(Some(Stmt::DrawRect {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        }))
     }
 
     fn parse_draw_line(&mut self) -> Result<Option<Stmt>> {
@@ -1530,7 +1625,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawLine { x1, y1, x2, y2, color }))
+        Ok(Some(Stmt::DrawLine {
+            x1,
+            y1,
+            x2,
+            y2,
+            color,
+        }))
     }
 
     fn parse_draw_text(&mut self) -> Result<Option<Stmt>> {
@@ -1577,7 +1678,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawText { texto, x, y, tamano, color }))
+        Ok(Some(Stmt::DrawText {
+            texto,
+            x,
+            y,
+            tamano,
+            color,
+        }))
     }
 
     // ========================================================================
@@ -1620,7 +1727,15 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color }))
+        Ok(Some(Stmt::DrawTriangle {
+            v1_x,
+            v1_y,
+            v2_x,
+            v2_y,
+            v3_x,
+            v3_y,
+            color,
+        }))
     }
 
     fn parse_draw_ring(&mut self) -> Result<Option<Stmt>> {
@@ -1655,7 +1770,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color }))
+        Ok(Some(Stmt::DrawRing {
+            center_x,
+            center_y,
+            inner_radius,
+            outer_radius,
+            color,
+        }))
     }
 
     fn parse_draw_rectangle_lines(&mut self) -> Result<Option<Stmt>> {
@@ -1690,7 +1811,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawRectangleLines { x, y, ancho, alto, color }))
+        Ok(Some(Stmt::DrawRectangleLines {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        }))
     }
 
     fn parse_draw_ellipse(&mut self) -> Result<Option<Stmt>> {
@@ -1725,7 +1852,13 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color }))
+        Ok(Some(Stmt::DrawEllipse {
+            center_x,
+            center_y,
+            radius_h,
+            radius_v,
+            color,
+        }))
     }
 
     fn parse_draw_line_thick(&mut self) -> Result<Option<Stmt>> {
@@ -1762,7 +1895,14 @@ impl Parser {
             self.pos += 1;
         }
 
-        Ok(Some(Stmt::DrawLineThick { x1, y1, x2, y2, thick, color }))
+        Ok(Some(Stmt::DrawLineThick {
+            x1,
+            y1,
+            x2,
+            y2,
+            thick,
+            color,
+        }))
     }
 
     fn skip_comma(&mut self) {
@@ -1784,7 +1924,7 @@ impl Parser {
     fn parse_input(&mut self) -> Result<Option<Stmt>> {
         // input() - leer del usuario
         self.pos += 1; // consumir input
-        
+
         // Consumir ( y ) si existen
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq) {
             self.pos += 1;
@@ -1792,7 +1932,7 @@ impl Parser {
                 self.pos += 1;
             }
         }
-        
+
         // Retornamos un statement especial que el executor reconocerá
         Ok(Some(Stmt::Expr(Expr::Var("__INPUT__".to_string()))))
     }
@@ -1811,18 +1951,20 @@ impl Parser {
         let module_name = name.clone();
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::DobleDosPuntos) {
             self.pos += 1; // consumir ::
-            
+
             // Ahora esperamos un identificador (nombre de función)
             if self.pos < self.tokens.len() {
                 if let Token::Ident(func_name) = &self.tokens[self.pos] {
                     let func_full_name = format!("{}::{}", module_name, func_name);
                     self.pos += 1;
-                    
+
                     // Verificar si hay () para llamada a función
-                    if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq) {
+                    if self.pos < self.tokens.len()
+                        && matches!(self.tokens[self.pos], Token::ParentIzq)
+                    {
                         return self.parse_call_with_name(func_full_name);
                     }
-                    
+
                     // Función sin llamar - no es statement válido
                     return Ok(None);
                 }
@@ -1955,7 +2097,8 @@ impl Parser {
         self.pos += 1; // consumir dark.slot
 
         // Saltar comentarios antes del nombre de variable
-        while self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::Comentario(_)) {
+        while self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::Comentario(_))
+        {
             self.pos += 1;
         }
 
@@ -1983,14 +2126,16 @@ impl Parser {
         };
 
         // Verificar si hay indexación [index]
-        let is_indexed = self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::CorcheteIzq);
-        
+        let is_indexed =
+            self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::CorcheteIzq);
+
         if is_indexed {
             // Es una asignación indexada: arr[index] = value
             self.pos += 1; // consumir [
             let index = self.parse_expression()?;
-            
-            if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::CorcheteDer) {
+
+            if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::CorcheteDer)
+            {
                 return Err(RyDitError {
                     kind: ErrorKind::SyntaxError,
                     message: "Se esperaba ']' después del índice".to_string(),
@@ -2000,7 +2145,7 @@ impl Parser {
                 });
             }
             self.pos += 1; // consumir ]
-            
+
             // Esperar =
             if self.pos >= self.tokens.len() || !matches!(self.tokens[self.pos], Token::Igual) {
                 return Err(RyDitError {
@@ -2012,11 +2157,15 @@ impl Parser {
                 });
             }
             self.pos += 1; // consumir =
-            
+
             // Parsear valor
             let value = self.parse_expression()?;
-            
-            Ok(Some(Stmt::IndexAssign { array: name, index, value }))
+
+            Ok(Some(Stmt::IndexAssign {
+                array: name,
+                index,
+                value,
+            }))
         } else {
             // Es una asignación simple: name = value
             // Esperar =
@@ -2044,7 +2193,7 @@ impl Parser {
 
     fn parse_or(&mut self) -> Result<Expr> {
         let mut left = self.parse_and()?;
-        
+
         while self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::Or) {
             self.pos += 1;
             let right = self.parse_and()?;
@@ -2054,13 +2203,13 @@ impl Parser {
                 right: Box::new(right),
             };
         }
-        
+
         Ok(left)
     }
 
     fn parse_and(&mut self) -> Result<Expr> {
         let mut left = self.parse_comparison()?;
-        
+
         while self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::And) {
             self.pos += 1;
             let right = self.parse_comparison()?;
@@ -2070,7 +2219,7 @@ impl Parser {
                 right: Box::new(right),
             };
         }
-        
+
         Ok(left)
     }
 
@@ -2106,7 +2255,7 @@ impl Parser {
 
     fn parse_additive(&mut self) -> Result<Expr> {
         let mut left = self.parse_multiplicative()?;
-        
+
         loop {
             let op = if self.pos < self.tokens.len() {
                 match &self.tokens[self.pos] {
@@ -2117,23 +2266,23 @@ impl Parser {
             } else {
                 break;
             };
-            
+
             self.pos += 1;
             let right = self.parse_multiplicative()?;
-            
+
             left = Expr::BinOp {
                 left: Box::new(left),
                 op,
                 right: Box::new(right),
             };
         }
-        
+
         Ok(left)
     }
 
     fn parse_multiplicative(&mut self) -> Result<Expr> {
         let mut left = self.parse_primary()?;
-        
+
         loop {
             let op = if self.pos < self.tokens.len() {
                 match &self.tokens[self.pos] {
@@ -2144,17 +2293,17 @@ impl Parser {
             } else {
                 break;
             };
-            
+
             self.pos += 1;
             let right = self.parse_primary()?;
-            
+
             left = Expr::BinOp {
                 left: Box::new(left),
                 op,
                 right: Box::new(right),
             };
         }
-        
+
         Ok(left)
     }
 
@@ -2219,20 +2368,24 @@ impl Parser {
                 self.pos += 1;
 
                 // Verificar si es namespace: modulo::funcion(...)
-                if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::DobleDosPuntos) {
+                if self.pos < self.tokens.len()
+                    && matches!(self.tokens[self.pos], Token::DobleDosPuntos)
+                {
                     self.pos += 1; // consumir ::
-                    
+
                     // Esperar identificador (nombre de función)
                     if self.pos < self.tokens.len() {
                         if let Token::Ident(func_name) = &self.tokens[self.pos] {
                             let func_full_name = format!("{}::{}", name, func_name);
                             self.pos += 1;
-                            
+
                             // Verificar si es llamada a función: modulo::funcion(...)
-                            if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq) {
+                            if self.pos < self.tokens.len()
+                                && matches!(self.tokens[self.pos], Token::ParentIzq)
+                            {
                                 return self.parse_call_expr(func_full_name);
                             }
-                            
+
                             // Variable con namespace: modulo::variable
                             return Ok(Expr::Var(func_full_name));
                         }
@@ -2240,12 +2393,15 @@ impl Parser {
                 }
 
                 // Verificar si es llamada a función normal: nombre(...)
-                if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq) {
+                if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentIzq)
+                {
                     return self.parse_call_expr(name);
                 }
 
                 // Verificar si es indexación: lista[0]
-                if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::CorcheteIzq) {
+                if self.pos < self.tokens.len()
+                    && matches!(self.tokens[self.pos], Token::CorcheteIzq)
+                {
                     return self.parse_index(Expr::Var(name));
                 }
 
@@ -2304,20 +2460,20 @@ impl Parser {
     fn parse_call_expr(&mut self, name: String) -> Result<Expr> {
         // nombre(arg1, arg2, ...)
         self.pos += 1; // consumir (
-        
+
         let mut args = Vec::new();
-        
+
         // Verificar si es llamada sin argumentos: nombre()
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
             self.pos += 1;
             return Ok(Expr::Call { name, args });
         }
-        
+
         // Parsear argumentos separados por coma
         loop {
             let arg = self.parse_expression()?;
             args.push(arg);
-            
+
             // Si hay coma, continuar con el siguiente argumento
             if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::Coma) {
                 self.pos += 1;
@@ -2325,7 +2481,7 @@ impl Parser {
                 break;
             }
         }
-        
+
         // Consumir )
         if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::ParentDer) {
             self.pos += 1;
@@ -2354,12 +2510,12 @@ impl Parser {
                 array: Box::new(array_expr),
                 index: Box::new(index),
             };
-            
+
             // Verificar si hay otra indexación: array[1][2]
             if self.pos < self.tokens.len() && matches!(self.tokens[self.pos], Token::CorcheteIzq) {
                 return self.parse_index(result);
             }
-            
+
             Ok(result)
         } else {
             Err(RyDitError {
@@ -2423,14 +2579,25 @@ mod parser_tests {
         let tokens = Lizer::new("onif not x shield.init").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         // Debería haber 1 statement (el If)
         assert_eq!(program.statements.len(), 1);
-        
+
         // Verificar que es un If con condición Unary Not
-        if let Stmt::If { condition, then_body, .. } = &program.statements[0] {
-            assert!(matches!(condition, Expr::Unary { op: UnaryOp::Not, .. }));
-            assert_eq!(then_body.len(), 1);  // shield.init en el body
+        if let Stmt::If {
+            condition,
+            then_body,
+            ..
+        } = &program.statements[0]
+        {
+            assert!(matches!(
+                condition,
+                Expr::Unary {
+                    op: UnaryOp::Not,
+                    ..
+                }
+            ));
+            assert_eq!(then_body.len(), 1); // shield.init en el body
         } else {
             panic!("No es un If");
         }
@@ -2480,7 +2647,7 @@ mod parser_tests {
         let tokens = Lizer::new("dark.slot lista = [1, 2, 3]").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Assign { name, value } = &program.statements[0] {
             assert_eq!(name, "lista");
@@ -2499,7 +2666,7 @@ mod parser_tests {
         let tokens = Lizer::new("lista[0]").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Expr(Expr::Index { array, index }) = &program.statements[0] {
             if let Expr::Var(name) = array.as_ref() {
@@ -2522,7 +2689,7 @@ mod parser_tests {
         let tokens = Lizer::new("dark.slot x = [10, 20, 30]").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Assign { value, .. } = &program.statements[0] {
             if let Expr::Array(elements) = value {
@@ -2544,9 +2711,9 @@ mod parser_tests {
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Assign { value, .. } = &program.statements[0] {
             if let Expr::Array(outer) = value {
-                assert_eq!(outer.len(), 2);  // 2 filas
+                assert_eq!(outer.len(), 2); // 2 filas
                 if let Expr::Array(inner) = &outer[0] {
-                    assert_eq!(inner.len(), 2);  // 2 columnas
+                    assert_eq!(inner.len(), 2); // 2 columnas
                 }
             }
         }
@@ -2570,7 +2737,12 @@ mod parser_tests {
         let program = parser.parse().unwrap();
 
         assert_eq!(program.statements.len(), 1);
-        if let Stmt::ForEach { var, iterable, body } = &program.statements[0] {
+        if let Stmt::ForEach {
+            var,
+            iterable,
+            body,
+        } = &program.statements[0]
+        {
             assert_eq!(var, "x");
             if let Expr::Var(name) = iterable {
                 assert_eq!(name, "lista");
@@ -2606,14 +2778,14 @@ mod parser_tests {
         let program = parser.parse().unwrap();
 
         if let Stmt::ForEach { body, .. } = &program.statements[0] {
-            assert_eq!(body.len(), 2);  // voz + dark.slot
+            assert_eq!(body.len(), 2); // voz + dark.slot
         }
     }
 
     // ========================================================================
     // TESTS DE REGRESIÓN - v0.0.10 Parser Loop Bug Fix
     // ========================================================================
-    
+
     #[test]
     fn test_regresion_ident_sin_parentesis_no_causa_loop() {
         // Bug: Un Ident sin () causaba loop infinito en el parser
@@ -2621,7 +2793,7 @@ mod parser_tests {
         let tokens = Lizer::new("lista").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         // "lista" solo no es un statement válido, debería ser ignorado
         assert_eq!(program.statements.len(), 0);
     }
@@ -2633,7 +2805,7 @@ mod parser_tests {
         let tokens = Lizer::new("voz \"hola\"").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Expr(Expr::Texto(text)) = &program.statements[0] {
             assert_eq!(text, "hola");
@@ -2648,7 +2820,7 @@ mod parser_tests {
         let tokens = Lizer::new("rytmo test(x) { voz x }").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Function { name, params, body } = &program.statements[0] {
             assert_eq!(name, "test");
@@ -2666,7 +2838,7 @@ mod parser_tests {
         let tokens = Lizer::new("input()").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Expr(Expr::Var(name)) = &program.statements[0] {
             assert_eq!(name, "__INPUT__");
@@ -2681,7 +2853,7 @@ mod parser_tests {
         let tokens = Lizer::new("foo(1, 2, 3)").scan();
         let mut parser = Parser::new(tokens);
         let program = parser.parse().unwrap();
-        
+
         assert_eq!(program.statements.len(), 1);
         if let Stmt::Call { name, args } = &program.statements[0] {
             assert_eq!(name, "foo");
@@ -2805,7 +2977,8 @@ voz x"#;
     #[test]
     fn test_precedencia_expresion_compleja() {
         // (5 + 3) * 2 > 10 AND not false = 16 > 10 AND true = true AND true = true
-        let mut parser = Parser::new(Lizer::new("dark.slot x = (5 + 3) * 2 > 10 and not false").scan());
+        let mut parser =
+            Parser::new(Lizer::new("dark.slot x = (5 + 3) * 2 > 10 and not false").scan());
         let program = parser.parse().unwrap();
         assert_eq!(program.statements.len(), 1);
     }
@@ -2851,4 +3024,3 @@ voz x"#;
         assert!(tokens.iter().any(|t| matches!(t, Token::Error(_))));
     }
 }
-

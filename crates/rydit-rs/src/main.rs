@@ -1,16 +1,16 @@
+use blast_core::Executor;
+use blast_core::Valor;
+use lizer::Expr;
 use lizer::Lizer;
 use lizer::Parser;
 use lizer::Program;
 use lizer::Stmt;
-use lizer::Expr;
-use blast_core::Executor;
-use blast_core::Valor;
-use rydit_gfx::{RyditGfx, ColorRydit, Key};
-use migui::{Migui, WidgetId, Rect, Color as MiguiColor};
+use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
+use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
 use std::io::{self, Write};
-use std::collections::{HashMap, HashSet};
 
 // =============================================================================
 // CONFIGURACIÓN AUTOMÁTICA DE ENTORNO (v0.6.0)
@@ -18,30 +18,30 @@ use std::collections::{HashMap, HashSet};
 /// Configurar variables de entorno para Termux-X11 automáticamente
 fn configurar_entorno_termux() {
     // Detectar si estamos en Termux
-    let es_termux = std::env::var("TERMUX_VERSION").is_ok() || 
-                    std::path::Path::new("/data/data/com.termux").exists();
-    
+    let es_termux = std::env::var("TERMUX_VERSION").is_ok()
+        || std::path::Path::new("/data/data/com.termux").exists();
+
     if es_termux {
         println!("[RYDIT] Termux detectado - Configurando entorno gráfico...");
-        
+
         // Configurar DISPLAY si no está establecido
         if std::env::var("DISPLAY").is_err() {
             std::env::set_var("DISPLAY", ":0");
             println!("[RYDIT] DISPLAY=:0 configurado automáticamente");
         }
-        
+
         // Configurar driver zink si no está establecido
         if std::env::var("MESA_LOADER_DRIVER_OVERRIDE").is_err() {
             std::env::set_var("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             println!("[RYDIT] zink GPU driver configurado automáticamente");
         }
-        
+
         // Configurar DRI3 si no está establecido
         if std::env::var("DRI3").is_err() {
             std::env::set_var("DRI3", "1");
             println!("[RYDIT] DRI3=1 configurado automáticamente");
         }
-        
+
         println!("[RYDIT] ✅ Entorno gráfico listo para Termux-X11");
     }
 }
@@ -110,9 +110,10 @@ fn valor_serde_a_rydit(val: &serde_json::Value) -> Valor {
         }
         serde_json::Value::Object(obj) => {
             // Los objetos JSON los convertimos a array de pares [key, value]
-            let pares: Vec<Valor> = obj.iter().map(|(k, v)| {
-                Valor::Array(vec![Valor::Texto(k.clone()), valor_serde_a_rydit(v)])
-            }).collect();
+            let pares: Vec<Valor> = obj
+                .iter()
+                .map(|(k, v)| Valor::Array(vec![Valor::Texto(k.clone()), valor_serde_a_rydit(v)]))
+                .collect();
             Valor::Array(pares)
         }
     }
@@ -121,11 +122,14 @@ fn valor_serde_a_rydit(val: &serde_json::Value) -> Valor {
 /// Convertir Valor (Rydit) a serde_json::Value
 fn valor_rydit_a_serde(val: &Valor) -> Result<serde_json::Value, String> {
     match val {
-        Valor::Num(n) => Ok(serde_json::Value::Number(serde_json::Number::from_f64(*n).unwrap_or(serde_json::Number::from(0)))),
+        Valor::Num(n) => Ok(serde_json::Value::Number(
+            serde_json::Number::from_f64(*n).unwrap_or(serde_json::Number::from(0)),
+        )),
         Valor::Texto(s) => Ok(serde_json::Value::String(s.clone())),
         Valor::Bool(b) => Ok(serde_json::Value::Bool(*b)),
         Valor::Array(arr) => {
-            let valores: Result<Vec<serde_json::Value>, _> = arr.iter().map(|v| valor_rydit_a_serde(v)).collect();
+            let valores: Result<Vec<serde_json::Value>, _> =
+                arr.iter().map(|v| valor_rydit_a_serde(v)).collect();
             Ok(serde_json::Value::Array(valores?))
         }
         Valor::Vacio => Ok(serde_json::Value::Null),
@@ -136,7 +140,7 @@ fn valor_rydit_a_serde(val: &Valor) -> Result<serde_json::Value, String> {
 fn main() {
     // Configurar entorno automáticamente (Termux-X11)
     configurar_entorno_termux();
-    
+
     let args: Vec<String> = env::args().collect();
 
     // Verificar si es modo REPL
@@ -152,7 +156,10 @@ fn main() {
     let default_script = "shield.init";
 
     // Buscar script: después de --gfx/--migui o al final
-    let script_arg = if let Some(flag_pos) = args.iter().position(|x| x == "--gfx" || x == "-g" || x == "--migui" || x == "-m") {
+    let script_arg = if let Some(flag_pos) = args
+        .iter()
+        .position(|x| x == "--gfx" || x == "-g" || x == "--migui" || x == "-m")
+    {
         // El script está después del flag
         if args.len() > flag_pos + 1 {
             Some(&args[flag_pos + 1])
@@ -185,8 +192,11 @@ fn main() {
 
     if modo_gfx {
         println!("--- SHIELD SYSTEM: MODO GRÁFICO ---");
-        println!("[RYDIT-GFX] Parseando: {}", script.lines().next().unwrap_or("(script vacío)"));
-        
+        println!(
+            "[RYDIT-GFX] Parseando: {}",
+            script.lines().next().unwrap_or("(script vacío)")
+        );
+
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
         let mut gfx = RyditGfx::new("RyDit Engine", 800, 600);
@@ -210,7 +220,10 @@ fn main() {
         println!("--- SISTEMA PROTEGIDO ---");
     } else if modo_migui {
         println!("--- SHIELD SYSTEM: MODO MIGUI ---");
-        println!("[MIGUI] Parseando: {}", script.lines().next().unwrap_or("(script vacío)"));
+        println!(
+            "[MIGUI] Parseando: {}",
+            script.lines().next().unwrap_or("(script vacío)")
+        );
 
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
@@ -235,10 +248,13 @@ fn main() {
         println!("--- SISTEMA PROTEGIDO ---");
     } else {
         println!("--- SHIELD SYSTEM: MODO COMANDANTE ---");
-        println!("[RYDIT] Parseando: {}", script.lines().next().unwrap_or("(script vacío)"));
+        println!(
+            "[RYDIT] Parseando: {}",
+            script.lines().next().unwrap_or("(script vacío)")
+        );
 
         let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();  // (params, body)
+        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new(); // (params, body)
 
         // Lexer + Parser (AST)
         let tokens = Lizer::new(&script).scan();
@@ -259,13 +275,23 @@ fn main() {
     }
 }
 
-fn ejecutar_programa(program: &Program, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) {
+fn ejecutar_programa(
+    program: &Program,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) {
     // Contexto de imports: módulos cargados y stack de imports en progreso
     let mut loaded_modules: HashSet<String> = HashSet::new();
     let mut importing_stack: Vec<String> = Vec::new();
-    
+
     for stmt in &program.statements {
-        let (break_flag, return_val) = ejecutar_stmt(stmt, executor, funcs, &mut loaded_modules, &mut importing_stack);
+        let (break_flag, return_val) = ejecutar_stmt(
+            stmt,
+            executor,
+            funcs,
+            &mut loaded_modules,
+            &mut importing_stack,
+        );
 
         // Si hay valor de retorno en el nivel global, imprimirlo
         if let Some(val) = return_val {
@@ -279,10 +305,15 @@ fn ejecutar_programa(program: &Program, executor: &mut Executor, funcs: &mut Has
     }
 }
 
-fn ejecutar_programa_gfx(program: &Program, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, gfx: &mut RyditGfx) {
+fn ejecutar_programa_gfx(
+    program: &Program,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    gfx: &mut RyditGfx,
+) {
     // Estado del input
     let mut input = InputEstado::new();
-    
+
     // Contexto de imports: módulos cargados y stack de imports en progreso
     let mut loaded_modules: HashSet<String> = HashSet::new();
     let mut importing_stack: Vec<String> = Vec::new();
@@ -300,7 +331,15 @@ fn ejecutar_programa_gfx(program: &Program, executor: &mut Executor, funcs: &mut
 
             // Ejecutar programa en cada frame
             for stmt in &program.statements {
-                ejecutar_stmt_gfx(stmt, executor, funcs, &mut d, &mut input, &mut loaded_modules, &mut importing_stack);
+                ejecutar_stmt_gfx(
+                    stmt,
+                    executor,
+                    funcs,
+                    &mut d,
+                    &mut input,
+                    &mut loaded_modules,
+                    &mut importing_stack,
+                );
             }
 
             // FPS counter
@@ -314,7 +353,13 @@ fn ejecutar_programa_gfx(program: &Program, executor: &mut Executor, funcs: &mut
     }
 }
 
-fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, gui: &mut Migui, gfx: &mut RyditGfx) {
+fn ejecutar_programa_migui(
+    program: &Program,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    gui: &mut Migui,
+    gfx: &mut RyditGfx,
+) {
     use migui::{Event, MouseButton};
     use rydit_gfx::Key as GfxKey;
 
@@ -332,7 +377,16 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
                 funcs.insert(name.clone(), (params.clone(), body.clone()));
             }
             Stmt::Assign { name, value } => {
-                let valor = evaluar_expr_migui(value, executor, gui, &mut checkbox_states, &mut slider_states, &mut textbox_states, &mut window_states, funcs);
+                let valor = evaluar_expr_migui(
+                    value,
+                    executor,
+                    gui,
+                    &mut checkbox_states,
+                    &mut slider_states,
+                    &mut textbox_states,
+                    &mut window_states,
+                    funcs,
+                );
                 executor.guardar(name, valor);
             }
             _ => {}
@@ -340,9 +394,17 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
     }
 
     // Guardar el bloque de código para ejecutar en cada frame
-    let frame_stmts: Vec<&Stmt> = program.statements.iter()
+    let frame_stmts: Vec<&Stmt> = program
+        .statements
+        .iter()
         .filter(|s| matches!(s, Stmt::Block(_)))
-        .flat_map(|s| if let Stmt::Block(stmts) = s { stmts.iter().collect() } else { vec![] })
+        .flat_map(|s| {
+            if let Stmt::Block(stmts) = s {
+                stmts.iter().collect()
+            } else {
+                vec![]
+            }
+        })
         .collect();
 
     // Game loop principal con migui + backend
@@ -354,13 +416,24 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
 
         // Input de mouse para migui
         let (mx, my) = gfx.get_mouse_position();
-        gui.handle_event(Event::MouseMove { x: mx as f32, y: my as f32 });
+        gui.handle_event(Event::MouseMove {
+            x: mx as f32,
+            y: my as f32,
+        });
 
         if gfx.is_mouse_button_pressed(0) {
-            gui.handle_event(Event::MouseDown { button: MouseButton::Left, x: mx as f32, y: my as f32 });
+            gui.handle_event(Event::MouseDown {
+                button: MouseButton::Left,
+                x: mx as f32,
+                y: my as f32,
+            });
         }
         if gfx.is_mouse_button_pressed(0) == false && gui.is_mouse_down() {
-            gui.handle_event(Event::MouseUp { button: MouseButton::Left, x: mx as f32, y: my as f32 });
+            gui.handle_event(Event::MouseUp {
+                button: MouseButton::Left,
+                x: mx as f32,
+                y: my as f32,
+            });
         }
 
         // Iniciar frame de migui
@@ -368,8 +441,18 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
 
         // Ejecutar statements del bloque en cada frame
         for stmt in &frame_stmts {
-            ejecutar_stmt_migui(stmt, executor, funcs, gui, &mut loaded_modules, &mut importing_stack,
-                               &mut checkbox_states, &mut slider_states, &mut textbox_states, &mut window_states);
+            ejecutar_stmt_migui(
+                stmt,
+                executor,
+                funcs,
+                gui,
+                &mut loaded_modules,
+                &mut importing_stack,
+                &mut checkbox_states,
+                &mut slider_states,
+                &mut textbox_states,
+                &mut window_states,
+            );
         }
 
         gui.end_frame();
@@ -384,8 +467,13 @@ fn ejecutar_programa_migui(program: &Program, executor: &mut Executor, funcs: &m
     }
 }
 
-fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>, 
-                 loaded_modules: &mut HashSet<String>, importing_stack: &mut Vec<String>) -> (Option<bool>, Option<Valor>) {
+fn ejecutar_stmt(
+    stmt: &Stmt,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    loaded_modules: &mut HashSet<String>,
+    importing_stack: &mut Vec<String>,
+) -> (Option<bool>, Option<Valor>) {
     match stmt {
         Stmt::Init => {
             println!("[SHIELD] Inicializando sistema...");
@@ -397,11 +485,15 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             let valor = evaluar_expr(value, executor, funcs);
             executor.guardar(name, valor);
         }
-        Stmt::IndexAssign { array, index, value } => {
+        Stmt::IndexAssign {
+            array,
+            index,
+            value,
+        } => {
             // Asignación a índice de array: arr[index] = value
             let index_val = evaluar_expr(index, executor, funcs);
             let valor = evaluar_expr(value, executor, funcs);
-            
+
             // Obtener el array actual
             if let Some(Valor::Array(arr)) = executor.leer(array) {
                 // Calcular índice
@@ -412,13 +504,17 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                         return (None, None);
                     }
                 };
-                
+
                 // Verificar límites
                 if idx >= arr.len() {
-                    println!("[ERROR] Índice {} fuera de límites (array de {} elementos)", idx, arr.len());
+                    println!(
+                        "[ERROR] Índice {} fuera de límites (array de {} elementos)",
+                        idx,
+                        arr.len()
+                    );
                     return (None, None);
                 }
-                
+
                 // Modificar el array
                 let mut nuevo_arr = arr.clone();
                 nuevo_arr[idx] = valor;
@@ -428,7 +524,11 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                 return (None, None);
             }
         }
-        Stmt::If { condition, then_body, else_body } => {
+        Stmt::If {
+            condition,
+            then_body,
+            else_body,
+        } => {
             let cond_val = evaluar_expr(condition, executor, funcs);
 
             let es_verdad = match cond_val {
@@ -440,8 +540,8 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             if es_verdad {
                 for s in then_body {
                     match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
-                        (Some(true), _) => return (Some(true), None),  // Propagar break
-                        (_, Some(val)) => return (None, Some(val)),  // Propagar return
+                        (Some(true), _) => return (Some(true), None), // Propagar break
+                        (_, Some(val)) => return (None, Some(val)),   // Propagar return
                         _ => {}
                     }
                 }
@@ -458,7 +558,8 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
         Stmt::While { condition, body } => {
             // Ejecutar mientras la condición sea verdadera
             let mut iterations = 0;
-            while iterations < 100 {  // Límite de seguridad
+            while iterations < 100 {
+                // Límite de seguridad
                 let cond_val = evaluar_expr(condition, executor, funcs);
                 let es_verdad = match cond_val {
                     Valor::Num(n) => n != 0.0,
@@ -472,15 +573,19 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
 
                 for s in body {
                     match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
-                        (Some(true), _) => return (Some(true), None),  // Break detectado
-                        (_, Some(val)) => return (None, Some(val)),  // Return detectado
+                        (Some(true), _) => return (Some(true), None), // Break detectado
+                        (_, Some(val)) => return (None, Some(val)),   // Return detectado
                         _ => {}
                     }
                 }
                 iterations += 1;
             }
         }
-        Stmt::ForEach { var, iterable, body } => {
+        Stmt::ForEach {
+            var,
+            iterable,
+            body,
+        } => {
             // cada x en lista { ... }
             let iterable_val = evaluar_expr(iterable, executor, funcs);
 
@@ -493,22 +598,25 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                     // Ejecutar cuerpo del loop
                     for s in body {
                         match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
-                            (Some(true), _) => return (Some(true), None),  // Break detectado
-                            (_, Some(val)) => return (None, Some(val)),  // Return detectado
+                            (Some(true), _) => return (Some(true), None), // Break detectado
+                            (_, Some(val)) => return (None, Some(val)),   // Return detectado
                             _ => {}
                         }
                     }
                 }
             } else {
-                println!("[ERROR] 'cada' requiere un array, se obtuvo: {:?}", iterable_val);
+                println!(
+                    "[ERROR] 'cada' requiere un array, se obtuvo: {:?}",
+                    iterable_val
+                );
             }
         }
         Stmt::Block(stmts) => {
             // Ejecutar todos los statements del bloque
             for s in stmts {
                 match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
-                    (Some(true), _) => return (Some(true), None),  // Propagar break
-                    (_, Some(val)) => return (None, Some(val)),  // Propagar return
+                    (Some(true), _) => return (Some(true), None), // Propagar break
+                    (_, Some(val)) => return (None, Some(val)),   // Propagar return
                     _ => {}
                 }
             }
@@ -523,11 +631,14 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             // Primero verificar funciones builtin
             if name == "sumar" || name == "restar" || name == "multiplicar" || name == "dividir" {
                 // Funciones builtin ya manejadas en evaluar_expr
-                println!("[WARNING] Función builtin '{}' debe usarse en expresiones", name);
+                println!(
+                    "[WARNING] Función builtin '{}' debe usarse en expresiones",
+                    name
+                );
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
                 let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
-                
+
                 if let Some((params, body)) = func_data {
                     // Función de usuario
                     // Evaluar argumentos
@@ -551,13 +662,13 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                     for s in &body {
                         match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
                             (Some(true), _) => {
-                                executor.pop_scope();  // Limpiar scope antes de salir
+                                executor.pop_scope(); // Limpiar scope antes de salir
                                 return (Some(true), None);
-                            },
+                            }
                             (_, Some(val)) => {
                                 return_value = Some(val);
-                                break;  // Salir del loop, hay retorno
-                            },
+                                break; // Salir del loop, hay retorno
+                            }
                             _ => {}
                         }
                     }
@@ -578,17 +689,17 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             // Return: retornamos el valor de la expresión
             if let Some(e) = expr {
                 let val = evaluar_expr(e, executor, funcs);
-                return (None, Some(val));  // Retornar valor al llamador
+                return (None, Some(val)); // Retornar valor al llamador
             } else {
-                return (None, Some(Valor::Vacio));  // Return sin valor
+                return (None, Some(Valor::Vacio)); // Return sin valor
             }
         }
         Stmt::Expr(expr) => {
             let val = evaluar_expr(expr, executor, funcs);
-            executor.voz(&val);  // Usar voz en vez de println
+            executor.voz(&val); // Usar voz en vez de println
         }
         Stmt::Break => {
-            return (Some(true), None);  // Señal de break
+            return (Some(true), None); // Señal de break
         }
         Stmt::Import { module, alias } => {
             // Importar módulo: import <modulo> [as <alias>]
@@ -597,8 +708,11 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             // DEUDA #2 FIX: Detectar import cíclico
             if importing_stack.contains(&module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
-                println!("[ERROR] Stack de imports: {} -> {}",
-                    importing_stack.join(" -> "), module);
+                println!(
+                    "[ERROR] Stack de imports: {} -> {}",
+                    importing_stack.join(" -> "),
+                    module
+                );
                 return (None, None);
             }
 
@@ -627,9 +741,12 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                         funcs.insert(new_name, func_data.clone());
                     }
                 }
-                
+
                 if let Some(alias_name) = alias {
-                    println!("[IMPORT] Módulo '{}' disponible como '{}'", module, alias_name);
+                    println!(
+                        "[IMPORT] Módulo '{}' disponible como '{}'",
+                        module, alias_name
+                    );
                 }
                 return (None, None);
             }
@@ -639,143 +756,185 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
                 Ok(content) => {
                     println!("[IMPORT] Módulo '{}' cargado", module);
                     content
-                },
+                }
                 Err(e) => {
                     println!("[ERROR] {}", e);
                     return (None, None);
                 }
             };
 
-                // Agregar al stack de imports en progreso
-                importing_stack.push(module.clone());
+            // Agregar al stack de imports en progreso
+            importing_stack.push(module.clone());
 
-                // Lexer + Parser
-                let tokens = Lizer::new(&module_content).scan();
-                let mut parser = Parser::new(tokens);
+            // Lexer + Parser
+            let tokens = Lizer::new(&module_content).scan();
+            let mut parser = Parser::new(tokens);
 
-                let program = match parser.parse() {
-                    Ok(p) => p,
-                    Err(e) => {
-                        println!("[ERROR] Error parseando módulo '{}': {}", module, e);
-                        importing_stack.pop();
-                        return (None, None);
-                    }
-                };
-
-                // Recolectar nombres de funciones originales antes de ejecutar
-                let mut original_funcs: Vec<String> = Vec::new();
-                for s in &program.statements {
-                    if let Stmt::Function { name, .. } = s {
-                        original_funcs.push(name.clone());
-                    }
+            let program = match parser.parse() {
+                Ok(p) => p,
+                Err(e) => {
+                    println!("[ERROR] Error parseando módulo '{}': {}", module, e);
+                    importing_stack.pop();
+                    return (None, None);
                 }
+            };
 
-                // Ejecutar módulo en scope global
-                for s in &program.statements {
-                    match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
-                        (Some(true), _) => {
-                            println!("[ERROR] break no permitido en módulo '{}'", module);
-                            break;
-                        },
-                        (_, Some(_)) => {
-                            println!("[ERROR] return no permitido en módulo '{}'", module);
-                            break;
-                        },
-                        _ => {}
-                    }
+            // Recolectar nombres de funciones originales antes de ejecutar
+            let mut original_funcs: Vec<String> = Vec::new();
+            for s in &program.statements {
+                if let Stmt::Function { name, .. } = s {
+                    original_funcs.push(name.clone());
                 }
+            }
 
-                // Remover del stack de imports en progreso
-                importing_stack.pop();
+            // Ejecutar módulo en scope global
+            for s in &program.statements {
+                match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
+                    (Some(true), _) => {
+                        println!("[ERROR] break no permitido en módulo '{}'", module);
+                        break;
+                    }
+                    (_, Some(_)) => {
+                        println!("[ERROR] return no permitido en módulo '{}'", module);
+                        break;
+                    }
+                    _ => {}
+                }
+            }
 
-                // Marcar módulo como cargado
-                loaded_modules.insert(module.clone());
+            // Remover del stack de imports en progreso
+            importing_stack.pop();
 
-                // Renombrar funciones con el prefijo del módulo
-                let prefix = if let Some(alias_name) = alias {
-                    alias_name.clone()
-                } else {
-                    module.clone()
-                };
+            // Marcar módulo como cargado
+            loaded_modules.insert(module.clone());
 
-                // Copiar funciones con nuevo nombre
+            // Renombrar funciones con el prefijo del módulo
+            let prefix = if let Some(alias_name) = alias {
+                alias_name.clone()
+            } else {
+                module.clone()
+            };
+
+            // Copiar funciones con nuevo nombre
+            for orig_name in &original_funcs {
+                if let Some(func_data) = funcs.get(orig_name) {
+                    let new_name = format!("{}::{}", prefix, orig_name);
+                    funcs.insert(new_name, func_data.clone());
+                }
+            }
+
+            // DEUDA #3 FIX: Eliminar funciones originales SOLO si no hay alias
+            // Si el usuario usó "import math", eliminar "sumar" y dejar solo "math::sumar"
+            // Si el usuario usó "import math as m", dejar "math::sumar" y "m::sumar"
+            if alias.is_none() {
+                // Sin alias: eliminar funciones originales
                 for orig_name in &original_funcs {
-                    if let Some(func_data) = funcs.get(orig_name) {
-                        let new_name = format!("{}::{}", prefix, orig_name);
-                        funcs.insert(new_name, func_data.clone());
-                    }
+                    funcs.remove(orig_name);
                 }
+            }
+            // Con alias: las funciones originales se mantienen como module::func
 
-                // DEUDA #3 FIX: Eliminar funciones originales SOLO si no hay alias
-                // Si el usuario usó "import math", eliminar "sumar" y dejar solo "math::sumar"
-                // Si el usuario usó "import math as m", dejar "math::sumar" y "m::sumar"
-                if alias.is_none() {
-                    // Sin alias: eliminar funciones originales
-                    for orig_name in &original_funcs {
-                        funcs.remove(orig_name);
-                    }
-                }
-                // Con alias: las funciones originales se mantienen como module::func
-
-                // Registrar alias si existe
-                if let Some(alias_name) = alias {
-                    println!("[IMPORT] Módulo '{}' disponible como '{}'", module, alias_name);
-                } else {
-                    println!("[IMPORT] Módulo '{}' disponible", module);
-                }
+            // Registrar alias si existe
+            if let Some(alias_name) = alias {
+                println!(
+                    "[IMPORT] Módulo '{}' disponible como '{}'",
+                    module, alias_name
+                );
+            } else {
+                println!("[IMPORT] Módulo '{}' disponible", module);
+            }
         }
         Stmt::DrawCircle { x, y, radio, color } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let radio_val = evaluar_expr(radio, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
+
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(radio)) = (x_val, y_val, radio_val) {
                 println!("[DRAW] circle({}, {}, {}, {:?})", x, y, radio, color_val);
             } else {
                 println!("[ERROR] draw.circle requiere números");
             }
         }
-        Stmt::DrawRect { x, y, ancho, alto, color } => {
+        Stmt::DrawRect {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
-            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) = (x_val, y_val, ancho_val, alto_val) {
-                println!("[DRAW] rect({}, {}, {}, {}, {:?})", x, y, ancho, alto, color_val);
+
+            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
+                (x_val, y_val, ancho_val, alto_val)
+            {
+                println!(
+                    "[DRAW] rect({}, {}, {}, {}, {:?})",
+                    x, y, ancho, alto, color_val
+                );
             } else {
                 println!("[ERROR] draw.rect requiere números");
             }
         }
-        Stmt::DrawLine { x1, y1, x2, y2, color } => {
+        Stmt::DrawLine {
+            x1,
+            y1,
+            x2,
+            y2,
+            color,
+        } => {
             let x1_val = evaluar_expr(x1, executor, funcs);
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
-            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) = (x1_val, y1_val, x2_val, y2_val) {
-                println!("[DRAW] line({}, {}, {}, {}, {:?})", x1, y1, x2, y2, color_val);
+
+            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) =
+                (x1_val, y1_val, x2_val, y2_val)
+            {
+                println!(
+                    "[DRAW] line({}, {}, {}, {}, {:?})",
+                    x1, y1, x2, y2, color_val
+                );
             } else {
                 println!("[ERROR] draw.line requiere números");
             }
         }
-        Stmt::DrawText { texto, x, y, tamano, color } => {
+        Stmt::DrawText {
+            texto,
+            x,
+            y,
+            tamano,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(tamano)) = (x_val, y_val, tamano_val) {
-                println!("[DRAW] text('{}', {}, {}, {}, {:?})", texto, x, y, tamano, color_val);
+                println!(
+                    "[DRAW] text('{}', {}, {}, {}, {:?})",
+                    texto, x, y, tamano, color_val
+                );
             } else {
                 println!("[ERROR] draw.text requiere números");
             }
         }
         // Statements v0.2.0 - Nuevas formas
-        Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color } => {
+        Stmt::DrawTriangle {
+            v1_x,
+            v1_y,
+            v2_x,
+            v2_y,
+            v3_x,
+            v3_y,
+            color,
+        } => {
             let v1_x_val = evaluar_expr(v1_x, executor, funcs);
             let v1_y_val = evaluar_expr(v1_y, executor, funcs);
             let v2_x_val = evaluar_expr(v2_x, executor, funcs);
@@ -784,55 +943,106 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             let v3_y_val = evaluar_expr(v3_y, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(v1_x), Valor::Num(v1_y), Valor::Num(v2_x), Valor::Num(v2_y), Valor::Num(v3_x), Valor::Num(v3_y)) = 
-                (v1_x_val, v1_y_val, v2_x_val, v2_y_val, v3_x_val, v3_y_val) {
-                println!("[DRAW] triangle({}, {}, {}, {}, {}, {}, {:?})", v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color_val);
+            if let (
+                Valor::Num(v1_x),
+                Valor::Num(v1_y),
+                Valor::Num(v2_x),
+                Valor::Num(v2_y),
+                Valor::Num(v3_x),
+                Valor::Num(v3_y),
+            ) = (v1_x_val, v1_y_val, v2_x_val, v2_y_val, v3_x_val, v3_y_val)
+            {
+                println!(
+                    "[DRAW] triangle({}, {}, {}, {}, {}, {}, {:?})",
+                    v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color_val
+                );
             } else {
                 println!("[ERROR] draw.triangle requiere números");
             }
         }
-        Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color } => {
+        Stmt::DrawRing {
+            center_x,
+            center_y,
+            inner_radius,
+            outer_radius,
+            color,
+        } => {
             let center_x_val = evaluar_expr(center_x, executor, funcs);
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let inner_radius_val = evaluar_expr(inner_radius, executor, funcs);
             let outer_radius_val = evaluar_expr(outer_radius, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = 
-                (center_x_val, center_y_val, inner_radius_val, outer_radius_val) {
-                println!("[DRAW] ring({}, {}, {}, {}, {:?})", cx, cy, ir, or, color_val);
+            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = (
+                center_x_val,
+                center_y_val,
+                inner_radius_val,
+                outer_radius_val,
+            ) {
+                println!(
+                    "[DRAW] ring({}, {}, {}, {}, {:?})",
+                    cx, cy, ir, or, color_val
+                );
             } else {
                 println!("[ERROR] draw.ring requiere números");
             }
         }
-        Stmt::DrawRectangleLines { x, y, ancho, alto, color } => {
+        Stmt::DrawRectangleLines {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) = (x_val, y_val, ancho_val, alto_val) {
-                println!("[DRAW] rectangle_lines({}, {}, {}, {}, {:?})", x, y, ancho, alto, color_val);
+            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
+                (x_val, y_val, ancho_val, alto_val)
+            {
+                println!(
+                    "[DRAW] rectangle_lines({}, {}, {}, {}, {:?})",
+                    x, y, ancho, alto, color_val
+                );
             } else {
                 println!("[ERROR] draw.rectangle_lines requiere números");
             }
         }
-        Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color } => {
+        Stmt::DrawEllipse {
+            center_x,
+            center_y,
+            radius_h,
+            radius_v,
+            color,
+        } => {
             let center_x_val = evaluar_expr(center_x, executor, funcs);
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let radius_h_val = evaluar_expr(radius_h, executor, funcs);
             let radius_v_val = evaluar_expr(radius_v, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) = 
-                (center_x_val, center_y_val, radius_h_val, radius_v_val) {
-                println!("[DRAW] ellipse({}, {}, {}, {}, {:?})", cx, cy, rh, rv, color_val);
+            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) =
+                (center_x_val, center_y_val, radius_h_val, radius_v_val)
+            {
+                println!(
+                    "[DRAW] ellipse({}, {}, {}, {}, {:?})",
+                    cx, cy, rh, rv, color_val
+                );
             } else {
                 println!("[ERROR] draw.ellipse requiere números");
             }
         }
-        Stmt::DrawLineThick { x1, y1, x2, y2, thick, color } => {
+        Stmt::DrawLineThick {
+            x1,
+            y1,
+            x2,
+            y2,
+            thick,
+            color,
+        } => {
             let x1_val = evaluar_expr(x1, executor, funcs);
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
@@ -840,15 +1050,24 @@ fn ejecutar_stmt(stmt: &Stmt, executor: &mut Executor, funcs: &mut HashMap<Strin
             let thick_val = evaluar_expr(thick, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2), Valor::Num(thick)) = 
-                (x1_val, y1_val, x2_val, y2_val, thick_val) {
-                println!("[DRAW] line_thick({}, {}, {}, {}, {}, {:?})", x1, y1, x2, y2, thick, color_val);
+            if let (
+                Valor::Num(x1),
+                Valor::Num(y1),
+                Valor::Num(x2),
+                Valor::Num(y2),
+                Valor::Num(thick),
+            ) = (x1_val, y1_val, x2_val, y2_val, thick_val)
+            {
+                println!(
+                    "[DRAW] line_thick({}, {}, {}, {}, {}, {:?})",
+                    x1, y1, x2, y2, thick, color_val
+                );
             } else {
                 println!("[ERROR] draw.line_thick requiere números");
             }
         }
     }
-    (None, None)  // No break, no return value
+    (None, None) // No break, no return value
 }
 
 // ============================================================================
@@ -897,7 +1116,7 @@ impl InputEstado {
         self.arrow_right = gfx.is_key_pressed(Key::ArrowRight);
         self.space = gfx.is_key_pressed(Key::Space);
         self.enter = gfx.is_key_pressed(Key::Enter);
-        
+
         // Actualizar mouse v0.3.0
         let mouse_pos = gfx.get_mouse_position();
         self.mouse_x = mouse_pos.0;
@@ -940,11 +1159,15 @@ fn ejecutar_stmt_gfx(
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
             executor.guardar(name, valor);
         }
-        Stmt::IndexAssign { array, index, value } => {
+        Stmt::IndexAssign {
+            array,
+            index,
+            value,
+        } => {
             // Asignación a índice de array: arr[index] = value
             let index_val = evaluar_expr_gfx(index, executor, input, funcs);
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
-            
+
             // Obtener el array actual
             if let Some(Valor::Array(arr)) = executor.leer(array) {
                 // Calcular índice
@@ -955,13 +1178,17 @@ fn ejecutar_stmt_gfx(
                         return None;
                     }
                 };
-                
+
                 // Verificar límites
                 if idx >= arr.len() {
-                    println!("[ERROR] Índice {} fuera de límites (array de {} elementos)", idx, arr.len());
+                    println!(
+                        "[ERROR] Índice {} fuera de límites (array de {} elementos)",
+                        idx,
+                        arr.len()
+                    );
                     return None;
                 }
-                
+
                 // Modificar el array
                 let mut nuevo_arr = arr.clone();
                 nuevo_arr[idx] = valor;
@@ -971,7 +1198,11 @@ fn ejecutar_stmt_gfx(
                 return None;
             }
         }
-        Stmt::If { condition, then_body, else_body } => {
+        Stmt::If {
+            condition,
+            then_body,
+            else_body,
+        } => {
             let cond_val = evaluar_expr_gfx(condition, executor, input, funcs);
             let es_verdad = match cond_val {
                 Valor::Num(n) => n != 0.0,
@@ -981,11 +1212,27 @@ fn ejecutar_stmt_gfx(
 
             if es_verdad {
                 for s in then_body {
-                    ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                    ejecutar_stmt_gfx(
+                        s,
+                        executor,
+                        funcs,
+                        d,
+                        input,
+                        loaded_modules,
+                        importing_stack,
+                    );
                 }
             } else if let Some(else_stmts) = else_body {
                 for s in else_stmts {
-                    ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                    ejecutar_stmt_gfx(
+                        s,
+                        executor,
+                        funcs,
+                        d,
+                        input,
+                        loaded_modules,
+                        importing_stack,
+                    );
                 }
             }
         }
@@ -993,7 +1240,8 @@ fn ejecutar_stmt_gfx(
             // Cuidado: while en modo gráfico puede causar loop infinito
             // Usar solo con condiciones controladas
             let mut iterations = 0;
-            while iterations < 10 {  // Límite estricto en modo gráfico
+            while iterations < 10 {
+                // Límite estricto en modo gráfico
                 let cond_val = evaluar_expr_gfx(condition, executor, input, funcs);
                 let es_verdad = match cond_val {
                     Valor::Num(n) => n != 0.0,
@@ -1006,25 +1254,53 @@ fn ejecutar_stmt_gfx(
                 }
 
                 for s in body {
-                    ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                    ejecutar_stmt_gfx(
+                        s,
+                        executor,
+                        funcs,
+                        d,
+                        input,
+                        loaded_modules,
+                        importing_stack,
+                    );
                 }
                 iterations += 1;
             }
         }
-        Stmt::ForEach { var, iterable, body } => {
+        Stmt::ForEach {
+            var,
+            iterable,
+            body,
+        } => {
             let iterable_val = evaluar_expr_gfx(iterable, executor, input, funcs);
             if let Valor::Array(arr) = iterable_val {
                 for item in arr {
                     executor.guardar(var, item.clone());
                     for s in body {
-                        ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                        ejecutar_stmt_gfx(
+                            s,
+                            executor,
+                            funcs,
+                            d,
+                            input,
+                            loaded_modules,
+                            importing_stack,
+                        );
                     }
                 }
             }
         }
         Stmt::Block(stmts) => {
             for s in stmts {
-                ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                ejecutar_stmt_gfx(
+                    s,
+                    executor,
+                    funcs,
+                    d,
+                    input,
+                    loaded_modules,
+                    importing_stack,
+                );
             }
         }
         Stmt::Function { name, params, body } => {
@@ -1040,7 +1316,7 @@ fn ejecutar_stmt_gfx(
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
                 let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
-                
+
                 if let Some((_params, body)) = func_data {
                     // Evaluar argumentos
                     let mut arg_values = vec![];
@@ -1048,9 +1324,17 @@ fn ejecutar_stmt_gfx(
                         arg_values.push(evaluar_expr_gfx(arg, executor, input, funcs));
                     }
                     // Ejecutar body con argumentos (sin scope real por ahora)
-                    let _ = arg_values;  // Por ahora no usamos los args
+                    let _ = arg_values; // Por ahora no usamos los args
                     for s in &body {
-                        ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                        ejecutar_stmt_gfx(
+                            s,
+                            executor,
+                            funcs,
+                            d,
+                            input,
+                            loaded_modules,
+                            importing_stack,
+                        );
                     }
                 }
             }
@@ -1072,8 +1356,11 @@ fn ejecutar_stmt_gfx(
             // DEUDA #2 FIX: Detectar import cíclico
             if importing_stack.contains(&module) {
                 println!("[ERROR] Importe cíclico detectado: '{}'", module);
-                println!("[ERROR] Stack de imports: {} -> {}", 
-                    importing_stack.join(" -> "), module);
+                println!(
+                    "[ERROR] Stack de imports: {} -> {}",
+                    importing_stack.join(" -> "),
+                    module
+                );
                 return None;
             }
 
@@ -1086,7 +1373,7 @@ fn ejecutar_stmt_gfx(
                 } else {
                     module.clone()
                 };
-                
+
                 // Copiar funciones con nuevo nombre desde el cache
                 let mut funcs_to_copy: Vec<(String, String)> = Vec::new();
                 for (func_name, _) in funcs.iter() {
@@ -1096,21 +1383,27 @@ fn ejecutar_stmt_gfx(
                         funcs_to_copy.push((func_name.clone(), new_name));
                     }
                 }
-                
+
                 for (old_name, new_name) in funcs_to_copy {
                     if let Some(func_data) = funcs.get(&old_name) {
                         funcs.insert(new_name, func_data.clone());
                     }
                 }
-                
+
                 if let Some(alias_name) = alias {
-                    println!("[IMPORT] Módulo '{}' disponible como '{}'", module, alias_name);
+                    println!(
+                        "[IMPORT] Módulo '{}' disponible como '{}'",
+                        module, alias_name
+                    );
                 }
                 return None;
             }
 
             if let Ok(content) = std::fs::read_to_string(&module_path) {
-                println!("[IMPORT] Cargando módulo '{}' desde '{}'", module, module_path);
+                println!(
+                    "[IMPORT] Cargando módulo '{}' desde '{}'",
+                    module, module_path
+                );
 
                 // Agregar al stack de imports en progreso
                 importing_stack.push(module.clone());
@@ -1137,7 +1430,15 @@ fn ejecutar_stmt_gfx(
                 }
 
                 for s in &program.statements {
-                    ejecutar_stmt_gfx(s, executor, funcs, d, input, loaded_modules, importing_stack);
+                    ejecutar_stmt_gfx(
+                        s,
+                        executor,
+                        funcs,
+                        d,
+                        input,
+                        loaded_modules,
+                        importing_stack,
+                    );
                 }
 
                 // Remover del stack de imports en progreso
@@ -1171,12 +1472,18 @@ fn ejecutar_stmt_gfx(
                 // Con alias: las funciones originales se mantienen como module::func
 
                 if let Some(alias_name) = alias {
-                    println!("[IMPORT] Módulo '{}' disponible como '{}'", module, alias_name);
+                    println!(
+                        "[IMPORT] Módulo '{}' disponible como '{}'",
+                        module, alias_name
+                    );
                 } else {
                     println!("[IMPORT] Módulo '{}' disponible", module);
                 }
             } else {
-                println!("[ERROR] Módulo '{}' no encontrado en '{}'", module, module_path);
+                println!(
+                    "[ERROR] Módulo '{}' no encontrado en '{}'",
+                    module, module_path
+                );
             }
         }
         // Comandos de dibujo - dibujan realmente en la ventana
@@ -1185,34 +1492,56 @@ fn ejecutar_stmt_gfx(
             let y_val = evaluar_expr(y, executor, funcs);
             let radio_val = evaluar_expr(radio, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
+
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(radio)) = (x_val, y_val, radio_val) {
                 d.draw_circle(x as i32, y as i32, radio as i32, color_val);
             }
         }
-        Stmt::DrawRect { x, y, ancho, alto, color } => {
+        Stmt::DrawRect {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
-            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) = (x_val, y_val, ancho_val, alto_val) {
+
+            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
+                (x_val, y_val, ancho_val, alto_val)
+            {
                 d.draw_rectangle(x as i32, y as i32, ancho as i32, alto as i32, color_val);
             }
         }
-        Stmt::DrawLine { x1, y1, x2, y2, color } => {
+        Stmt::DrawLine {
+            x1,
+            y1,
+            x2,
+            y2,
+            color,
+        } => {
             let x1_val = evaluar_expr(x1, executor, funcs);
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
             let color_val = ColorRydit::from_str(color);
-            
-            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) = (x1_val, y1_val, x2_val, y2_val) {
+
+            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) =
+                (x1_val, y1_val, x2_val, y2_val)
+            {
                 d.draw_line(x1 as i32, y1 as i32, x2 as i32, y2 as i32, color_val);
             }
         }
-        Stmt::DrawText { texto, x, y, tamano, color } => {
+        Stmt::DrawText {
+            texto,
+            x,
+            y,
+            tamano,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
@@ -1223,7 +1552,15 @@ fn ejecutar_stmt_gfx(
             }
         }
         // Statements v0.2.0 - Nuevas formas (gráficos reales)
-        Stmt::DrawTriangle { v1_x, v1_y, v2_x, v2_y, v3_x, v3_y, color } => {
+        Stmt::DrawTriangle {
+            v1_x,
+            v1_y,
+            v2_x,
+            v2_y,
+            v3_x,
+            v3_y,
+            color,
+        } => {
             let v1_x_val = evaluar_expr(v1_x, executor, funcs);
             let v1_y_val = evaluar_expr(v1_y, executor, funcs);
             let v2_x_val = evaluar_expr(v2_x, executor, funcs);
@@ -1232,47 +1569,91 @@ fn ejecutar_stmt_gfx(
             let v3_y_val = evaluar_expr(v3_y, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(v1_x), Valor::Num(v1_y), Valor::Num(v2_x), Valor::Num(v2_y), Valor::Num(v3_x), Valor::Num(v3_y)) = 
-                (v1_x_val, v1_y_val, v2_x_val, v2_y_val, v3_x_val, v3_y_val) {
-                d.draw_triangle((v1_x as i32, v1_y as i32), (v2_x as i32, v2_y as i32), (v3_x as i32, v3_y as i32), color_val);
+            if let (
+                Valor::Num(v1_x),
+                Valor::Num(v1_y),
+                Valor::Num(v2_x),
+                Valor::Num(v2_y),
+                Valor::Num(v3_x),
+                Valor::Num(v3_y),
+            ) = (v1_x_val, v1_y_val, v2_x_val, v2_y_val, v3_x_val, v3_y_val)
+            {
+                d.draw_triangle(
+                    (v1_x as i32, v1_y as i32),
+                    (v2_x as i32, v2_y as i32),
+                    (v3_x as i32, v3_y as i32),
+                    color_val,
+                );
             }
         }
-        Stmt::DrawRing { center_x, center_y, inner_radius, outer_radius, color } => {
+        Stmt::DrawRing {
+            center_x,
+            center_y,
+            inner_radius,
+            outer_radius,
+            color,
+        } => {
             let center_x_val = evaluar_expr(center_x, executor, funcs);
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let inner_radius_val = evaluar_expr(inner_radius, executor, funcs);
             let outer_radius_val = evaluar_expr(outer_radius, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = 
-                (center_x_val, center_y_val, inner_radius_val, outer_radius_val) {
+            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = (
+                center_x_val,
+                center_y_val,
+                inner_radius_val,
+                outer_radius_val,
+            ) {
                 d.draw_ring((cx as i32, cy as i32), ir as i32, or as i32, color_val);
             }
         }
-        Stmt::DrawRectangleLines { x, y, ancho, alto, color } => {
+        Stmt::DrawRectangleLines {
+            x,
+            y,
+            ancho,
+            alto,
+            color,
+        } => {
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) = (x_val, y_val, ancho_val, alto_val) {
+            if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
+                (x_val, y_val, ancho_val, alto_val)
+            {
                 d.draw_rectangle_lines(x as i32, y as i32, ancho as i32, alto as i32, color_val);
             }
         }
-        Stmt::DrawEllipse { center_x, center_y, radius_h, radius_v, color } => {
+        Stmt::DrawEllipse {
+            center_x,
+            center_y,
+            radius_h,
+            radius_v,
+            color,
+        } => {
             let center_x_val = evaluar_expr(center_x, executor, funcs);
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let radius_h_val = evaluar_expr(radius_h, executor, funcs);
             let radius_v_val = evaluar_expr(radius_v, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) = 
-                (center_x_val, center_y_val, radius_h_val, radius_v_val) {
+            if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) =
+                (center_x_val, center_y_val, radius_h_val, radius_v_val)
+            {
                 d.draw_ellipse((cx as i32, cy as i32), rh as i32, rv as i32, color_val);
             }
         }
-        Stmt::DrawLineThick { x1, y1, x2, y2, thick, color } => {
+        Stmt::DrawLineThick {
+            x1,
+            y1,
+            x2,
+            y2,
+            thick,
+            color,
+        } => {
             let x1_val = evaluar_expr(x1, executor, funcs);
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
@@ -1280,13 +1661,24 @@ fn ejecutar_stmt_gfx(
             let thick_val = evaluar_expr(thick, executor, funcs);
             let color_val = ColorRydit::from_str(color);
 
-            if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2), Valor::Num(thick)) = 
-                (x1_val, y1_val, x2_val, y2_val, thick_val) {
-                d.draw_line_thick((x1 as i32, y1 as i32), (x2 as i32, y2 as i32), thick as f32, color_val);
+            if let (
+                Valor::Num(x1),
+                Valor::Num(y1),
+                Valor::Num(x2),
+                Valor::Num(y2),
+                Valor::Num(thick),
+            ) = (x1_val, y1_val, x2_val, y2_val, thick_val)
+            {
+                d.draw_line_thick(
+                    (x1 as i32, y1 as i32),
+                    (x2 as i32, y2 as i32),
+                    thick as f32,
+                    color_val,
+                );
             }
         }
         Stmt::Break => {
-            return Some(true);  // Señal de break
+            return Some(true); // Señal de break
         }
     }
     None
@@ -1300,7 +1692,11 @@ fn valor_a_bool(val: &Valor) -> bool {
     }
 }
 
-fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) -> Valor {
+fn evaluar_expr(
+    expr: &Expr,
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
@@ -1314,7 +1710,10 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
         Expr::Bool(b) => Valor::Bool(*b),
         Expr::Array(elements) => {
             // Evaluar cada elemento del array
-            let valores: Vec<Valor> = elements.iter().map(|e| evaluar_expr(e, executor, funcs)).collect();
+            let valores: Vec<Valor> = elements
+                .iter()
+                .map(|e| evaluar_expr(e, executor, funcs))
+                .collect();
             Valor::Array(valores)
         }
         Expr::Index { array, index } => {
@@ -1330,7 +1729,11 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                     if idx < arr.len() {
                         return arr[idx].clone();
                     } else {
-                        return Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()));
+                        return Valor::Error(format!(
+                            "Índice {} fuera de rango (len={})",
+                            idx,
+                            arr.len()
+                        ));
                     }
                 } else {
                     return Valor::Error("El índice debe ser un número".to_string());
@@ -1399,7 +1802,7 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             // ========================================================================
             // FUNCIONES MATH AVANZADAS - V0.3.0 (Tank Combat)
             // ========================================================================
-            
+
             // math::sqrt(x) - Raíz cuadrada
             if (name == "__math_sqrt" || name == "math::sqrt") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
@@ -1517,16 +1920,22 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let start_val = evaluar_expr(&args[1], executor, funcs);
                 let len_val = evaluar_expr(&args[2], executor, funcs);
-                if let (Valor::Texto(s), Valor::Num(start), Valor::Num(len)) = (s_val, start_val, len_val) {
+                if let (Valor::Texto(s), Valor::Num(start), Valor::Num(len)) =
+                    (s_val, start_val, len_val)
+                {
                     let start_idx = start as usize;
                     let length = len as usize;
                     if start_idx + length <= s.len() {
                         return Valor::Texto(s[start_idx..start_idx + length].to_string());
                     } else {
-                        return Valor::Error("strings::substr(): índices fuera de rango".to_string());
+                        return Valor::Error(
+                            "strings::substr(): índices fuera de rango".to_string(),
+                        );
                     }
                 } else {
-                    return Valor::Error("strings::substr() requiere (string, inicio, longitud)".to_string());
+                    return Valor::Error(
+                        "strings::substr() requiere (string, inicio, longitud)".to_string(),
+                    );
                 }
             }
 
@@ -1534,7 +1943,9 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let buscar_val = evaluar_expr(&args[1], executor, funcs);
                 let reemplazar_val = evaluar_expr(&args[2], executor, funcs);
-                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) = (s_val, buscar_val, reemplazar_val) {
+                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) =
+                    (s_val, buscar_val, reemplazar_val)
+                {
                     return Valor::Texto(s.replace(&buscar, &reemplazar));
                 } else {
                     return Valor::Error("strings::replace() requiere tres strings".to_string());
@@ -1546,10 +1957,13 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let sep_val = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Texto(s), Valor::Texto(sep)) = (s_val, sep_val) {
-                    let partes: Vec<Valor> = s.split(&sep).map(|p| Valor::Texto(p.to_string())).collect();
+                    let partes: Vec<Valor> =
+                        s.split(&sep).map(|p| Valor::Texto(p.to_string())).collect();
                     return Valor::Array(partes);
                 } else {
-                    return Valor::Error("strings::split() requiere (string, separador)".to_string());
+                    return Valor::Error(
+                        "strings::split() requiere (string, separador)".to_string(),
+                    );
                 }
             }
 
@@ -1577,10 +1991,14 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let s_val = evaluar_expr(&args[0], executor, funcs);
                 let buscar_val = evaluar_expr(&args[1], executor, funcs);
                 let reemplazar_val = evaluar_expr(&args[2], executor, funcs);
-                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) = (s_val, buscar_val, reemplazar_val) {
+                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) =
+                    (s_val, buscar_val, reemplazar_val)
+                {
                     return Valor::Texto(s.replace(&buscar, &reemplazar));
                 } else {
-                    return Valor::Error("strings::replace_all() requiere tres strings".to_string());
+                    return Valor::Error(
+                        "strings::replace_all() requiere tres strings".to_string(),
+                    );
                 }
             }
 
@@ -1588,13 +2006,16 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let sep_val = evaluar_expr(&args[0], executor, funcs);
                 let arr_val = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Texto(sep), Valor::Array(arr)) = (sep_val, arr_val) {
-                    let strs: Result<Vec<String>, _> = arr.iter().map(|v| {
-                        if let Valor::Texto(s) = v {
-                            Ok(s.clone())
-                        } else {
-                            Err("strings::join() requiere array de strings")
-                        }
-                    }).collect();
+                    let strs: Result<Vec<String>, _> = arr
+                        .iter()
+                        .map(|v| {
+                            if let Valor::Texto(s) = v {
+                                Ok(s.clone())
+                            } else {
+                                Err("strings::join() requiere array de strings")
+                            }
+                        })
+                        .collect();
                     match strs {
                         Ok(parts) => return Valor::Texto(parts.join(&sep)),
                         Err(msg) => return Valor::Error(msg.to_string()),
@@ -1735,7 +2156,9 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                     arr.insert(0, elem_val);
                     return Valor::Array(arr);
                 } else {
-                    return Valor::Error("arrays::unshift() requiere (array, elemento)".to_string());
+                    return Valor::Error(
+                        "arrays::unshift() requiere (array, elemento)".to_string(),
+                    );
                 }
             }
 
@@ -1743,7 +2166,9 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let arr_val = evaluar_expr(&args[0], executor, funcs);
                 let start_val = evaluar_expr(&args[1], executor, funcs);
                 let end_val = evaluar_expr(&args[2], executor, funcs);
-                if let (Valor::Array(arr), Valor::Num(start), Valor::Num(end)) = (arr_val, start_val, end_val) {
+                if let (Valor::Array(arr), Valor::Num(start), Valor::Num(end)) =
+                    (arr_val, start_val, end_val)
+                {
                     let s = start as usize;
                     let e = end as usize;
                     if s <= e && e <= arr.len() {
@@ -1753,7 +2178,9 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                         return Valor::Error("arrays::slice(): índices inválidos".to_string());
                     }
                 } else {
-                    return Valor::Error("arrays::slice() requiere (array, inicio, fin)".to_string());
+                    return Valor::Error(
+                        "arrays::slice() requiere (array, inicio, fin)".to_string(),
+                    );
                 }
             }
 
@@ -1772,8 +2199,14 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 let min_val = evaluar_expr(&args[0], executor, funcs);
                 let max_val = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Num(min), Valor::Num(max)) = (min_val, max_val) {
-                    let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                    let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                    let seed = executor
+                        .leer("__random_seed")
+                        .unwrap_or(Valor::Num(12345.0));
+                    let mut s = if let Valor::Num(n) = seed {
+                        n as u32
+                    } else {
+                        12345
+                    };
                     // xorshift PRNG
                     s ^= s << 13;
                     s ^= s >> 17;
@@ -1794,8 +2227,14 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             }
 
             if (name == "__random_float" || name == "random::float") && args.len() == 0 {
-                let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                let seed = executor
+                    .leer("__random_seed")
+                    .unwrap_or(Valor::Num(12345.0));
+                let mut s = if let Valor::Num(n) = seed {
+                    n as u32
+                } else {
+                    12345
+                };
                 // xorshift PRNG
                 s ^= s << 13;
                 s ^= s >> 17;
@@ -1810,8 +2249,14 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                     if arr.is_empty() {
                         return Valor::Error("random::choice(): array vacío".to_string());
                     }
-                    let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                    let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                    let seed = executor
+                        .leer("__random_seed")
+                        .unwrap_or(Valor::Num(12345.0));
+                    let mut s = if let Valor::Num(n) = seed {
+                        n as u32
+                    } else {
+                        12345
+                    };
                     // xorshift PRNG
                     s ^= s << 13;
                     s ^= s >> 17;
@@ -1842,12 +2287,10 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             if (name == "__json_stringify" || name == "json::stringify") && args.len() == 1 {
                 let val = evaluar_expr(&args[0], executor, funcs);
                 match valor_rydit_a_serde(&val) {
-                    Ok(serde_val) => {
-                        match serde_json::to_string(&serde_val) {
-                            Ok(json_str) => return Valor::Texto(json_str),
-                            Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
-                        }
-                    }
+                    Ok(serde_val) => match serde_json::to_string(&serde_val) {
+                        Ok(json_str) => return Valor::Texto(json_str),
+                        Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
+                    },
                     Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
                 }
             }
@@ -1868,13 +2311,18 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                     thread::sleep(Duration::from_millis(ms as u64));
                     return Valor::Vacio;
                 } else {
-                    return Valor::Error("time::sleep() requiere milisegundos (número)".to_string());
+                    return Valor::Error(
+                        "time::sleep() requiere milisegundos (número)".to_string(),
+                    );
                 }
             }
 
             // ========== FUNCIONES REGEX (v0.6.2) ==========
             if (name == "__regex_match" || name == "regex::match") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => return Valor::Bool(re.is_match(text)),
                         Err(e) => return Valor::Error(format!("regex::match(): {}", e)),
@@ -1888,22 +2336,34 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
                     &evaluar_expr(&args[0], executor, funcs),
                     &evaluar_expr(&args[1], executor, funcs),
-                    &evaluar_expr(&args[2], executor, funcs)
+                    &evaluar_expr(&args[2], executor, funcs),
                 ) {
                     match regex::Regex::new(pattern) {
-                        Ok(re) => return Valor::Texto(re.replace_all(text, replacement.as_str()).to_string()),
+                        Ok(re) => {
+                            return Valor::Texto(
+                                re.replace_all(text, replacement.as_str()).to_string(),
+                            )
+                        }
                         Err(e) => return Valor::Error(format!("regex::replace(): {}", e)),
                     }
                 } else {
-                    return Valor::Error("regex::replace() requiere (patrón, reemplazo, texto)".to_string());
+                    return Valor::Error(
+                        "regex::replace() requiere (patrón, reemplazo, texto)".to_string(),
+                    );
                 }
             }
 
             if (name == "__regex_split" || name == "regex::split") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
-                            let parts: Vec<Valor> = re.split(text).map(|s| Valor::Texto(s.to_string())).collect();
+                            let parts: Vec<Valor> = re
+                                .split(text)
+                                .map(|s| Valor::Texto(s.to_string()))
+                                .collect();
                             return Valor::Array(parts);
                         }
                         Err(e) => return Valor::Error(format!("regex::split(): {}", e)),
@@ -1914,10 +2374,16 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             }
 
             if (name == "__regex_find_all" || name == "regex::find_all") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
-                            let matches: Vec<Valor> = re.find_iter(text).map(|m| Valor::Texto(m.as_str().to_string())).collect();
+                            let matches: Vec<Valor> = re
+                                .find_iter(text)
+                                .map(|m| Valor::Texto(m.as_str().to_string()))
+                                .collect();
                             return Valor::Array(matches);
                         }
                         Err(e) => return Valor::Error(format!("regex::find_all(): {}", e)),
@@ -1928,14 +2394,18 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             }
 
             if (name == "__regex_capture" || name == "regex::capture") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr(&args[0], executor, funcs), &evaluar_expr(&args[1], executor, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr(&args[0], executor, funcs),
+                    &evaluar_expr(&args[1], executor, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
                             if let Some(caps) = re.captures(text) {
                                 // Retornar array: [match completo, grupo1, grupo2, ...]
                                 let mut result: Vec<Valor> = Vec::new();
                                 // Match completo
-                                result.push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
+                                result
+                                    .push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
                                 // Grupos de captura
                                 for i in 1..caps.len() {
                                     if let Some(m) = caps.get(i) {
@@ -1971,7 +2441,7 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             if (name == "__files_write" || name == "files::write") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr(&args[0], executor, funcs),
-                    &evaluar_expr(&args[1], executor, funcs)
+                    &evaluar_expr(&args[1], executor, funcs),
                 ) {
                     match std::fs::write(path, content) {
                         Ok(_) => return Valor::Bool(true),
@@ -1985,16 +2455,18 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             if (name == "__files_append" || name == "files::append") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr(&args[0], executor, funcs),
-                    &evaluar_expr(&args[1], executor, funcs)
+                    &evaluar_expr(&args[1], executor, funcs),
                 ) {
                     use std::io::Write;
-                    match std::fs::OpenOptions::new().create(true).append(true).open(path) {
-                        Ok(mut file) => {
-                            match file.write_all(content.as_bytes()) {
-                                Ok(_) => return Valor::Bool(true),
-                                Err(e) => return Valor::Error(format!("files::append(): {}", e)),
-                            }
-                        }
+                    match std::fs::OpenOptions::new()
+                        .create(true)
+                        .append(true)
+                        .open(path)
+                    {
+                        Ok(mut file) => match file.write_all(content.as_bytes()) {
+                            Ok(_) => return Valor::Bool(true),
+                            Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                        },
                         Err(e) => return Valor::Error(format!("files::append(): {}", e)),
                     }
                 } else {
@@ -2025,7 +2497,7 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             // Función de usuario - ejecutar y capturar retorno
             // Ahora tenemos &mut Executor, podemos ejecutar la función
             // Clonar datos para evitar borrow checker issues
-            
+
             // Primero buscar con nombre completo (math::sumar)
             // Si no existe, intentar buscar solo el nombre después de ::
             let func_name = if name.contains("::") {
@@ -2039,9 +2511,9 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
             } else {
                 name.clone()
             };
-            
+
             let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
-            
+
             if let Some((params, body)) = func_data {
                 // Evaluar argumentos
                 let mut arg_values = vec![];
@@ -2063,18 +2535,20 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                 // Nota: las funciones no pueden tener imports, así que usamos contextos vacíos
                 let mut empty_loaded: HashSet<String> = HashSet::new();
                 let mut empty_stack: Vec<String> = Vec::new();
-                
+
                 let mut return_value: Option<Valor> = None;
                 for s in &body {
                     match ejecutar_stmt(s, executor, funcs, &mut empty_loaded, &mut empty_stack) {
                         (Some(true), _) => {
                             // Break en función - salir
                             executor.pop_scope();
-                            return Valor::Error("Break no permitido en función de expresión".to_string());
+                            return Valor::Error(
+                                "Break no permitido en función de expresión".to_string(),
+                            );
                         }
                         (_, Some(val)) => {
                             return_value = Some(val);
-                            break;  // Hay retorno
+                            break; // Hay retorno
                         }
                         _ => {}
                     }
@@ -2136,14 +2610,18 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
                     lizer::BinOp::Resta => Valor::Num(l - r),
                     lizer::BinOp::Mult => Valor::Num(l * r),
                     lizer::BinOp::Div => {
-                        if r != 0.0 { Valor::Num(l / r) } else { Valor::Error("División por cero".to_string()) }
+                        if r != 0.0 {
+                            Valor::Num(l / r)
+                        } else {
+                            Valor::Error("División por cero".to_string())
+                        }
                     }
                     lizer::BinOp::Mayor => Valor::Bool(l > r),
                     lizer::BinOp::Menor => Valor::Bool(l < r),
                     lizer::BinOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
                     lizer::BinOp::MayorIgual => Valor::Bool(l >= r),
                     lizer::BinOp::MenorIgual => Valor::Bool(l <= r),
-                    _ => Valor::Error("Operador no soportado".to_string())
+                    _ => Valor::Error("Operador no soportado".to_string()),
                 };
             }
 
@@ -2172,7 +2650,12 @@ fn evaluar_expr(expr: &Expr, executor: &mut Executor, funcs: &mut HashMap<String
 // EVALUAR EXPRESIÓN (MODO GRÁFICO CON INPUT)
 // ============================================================================
 
-fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) -> Valor {
+fn evaluar_expr_gfx(
+    expr: &Expr,
+    executor: &mut Executor,
+    input: &InputEstado,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
@@ -2184,7 +2667,10 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
         }
         Expr::Bool(b) => Valor::Bool(*b),
         Expr::Array(elements) => {
-            let valores: Vec<Valor> = elements.iter().map(|e| evaluar_expr_gfx(e, executor, input, funcs)).collect();
+            let valores: Vec<Valor> = elements
+                .iter()
+                .map(|e| evaluar_expr_gfx(e, executor, input, funcs))
+                .collect();
             Valor::Array(valores)
         }
         Expr::Index { array, index } => {
@@ -2197,7 +2683,11 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     if idx < arr.len() {
                         return arr[idx].clone();
                     } else {
-                        return Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()));
+                        return Valor::Error(format!(
+                            "Índice {} fuera de rango (len={})",
+                            idx,
+                            arr.len()
+                        ));
                     }
                 } else {
                     return Valor::Error("El índice debe ser un número".to_string());
@@ -2218,7 +2708,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             // ========================================================================
             // INPUT MOUSE - V0.3.0 (Tank Combat)
             // ========================================================================
-            
+
             // input::mouse_x() - Retorna posición X del mouse
             if name == "input::mouse_x" || name == "__input_mouse_x" {
                 return Valor::Num(input.mouse_x as f64);
@@ -2231,11 +2721,17 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
 
             // input::mouse_position() - Retorna [x, y]
             if name == "input::mouse_position" || name == "__input_mouse_position" {
-                return Valor::Array(vec![Valor::Num(input.mouse_x as f64), Valor::Num(input.mouse_y as f64)]);
+                return Valor::Array(vec![
+                    Valor::Num(input.mouse_x as f64),
+                    Valor::Num(input.mouse_y as f64),
+                ]);
             }
 
             // input::is_mouse_button_pressed(button) - 0=izq, 1=der, 2=medio
-            if (name == "input::is_mouse_button_pressed" || name == "__input_is_mouse_button_pressed") && args.len() == 1 {
+            if (name == "input::is_mouse_button_pressed"
+                || name == "__input_is_mouse_button_pressed")
+                && args.len() == 1
+            {
                 if let Valor::Num(button) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     // Usamos el input estado para botones de mouse
                     let presionado = match button as i32 {
@@ -2260,7 +2756,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 }
                 return Valor::Num(suma);
             }
-            
+
             if name == "restar" && args.len() == 2 {
                 let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
@@ -2270,7 +2766,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     return Valor::Error("restar() requiere números".to_string());
                 }
             }
-            
+
             if name == "multiplicar" && args.len() >= 2 {
                 let mut producto = 1.0;
                 for arg in args {
@@ -2282,7 +2778,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 }
                 return Valor::Num(producto);
             }
-            
+
             if name == "dividir" && args.len() == 2 {
                 let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
@@ -2300,7 +2796,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             // ========================================================================
             // FUNCIONES MATH AVANZADAS - V0.3.0 (Tank Combat)
             // ========================================================================
-            
+
             // math::sqrt(x) - Raíz cuadrada
             if (name == "__math_sqrt" || name == "math::sqrt") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
@@ -2418,16 +2914,22 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let start_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let len_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
-                if let (Valor::Texto(s), Valor::Num(start), Valor::Num(len)) = (s_val, start_val, len_val) {
+                if let (Valor::Texto(s), Valor::Num(start), Valor::Num(len)) =
+                    (s_val, start_val, len_val)
+                {
                     let start_idx = start as usize;
                     let length = len as usize;
                     if start_idx + length <= s.len() {
                         return Valor::Texto(s[start_idx..start_idx + length].to_string());
                     } else {
-                        return Valor::Error("strings::substr(): índices fuera de rango".to_string());
+                        return Valor::Error(
+                            "strings::substr(): índices fuera de rango".to_string(),
+                        );
                     }
                 } else {
-                    return Valor::Error("strings::substr() requiere (string, inicio, longitud)".to_string());
+                    return Valor::Error(
+                        "strings::substr() requiere (string, inicio, longitud)".to_string(),
+                    );
                 }
             }
 
@@ -2435,7 +2937,9 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
-                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) = (s_val, buscar_val, reemplazar_val) {
+                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) =
+                    (s_val, buscar_val, reemplazar_val)
+                {
                     return Valor::Texto(s.replace(&buscar, &reemplazar));
                 } else {
                     return Valor::Error("strings::replace() requiere tres strings".to_string());
@@ -2447,10 +2951,13 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let sep_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(sep)) = (s_val, sep_val) {
-                    let partes: Vec<Valor> = s.split(&sep).map(|p| Valor::Texto(p.to_string())).collect();
+                    let partes: Vec<Valor> =
+                        s.split(&sep).map(|p| Valor::Texto(p.to_string())).collect();
                     return Valor::Array(partes);
                 } else {
-                    return Valor::Error("strings::split() requiere (string, separador)".to_string());
+                    return Valor::Error(
+                        "strings::split() requiere (string, separador)".to_string(),
+                    );
                 }
             }
 
@@ -2478,10 +2985,14 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
-                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) = (s_val, buscar_val, reemplazar_val) {
+                if let (Valor::Texto(s), Valor::Texto(buscar), Valor::Texto(reemplazar)) =
+                    (s_val, buscar_val, reemplazar_val)
+                {
                     return Valor::Texto(s.replace(&buscar, &reemplazar));
                 } else {
-                    return Valor::Error("strings::replace_all() requiere tres strings".to_string());
+                    return Valor::Error(
+                        "strings::replace_all() requiere tres strings".to_string(),
+                    );
                 }
             }
 
@@ -2489,13 +3000,16 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let sep_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let arr_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(sep), Valor::Array(arr)) = (sep_val, arr_val) {
-                    let strs: Result<Vec<String>, _> = arr.iter().map(|v| {
-                        if let Valor::Texto(s) = v {
-                            Ok(s.clone())
-                        } else {
-                            Err("strings::join() requiere array de strings")
-                        }
-                    }).collect();
+                    let strs: Result<Vec<String>, _> = arr
+                        .iter()
+                        .map(|v| {
+                            if let Valor::Texto(s) = v {
+                                Ok(s.clone())
+                            } else {
+                                Err("strings::join() requiere array de strings")
+                            }
+                        })
+                        .collect();
                     match strs {
                         Ok(parts) => return Valor::Texto(parts.join(&sep)),
                         Err(msg) => return Valor::Error(msg.to_string()),
@@ -2554,12 +3068,10 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::remove_file(&path) {
                         Ok(_) => return Valor::Num(1.0),
-                        Err(e) => {
-                            match std::fs::remove_dir_all(&path) {
-                                Ok(_) => return Valor::Num(1.0),
-                                Err(_) => return Valor::Error(format!("io::remove(): {}", e)),
-                            }
-                        }
+                        Err(e) => match std::fs::remove_dir_all(&path) {
+                            Ok(_) => return Valor::Num(1.0),
+                            Err(_) => return Valor::Error(format!("io::remove(): {}", e)),
+                        },
                     }
                 } else {
                     return Valor::Error("io::remove() requiere path (string)".to_string());
@@ -2635,7 +3147,9 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     arr.insert(0, elem_val);
                     return Valor::Array(arr);
                 } else {
-                    return Valor::Error("arrays::unshift() requiere (array, elemento)".to_string());
+                    return Valor::Error(
+                        "arrays::unshift() requiere (array, elemento)".to_string(),
+                    );
                 }
             }
 
@@ -2643,7 +3157,9 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let start_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let end_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
-                if let (Valor::Array(arr), Valor::Num(start), Valor::Num(end)) = (arr_val, start_val, end_val) {
+                if let (Valor::Array(arr), Valor::Num(start), Valor::Num(end)) =
+                    (arr_val, start_val, end_val)
+                {
                     let s = start as usize;
                     let e = end as usize;
                     if s <= e && e <= arr.len() {
@@ -2653,7 +3169,9 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                         return Valor::Error("arrays::slice(): índices inválidos".to_string());
                     }
                 } else {
-                    return Valor::Error("arrays::slice() requiere (array, inicio, fin)".to_string());
+                    return Valor::Error(
+                        "arrays::slice() requiere (array, inicio, fin)".to_string(),
+                    );
                 }
             }
 
@@ -2671,8 +3189,14 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 let min_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let max_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Num(min), Valor::Num(max)) = (min_val, max_val) {
-                    let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                    let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                    let seed = executor
+                        .leer("__random_seed")
+                        .unwrap_or(Valor::Num(12345.0));
+                    let mut s = if let Valor::Num(n) = seed {
+                        n as u32
+                    } else {
+                        12345
+                    };
                     s ^= s << 13;
                     s ^= s >> 17;
                     s ^= s << 5;
@@ -2686,8 +3210,14 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             }
 
             if (name == "__random_float" || name == "random::float") && args.len() == 0 {
-                let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                let seed = executor
+                    .leer("__random_seed")
+                    .unwrap_or(Valor::Num(12345.0));
+                let mut s = if let Valor::Num(n) = seed {
+                    n as u32
+                } else {
+                    12345
+                };
                 s ^= s << 13;
                 s ^= s >> 17;
                 s ^= s << 5;
@@ -2701,8 +3231,14 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     if arr.is_empty() {
                         return Valor::Error("random::choice(): array vacío".to_string());
                     }
-                    let seed = executor.leer("__random_seed").unwrap_or(Valor::Num(12345.0));
-                    let mut s = if let Valor::Num(n) = seed { n as u32 } else { 12345 };
+                    let seed = executor
+                        .leer("__random_seed")
+                        .unwrap_or(Valor::Num(12345.0));
+                    let mut s = if let Valor::Num(n) = seed {
+                        n as u32
+                    } else {
+                        12345
+                    };
                     s ^= s << 13;
                     s ^= s >> 17;
                     s ^= s << 5;
@@ -2731,12 +3267,10 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             if (name == "__json_stringify" || name == "json::stringify") && args.len() == 1 {
                 let val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 match valor_rydit_a_serde(&val) {
-                    Ok(serde_val) => {
-                        match serde_json::to_string(&serde_val) {
-                            Ok(json_str) => return Valor::Texto(json_str),
-                            Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
-                        }
-                    }
+                    Ok(serde_val) => match serde_json::to_string(&serde_val) {
+                        Ok(json_str) => return Valor::Texto(json_str),
+                        Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
+                    },
                     Err(e) => return Valor::Error(format!("json::stringify(): {}", e)),
                 }
             }
@@ -2757,13 +3291,18 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     thread::sleep(Duration::from_millis(ms as u64));
                     return Valor::Vacio;
                 } else {
-                    return Valor::Error("time::sleep() requiere milisegundos (número)".to_string());
+                    return Valor::Error(
+                        "time::sleep() requiere milisegundos (número)".to_string(),
+                    );
                 }
             }
 
             // ========== FUNCIONES REGEX (v0.6.2) ==========
             if (name == "__regex_match" || name == "regex::match") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => return Valor::Bool(re.is_match(text)),
                         Err(e) => return Valor::Error(format!("regex::match(): {}", e)),
@@ -2777,22 +3316,34 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                 if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
-                    &evaluar_expr_gfx(&args[2], executor, input, funcs)
+                    &evaluar_expr_gfx(&args[2], executor, input, funcs),
                 ) {
                     match regex::Regex::new(pattern) {
-                        Ok(re) => return Valor::Texto(re.replace_all(text, replacement.as_str()).to_string()),
+                        Ok(re) => {
+                            return Valor::Texto(
+                                re.replace_all(text, replacement.as_str()).to_string(),
+                            )
+                        }
                         Err(e) => return Valor::Error(format!("regex::replace(): {}", e)),
                     }
                 } else {
-                    return Valor::Error("regex::replace() requiere (patrón, reemplazo, texto)".to_string());
+                    return Valor::Error(
+                        "regex::replace() requiere (patrón, reemplazo, texto)".to_string(),
+                    );
                 }
             }
 
             if (name == "__regex_split" || name == "regex::split") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
-                            let parts: Vec<Valor> = re.split(text).map(|s| Valor::Texto(s.to_string())).collect();
+                            let parts: Vec<Valor> = re
+                                .split(text)
+                                .map(|s| Valor::Texto(s.to_string()))
+                                .collect();
                             return Valor::Array(parts);
                         }
                         Err(e) => return Valor::Error(format!("regex::split(): {}", e)),
@@ -2803,10 +3354,16 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             }
 
             if (name == "__regex_find_all" || name == "regex::find_all") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
-                            let matches: Vec<Valor> = re.find_iter(text).map(|m| Valor::Texto(m.as_str().to_string())).collect();
+                            let matches: Vec<Valor> = re
+                                .find_iter(text)
+                                .map(|m| Valor::Texto(m.as_str().to_string()))
+                                .collect();
                             return Valor::Array(matches);
                         }
                         Err(e) => return Valor::Error(format!("regex::find_all(): {}", e)),
@@ -2817,12 +3374,16 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             }
 
             if (name == "__regex_capture" || name == "regex::capture") && args.len() == 2 {
-                if let (Valor::Texto(pattern), Valor::Texto(text)) = (&evaluar_expr_gfx(&args[0], executor, input, funcs), &evaluar_expr_gfx(&args[1], executor, input, funcs)) {
+                if let (Valor::Texto(pattern), Valor::Texto(text)) = (
+                    &evaluar_expr_gfx(&args[0], executor, input, funcs),
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
+                ) {
                     match regex::Regex::new(pattern) {
                         Ok(re) => {
                             if let Some(caps) = re.captures(text) {
                                 let mut result: Vec<Valor> = Vec::new();
-                                result.push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
+                                result
+                                    .push(Valor::Texto(caps.get(0).unwrap().as_str().to_string()));
                                 for i in 1..caps.len() {
                                     if let Some(m) = caps.get(i) {
                                         result.push(Valor::Texto(m.as_str().to_string()));
@@ -2857,7 +3418,7 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             if (name == "__files_write" || name == "files::write") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
-                    &evaluar_expr_gfx(&args[1], executor, input, funcs)
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
                 ) {
                     match std::fs::write(path, content) {
                         Ok(_) => return Valor::Bool(true),
@@ -2871,16 +3432,18 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
             if (name == "__files_append" || name == "files::append") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
-                    &evaluar_expr_gfx(&args[1], executor, input, funcs)
+                    &evaluar_expr_gfx(&args[1], executor, input, funcs),
                 ) {
                     use std::io::Write;
-                    match std::fs::OpenOptions::new().create(true).append(true).open(path) {
-                        Ok(mut file) => {
-                            match file.write_all(content.as_bytes()) {
-                                Ok(_) => return Valor::Bool(true),
-                                Err(e) => return Valor::Error(format!("files::append(): {}", e)),
-                            }
-                        }
+                    match std::fs::OpenOptions::new()
+                        .create(true)
+                        .append(true)
+                        .open(path)
+                    {
+                        Ok(mut file) => match file.write_all(content.as_bytes()) {
+                            Ok(_) => return Valor::Bool(true),
+                            Err(e) => return Valor::Error(format!("files::append(): {}", e)),
+                        },
                         Err(e) => return Valor::Error(format!("files::append(): {}", e)),
                     }
                 } else {
@@ -2955,14 +3518,18 @@ fn evaluar_expr_gfx(expr: &Expr, executor: &mut Executor, input: &InputEstado, f
                     lizer::BinOp::Resta => Valor::Num(l - r),
                     lizer::BinOp::Mult => Valor::Num(l * r),
                     lizer::BinOp::Div => {
-                        if r != 0.0 { Valor::Num(l / r) } else { Valor::Error("División por cero".to_string()) }
+                        if r != 0.0 {
+                            Valor::Num(l / r)
+                        } else {
+                            Valor::Error("División por cero".to_string())
+                        }
                     }
                     lizer::BinOp::Mayor => Valor::Bool(l > r),
                     lizer::BinOp::Menor => Valor::Bool(l < r),
                     lizer::BinOp::Igual => Valor::Bool((l - r).abs() < 0.0001),
                     lizer::BinOp::MayorIgual => Valor::Bool(l >= r),
                     lizer::BinOp::MenorIgual => Valor::Bool(l <= r),
-                    _ => Valor::Error("Operador no soportado".to_string())
+                    _ => Valor::Error("Operador no soportado".to_string()),
                 };
             }
 
@@ -2995,7 +3562,7 @@ fn repl_mode() {
 
     let mut executor = Executor::nuevo();
     let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-    let stdin = io::stdin();  // No necesita ser mutable
+    let stdin = io::stdin(); // No necesita ser mutable
 
     loop {
         print!("rydit> ");
@@ -3044,7 +3611,7 @@ fn repl_mode() {
             _ => {
                 let tokens = Lizer::new(input).scan();
                 let mut parser = Parser::new(tokens);
-                
+
                 match parser.parse() {
                     Ok(program) => {
                         println!("[RYDIT] {} statements", program.statements.len());
@@ -3071,7 +3638,7 @@ fn evaluar_expr_migui(
     slider_states: &mut HashMap<String, f32>,
     textbox_states: &mut HashMap<String, String>,
     window_states: &mut HashMap<String, bool>,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
@@ -3084,14 +3651,44 @@ fn evaluar_expr_migui(
         }
         Expr::Bool(b) => Valor::Bool(*b),
         Expr::Array(elements) => {
-            let valores: Vec<Valor> = elements.iter()
-                .map(|e| evaluar_expr_migui(e, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs))
+            let valores: Vec<Valor> = elements
+                .iter()
+                .map(|e| {
+                    evaluar_expr_migui(
+                        e,
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    )
+                })
                 .collect();
             Valor::Array(valores)
         }
         Expr::Index { array, index } => {
-            let array_val = evaluar_expr_migui(array, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
-            let index_val = evaluar_expr_migui(index, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let array_val = evaluar_expr_migui(
+                array,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
+            let index_val = evaluar_expr_migui(
+                index,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
 
             if let Valor::Array(arr) = array_val {
                 if let Valor::Num(i) = index_val {
@@ -3099,7 +3696,11 @@ fn evaluar_expr_migui(
                     if idx < arr.len() {
                         return arr[idx].clone();
                     } else {
-                        return Valor::Error(format!("Índice {} fuera de rango (len={})", idx, arr.len()));
+                        return Valor::Error(format!(
+                            "Índice {} fuera de rango (len={})",
+                            idx,
+                            arr.len()
+                        ));
                     }
                 } else {
                     return Valor::Error("El índice debe ser un número".to_string());
@@ -3122,19 +3723,79 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
-                    let clicked = gui.button(WidgetId::new(&id), Rect::new(x as f32, y as f32, w as f32, h as f32), &text);
+                    let clicked = gui.button(
+                        WidgetId::new(&id),
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                        &text,
+                    );
                     return Valor::Bool(clicked);
                 } else {
-                    return Valor::Error("migui::button() requiere (id, text, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::button() requiere (id, text, x, y, w, h)".to_string(),
+                    );
                 }
             }
 
@@ -3146,19 +3807,79 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
-                    gui.label(WidgetId::new(&id), &text, Rect::new(x as f32, y as f32, w as f32, h as f32));
+                    gui.label(
+                        WidgetId::new(&id),
+                        &text,
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                    );
                     return Valor::Vacio;
                 } else {
-                    return Valor::Error("migui::label() requiere (id, text, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::label() requiere (id, text, x, y, w, h)".to_string(),
+                    );
                 }
             }
 
@@ -3171,21 +3892,91 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[6], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[6],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
                     let state = checkbox_states.entry(id.clone()).or_insert(checked);
-                    let changed = gui.checkbox(WidgetId::new(&id), &text, state, Rect::new(x as f32, y as f32, w as f32, h as f32));
+                    let changed = gui.checkbox(
+                        WidgetId::new(&id),
+                        &text,
+                        state,
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                    );
                     return Valor::Bool(changed);
                 } else {
-                    return Valor::Error("migui::checkbox() requiere (id, text, checked, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::checkbox() requiere (id, text, checked, x, y, w, h)".to_string(),
+                    );
                 }
             }
 
@@ -3199,22 +3990,102 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[6], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[7], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[6],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[7],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
                     let state = slider_states.entry(id.clone()).or_insert(value as f32);
-                    *state = gui.slider(WidgetId::new(&id), *state, min as f32, max as f32, Rect::new(x as f32, y as f32, w as f32, h as f32));
+                    *state = gui.slider(
+                        WidgetId::new(&id),
+                        *state,
+                        min as f32,
+                        max as f32,
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                    );
                     return Valor::Num(*state as f64);
                 } else {
-                    return Valor::Error("migui::slider() requiere (id, value, min, max, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::slider() requiere (id, value, min, max, x, y, w, h)".to_string(),
+                    );
                 }
             }
 
@@ -3226,20 +4097,80 @@ fn evaluar_expr_migui(
                     Valor::Num(y),
                     Valor::Num(w),
                     Valor::Num(h),
-                    Valor::Texto(color_str)
+                    Valor::Texto(color_str),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
                     let color = MiguiColor::from_str(&color_str);
-                    gui.panel(WidgetId::new(&id), Rect::new(x as f32, y as f32, w as f32, h as f32), color);
+                    gui.panel(
+                        WidgetId::new(&id),
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                        color,
+                    );
                     return Valor::Vacio;
                 } else {
-                    return Valor::Error("migui::panel() requiere (id, x, y, w, h, color)".to_string());
+                    return Valor::Error(
+                        "migui::panel() requiere (id, x, y, w, h, color)".to_string(),
+                    );
                 }
             }
 
@@ -3250,17 +4181,70 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
                     gui.set_textbox_text(&id, String::new());
-                    gui.textbox(WidgetId::new(&id), Rect::new(x as f32, y as f32, w as f32, h as f32));
-                    return Valor::Texto(gui.textbox_states.get(&id).map(|s| s.text.clone()).unwrap_or_default());
+                    gui.textbox(
+                        WidgetId::new(&id),
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                    );
+                    return Valor::Texto(
+                        gui.textbox_states
+                            .get(&id)
+                            .map(|s| s.text.clone())
+                            .unwrap_or_default(),
+                    );
                 } else {
                     return Valor::Error("migui::textbox() requiere (id, x, y, w, h)".to_string());
                 }
@@ -3275,21 +4259,91 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[6], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[6],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
                     let state = window_states.entry(id.clone()).or_insert(open);
-                    let is_open = gui.window(WidgetId::new(&id), &title, Rect::new(x as f32, y as f32, w as f32, h as f32), state);
+                    let is_open = gui.window(
+                        WidgetId::new(&id),
+                        &title,
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                        state,
+                    );
                     return Valor::Bool(is_open);
                 } else {
-                    return Valor::Error("migui::window() requiere (id, title, open, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::window() requiere (id, title, open, x, y, w, h)".to_string(),
+                    );
                 }
             }
 
@@ -3302,23 +4356,101 @@ fn evaluar_expr_migui(
                     Valor::Num(x),
                     Valor::Num(y),
                     Valor::Num(w),
-                    Valor::Num(h)
+                    Valor::Num(h),
                 ) = (
-                    evaluar_expr_migui(&args[0], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[1], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[2], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[3], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[4], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[5], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
-                    evaluar_expr_migui(&args[6], executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs),
+                    evaluar_expr_migui(
+                        &args[0],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[1],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[2],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[3],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[4],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[5],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
+                    evaluar_expr_migui(
+                        &args[6],
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ),
                 ) {
-                    let buttons: Vec<&str> = buttons_arr.iter()
-                        .filter_map(|v| if let Valor::Texto(s) = v { Some(s.as_str()) } else { None })
+                    let buttons: Vec<&str> = buttons_arr
+                        .iter()
+                        .filter_map(|v| {
+                            if let Valor::Texto(s) = v {
+                                Some(s.as_str())
+                            } else {
+                                None
+                            }
+                        })
                         .collect();
-                    let result = gui.message_box(&title, &message, &buttons, Rect::new(x as f32, y as f32, w as f32, h as f32));
+                    let result = gui.message_box(
+                        &title,
+                        &message,
+                        &buttons,
+                        Rect::new(x as f32, y as f32, w as f32, h as f32),
+                    );
                     return Valor::Num(result as f64);
                 } else {
-                    return Valor::Error("migui::message_box() requiere (title, message, buttons, x, y, w, h)".to_string());
+                    return Valor::Error(
+                        "migui::message_box() requiere (title, message, buttons, x, y, w, h)"
+                            .to_string(),
+                    );
                 }
             }
 
@@ -3339,7 +4471,8 @@ fn evaluar_expr_migui(
             }
 
             // migui::is_mouse_button_pressed() -> bool
-            if name == "migui::is_mouse_button_pressed" || name == "__migui_is_mouse_button_pressed" {
+            if name == "migui::is_mouse_button_pressed" || name == "__migui_is_mouse_button_pressed"
+            {
                 return Valor::Bool(gui.is_mouse_pressed());
             }
 
@@ -3359,7 +4492,16 @@ fn evaluar_expr_migui(
             if let Some((params, body)) = func_data {
                 let mut arg_values = vec![];
                 for arg in args {
-                    arg_values.push(evaluar_expr_migui(arg, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs));
+                    arg_values.push(evaluar_expr_migui(
+                        arg,
+                        executor,
+                        gui,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                        funcs,
+                    ));
                 }
 
                 executor.push_scope();
@@ -3374,10 +4516,23 @@ fn evaluar_expr_migui(
 
                 let mut return_value: Option<Valor> = None;
                 for s in &body {
-                    match ejecutar_stmt_migui(s, executor, funcs, gui, &mut empty_loaded, &mut empty_stack, checkbox_states, slider_states, textbox_states, window_states) {
+                    match ejecutar_stmt_migui(
+                        s,
+                        executor,
+                        funcs,
+                        gui,
+                        &mut empty_loaded,
+                        &mut empty_stack,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                    ) {
                         (Some(true), _) => {
                             executor.pop_scope();
-                            return Valor::Error("Break no permitido en función de expresión".to_string());
+                            return Valor::Error(
+                                "Break no permitido en función de expresión".to_string(),
+                            );
                         }
                         (_, Some(val)) => {
                             return_value = Some(val);
@@ -3394,8 +4549,26 @@ fn evaluar_expr_migui(
             Valor::Error(format!("Función '{}' no soportada en expresiones", name))
         }
         Expr::BinOp { left, op, right } => {
-            let left_val = evaluar_expr_migui(left, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
-            let right_val = evaluar_expr_migui(right, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let left_val = evaluar_expr_migui(
+                left,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
+            let right_val = evaluar_expr_migui(
+                right,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
 
             match op {
                 lizer::BinOp::And => {
@@ -3469,10 +4642,22 @@ fn evaluar_expr_migui(
                 _ => {}
             }
 
-            Valor::Error(format!("Operación no soportada: {:?} entre {:?} y {:?}", op, left_val, right_val))
+            Valor::Error(format!(
+                "Operación no soportada: {:?} entre {:?} y {:?}",
+                op, left_val, right_val
+            ))
         }
         Expr::Unary { op, expr: inner } => {
-            let val = evaluar_expr_migui(inner, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let val = evaluar_expr_migui(
+                inner,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             match op {
                 lizer::UnaryOp::Neg => {
                     if let Valor::Num(n) = val {
@@ -3512,12 +4697,43 @@ fn ejecutar_stmt_migui(
             executor.ejecutar(cmd);
         }
         Stmt::Assign { name, value } => {
-            let valor = evaluar_expr_migui(value, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let valor = evaluar_expr_migui(
+                value,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             executor.guardar(name, valor);
         }
-        Stmt::IndexAssign { array, index, value } => {
-            let index_val = evaluar_expr_migui(index, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
-            let valor = evaluar_expr_migui(value, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+        Stmt::IndexAssign {
+            array,
+            index,
+            value,
+        } => {
+            let index_val = evaluar_expr_migui(
+                index,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
+            let valor = evaluar_expr_migui(
+                value,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
 
             if let Some(Valor::Array(arr)) = executor.leer(array) {
                 let idx = match index_val {
@@ -3529,7 +4745,11 @@ fn ejecutar_stmt_migui(
                 };
 
                 if idx >= arr.len() {
-                    println!("[ERROR] Índice {} fuera de límites (array de {} elementos)", idx, arr.len());
+                    println!(
+                        "[ERROR] Índice {} fuera de límites (array de {} elementos)",
+                        idx,
+                        arr.len()
+                    );
                     return (None, None);
                 }
 
@@ -3540,8 +4760,21 @@ fn ejecutar_stmt_migui(
                 println!("[ERROR] '{}' no es un array", array);
             }
         }
-        Stmt::If { condition, then_body, else_body } => {
-            let cond_val = evaluar_expr_migui(condition, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+        Stmt::If {
+            condition,
+            then_body,
+            else_body,
+        } => {
+            let cond_val = evaluar_expr_migui(
+                condition,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             let es_verdad = match cond_val {
                 Valor::Num(n) => n != 0.0,
                 Valor::Bool(b) => b,
@@ -3550,18 +4783,49 @@ fn ejecutar_stmt_migui(
 
             if es_verdad {
                 for s in then_body {
-                    ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
+                    ejecutar_stmt_migui(
+                        s,
+                        executor,
+                        funcs,
+                        gui,
+                        loaded_modules,
+                        importing_stack,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                    );
                 }
             } else if let Some(else_stmts) = else_body {
                 for s in else_stmts {
-                    ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
+                    ejecutar_stmt_migui(
+                        s,
+                        executor,
+                        funcs,
+                        gui,
+                        loaded_modules,
+                        importing_stack,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                    );
                 }
             }
         }
         Stmt::While { condition, body } => {
             let mut iterations = 0;
             while iterations < 10 {
-                let cond_val = evaluar_expr_migui(condition, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+                let cond_val = evaluar_expr_migui(
+                    condition,
+                    executor,
+                    gui,
+                    checkbox_states,
+                    slider_states,
+                    textbox_states,
+                    window_states,
+                    funcs,
+                );
                 let es_verdad = match cond_val {
                     Valor::Num(n) => n != 0.0,
                     Valor::Bool(b) => b,
@@ -3573,18 +4837,53 @@ fn ejecutar_stmt_migui(
                 }
 
                 for s in body {
-                    ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
+                    ejecutar_stmt_migui(
+                        s,
+                        executor,
+                        funcs,
+                        gui,
+                        loaded_modules,
+                        importing_stack,
+                        checkbox_states,
+                        slider_states,
+                        textbox_states,
+                        window_states,
+                    );
                 }
                 iterations += 1;
             }
         }
-        Stmt::ForEach { var, iterable, body } => {
-            let iterable_val = evaluar_expr_migui(iterable, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+        Stmt::ForEach {
+            var,
+            iterable,
+            body,
+        } => {
+            let iterable_val = evaluar_expr_migui(
+                iterable,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             if let Valor::Array(arr) = iterable_val {
                 for item in arr {
                     executor.guardar(var, item.clone());
                     for s in body {
-                        ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
+                        ejecutar_stmt_migui(
+                            s,
+                            executor,
+                            funcs,
+                            gui,
+                            loaded_modules,
+                            importing_stack,
+                            checkbox_states,
+                            slider_states,
+                            textbox_states,
+                            window_states,
+                        );
                     }
                 }
             } else {
@@ -3592,16 +4891,34 @@ fn ejecutar_stmt_migui(
             }
         }
         Stmt::Block(stmts) => {
-            println!("[MIGUI DEBUG] Ejecutando bloque con {} statements", stmts.len());
+            println!(
+                "[MIGUI DEBUG] Ejecutando bloque con {} statements",
+                stmts.len()
+            );
             for (i, s) in stmts.iter().enumerate() {
-                println!("[MIGUI DEBUG] Statement {}: {:?}", i, match s {
-                    Stmt::Expr(_) => "Expr",
-                    Stmt::Assign { .. } => "Assign",
-                    Stmt::Call { .. } => "Call",
-                    Stmt::Function { .. } => "Function",
-                    _ => "Other",
-                });
-                ejecutar_stmt_migui(s, executor, funcs, gui, loaded_modules, importing_stack, checkbox_states, slider_states, textbox_states, window_states);
+                println!(
+                    "[MIGUI DEBUG] Statement {}: {:?}",
+                    i,
+                    match s {
+                        Stmt::Expr(_) => "Expr",
+                        Stmt::Assign { .. } => "Assign",
+                        Stmt::Call { .. } => "Call",
+                        Stmt::Function { .. } => "Function",
+                        _ => "Other",
+                    }
+                );
+                ejecutar_stmt_migui(
+                    s,
+                    executor,
+                    funcs,
+                    gui,
+                    loaded_modules,
+                    importing_stack,
+                    checkbox_states,
+                    slider_states,
+                    textbox_states,
+                    window_states,
+                );
             }
         }
         Stmt::Function { name, params, body } => {
@@ -3609,7 +4926,19 @@ fn ejecutar_stmt_migui(
         }
         Stmt::Call { name, args } => {
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
-            let _ = evaluar_expr_migui(&Expr::Call { name: name.clone(), args: args.clone() }, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let _ = evaluar_expr_migui(
+                &Expr::Call {
+                    name: name.clone(),
+                    args: args.clone(),
+                },
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             return (None, None);
         }
         Stmt::Import { module, alias } => {
@@ -3671,11 +5000,11 @@ fn ejecutar_stmt_migui(
                         (Some(true), _) => {
                             println!("[ERROR] break no permitido en módulo '{}'", module);
                             break;
-                        },
+                        }
                         (_, Some(_)) => {
                             println!("[ERROR] return no permitido en módulo '{}'", module);
                             break;
-                        },
+                        }
                         _ => {}
                     }
                 }
@@ -3707,17 +5036,38 @@ fn ejecutar_stmt_migui(
         }
         Stmt::Return(opt_expr) => {
             if let Some(val) = opt_expr {
-                let valor = evaluar_expr_migui(val, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
-                println!("[RETURN] {}", match valor {
-                    Valor::Num(n) => format!("{}", n),
-                    Valor::Texto(s) => s,
-                    Valor::Bool(b) => format!("{}", b),
-                    _ => format!("{:?}", valor),
-                });
+                let valor = evaluar_expr_migui(
+                    val,
+                    executor,
+                    gui,
+                    checkbox_states,
+                    slider_states,
+                    textbox_states,
+                    window_states,
+                    funcs,
+                );
+                println!(
+                    "[RETURN] {}",
+                    match valor {
+                        Valor::Num(n) => format!("{}", n),
+                        Valor::Texto(s) => s,
+                        Valor::Bool(b) => format!("{}", b),
+                        _ => format!("{:?}", valor),
+                    }
+                );
             }
         }
         Stmt::Expr(expr) => {
-            let valor = evaluar_expr_migui(expr, executor, gui, checkbox_states, slider_states, textbox_states, window_states, funcs);
+            let valor = evaluar_expr_migui(
+                expr,
+                executor,
+                gui,
+                checkbox_states,
+                slider_states,
+                textbox_states,
+                window_states,
+                funcs,
+            );
             executor.voz(&valor);
         }
         _ => {}
@@ -3808,7 +5158,7 @@ mod warning_tests {
         // "a"+1+"b"+2 -> "a1b2"
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // "a" + 1 -> "a1"
         let expr1 = Expr::BinOp {
             left: Box::new(Expr::Texto("a".to_string())),
@@ -3817,7 +5167,7 @@ mod warning_tests {
         };
         let result1 = evaluar_expr(&expr1, &mut executor, &mut funcs);
         assert_eq!(result1, Valor::Texto("a1".to_string()));
-        
+
         // "a1" + "b" -> "a1b"
         let expr2 = Expr::BinOp {
             left: Box::new(Expr::Texto("a1".to_string())),
@@ -3826,7 +5176,7 @@ mod warning_tests {
         };
         let result2 = evaluar_expr(&expr2, &mut executor, &mut funcs);
         assert_eq!(result2, Valor::Texto("a1b".to_string()));
-        
+
         // "a1b" + 2 -> "a1b2"
         let expr3 = Expr::BinOp {
             left: Box::new(Expr::Texto("a1b".to_string())),
@@ -3842,7 +5192,7 @@ mod warning_tests {
         // "total: " + (2+3)*4 -> "total: 20"
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // (2+3)*4 = 20
         let inner = Expr::BinOp {
             left: Box::new(Expr::Num(2.0)),
@@ -3854,14 +5204,14 @@ mod warning_tests {
             op: lizer::BinOp::Mult,
             right: Box::new(Expr::Num(4.0)),
         };
-        
+
         // "total: " + 20
         let expr = Expr::BinOp {
             left: Box::new(Expr::Texto("total: ".to_string())),
             op: lizer::BinOp::Suma,
             right: Box::new(expr_mult),
         };
-        
+
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
         assert_eq!(result, Valor::Texto("total: 20".to_string()));
     }
@@ -3889,16 +5239,16 @@ mod warning_tests {
         // %p = 50 + 25 -> 75
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         let expr = Expr::BinOp {
             left: Box::new(Expr::Num(50.0)),
             op: lizer::BinOp::Suma,
             right: Box::new(Expr::Num(25.0)),
         };
-        
+
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
         executor.guardar("%p", result);
-        
+
         assert_eq!(executor.leer("%p"), Some(Valor::Num(75.0)));
     }
 
@@ -3907,17 +5257,17 @@ mod warning_tests {
         // [$a, $b] debe evaluarse como array
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         executor.guardar("$a", Valor::Num(1.0));
         executor.guardar("$b", Valor::Num(2.0));
-        
+
         let expr = Expr::Array(vec![
             Expr::Var("$a".to_string()),
             Expr::Var("$b".to_string()),
         ]);
-        
+
         let result = evaluar_expr(&expr, &mut executor, &mut funcs);
-        
+
         if let Valor::Array(arr) = result {
             assert_eq!(arr.len(), 2);
             assert_eq!(arr[0], Valor::Num(1.0));
@@ -4122,7 +5472,7 @@ mod warning_tests {
         // Escribir y leer archivo
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // Write
         let write_args = vec![
             Expr::Texto("test_rydit.txt".to_string()),
@@ -4153,10 +5503,10 @@ mod warning_tests {
         // Append a archivo
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // Write inicial
         std::fs::write("test_append.txt", "Linea 1");
-        
+
         // Append
         let append_args = vec![
             Expr::Texto("test_append.txt".to_string()),
@@ -4182,10 +5532,10 @@ mod warning_tests {
         // Verificar existencia
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // Crear archivo
         std::fs::write("test_exists.txt", "test");
-        
+
         // Exists - true
         let exists_args = vec![Expr::Texto("test_exists.txt".to_string())];
         let exists_expr = Expr::Call {
@@ -4213,10 +5563,10 @@ mod warning_tests {
         // Eliminar archivo
         let mut executor = Executor::nuevo();
         let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        
+
         // Crear archivo
         std::fs::write("test_delete.txt", "para eliminar");
-        
+
         // Delete
         let delete_args = vec![Expr::Texto("test_delete.txt".to_string())];
         let delete_expr = Expr::Call {

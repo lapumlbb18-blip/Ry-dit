@@ -13,10 +13,10 @@ use std::collections::HashMap;
 pub struct Particle {
     pub x: f32,
     pub y: f32,
-    pub vx: f32,  // Velocidad X
-    pub vy: f32,  // Velocidad Y
-    pub life: f32,      // Vida actual (0.0 - 1.0)
-    pub max_life: f32,  // Vida máxima
+    pub vx: f32,       // Velocidad X
+    pub vy: f32,       // Velocidad Y
+    pub life: f32,     // Vida actual (0.0 - 1.0)
+    pub max_life: f32, // Vida máxima
     pub size: f32,
     pub color: Color,
     pub gravity: f32,
@@ -26,7 +26,10 @@ pub struct Particle {
 impl Particle {
     pub fn new(x: f32, y: f32, vx: f32, vy: f32, color: Color, size: f32, life: f32) -> Self {
         Self {
-            x, y, vx, vy,
+            x,
+            y,
+            vx,
+            vy,
             life,
             max_life: life,
             size,
@@ -42,15 +45,15 @@ impl Particle {
         self.vy += (self.gravity + global_gravity) * dt;
         self.vx += wind_x * dt;
         self.vy += wind_y * dt;
-        
+
         // Aplicar fricción
         self.vx *= self.friction;
         self.vy *= self.friction;
-        
+
         // Actualizar posición
         self.x += self.vx * dt;
         self.y += self.vy * dt;
-        
+
         // Reducir vida
         self.life -= dt;
     }
@@ -84,8 +87,13 @@ impl Particle {
             b: self.color.b,
             a: alpha,
         };
-        
-        d.draw_circle(self.x as i32, self.y as i32, self.size as f32, color_with_alpha);
+
+        d.draw_circle(
+            self.x as i32,
+            self.y as i32,
+            self.size as f32,
+            color_with_alpha,
+        );
     }
 }
 
@@ -98,8 +106,8 @@ impl Particle {
 pub struct ParticleEmitter {
     pub x: f32,
     pub y: f32,
-    pub rate: f32,        // Partículas por segundo
-    pub spread: f32,      // Dispersión angular (grados)
+    pub rate: f32,   // Partículas por segundo
+    pub spread: f32, // Dispersión angular (grados)
     pub speed_min: f32,
     pub speed_max: f32,
     pub size_min: f32,
@@ -113,14 +121,16 @@ pub struct ParticleEmitter {
     pub wind_y: f32,
     pub emission_timer: f32,
     pub active: bool,
-    pub one_shot: bool,   // Emitir una vez y desactivar
-    pub emitted: bool,    // Ya emitió (para one_shot)
+    pub one_shot: bool, // Emitir una vez y desactivar
+    pub emitted: bool,  // Ya emitió (para one_shot)
 }
 
 impl ParticleEmitter {
     pub fn new(x: f32, y: f32, rate: f32) -> Self {
         Self {
-            x, y, rate,
+            x,
+            y,
+            rate,
             spread: 360.0,
             speed_min: 50.0,
             speed_max: 150.0,
@@ -152,34 +162,38 @@ impl ParticleEmitter {
         } else {
             -self.spread / 2.0 + rand_f32() * self.spread
         };
-        
+
         let angle_rad = angle_deg.to_radians();
-        
+
         // Calcular velocidad
         let speed = self.speed_min + rand_f32() * (self.speed_max - self.speed_min);
         let vx = speed * angle_rad.cos();
         let vy = speed * angle_rad.sin();
-        
+
         // Tamaño aleatorio
         let size = self.size_min + rand_f32() * (self.size_max - self.size_min);
-        
+
         // Color interpolado
         let t = rand_f32();
         let color = Color {
-            r: (self.color_start.r as f32 + t * (self.color_end.r as f32 - self.color_start.r as f32)) as u8,
-            g: (self.color_start.g as f32 + t * (self.color_end.g as f32 - self.color_start.g as f32)) as u8,
-            b: (self.color_start.b as f32 + t * (self.color_end.b as f32 - self.color_start.b as f32)) as u8,
-            a: (self.color_start.a as f32 + t * (self.color_end.a as f32 - self.color_start.a as f32)) as u8,
+            r: (self.color_start.r as f32
+                + t * (self.color_end.r as f32 - self.color_start.r as f32)) as u8,
+            g: (self.color_start.g as f32
+                + t * (self.color_end.g as f32 - self.color_start.g as f32)) as u8,
+            b: (self.color_start.b as f32
+                + t * (self.color_end.b as f32 - self.color_start.b as f32)) as u8,
+            a: (self.color_start.a as f32
+                + t * (self.color_end.a as f32 - self.color_start.a as f32)) as u8,
         };
-        
+
         // Vida aleatoria
-        let life = 0.5 + rand_f32() * 1.5;  // 0.5 - 2.0 segundos
-        
+        let life = 0.5 + rand_f32() * 1.5; // 0.5 - 2.0 segundos
+
         let mut particle = Particle::new(self.x, self.y, vx, vy, color, size, life);
         particle.gravity = self.gravity;
         particle.friction = self.friction;
         self.particles.push(particle);
-        
+
         if self.one_shot {
             self.emitted = true;
         }
@@ -195,7 +209,7 @@ impl ParticleEmitter {
         if !self.one_shot || !self.emitted {
             self.emission_timer += dt;
             let emit_interval = 1.0 / self.rate;
-            
+
             while self.emission_timer >= emit_interval {
                 self.emit();
                 self.emission_timer -= emit_interval;
@@ -204,7 +218,12 @@ impl ParticleEmitter {
 
         // Actualizar partículas
         for particle in &mut self.particles {
-            particle.update(dt, global_gravity + self.gravity, global_wind_x + self.wind_x, global_wind_y + self.wind_y);
+            particle.update(
+                dt,
+                global_gravity + self.gravity,
+                global_wind_x + self.wind_x,
+                global_wind_y + self.wind_y,
+            );
         }
 
         // Eliminar partículas muertas
@@ -240,7 +259,7 @@ impl ParticleSystem {
     pub fn new() -> Self {
         Self {
             emitters: HashMap::new(),
-            global_gravity: 200.0,  // Gravedad hacia abajo
+            global_gravity: 200.0, // Gravedad hacia abajo
             global_wind_x: 0.0,
             global_wind_y: 0.0,
         }
@@ -260,7 +279,12 @@ impl ParticleSystem {
     /// Actualizar todos los emisores
     pub fn update(&mut self, dt: f32) {
         for (_, emitter) in &mut self.emitters {
-            emitter.update(dt, self.global_gravity, self.global_wind_x, self.global_wind_y);
+            emitter.update(
+                dt,
+                self.global_gravity,
+                self.global_wind_x,
+                self.global_wind_y,
+            );
         }
 
         // Eliminar emisores vacíos
@@ -328,30 +352,30 @@ fn rand_f32() -> f32 {
 impl ParticleEmitter {
     /// Efecto de explosión
     pub fn explosion(x: f32, y: f32) -> Self {
-        let mut emitter = Self::new(x, y, 500.0);  // Alta tasa inicial
+        let mut emitter = Self::new(x, y, 500.0); // Alta tasa inicial
         emitter.spread = 360.0;
         emitter.speed_min = 100.0;
         emitter.speed_max = 300.0;
         emitter.size_min = 3.0;
         emitter.size_max = 8.0;
-        emitter.color_start = Color::new(255, 200, 50, 255);  // Amarillo
-        emitter.color_end = Color::new(255, 50, 0, 255);      // Rojo
-        emitter.gravity = -50.0;  // Anti-gravedad inicial
-        emitter.one_shot = true;  // Una sola explosión
+        emitter.color_start = Color::new(255, 200, 50, 255); // Amarillo
+        emitter.color_end = Color::new(255, 50, 0, 255); // Rojo
+        emitter.gravity = -50.0; // Anti-gravedad inicial
+        emitter.one_shot = true; // Una sola explosión
         emitter
     }
 
     /// Efecto de fuego
     pub fn fire(x: f32, y: f32) -> Self {
         let mut emitter = Self::new(x, y, 30.0);
-        emitter.spread = 30.0;  // Hacia arriba
+        emitter.spread = 30.0; // Hacia arriba
         emitter.speed_min = 50.0;
         emitter.speed_max = 100.0;
         emitter.size_min = 5.0;
         emitter.size_max = 15.0;
-        emitter.color_start = Color::new(255, 200, 50, 200);  // Amarillo
-        emitter.color_end = Color::new(255, 50, 0, 50);       // Rojo transparente
-        emitter.gravity = -30.0;  // Hacia arriba
+        emitter.color_start = Color::new(255, 200, 50, 200); // Amarillo
+        emitter.color_end = Color::new(255, 50, 0, 50); // Rojo transparente
+        emitter.gravity = -30.0; // Hacia arriba
         emitter
     }
 
@@ -363,24 +387,24 @@ impl ParticleEmitter {
         emitter.speed_max = 50.0;
         emitter.size_min = 10.0;
         emitter.size_max = 30.0;
-        emitter.color_start = Color::new(100, 100, 100, 150);  // Gris
+        emitter.color_start = Color::new(100, 100, 100, 150); // Gris
         emitter.color_end = Color::new(50, 50, 50, 50);
-        emitter.gravity = -20.0;  // Hacia arriba lento
+        emitter.gravity = -20.0; // Hacia arriba lento
         emitter
     }
 
     /// Efecto de lluvia
     pub fn rain(x: f32, y: f32, _width: f32) -> Self {
         let mut emitter = Self::new(x, y, 100.0);
-        emitter.spread = 5.0;  // Casi recto
+        emitter.spread = 5.0; // Casi recto
         emitter.speed_min = 200.0;
         emitter.speed_max = 400.0;
         emitter.size_min = 2.0;
         emitter.size_max = 3.0;
-        emitter.color_start = Color::new(100, 150, 255, 200);  // Azul claro
+        emitter.color_start = Color::new(100, 150, 255, 200); // Azul claro
         emitter.color_end = Color::new(50, 100, 200, 150);
-        emitter.gravity = 50.0;  // Hacia abajo
-        emitter.wind_x = 20.0;   // Viento lateral
+        emitter.gravity = 50.0; // Hacia abajo
+        emitter.wind_x = 20.0; // Viento lateral
         emitter
     }
 
@@ -392,9 +416,9 @@ impl ParticleEmitter {
         emitter.speed_max = 250.0;
         emitter.size_min = 2.0;
         emitter.size_max = 4.0;
-        emitter.color_start = Color::new(255, 255, 100, 255);  // Amarillo brillante
+        emitter.color_start = Color::new(255, 255, 100, 255); // Amarillo brillante
         emitter.color_end = Color::new(255, 100, 0, 255);
-        emitter.gravity = 100.0;  // Caen rápido
+        emitter.gravity = 100.0; // Caen rápido
         emitter
     }
 }

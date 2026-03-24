@@ -1,13 +1,13 @@
 //! Benchmarks para lizer (lexer + parser)
-//! 
+//!
 //! Ejecutar con: cargo bench --bench bench_lizer
-//! 
+//!
 //! Nota: Requiere nightly Rust para #[feature(test)]
 
 #![feature(test)]
 extern crate test;
 
-use lizer::{Lizer, Parser};
+use lizer::Lizer;
 use test::Bencher;
 
 // ============================================================================

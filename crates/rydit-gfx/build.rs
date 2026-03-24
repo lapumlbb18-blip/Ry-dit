@@ -7,6 +7,6 @@ fn main() {
         .atleast_version("5.0")
         .probe("raylib")
         .expect("raylib no encontrado. Instala raylib con: pkg install raylib");
-    
+
     println!("cargo:rerun-if-changed=build.rs");
 }
