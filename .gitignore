@@ -115,13 +115,15 @@ credentials/
 *.password
 
 # ============================================================================
-# BACKUPS (NO SUBIR - LOCALES)
+# BACKUPS (NO SUBIR - LOCALES Y PELIGROSOS)
 # ============================================================================
 *.bak
 *.backup
 *.old
 backup/
 backups/
+backup_*.sh
+.rcloneignore
 
 # ============================================================================
 # DOCUMENTACIÓN INTERNA (NO SUBIR - SOLO EQUIPO)
@@ -129,6 +131,26 @@ backups/
 internal/
 private/
 confidential/
+historial/
+ruta_v0.5.0_v0.9.9/
+archive/
+context/
+
+# ============================================================================
+# ARCHIVOS DE PLANES Y RESÚMENES INTERNOS (NO SUBIR)
+# ============================================================================
+PLAN_*.md
+RESUMEN_*.md
+RESUMEN_*.txt
+CONTEXTO_*.md
+EVALUACION_*.md
+SOLUCION_*.md
+DATOS_EXACTOS_*.md
+ORGANIZACION_*.md
+REPORTES_*.md
+ROADMAP_TOTAL_*.md
+TAREAS_SIGUIENTE_SESION_*.txt
+ideas_evaluar.txt
 
 # ============================================================================
 # SCREENSHOTS OPCIONALES (DECIDIR SI SUBIR)

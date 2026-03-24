@@ -58,6 +58,43 @@ ryda frame < 1000 {
 
 ---
 
+## 🛡️ MANIFIESTO
+
+> **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
+
+### Filosofía RyDit
+
+1. **Mobile-First Real** - No "también funciona en Android". **Nació en Android**.
+2. **Ligero y Portable** - Binario de ~550 KB (no 50 MB como Godot)
+3. **Educativo** - Código 100% abierto, lenguaje en español, sin magia
+4. **David vs Goliat** - 12,000 líneas de Rust bien escritas > 500,000 líneas de C++
+
+### ¿Por qué existe RyDit?
+
+**El Problema:**
+- Barrera de entrada alta: Godot/Unity requieren PC potente
+- Android es ciudadano de segunda: "Funciona en Android" ≠ "Nació en Android"
+- Herramientas sobredimensionadas: 90% de features que no usas
+- Inglés como requisito: Documentación y sintaxis solo en inglés
+
+**La Solución RyDit:**
+✅ **Termux como plataforma primera** - No emulación, nativo
+✅ **Binario <1 MB** - Cabe en cualquier lado
+✅ **12 widgets, 8 módulos stdlib** - Lo justo y necesario
+✅ **Español nativo** - `draw.circulo()`, `si`, `mientras`
+✅ **Sin IDE** - `cargo run` y listo
+
+### Valores
+
+- **Código > Burocracia** - Preferimos código funcionando a documentación perfecta
+- **Mobile-First** - Si no funciona en Android, no es RyDit
+- **Ligero** - Cada KB cuenta. Sin dependencias innecesarias
+- **Abierto** - MIT license. 100% transparente
+- **Educativo** - Enseñamos, no solo damos herramientas
+- **Comunidad** - Hispanohablantes, mobile developers, hobbyists
+
+---
+
 ## 🎮 Snake Game - Demo Funcional
 
 <div align="center">
@@ -151,6 +188,38 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 |--------------|--------------|
 | ![Snake](screenshots/04_snake_gameplay.jpg) | ![Game Over](screenshots/05_snake_gameover.jpg) |
 | Snake en movimiento, grid retro, comida roja | Pantalla de Game Over, puntuación, high score |
+
+---
+
+### ✨ Sistema de Partículas v0.5.3
+
+| Demo Partículas |
+|--------------|
+| ![Partículas Demo](logo_icon_asst/particulas.mp4) |
+| **5 efectos: fuego, humo, explosión, lluvia, chispas** - 60 FPS con 500+ partículas |
+
+**Controles del Demo:**
+- `F` - Fuego
+- `S` - Chispas  
+- `H` - Humo
+- `E` - Explosión
+- `ESC` - Salir
+
+---
+
+### 🎨 Carga de Sprites v0.5.1
+
+| Tanque + Helicóptero |
+|--------------|
+| ![Carga Sprite](logo_icon_asst/carga_sprite.jpg) |
+| **Assets Manager funcionando** - Tanque y helicóptero con sprites 16x16 escalados |
+
+**Funciones de Assets:**
+```rydit
+assets::load_texture("tank", "sprites/tank.png")
+assets::draw("tank", x, y)
+assets::draw_scaled("tank", x, y, 4.0)
+```
 
 </div>
 
