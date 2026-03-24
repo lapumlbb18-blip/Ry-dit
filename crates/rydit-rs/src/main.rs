@@ -11,6 +11,8 @@ mod eval;
 mod config;
 mod json_helpers;
 mod tests;
+mod cli;
+mod executor;
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;
@@ -19,348 +21,24 @@ pub use eval::evaluar_expr;
 pub use config::{configurar_entorno_termux, cargar_modulo};
 pub use json_helpers::{valor_serde_a_rydit, valor_rydit_a_serde};
 
-use blast_core::Executor;
-use blast_core::Valor;
-use lizer::Expr;
-use lizer::Lizer;
-use lizer::Parser;
-use lizer::Program;
-use lizer::Stmt;
+// Re-exportar ejecutores
+pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
+
+// Imports necesarios para el código restante en main.rs
+use blast_core::{Executor, Valor};
+use lizer::{Expr, Lizer, Parser, Program, Stmt};
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
-use std::env;
-use std::fs;
 
 fn main() {
-    // Configurar entorno automáticamente (Termux-X11)
-    configurar_entorno_termux();
-
-    let args: Vec<String> = env::args().collect();
-
-    // Verificar si es modo REPL
-    if args.len() > 1 && (args[1] == "--repl" || args[1] == "-r") {
-        repl::repl_mode();
-        return;
-    }
-
-    // Verificar si es modo gráfico (gfx) o modo migui
-    let modo_gfx = args.iter().any(|x| x == "--gfx" || x == "-g");
-    let modo_migui = args.iter().any(|x| x == "--migui" || x == "-m");
-
-    let default_script = "shield.init";
-
-    // Buscar script: después de --gfx/--migui o al final
-    let script_arg = if let Some(flag_pos) = args
-        .iter()
-        .position(|x| x == "--gfx" || x == "-g" || x == "--migui" || x == "-m")
-    {
-        // El script está después del flag
-        if args.len() > flag_pos + 1 {
-            Some(&args[flag_pos + 1])
-        } else {
-            None
-        }
-    } else if args.len() > 1 && args[1] != "--repl" && args[1] != "-r" {
-        // El script es el segundo argumento
-        Some(&args[1])
-    } else {
-        None
-    };
-
-    // Determinar si es archivo o script directo
-    let script: String = if let Some(arg) = script_arg {
-        if arg.ends_with(".rydit") {
-            match fs::read_to_string(arg) {
-                Ok(content) => content,
-                Err(e) => {
-                    eprintln!("[ERROR] No se pudo leer el archivo '{}': {}", arg, e);
-                    return;
-                }
-            }
-        } else {
-            arg.clone()
-        }
-    } else {
-        default_script.to_string()
-    };
-
-    if modo_gfx {
-        println!("--- SHIELD SYSTEM: MODO GRÁFICO ---");
-        println!(
-            "[RYDIT-GFX] Parseando: {}",
-            script.lines().next().unwrap_or("(script vacío)")
-        );
-
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let mut gfx = RyditGfx::new("RyDit Engine", 800, 600);
-        gfx.set_target_fps(60);
-
-        // Lexer + Parser (AST)
-        let tokens = Lizer::new(&script).scan();
-        let mut parser = Parser::new(tokens);
-
-        match parser.parse() {
-            Ok(program) => {
-                println!("[RYDIT] {} statements en AST", program.statements.len());
-                ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
-            }
-            Err(e) => {
-                println!("[ERROR] {}", e);
-            }
-        }
-
-        executor.mostrar_memoria();
-        println!("--- SISTEMA PROTEGIDO ---");
-    } else if modo_migui {
-        println!("--- SHIELD SYSTEM: MODO MIGUI ---");
-        println!(
-            "[MIGUI] Parseando: {}",
-            script.lines().next().unwrap_or("(script vacío)")
-        );
-
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-        let mut gui = Migui::new();
-        let mut gfx = RyditGfx::new("RyDit migui v0.4.1", 800, 600);
-        gfx.set_target_fps(60);
-
-        let tokens = Lizer::new(&script).scan();
-        let mut parser = Parser::new(tokens);
-
-        match parser.parse() {
-            Ok(program) => {
-                println!("[RYDIT] {} statements en AST", program.statements.len());
-                ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
-            }
-            Err(e) => {
-                println!("[ERROR] {}", e);
-            }
-        }
-
-        executor.mostrar_memoria();
-        println!("--- SISTEMA PROTEGIDO ---");
-    } else {
-        println!("--- SHIELD SYSTEM: MODO COMANDANTE ---");
-        println!(
-            "[RYDIT] Parseando: {}",
-            script.lines().next().unwrap_or("(script vacío)")
-        );
-
-        let mut executor = Executor::nuevo();
-        let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new(); // (params, body)
-
-        // Lexer + Parser (AST)
-        let tokens = Lizer::new(&script).scan();
-        let mut parser = Parser::new(tokens);
-
-        match parser.parse() {
-            Ok(program) => {
-                println!("[RYDIT] {} statements en AST", program.statements.len());
-                ejecutar_programa(&program, &mut executor, &mut funcs);
-            }
-            Err(e) => {
-                println!("[ERROR] {}", e);
-            }
-        }
-
-        executor.mostrar_memoria();
-        println!("--- SISTEMA PROTEGIDO ---");
-    }
+    cli::run();
 }
 
-fn ejecutar_programa(
-    program: &Program,
-    executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
-) {
-    // Contexto de imports: módulos cargados y stack de imports en progreso
-    let mut loaded_modules: HashSet<String> = HashSet::new();
-    let mut importing_stack: Vec<String> = Vec::new();
 
-    for stmt in &program.statements {
-        let (break_flag, return_val) = ejecutar_stmt(
-            stmt,
-            executor,
-            funcs,
-            &mut loaded_modules,
-            &mut importing_stack,
-        );
-
-        // Si hay valor de retorno en el nivel global, imprimirlo
-        if let Some(val) = return_val {
-            executor.voz(&val);
-        }
-
-        // Si hay break en nivel global, es error
-        if break_flag == Some(true) {
-            println!("[ERROR] 'break' fuera de un loop");
-        }
-    }
-}
-
-fn ejecutar_programa_gfx(
-    program: &Program,
-    executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
-    gfx: &mut RyditGfx,
-) {
-    // Estado del input
-    let mut input = InputEstado::new();
-
-    // Contexto de imports: módulos cargados y stack de imports en progreso
-    let mut loaded_modules: HashSet<String> = HashSet::new();
-    let mut importing_stack: Vec<String> = Vec::new();
-
-    // Game loop principal
-    while !gfx.should_close() {
-        // Input primero (Rust = Arquitecto)
-        input.actualizar(gfx);
-        let escape = gfx.is_key_pressed(Key::Escape);
-
-        // Iniciar dibujo
-        {
-            let mut d = gfx.begin_draw();
-            d.clear(ColorRydit::Negro);
-
-            // Ejecutar programa en cada frame
-            for stmt in &program.statements {
-                ejecutar_stmt_gfx(
-                    stmt,
-                    executor,
-                    funcs,
-                    &mut d,
-                    &mut input,
-                    &mut loaded_modules,
-                    &mut importing_stack,
-                );
-            }
-
-            // FPS counter
-            d.draw_text("RyDit v0.0.9", 10, 10, 20, ColorRydit::Blanco);
-        }
-        // end_draw automático cuando d sale de scope
-
-        if escape {
-            break;
-        }
-    }
-}
-
-fn ejecutar_programa_migui(
-    program: &Program,
-    executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
-    gui: &mut Migui,
-    gfx: &mut RyditGfx,
-) {
-    use migui::{Event, MouseButton};
-    use rydit_gfx::Key as GfxKey;
-
-    let mut loaded_modules: HashSet<String> = HashSet::new();
-    let mut importing_stack: Vec<String> = Vec::new();
-    let mut checkbox_states: HashMap<String, bool> = HashMap::new();
-    let mut slider_states: HashMap<String, f32> = HashMap::new();
-    let mut textbox_states: HashMap<String, String> = HashMap::new();
-    let mut window_states: HashMap<String, bool> = HashMap::new();
-
-    // Primero, ejecutar statements iniciales (definiciones de funciones, variables)
-    for stmt in &program.statements {
-        match stmt {
-            Stmt::Function { name, params, body } => {
-                funcs.insert(name.clone(), (params.clone(), body.clone()));
-            }
-            Stmt::Assign { name, value } => {
-                let valor = evaluar_expr_migui(
-                    value,
-                    executor,
-                    gui,
-                    &mut checkbox_states,
-                    &mut slider_states,
-                    &mut textbox_states,
-                    &mut window_states,
-                    funcs,
-                );
-                executor.guardar(name, valor);
-            }
-            _ => {}
-        }
-    }
-
-    // Guardar el bloque de código para ejecutar en cada frame
-    let frame_stmts: Vec<&Stmt> = program
-        .statements
-        .iter()
-        .filter(|s| matches!(s, Stmt::Block(_)))
-        .flat_map(|s| {
-            if let Stmt::Block(stmts) = s {
-                stmts.iter().collect()
-            } else {
-                vec![]
-            }
-        })
-        .collect();
-
-    // Game loop principal con migui + backend
-    while !gfx.should_close() {
-        // Input de teclado para salir
-        if gfx.is_key_pressed(GfxKey::Escape) {
-            break;
-        }
-
-        // Input de mouse para migui
-        let (mx, my) = gfx.get_mouse_position();
-        gui.handle_event(Event::MouseMove {
-            x: mx as f32,
-            y: my as f32,
-        });
-
-        if gfx.is_mouse_button_pressed(0) {
-            gui.handle_event(Event::MouseDown {
-                button: MouseButton::Left,
-                x: mx as f32,
-                y: my as f32,
-            });
-        }
-        if !gfx.is_mouse_button_pressed(0) && gui.is_mouse_down() {
-            gui.handle_event(Event::MouseUp {
-                button: MouseButton::Left,
-                x: mx as f32,
-                y: my as f32,
-            });
-        }
-
-        // Iniciar frame de migui
-        gui.begin_frame();
-
-        // Ejecutar statements del bloque en cada frame
-        for stmt in &frame_stmts {
-            ejecutar_stmt_migui(
-                stmt,
-                executor,
-                funcs,
-                gui,
-                &mut loaded_modules,
-                &mut importing_stack,
-                &mut checkbox_states,
-                &mut slider_states,
-                &mut textbox_states,
-                &mut window_states,
-            );
-        }
-
-        gui.end_frame();
-
-        // Debug: mostrar comandos generados
-        if !gui.draw_commands().is_empty() {
-            println!("[MIGUI] {} comandos generados", gui.draw_commands().len());
-        }
-
-        // Renderizar con el backend optimizado
-        gfx.render_migui_frame(gui.draw_commands());
-    }
-}
+// ============================================================================
+// EJECUTOR DE STATEMENTS (pública para módulos)
+// ============================================================================
 
 /// Ejecutar un statement (pública para módulos)
 pub fn ejecutar_stmt(
@@ -2501,7 +2179,7 @@ fn evaluar_expr_gfx(
 // EVALUAR EXPRESION MODO MIGUI
 // ============================================================================
 
-fn evaluar_expr_migui(
+pub fn evaluar_expr_migui(
     expr: &Expr,
     executor: &mut Executor,
     gui: &mut Migui,
