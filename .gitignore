@@ -182,3 +182,4 @@ ROADMAP_INTERNAL.md
 # - docs/ (documentación pública)
 # ============================================================================
 .local/
+.private/
