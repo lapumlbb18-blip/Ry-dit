@@ -1,71 +1,39 @@
-feat: Módulo REGEX v0.6.2 - Expresiones regulares para RyDit
+style: cargo fmt automático + fix bench imports
 
-MÓDULO REGEX - IMPLEMENTACIÓN COMPLETA
-======================================
+CARGO FMT - FORMATO AUTOMÁTICO
+==============================
 
-Dependencias:
-- regex crate 1.10 (agregada a crates/rydit-rs/Cargo.toml)
-- Impacto binario: +30-40 KB
+Archivos formateados: 12
+- crates/blast-core/src/lib.rs
+- crates/lizer/benches/bench_lizer.rs
+- crates/lizer/src/lib.rs
+- crates/migui/src/lib.rs
+- crates/rydit-gfx/build.rs
+- crates/rydit-gfx/examples/demo.rs
+- crates/rydit-gfx/src/lib.rs
+- crates/rydit-gfx/src/particles.rs
+- crates/rydit-rs/src/bin/demo_particles.rs
+- crates/rydit-rs/src/bin/snake.rs
+- crates/rydit-rs/src/main.rs
+- crates/v-shield/src/lib.rs
 
-Funciones Implementadas:
-- regex::match(patron, texto) -> bool
-  * Retorna true si el patrón coincide con el texto
-  * Ejemplo: regex::match("\\d+", "123") -> true
+Cambios:
+- Whitespace consistente (tabs, espacios)
+- Line breaks optimizados
+- Paréntesis en múltiples líneas cuando exceden ancho
 
-- regex::replace(patron, reemplazo, texto) -> texto
-  * Reemplaza todas las ocurrencias del patrón
-  * Ejemplo: regex::replace("[aeiou]", "*", "hola") -> "h*l*"
-
-- regex::split(patron, texto) -> array
-  * Divide el texto por el patrón
-  * Ejemplo: regex::split(",", "uno,dos,tres") -> ["uno","dos","tres"]
-
-- regex::find_all(patron, texto) -> array
-  * Encuentra todas las ocurrencias del patrón
-  * Ejemplo: regex::find_all("\\d+", "a1b23c456") -> ["1","23","456"]
-
-- regex::capture(patron, texto) -> array
-  * Captura grupos de coincidencia
-  * Ejemplo: regex::capture("([a-z]+):(\\d+)", "edad:25") -> ["edad:25","edad","25"]
-
-Archivos Creados:
-- crates/modules/regex.rydit - Módulo embebido (documentación + ejemplos)
-- demos/demo_regex.rydit - Demo completo con casos de uso reales
-- screenshots/particulas.jpg - Captura del demo de partículas
-- screenshots/particulas.mp4 - Video del demo de partículas
-
-Tests Agregados (7 tests):
-- test_regex_match_valido
-- test_regex_match_invalido
-- test_regex_replace
-- test_regex_split
-- test_regex_find_all
-- test_regex_capture
-- test_regex_email_validation
-
-Casos de Uso en Demo:
-- Validación de emails
-- Reemplazo de vocales
-- Split por comas y espacios
-- Extracción de números
-- Captura de grupos (nombre:valor, fecha DD/MM/AAAA)
-- Validación de teléfonos
-- Extracción de hashtags
-- Validación de URLs
-
-README Actualizado:
-- Galería de Partículas con imagen screenshots/particulas.jpg
-- Enlace al video completo: screenshots/particulas.mp4
-- Eliminada imagen de Game Over (reemplazada por partículas)
-
-MÉTRICAS:
+BENCH FIX
 =========
-- Tests totales: 126 + 7 = 133 tests pasando
-- Binario release: ~580-600 KB (+30-40 KB por regex)
-- Líneas Rust agregadas: ~200 (bindings + tests)
-- 0 warnings
+- crates/lizer/benches/bench_lizer.rs
+  * Eliminado import unused: `Parser`
+  * Solo se usa `Lizer` en benchmarks
 
-PRÓXIMOS PASOS:
-===============
-- v0.6.3: Módulo files (lectura/escritura de archivos)
-- v0.7.0: Animaciones 2D (sprite sheets + easing)
+VERIFICACIÓN
+============
+✅ cargo build --release: 0 errors, 0 warnings
+✅ cargo test: 137 tests passing
+✅ Sin regresiones
+
+PRÓXIMO: SPLIT DE main.rs (v0.7.0)
+===================================
+Ver documento SPLIT_EVALUACION.md para plan detallado
