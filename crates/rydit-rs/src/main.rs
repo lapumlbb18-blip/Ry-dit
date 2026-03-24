@@ -1,3 +1,12 @@
+// ============================================================================
+// RYDIT-RS v0.7.0 - SPLIT EDITION
+// ============================================================================
+// Main.rs dividido en módulos para mejor mantenibilidad
+// ============================================================================
+
+// Módulos locales
+mod repl;
+
 use blast_core::Executor;
 use blast_core::Valor;
 use lizer::Expr;
@@ -145,7 +154,7 @@ fn main() {
 
     // Verificar si es modo REPL
     if args.len() > 1 && (args[1] == "--repl" || args[1] == "-r") {
-        repl_mode();
+        repl::repl_mode();
         return;
     }
 
@@ -467,7 +476,8 @@ fn ejecutar_programa_migui(
     }
 }
 
-fn ejecutar_stmt(
+/// Ejecutar un statement (pública para módulos)
+pub fn ejecutar_stmt(
     stmt: &Stmt,
     executor: &mut Executor,
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
@@ -3547,78 +3557,6 @@ fn evaluar_expr_gfx(
                         Valor::Num(-n)
                     } else {
                         Valor::Error("Neg requiere número".to_string())
-                    }
-                }
-            }
-        }
-    }
-}
-
-fn repl_mode() {
-    println!("=== RYDIT REPL v0.0.3 ===");
-    println!("Escribe comandos RyDit y presiona Enter");
-    println!("Comandos: 'help', 'mem', 'clear', 'exit'");
-    println!();
-
-    let mut executor = Executor::nuevo();
-    let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
-    let stdin = io::stdin(); // No necesita ser mutable
-
-    loop {
-        print!("rydit> ");
-        // Manejar error de flush en REPL
-        if let Err(e) = io::stdout().flush() {
-            eprintln!("[REPL ERROR] Flush falló: {}", e);
-            break;
-        }
-
-        let mut input = String::new();
-        if stdin.read_line(&mut input).is_err() {
-            break;
-        }
-
-        let input = input.trim();
-
-        match input {
-            "" => continue,
-            "exit" | "quit" | "q" => {
-                println!("[REPL] Saliendo...");
-                break;
-            }
-            "help" | "h" => {
-                println!("Comandos RyDit:");
-                println!("  shield.init          - Inicializar sistema");
-                println!("  onda.core            - Ejecutar acción");
-                println!("  ryprime              - Operación especial");
-                println!("  dark.slot x = N      - Crear variable");
-                println!("  onif x > 0 ... blelse - Condicional");
-                println!();
-                println!("Comandos REPL:");
-                println!("  help / h    - Esta ayuda");
-                println!("  mem / m     - Ver memoria");
-                println!("  clear / c   - Limpiar pantalla");
-                println!("  exit / q    - Salir");
-                continue;
-            }
-            "mem" | "m" => {
-                executor.mostrar_memoria();
-                continue;
-            }
-            "clear" | "c" => {
-                print!("\x1B[2J\x1B[1;1H");
-                continue;
-            }
-            _ => {
-                let tokens = Lizer::new(input).scan();
-                let mut parser = Parser::new(tokens);
-
-                match parser.parse() {
-                    Ok(program) => {
-                        println!("[RYDIT] {} statements", program.statements.len());
-                        ejecutar_programa(&program, &mut executor, &mut funcs);
-                    }
-                    Err(e) => {
-                        println!("[ERROR] {}", e);
                     }
                 }
             }
