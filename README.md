@@ -808,22 +808,7 @@ ryda frame < 500 {
 - ✅ **~11,700 líneas de código**
 - ✅ **Documentación completa** (20+ archivos .md)
 - ✅ **GitHub público** (Rydit_Engine)
-- ✅ **Backup Google Drive** automatizado
 - ✅ **README en inglés** (README_EN.md)
-
----
-
-## 💾 Backup
-
-- **Google Drive:** `alucard18:/shield-project-rydit`
-- **Backup Histórico:** `alucard18:/shield-project-rydit-historial` (archivos antiguos)
-- **Scripts de Backup:**
-  - `./backup_google_drive.sh` - Backup rápido (solo código)
-  - `./backup_con_binarios.sh` - Backup completo (código + binarios)
-- **Archivos:** 120+
-- **Tamaño:** ~2 MB (sin `target/`, con binarios)
-- **Última sync:** 2026-03-23 (v0.5.3)
-- **Comando:** `./backup_con_binarios.sh`
 
 ---
 
