@@ -39,6 +39,7 @@
 - ⚛️ **Física 2D** (proyectiles, gravedad, ondas, péndulo)
 - 📊 **Ciencia de Datos** (CSV, estadísticas, gráficos ASCII/SVG)
 - 🔌 **Arquitectura modular** (v0.8.0+: ciencia, animación, red, datos)
+- 🔗 **Protocolo LAZOS** (comunicación universal con Python, web, etc.)
 - 🐍 Snake Game completo como demo
 
 ```rydit
@@ -847,21 +848,74 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 ---
 
-## 🔗 Protocolo LAZOS (Próximamente en v0.7.2.0)
+## 🔗 Protocolo LAZOS (v0.7.2.0)
 
-**Conectando el ecosistema Ry:**
+**Sistema universal de comunicación entre RyDit y otros lenguajes.**
 
+### **Características:**
+
+- ✅ **Universal** - Funciona con Python, Node.js, C, Bash, cualquier lenguaje
+- ✅ **Simple** - JSON-RPC sobre stdin/stdout
+- ✅ **Nativo** - Parte del binario de rydit-rs
+- ✅ **Seguro** - Sin red, solo local
+- ✅ **Rápido** - ~200 líneas de código Rust
+
+### **Ejemplo desde Python:**
+
+```python
+from ry_lazo import RyLazo
+
+with RyLazo() as ry:
+    # Bezier cúbica
+    punto = ry.call("science::bezier::cubic", 
+                   [0, 0, 30, 100, 70, 100, 100, 0, 0.5])
+    print(punto)  # [50.0, 75.0]
+    
+    # Física: proyectil
+    trayectoria = ry.call("physics::projectile", [0, 0, 50, 45])
+    print(f"Alcance: {trayectoria[4]:.2f} m")
+    
+    # Estadísticas
+    media = ry.call("stats::mean", [[1, 2, 3, 4, 5]])
+    print(f"Media: {media}")
 ```
-📦 RYDIT-RS ←→ 🔗 LAZOS ←→ 🐍 Python
-     ↓                    ↓
-   Linux              Scripts
-     ↓                    ↓
-  Windows            Automatización
-     ↓                    ↓
- Android            IA/ML
+
+### **Ejemplo desde Shell:**
+
+```bash
+# Ping
+echo '{"method":"system::ping"}' | rydit-rs --lazos
+# {"result":"pong"}
+
+# Bezier
+echo '{"method":"science::bezier::cubic","params":[0,0,30,100,70,100,100,0,0.5]}' | rydit-rs --lazos
+# {"result":[50.0,75.0]}
 ```
 
-**Universal. Simple. Nuestro.**
+### **Comandos Disponibles:**
+
+**System:**
+- `system::version` - Versión de RyDit
+- `system::ping` - Verificar conexión
+- `system::info` - Información completa
+
+**Bezier:**
+- `science::bezier::linear` - Bezier lineal (2 puntos)
+- `science::bezier::quadratic` - Bezier cuadrática (1 control)
+- `science::bezier::cubic` - Bezier cúbica (2 controles)
+
+**Física:**
+- `physics::projectile` - Trayectoria de proyectil
+- `physics::nbody_2` - Gravedad (2 cuerpos)
+
+**Estadísticas:**
+- `stats::mean` - Media aritmética
+- `stats::median` - Mediana
+- `stats::min` / `stats::max` - Mínimo/Máximo
+
+### **Documentación Completa:**
+
+Ver [ROADMAP_LAZOS.md](ROADMAP_LAZOS.md) para arquitectura completa.
 
 ---
 

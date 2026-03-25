@@ -1,4 +1,4 @@
-// RYDIT-RS v0.7.0.bis - SPLIT EDITION
+// RYDIT-RS v0.7.2.0 - LAZOS EDITION
 // Main.rs dividido en módulos para mejor mantenibilidad
 
 // Módulos locales
@@ -8,6 +8,7 @@ mod config;
 mod eval;
 mod executor;
 mod json_helpers;
+mod lazos;  // ← PROTOCOLO LAZOS (NUEVO)
 mod module;
 mod repl;
 mod tests;
