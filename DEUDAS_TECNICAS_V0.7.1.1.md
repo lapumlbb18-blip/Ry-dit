@@ -7,37 +7,22 @@
 
 ## 🔴 DEUDAS CRÍTICAS
 
-### **1. Parser - Expresiones con `+` no soportado**
+### **1. Parser - Expresiones con `+` ✅ RESUELTO**
 
-**Problema**: El parser no reconoce el operador `+` para:
-- Suma aritmética: `x + 1` ❌
-- Concatenación strings: `"hola" + "mundo"` ❌
+**Estado**: El operador `+` **SÍ FUNCIONA** correctamente.
 
-**Síntoma**:
-```
-Error: Expresión no válida: Mas
-Ubicación: línea X, columna Y
-```
-
-**Workaround actual**:
+**Verificación**:
 ```rydit
-# En lugar de:
-dark.slot x = frame + 100
-dark.slot texto = "hola" + "mundo"
-
-# Usar:
-dark.slot x = math::sumar(frame, 100)
-dark.slot texto = strings::concat("hola", "mundo")
+dark.slot x = frame + 100  # ✅ Funciona
+dark.slot y = ilusion + 1  # ✅ Funciona
 ```
 
-**Solución requerida**:
-- Agregar `+` al parser de expresiones (lizer/src/lib.rs)
-- Soportar sobrecarga: suma para números, concat para strings
-- Prioridad: ALTA (afecta usabilidad)
+**Implementación existente**:
+- Lexer: Token `Mas` → línea 253, 713
+- Parser: `parse_additive()` → línea 2256
+- Eval: `BinOp::Suma` → línea 1019
 
-**Archivos a modificar**:
-- `crates/lizer/src/lib.rs` - Parser de expresiones binarias
-- `crates/rydit-rs/src/eval/mod.rs` - Manejo del operador `+`
+**Cierre**: Esta deuda está **RESUELTA**. El parser y evaluador soportan `+` correctamente.
 
 ---
 
@@ -189,7 +174,7 @@ GLFW: Failed to initialize GLFW
 
 | # | Deuda | Prioridad | Esfuerzo | Impacto |
 |---|-------|-----------|----------|---------|
-| 1 | Parser `+` | 🔴 ALTA | 2-3h | Alto |
+| 1 | ~~Parser `+`~~ | ✅ RESUELTA | - | - |
 | 2 | Game loop cierre | 🔴 ALTA | 1-2h | Alto |
 | 3 | Auto-config X11 | 🟡 MEDIA | 1h | Medio |
 | 4 | RyditModule producción | 🟡 MEDIA | 4-6h | Alto |
@@ -202,9 +187,9 @@ GLFW: Failed to initialize GLFW
 
 ## 🎯 PRÓXIMA SESIÓN
 
-**Recomendado**: Fix #1 (Parser `+`) + #2 (Game loop)
+**Recomendado**: Fix #2 (Game loop cierre)
 
-**Beneficio**: Mejora inmediata de usabilidad para usuarios.
+**Beneficio**: Demos se mantienen abiertos sin timeout.
 
 ---
 
