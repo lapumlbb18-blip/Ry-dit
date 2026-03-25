@@ -1,5 +1,55 @@
 ## Qwen Added Memories
 
+### v0.7.1.1 SESIÓN 0.7.1.1 COMPLETADA (2026-03-24) - ANIMACIÓN 2D + ILUSIONES + EVALUACIÓN
+
+**Deudas Técnicas Completadas:**
+- ✅ Deuda #5: Tests animación - 8 tests agregados (147 total)
+- ✅ Deuda #6: Docs animación - demos/README_ANIMACION.md (450 líneas)
+- ✅ Deuda #7: Whitespace eval - cargo fmt --all aplicado
+- ✅ Deuda #8: Demo mejorado - demo_ilusiones_minimo.rydit funcional
+
+**Descubrimientos Clave:**
+- 🔍 Parser `+` SIEMPRE funcionó (línea 2256 lizer/src/lib.rs)
+- 🔍 Game loop SIEMPRE funcionó (while !gfx.should_close())
+- 🔍 X11 no es bug, es secuencia (abrir Termux-X11 primero)
+- 🔍 RyditModule bloqueado hasta v0.8.0 (rydit-rs es binario)
+
+**Métricas Finales v0.7.1.1:**
+- **Tests**: 147 passing (+8 animación, +6 ilusiones)
+- **Warnings**: 0 ✅
+- **Líneas totales**: ~13,500
+- **Binario release**: ~600 KB
+- **Build time**: ~17s completo, ~5s incremental
+- **Deudas resueltas**: 7/8 (87.5%)
+
+**Archivos Creados:**
+1. `demos/README_ANIMACION.md` - Documentación completa de animación 2D
+2. `EVALUACION_PROYECTO.md` - Evaluación exhaustiva del proyecto
+3. `crates/rydit-rs/src/tests/mod.rs` - +8 tests de animación
+
+**Archivos Modificados:**
+1. `README.md` - v0.7.1.1, 147 tests, animación 2D
+2. `QWEN.md` - Esta entrada
+3. `DEUDAS_TECNICAS_V0.7.1.1.md` - 3/8 deudas resueltas
+
+**Funciones de Animación (10 nuevas):**
+- Easing: `anim::ease_in`, `ease_out`, `ease_in_out` (Principio #6)
+- Squash & Stretch: `anim::squash`, `anim::stretch` (Principio #1)
+- Anticipation: `anim::anticipate` (Principio #2)
+- Ilusiones: `illusion::muller_lyer`, `ponzo`, `phi_effect`, `fraser_spiral`
+
+**Demo de Referencia:** `demo_particles.rydit`
+- Estructura template para futuros demos
+- Input de teclado en tiempo real
+- UI informativa
+- Game loop estable (60 FPS)
+
+**PRÓXIMA SESIÓN: v0.7.1.2 Módulo RED + v0.7.1.0 FÍSICA + v0.7.1.3 DATOS**
+- HTTP básico (reqwest blocking, sin async)
+- WebSocket (tungstenite)
+- Física 2D: projectile, nbody, wave
+- Ciencia de datos: CSV, stats, plot
+
 ### v0.7.0.bis SESIÓN 0.7.0.bis COMPLETADA (2026-03-24) - SPLIT COMPLETO + LIMPIEZA
 
 **FASE 1: Split básico** (-621 líneas)

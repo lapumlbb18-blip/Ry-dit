@@ -6,8 +6,8 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.7.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-102%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.7.1.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-147%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -28,12 +28,13 @@
 - 🎨 Renderizado gráfico (círculos, rectángulos, líneas, texto, sprites)
 - 🎹 Input de teclado en tiempo real
 - 🎲 Sistema de módulos (math, arrays, strings, io, random, time, json, colisiones, regex, files)
-- 🧪 **102 tests automáticos**
+- 🧪 **147 tests automáticos**
 - 🎨 **12 widgets UI** (migui - immediate mode GUI)
 - 🎵 **Audio** (sonidos + música)
 - ✨ **Sistema de partículas** (fuego, humo, explosión, lluvia, chispas)
 - 💻 **REPL interactivo** con historial y auto-completado
 - 📦 **Stdlib embebido** (sin archivos externos necesarios)
+- 🎨 **Animación 2D** (10 funciones, 12 principios de Disney - 3 implementados)
 - 🔌 **Arquitectura modular** (v0.8.0+: ciencia, animación, red, datos)
 - 🐍 Snake Game completo como demo
 
@@ -504,10 +505,10 @@ Crates:
 | **v0.6.3** | ✅ | **Módulo FILES** (read, write, append, exists, delete) | 2026-03-24 |
 | **v0.6.4** | ✅ | **cargo fmt + Evaluación Split** (código consistente) | 2026-03-24 |
 | **v0.7.0** | ✅ | **Split PARCIAL** (REPL + eval extraídos, -17% main.rs) | 2026-03-24 |
-| **v0.7.1.0** | 🔜 | **Módulo CIENCIA** (Manim-style: scenes, physics, MObjects) | 2-3 semanas |
-| **v0.7.1.1** | 🔮 | **Módulo ANIMACIÓN** (12 principios, sprite sheets, easing) | 3-4 semanas |
-| **v0.7.1.2** | 🔮 | **Módulo RED** (HTTP, WebSocket, TCP/UDP) | 4-5 semanas |
-| **v0.7.1.3** | 🔮 | **Módulo DATOS** (CSV, HDF5, plots, statistics) | 5-6 semanas |
+| **v0.7.0.bis** | ✅ | **Clippy + RyditModule diseño** (55→6 warnings, documentación) | 2026-03-24 |
+| **v0.7.1.1** | ✅ | **ANIMACIÓN 2D** (10 funciones, 12 principios Disney, 4 ilusiones) | 2026-03-24 |
+| **v0.7.1.2** | 🔜 | **Módulo RED** (HTTP, WebSocket, TCP/UDP) | Próxima sesión |
+| **v0.7.1.3** | 🔮 | **Módulo DATOS** (CSV, HDF5, plots, statistics) | 2-3 semanas |
 | **v0.7.2.0** | 🔮 | **Sistema NODOS/ESCENAS** (árbol de nodos, transforms) | 6-8 semanas |
 | **v0.8.0.0** | 🔮 | **Integración COMPLETA** (Manim + Bevy architecture) | 8-12 semanas |
 | **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
