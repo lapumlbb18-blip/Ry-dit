@@ -1,8 +1,5 @@
-// ============================================================================
 // RYDIT-RS v0.7.0.bis - SPLIT EDITION
-// ============================================================================
 // Main.rs dividido en módulos para mejor mantenibilidad
-// ============================================================================
 
 // Módulos locales
 mod repl;
@@ -34,11 +31,7 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     cli::run();
 }
-
-
-// ============================================================================
 // EJECUTOR DE STATEMENTS (pública para módulos)
-// ============================================================================
 
 /// Ejecutar un statement (pública para módulos)
 pub fn ejecutar_stmt(
@@ -644,9 +637,7 @@ pub fn ejecutar_stmt(
     (None, None) // No break, no return value
 }
 
-// ============================================================================
 // EJECUTOR GRÁFICO (con DrawHandle)
-// ============================================================================
 
 use rydit_gfx::DrawHandle;
 
@@ -1268,9 +1259,6 @@ pub fn valor_a_bool(val: &Valor) -> bool {
         _ => false,
     }
 }
-
-// ============================================================================
-
 fn evaluar_expr_gfx(
     expr: &Expr,
     executor: &mut Executor,
@@ -2175,9 +2163,7 @@ fn evaluar_expr_gfx(
     }
 }
 
-// ============================================================================
 // EVALUAR EXPRESION MODO MIGUI
-// ============================================================================
 
 pub fn evaluar_expr_migui(
     expr: &Expr,
@@ -3224,9 +3210,7 @@ pub fn evaluar_expr_migui(
     }
 }
 
-// ============================================================================
 // EJECUTAR STATEMENT MODO MIGUI
-// ============================================================================
 
 /// Ejecutar statement en modo migui
 pub fn ejecutar_stmt_migui(
@@ -3625,5 +3609,4 @@ pub fn ejecutar_stmt_migui(
     (None, None)
 }
 
-// ==================== FIN DE main.rs ====================
 // Tests movidos a: crates/rydit-rs/src/tests/mod.rs
