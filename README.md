@@ -839,11 +839,31 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 *¿Quieres evaluar este proyecto?* Únete al **Discord Mouredev**: https://discord.gg/mouredev y comparte tu opinión en #mostrar-proyecto
 
-*Próxima actualización:* v0.6.1 Animaciones 2D (sprite sheets)
+*Próxima actualización:* v0.7.2.0 - Protocolo LAZOS (Contenedores, Mundos, Actores)
 
-*Última actualización:* 2026-03-23 (v0.6.0 - Fix Termux-X11 + Stdlib Embebido + Optimización)
-*Próxima versión:* v0.6.1 (Animaciones 2D + Sprite Sheets + anim::load/play)
-*Estado:* ✅ **45+ TESTS - 16 BENCHMARKS - 12 WIDGETS - AUDIO SYSTEM - PARTÍCULAS - REPL INTERACTIVO - STDLIB EMBEBIDO - 60 FPS**
+*Última actualización:* 2026-03-25 (v0.7.1.4 - Bezier + RyDit Science + Limpieza)
+*Próxima versión:* v0.7.2.0 (Protocolo LAZOS + Contenedores + Python Bridge)
+*Estado:* ✅ **163 TESTS - 21 FUNCIONES SCIENCE - 6 BEZIER - 12 WIDGETS - AUDIO - PARTÍCULAS - 700 KB**
+
+---
+
+## 🔗 Protocolo LAZOS (Próximamente en v0.7.2.0)
+
+**Conectando el ecosistema Ry:**
+
+```
+📦 RYDIT-RS ←→ 🔗 LAZOS ←→ 🐍 Python
+     ↓                    ↓
+   Linux              Scripts
+     ↓                    ↓
+  Windows            Automatización
+     ↓                    ↓
+ Android            IA/ML
+```
+
+**Universal. Simple. Nuestro.**
+
+---
 
 [⬆️ Volver arriba](#-rydit---rust-gaming--scripting-engine-for-androidtermux)
 
