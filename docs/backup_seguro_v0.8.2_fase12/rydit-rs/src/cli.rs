@@ -9,15 +9,12 @@ use migui::Migui;
 use rydit_gfx::RyditGfx;
 
 use crate::{
-    ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, init_global_loader,
-    lazos::lazos_loop, repl::repl_mode,
+    ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, lazos::lazos_loop,
+    repl::repl_mode,
 };
 
 /// Punto de entrada principal después de configurar entorno
 pub fn run() {
-    // Inicializar loader de módulos dinámicos (v0.8.2)
-    init_global_loader();
-
     let args: Vec<String> = env::args().collect();
 
     // Verificar si es modo LAZOS (Protocolo LAZOS)

@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 rydit-core = { path = "../rydit-core" }
-rydit-loader = { path = "../rydit-loader" }
 rydit-science = { path = "../rydit-science" }
 rydit-physics = { path = "../rydit-physics" }
 rydit-anim = { path = "../rydit-anim" }

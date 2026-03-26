@@ -10,7 +10,6 @@ mod executor;
 mod json_helpers;
 mod lazos; // ← PROTOCOLO LAZOS
 mod module;
-mod module_loader; // ← CARGA DINÁMICA v0.8.2
 // mod physics;  ← AHORA ES CRATE EXTERNO: use rydit_physics::PhysicsModule;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;
@@ -35,7 +34,6 @@ pub use module::{
 // Re-exportar módulos con trait rydit-core (crates externos)
 pub use rydit_anim::AnimModule;
 pub use rydit_core::{ModuleError, ModuleRegistry, ModuleResult, RyditModule};
-pub use rydit_loader::DynamicModuleLoader;
 pub use rydit_physics::PhysicsModule;
 pub use rydit_science::ScienceModule;
 
@@ -46,22 +44,6 @@ use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-use std::sync::Mutex;
-
-// Loader global para módulos dinámicos (v0.8.2)
-static mut GLOBAL_LOADER: Option<Mutex<DynamicModuleLoader>> = None;
-
-/// Inicializar el loader global
-pub fn init_global_loader() {
-    unsafe {
-        GLOBAL_LOADER = Some(Mutex::new(DynamicModuleLoader::new()));
-    }
-}
-
-/// Obtener referencia al loader global
-pub fn get_loader() -> Option<&'static Mutex<DynamicModuleLoader>> {
-    unsafe { GLOBAL_LOADER.as_ref() }
-}
 
 fn main() {
     cli::run();

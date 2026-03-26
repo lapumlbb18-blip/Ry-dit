@@ -4,8 +4,6 @@
 use serde_json::{json, Value};
 use std::io::{self, BufRead, Write};
 
-use crate::get_loader;
-
 /// Loop principal del Protocolo LAZOS
 /// Lee comandos JSON desde stdin, ejecuta, responde por stdout
 pub fn lazos_loop() {
@@ -60,7 +58,7 @@ fn ejecutar_comando_lazos(request: &Value) -> Value {
         "system::info" => {
             json!({
                 "name": "RyDit Engine",
-                "version": "v0.8.2-sistema-universal",
+                "version": "v0.7.3-lazos",
                 "protocol": "LAZOS v1.0",
                 "commands": [
                     "system::version", "system::ping", "system::info",
@@ -68,8 +66,7 @@ fn ejecutar_comando_lazos(request: &Value) -> Value {
                     "science::stats::mean", "science::stats::median", "science::stats::min", "science::stats::max",
                     "physics::projectile", "physics::nbody_2",
                     "anim::ease_in", "anim::ease_out", "anim::ease_in_out",
-                    "anim::squash", "anim::stretch", "anim::anticipate",
-                    "module::list", "module::info"
+                    "anim::squash", "anim::stretch", "anim::anticipate"
                 ]
             })
         }
@@ -96,40 +93,6 @@ fn ejecutar_comando_lazos(request: &Value) -> Value {
         "anim::squash" => anim_squash(params),
         "anim::stretch" => anim_stretch(params),
         "anim::anticipate" => anim_anticipate(params),
-
-        // === MÓDULOS DINÁMICOS (v0.8.2) ===
-        "module::list" => {
-            if let Some(loader_mutex) = get_loader() {
-                let loader = loader_mutex.lock().unwrap();
-                let modules = loader.list_modules();
-                json!({"modules": modules, "count": modules.len()})
-            } else {
-                json!({"error": "Loader not initialized"})
-            }
-        }
-        "module::info" => {
-            if params.is_empty() {
-                json!({"error": "module::info requires module name"})
-            } else if let Some(module_name) = params[0].as_str() {
-                if let Some(loader_mutex) = get_loader() {
-                    let loader = loader_mutex.lock().unwrap();
-                    if let Some(info) = loader.get_module_info(module_name) {
-                        json!({
-                            "name": info.name,
-                            "version": info.metadata.version,
-                            "path": info.path,
-                            "loaded_at": info.loaded_at
-                        })
-                    } else {
-                        json!({"error": format!("Module '{}' not found", module_name)})
-                    }
-                } else {
-                    json!({"error": "Loader not initialized"})
-                }
-            } else {
-                json!({"error": "Invalid module name"})
-            }
-        }
 
         // === ERROR ===
         _ => json!({"error": format!("Unknown method: {}", method)}),
