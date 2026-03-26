@@ -81,7 +81,7 @@ impl ScienceModule {
         let p0_y = arr[1].as_f64().unwrap_or(0.0);
         let p1_x = arr[2].as_f64().unwrap_or(0.0);
         let p1_y = arr[3].as_f64().unwrap_or(0.0);
-        let t = arr[4].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[4].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
 
         let x = (1.0 - t) * p0_x + t * p1_x;
         let y = (1.0 - t) * p0_y + t * p1_y;
@@ -111,7 +111,7 @@ impl ScienceModule {
         let p1_y = arr[3].as_f64().unwrap_or(0.0);
         let p2_x = arr[4].as_f64().unwrap_or(0.0);
         let p2_y = arr[5].as_f64().unwrap_or(0.0);
-        let t = arr[6].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[6].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
 
         let mt = 1.0 - t;
         let x = mt * mt * p0_x + 2.0 * mt * t * p1_x + t * t * p2_x;
@@ -142,7 +142,7 @@ impl ScienceModule {
         let p2_y = arr[5].as_f64().unwrap_or(0.0);
         let p3_x = arr[6].as_f64().unwrap_or(0.0);
         let p3_y = arr[7].as_f64().unwrap_or(0.0);
-        let t = arr[8].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[8].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
 
         let mt = 1.0 - t;
         let mt2 = mt * mt;

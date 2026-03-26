@@ -64,7 +64,7 @@ impl AnimModule {
             });
         }
 
-        let t = arr[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
         Ok(json!(t * t))
     }
 
@@ -83,7 +83,7 @@ impl AnimModule {
             });
         }
 
-        let t = arr[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
         Ok(json!(t * (2.0 - t)))
     }
 
@@ -102,7 +102,7 @@ impl AnimModule {
             });
         }
 
-        let t = arr[0].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
+        let t = arr[0].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
         let result = if t < 0.5 {
             2.0 * t * t
         } else {
