@@ -1,0 +1,274 @@
+# demo_ilusiones_opticas.rydit
+# Demo visual de ilusiones ópticas con rydit-science::geometry
+# Ejecutar: cargo run --bin rydit-rs -- --gfx demos/demo_ilusiones_opticas.rydit
+
+shield.init
+
+dark.slot selected = 0
+dark.slot frame = 0
+
+ryda frame < 10000 {
+    # Limpiar pantalla
+    draw.rect(0, 0, 800, 600, "negro")
+
+    # Título
+    draw.text("ILUSIONES ÓPTICAS - RyDit v0.7.3.4", 180, 15, "amarillo")
+    draw.text("← → para cambiar | ESC para salir", 220, 35, "gris")
+
+    # ========================================================================
+    # 1. TRIÁNGULO DE PENROSE
+    # ========================================================================
+    onif selected == 0 {
+        draw.text("1. Triángulo de Penrose (Imposible)", 240, 70, "verde")
+
+        # Usar geometry::penrose para obtener las líneas
+        # Como no podemos llamar directamente desde RyDit, dibujamos manualmente
+        # Basado en las coordenadas que genera penrose(400, 250, 150)
+        
+        dark.slot cx = 400
+        dark.slot cy = 250
+        dark.slot s = 150
+        dark.slot thick = 22
+
+        # Vértices
+        dark.slot v1_x = cx
+        dark.slot v1_y = cy - s * 0.577
+        dark.slot v2_x = cx - s * 0.5
+        dark.slot v2_y = cy + s * 0.289
+        dark.slot v3_x = cx + s * 0.5
+        dark.slot v3_y = cy + s * 0.289
+
+        # Barra 1: v1 -> v2
+        draw.line(v1_x - thick * 0.3, v1_y - thick * 0.5, v2_x + thick * 0.5, v2_y - thick * 0.3, "blanco")
+        draw.line(v1_x + thick * 0.3, v1_y - thick * 0.5, v2_x - thick * 0.5, v2_y + thick * 0.3, "blanco")
+        
+        # Barra 2: v2 -> v3
+        draw.line(v2_x + thick * 0.5, v2_y - thick * 0.3, v3_x - thick * 0.5, v3_y - thick * 0.3, "blanco")
+        draw.line(v2_x + thick * 0.5, v2_y + thick * 0.3, v3_x - thick * 0.5, v3_y + thick * 0.3, "blanco")
+        
+        # Barra 3: v3 -> v1
+        draw.line(v3_x + thick * 0.3, v3_y - thick * 0.5, v1_x + thick * 0.3, v1_y + thick * 0.5, "blanco")
+        draw.line(v3_x - thick * 0.3, v3_y + thick * 0.5, v1_x - thick * 0.3, v1_y + thick * 0.5, "blanco")
+
+        # Conexiones en esquinas
+        draw.line(v1_x - thick * 0.3, v1_y - thick * 0.5, v1_x - thick * 0.3, v1_y + thick * 0.5, "rojo")
+        draw.line(v1_x + thick * 0.3, v1_y - thick * 0.5, v1_x + thick * 0.3, v1_y + thick * 0.5, "rojo")
+        
+        draw.line(v2_x - thick * 0.5, v2_y - thick * 0.3, v2_x - thick * 0.5, v2_y + thick * 0.3, "rojo")
+        draw.line(v2_x + thick * 0.5, v2_y - thick * 0.3, v2_x + thick * 0.5, v2_y + thick * 0.3, "rojo")
+        
+        draw.line(v3_x - thick * 0.5, v3_y - thick * 0.3, v3_x - thick * 0.5, v3_y + thick * 0.3, "rojo")
+        draw.line(v3_x + thick * 0.5, v3_y - thick * 0.3, v3_x + thick * 0.5, v3_y + thick * 0.3, "rojo")
+
+        draw.text("¿Puede existir este triángulo en 3D?", 260, 500, "naranja")
+    }
+
+    # ========================================================================
+    # 2. CUBO IMPOSIBLE (Necker Cube)
+    # ========================================================================
+    onif selected == 1 {
+        draw.text("2. Cubo Imposible (Necker)", 270, 70, "verde")
+
+        dark.slot cx = 400
+        dark.slot cy = 300
+        dark.slot s = 80
+        dark.slot offset = 48
+
+        # Cubo frontal
+        dark.slot f_bl_x = cx - s
+        dark.slot f_bl_y = cy + s
+        dark.slot f_br_x = cx + s
+        dark.slot f_br_y = cy + s
+        dark.slot f_tl_x = cx - s
+        dark.slot f_tl_y = cy - s
+        dark.slot f_tr_x = cx + s
+        dark.slot f_tr_y = cy - s
+
+        # Cubo trasero
+        dark.slot b_bl_x = cx - s + offset
+        dark.slot b_bl_y = cy + s - offset
+        dark.slot b_br_x = cx + s + offset
+        dark.slot b_br_y = cy + s - offset
+        dark.slot b_tl_x = cx - s + offset
+        dark.slot b_tl_y = cy - s - offset
+        dark.slot b_tr_x = cx + s + offset
+        dark.slot b_tr_y = cy - s - offset
+
+        # Cara frontal (azul)
+        draw.line(f_bl_x, f_bl_y, f_br_x, f_br_y, "azul")
+        draw.line(f_br_x, f_br_y, f_tr_x, f_tr_y, "azul")
+        draw.line(f_tr_x, f_tr_y, f_tl_x, f_tl_y, "azul")
+        draw.line(f_tl_x, f_tl_y, f_bl_x, f_bl_y, "azul")
+
+        # Cara trasera (verde)
+        draw.line(b_bl_x, b_bl_y, b_br_x, b_br_y, "verde")
+        draw.line(b_br_x, b_br_y, b_tr_x, b_tr_y, "verde")
+        draw.line(b_tr_x, b_tr_y, b_tl_x, b_tl_y, "verde")
+        draw.line(b_tl_x, b_tl_y, b_bl_x, b_bl_y, "verde")
+
+        # Conexiones (amarillo)
+        draw.line(f_bl_x, f_bl_y, b_bl_x, b_bl_y, "amarillo")
+        draw.line(f_br_x, f_br_y, b_br_x, b_br_y, "amarillo")
+        draw.line(f_tl_x, f_tl_y, b_tl_x, b_tl_y, "amarillo")
+        draw.line(f_tr_x, f_tr_y, b_tr_x, b_tr_y, "amarillo")
+
+        # Líneas imposibles (rojo)
+        draw.line(f_bl_x + 24, f_bl_y, b_bl_x - 24, b_bl_y, "rojo")
+        draw.line(f_tr_x - 24, f_tr_y, b_tr_x + 24, b_tr_y, "rojo")
+
+        draw.text("¿Qué cara está al frente? ¡Parpadea!", 240, 520, "naranja")
+    }
+
+    # ========================================================================
+    # 3. ESPIRAL DE ARQUÍMEDES
+    # ========================================================================
+    onif selected == 2 {
+        draw.text("3. Espiral de Arquímedes", 280, 70, "verde")
+
+        dark.slot cx = 400
+        dark.slot cy = 300
+        dark.slot turns = 5
+        dark.slot max_radius = 200
+        dark.slot points_per_turn = 30
+        dark.slot total_points = turns * points_per_turn
+
+        # Dibujar espiral punto por punto
+        dark.slot i = 0
+        ryda i < total_points {
+            dark.slot t = i / total_points
+            dark.slot angle = t * turns * 6.28318  # 2 * PI
+            dark.slot r = t * max_radius
+            
+            dark.slot x = cx + r * angle.cos()
+            dark.slot y = cy + r * angle.sin()
+            
+            # Color que cambia con la distancia
+            onif t < 0.33 {
+                draw.circle(x, y, 2, "rojo")
+            } blelse onif t < 0.66 {
+                draw.circle(x, y, 2, "verde")
+            } blelse {
+                draw.circle(x, y, 2, "azul")
+            }
+            
+            dark.slot i = i + 1
+        }
+
+        # Dibujar centro
+        draw.circle(cx, cy, 5, "amarillo")
+
+        draw.text("Sigue la espiral con la vista... ¿se mueve?", 220, 520, "naranja")
+    }
+
+    # ========================================================================
+    # 4. ILUSIÓN DE MÜLLER-LYER
+    # ========================================================================
+    onif selected == 3 {
+        draw.text("4. Müller-Lyer (Flechas)", 280, 70, "verde")
+
+        dark.slot cx = 400
+        dark.slot cy1 = 200
+        dark.slot cy2 = 400
+        dark.slot length = 200
+        dark.slot arrow_size = 30
+
+        # Línea 1: Flechas hacia adentro (rojo)
+        draw.line(cx - length/2, cy1, cx + length/2, cy1, "blanco")
+        
+        # Flecha izquierda adentro
+        draw.line(cx - length/2, cy1, cx - length/2 + arrow_size, cy1 - arrow_size * 0.6, "rojo")
+        draw.line(cx - length/2, cy1, cx - length/2 + arrow_size, cy1 + arrow_size * 0.6, "rojo")
+        
+        # Flecha derecha adentro
+        draw.line(cx + length/2, cy1, cx + length/2 - arrow_size, cy1 - arrow_size * 0.6, "rojo")
+        draw.line(cx + length/2, cy1, cx + length/2 - arrow_size, cy1 + arrow_size * 0.6, "rojo")
+
+        # Línea 2: Flechas hacia afuera (verde)
+        draw.line(cx - length/2, cy2, cx + length/2, cy2, "blanco")
+        
+        # Flecha izquierda afuera
+        draw.line(cx - length/2, cy2, cx - length/2 - arrow_size, cy2 - arrow_size * 0.6, "verde")
+        draw.line(cx - length/2, cy2, cx - length/2 - arrow_size, cy2 + arrow_size * 0.6, "verde")
+        
+        # Flecha derecha afuera
+        draw.line(cx + length/2, cy2, cx + length/2 + arrow_size, cy2 - arrow_size * 0.6, "verde")
+        draw.line(cx + length/2, cy2, cx + length/2 + arrow_size, cy2 + arrow_size * 0.6, "verde")
+
+        draw.text("¿Cuál línea es más larga? (Ambas miden igual)", 200, 520, "naranja")
+    }
+
+    # ========================================================================
+    # 5. ILUSIÓN DE PONZO (Perspectiva)
+    # ========================================================================
+    onif selected == 4 {
+        draw.text("5. Ponzo (Perspectiva Forzada)", 250, 70, "verde")
+
+        dark.slot cx = 400
+        dark.slot top_y = 150
+        dark.slot bottom_y = 450
+        dark.slot width_top = 100
+        dark.slot width_bottom = 300
+
+        # Rieles de perspectiva (gris)
+        draw.line(cx - width_top/2, top_y, cx - width_bottom/2, bottom_y, "gris")
+        draw.line(cx + width_top/2, top_y, cx + width_bottom/2, bottom_y, "gris")
+
+        # Líneas horizontales
+        dark.slot top_line_width = width_top * 0.8
+        dark.slot bottom_line_width = width_bottom * 0.8
+
+        # Línea superior (rojo)
+        draw.line(cx - top_line_width/2, top_y + 60, cx + top_line_width/2, top_y + 60, "rojo")
+
+        # Línea inferior (verde) - misma longitud real, parece más corta
+        draw.line(cx - bottom_line_width/2, bottom_y - 60, cx + bottom_line_width/2, bottom_y - 60, "verde")
+
+        # Líneas adicionales de perspectiva
+        dark.slot mid_y = (top_y + bottom_y) / 2
+        dark.slot mid_width = (width_top + width_bottom) * 0.4
+        draw.line(cx - mid_width/2, mid_y, cx + mid_width/2, mid_y, "amarillo")
+        draw.line(cx - mid_width/4, mid_y + 45, cx + mid_width/4, mid_y + 45, "amarillo")
+
+        draw.text("¿Cuál línea horizontal es más larga? (Son iguales)", 200, 520, "naranja")
+    }
+
+    # ========================================================================
+    # NAVEGACIÓN
+    # ========================================================================
+
+    # Indicador de selección (texto fijo por ahora)
+    onif selected == 0 {
+        draw.text("Ilusion 1 de 5: Penrose", 300, 560, "cian")
+    }
+    onif selected == 1 {
+        draw.text("Ilusion 2 de 5: Cubo", 310, 560, "cian")
+    }
+    onif selected == 2 {
+        draw.text("Ilusion 3 de 5: Espiral", 300, 560, "cian")
+    }
+    onif selected == 3 {
+        draw.text("Ilusion 4 de 5: Muller-Lyer", 280, 560, "cian")
+    }
+    onif selected == 4 {
+        draw.text("Ilusion 5 de 5: Ponzo", 300, 560, "cian")
+    }
+
+    # Input
+    onif key_pressed("RIGHT") {
+        dark.slot selected = selected + 1
+        onif selected > 4 {
+            dark.slot selected = 0
+        }
+        dark.slot frame = frame + 100  # Debounce
+    }
+
+    onif key_pressed("LEFT") {
+        dark.slot selected = selected - 1
+        onif selected < 0 {
+            dark.slot selected = 4
+        }
+        dark.slot frame = frame + 100  # Debounce
+    }
+
+    dark.slot frame = frame + 1
+}
