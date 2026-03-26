@@ -432,7 +432,7 @@ pub fn ejecutar_stmt(
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let radio_val = evaluar_expr(radio, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(radio)) = (x_val, y_val, radio_val) {
                 println!("[DRAW] circle({}, {}, {}, {:?})", x, y, radio, color_val);
@@ -451,7 +451,7 @@ pub fn ejecutar_stmt(
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
                 (x_val, y_val, ancho_val, alto_val)
@@ -475,7 +475,7 @@ pub fn ejecutar_stmt(
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) =
                 (x1_val, y1_val, x2_val, y2_val)
@@ -498,7 +498,7 @@ pub fn ejecutar_stmt(
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(tamano)) = (x_val, y_val, tamano_val) {
                 println!(
@@ -525,7 +525,7 @@ pub fn ejecutar_stmt(
             let v2_y_val = evaluar_expr(v2_y, executor, funcs);
             let v3_x_val = evaluar_expr(v3_x, executor, funcs);
             let v3_y_val = evaluar_expr(v3_y, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (
                 Valor::Num(v1_x),
@@ -555,7 +555,7 @@ pub fn ejecutar_stmt(
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let inner_radius_val = evaluar_expr(inner_radius, executor, funcs);
             let outer_radius_val = evaluar_expr(outer_radius, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = (
                 center_x_val,
@@ -582,7 +582,7 @@ pub fn ejecutar_stmt(
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
                 (x_val, y_val, ancho_val, alto_val)
@@ -606,7 +606,7 @@ pub fn ejecutar_stmt(
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let radius_h_val = evaluar_expr(radius_h, executor, funcs);
             let radius_v_val = evaluar_expr(radius_v, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) =
                 (center_x_val, center_y_val, radius_h_val, radius_v_val)
@@ -632,7 +632,7 @@ pub fn ejecutar_stmt(
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
             let thick_val = evaluar_expr(thick, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (
                 Valor::Num(x1),
@@ -1075,7 +1075,7 @@ fn ejecutar_stmt_gfx(
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let radio_val = evaluar_expr(radio, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(radio)) = (x_val, y_val, radio_val) {
                 d.draw_circle(x as i32, y as i32, radio as i32, color_val);
@@ -1092,7 +1092,7 @@ fn ejecutar_stmt_gfx(
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
                 (x_val, y_val, ancho_val, alto_val)
@@ -1111,7 +1111,7 @@ fn ejecutar_stmt_gfx(
             let y1_val = evaluar_expr(y1, executor, funcs);
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x1), Valor::Num(y1), Valor::Num(x2), Valor::Num(y2)) =
                 (x1_val, y1_val, x2_val, y2_val)
@@ -1129,7 +1129,7 @@ fn ejecutar_stmt_gfx(
             let x_val = evaluar_expr(x, executor, funcs);
             let y_val = evaluar_expr(y, executor, funcs);
             let tamano_val = evaluar_expr(tamano, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(tamano)) = (x_val, y_val, tamano_val) {
                 d.draw_text(texto, x as i32, y as i32, tamano as i32, color_val);
@@ -1151,7 +1151,7 @@ fn ejecutar_stmt_gfx(
             let v2_y_val = evaluar_expr(v2_y, executor, funcs);
             let v3_x_val = evaluar_expr(v3_x, executor, funcs);
             let v3_y_val = evaluar_expr(v3_y, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (
                 Valor::Num(v1_x),
@@ -1181,7 +1181,7 @@ fn ejecutar_stmt_gfx(
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let inner_radius_val = evaluar_expr(inner_radius, executor, funcs);
             let outer_radius_val = evaluar_expr(outer_radius, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(ir), Valor::Num(or)) = (
                 center_x_val,
@@ -1203,7 +1203,7 @@ fn ejecutar_stmt_gfx(
             let y_val = evaluar_expr(y, executor, funcs);
             let ancho_val = evaluar_expr(ancho, executor, funcs);
             let alto_val = evaluar_expr(alto, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(x), Valor::Num(y), Valor::Num(ancho), Valor::Num(alto)) =
                 (x_val, y_val, ancho_val, alto_val)
@@ -1222,7 +1222,7 @@ fn ejecutar_stmt_gfx(
             let center_y_val = evaluar_expr(center_y, executor, funcs);
             let radius_h_val = evaluar_expr(radius_h, executor, funcs);
             let radius_v_val = evaluar_expr(radius_v, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (Valor::Num(cx), Valor::Num(cy), Valor::Num(rh), Valor::Num(rv)) =
                 (center_x_val, center_y_val, radius_h_val, radius_v_val)
@@ -1243,7 +1243,7 @@ fn ejecutar_stmt_gfx(
             let x2_val = evaluar_expr(x2, executor, funcs);
             let y2_val = evaluar_expr(y2, executor, funcs);
             let thick_val = evaluar_expr(thick, executor, funcs);
-            let color_val = ColorRydit::from_str(color).unwrap_or(ColorRydit::Blanco);
+            let color_val = ColorRydit::from_str(color);
 
             if let (
                 Valor::Num(x1),

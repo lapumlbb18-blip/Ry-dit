@@ -903,21 +903,21 @@ pub fn evaluar_expr(
             // --- EASING FUNCTIONS (Slow In & Slow Out - Principio #6) ---
             if name == "anim::ease_in" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     return Valor::Num(t * t);
                 }
                 return Valor::Error("anim::ease_in() requiere número (0.0-1.0)".to_string());
             }
             if name == "anim::ease_out" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     return Valor::Num(t * (2.0 - t));
                 }
                 return Valor::Error("anim::ease_out() requiere número (0.0-1.0)".to_string());
             }
             if name == "anim::ease_in_out" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     return Valor::Num(if t < 0.5 {
                         2.0 * t * t
                     } else {
@@ -930,14 +930,14 @@ pub fn evaluar_expr(
             // --- SQUASH & STRETCH (Principio #1) ---
             if name == "anim::squash" && args.len() == 1 {
                 if let Valor::Num(factor) = evaluar_expr(&args[0], executor, funcs) {
-                    let factor = factor.clamp(0.5, 2.0);
+                    let factor = factor.max(0.5).min(2.0);
                     return Valor::Array(vec![Valor::Num(factor), Valor::Num(1.0 / factor)]);
                 }
                 return Valor::Error("anim::squash() requiere número (0.5-2.0)".to_string());
             }
             if name == "anim::stretch" && args.len() == 1 {
                 if let Valor::Num(factor) = evaluar_expr(&args[0], executor, funcs) {
-                    let factor = factor.clamp(0.5, 2.0);
+                    let factor = factor.max(0.5).min(2.0);
                     return Valor::Array(vec![Valor::Num(1.0 / factor), Valor::Num(factor)]);
                 }
                 return Valor::Error("anim::stretch() requiere número (0.5-2.0)".to_string());
@@ -1494,7 +1494,7 @@ pub fn evaluar_expr(
                 if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(t)] =
                     vals.as_slice()
                 {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     let x = (1.0 - t) * p0_x + t * p1_x;
                     let y = (1.0 - t) * p0_y + t * p1_y;
                     return Valor::Array(vec![Valor::Num(x), Valor::Num(y)]);
@@ -1513,7 +1513,7 @@ pub fn evaluar_expr(
                 if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(t)] =
                     vals.as_slice()
                 {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     let mt = 1.0 - t;
                     let x = mt * mt * p0_x + 2.0 * mt * t * p1_x + t * t * p2_x;
                     let y = mt * mt * p0_y + 2.0 * mt * t * p1_y + t * t * p2_y;
@@ -1534,7 +1534,7 @@ pub fn evaluar_expr(
                 if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(p3_x), Valor::Num(p3_y), Valor::Num(t)] =
                     vals.as_slice()
                 {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     let mt = 1.0 - t;
                     let mt2 = mt * mt;
                     let t2 = t * t;
@@ -1563,7 +1563,7 @@ pub fn evaluar_expr(
                 if let [Valor::Num(p0_x), Valor::Num(p0_y), Valor::Num(p1_x), Valor::Num(p1_y), Valor::Num(p2_x), Valor::Num(p2_y), Valor::Num(p3_x), Valor::Num(p3_y), Valor::Num(t)] =
                     vals.as_slice()
                 {
-                    let t = t.clamp(0.0, 1.0);
+                    let t = t.max(0.0).min(1.0);
                     let mt = 1.0 - t;
                     // Derivada de Bezier cúbica: B'(t) = 3(1-t)²(P1-P0) + 6(1-t)t(P2-P1) + 3t²(P3-P2)
                     let dx = 3.0 * mt * mt * (p1_x - p0_x)

@@ -126,7 +126,7 @@ impl AnimModule {
             });
         }
 
-        let factor = arr[0].as_f64().unwrap_or(1.0).clamp(0.5, 2.0);
+        let factor = arr[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
         Ok(json!([factor, 1.0 / factor]))
     }
 
@@ -145,7 +145,7 @@ impl AnimModule {
             });
         }
 
-        let factor = arr[0].as_f64().unwrap_or(1.0).clamp(0.5, 2.0);
+        let factor = arr[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
         Ok(json!([1.0 / factor, factor]))
     }
 

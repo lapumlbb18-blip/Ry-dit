@@ -34,87 +34,92 @@ pub fn penrose(center_x: f64, center_y: f64, size: f64) -> Value {
 
     // Barras del triángulo imposible
     // Cada barra tiene 2 líneas paralelas para dar grosor
-    let lines = vec![
-        // Barra 1: v1 -> v2 (con "quiebre" imposible)
-        json!([
-            v1_x - thick * 0.3,
-            v1_y - thick * 0.5,
-            v2_x + thick * 0.5,
-            v2_y - thick * 0.3,
-        ]),
-        json!([
-            v1_x + thick * 0.3,
-            v1_y - thick * 0.5,
-            v2_x - thick * 0.5,
-            v2_y + thick * 0.3,
-        ]),
-        // Barra 2: v2 -> v3
-        json!([
-            v2_x + thick * 0.5,
-            v2_y - thick * 0.3,
-            v3_x - thick * 0.5,
-            v3_y - thick * 0.3,
-        ]),
-        json!([
-            v2_x + thick * 0.5,
-            v2_y + thick * 0.3,
-            v3_x - thick * 0.5,
-            v3_y + thick * 0.3,
-        ]),
-        // Barra 3: v3 -> v1 (con "quiebre" imposible)
-        json!([
-            v3_x + thick * 0.3,
-            v3_y - thick * 0.5,
-            v1_x + thick * 0.3,
-            v1_y + thick * 0.5,
-        ]),
-        json!([
-            v3_x - thick * 0.3,
-            v3_y + thick * 0.5,
-            v1_x - thick * 0.3,
-            v1_y + thick * 0.5,
-        ]),
-        // Líneas de conexión "imposibles" en las esquinas
-        // Esquina v1
-        json!([
-            v1_x - thick * 0.3,
-            v1_y - thick * 0.5,
-            v1_x - thick * 0.3,
-            v1_y + thick * 0.5,
-        ]),
-        json!([
-            v1_x + thick * 0.3,
-            v1_y - thick * 0.5,
-            v1_x + thick * 0.3,
-            v1_y + thick * 0.5,
-        ]),
-        // Esquina v2
-        json!([
-            v2_x - thick * 0.5,
-            v2_y - thick * 0.3,
-            v2_x - thick * 0.5,
-            v2_y + thick * 0.3,
-        ]),
-        json!([
-            v2_x + thick * 0.5,
-            v2_y - thick * 0.3,
-            v2_x + thick * 0.5,
-            v2_y + thick * 0.3,
-        ]),
-        // Esquina v3
-        json!([
-            v3_x - thick * 0.5,
-            v3_y - thick * 0.3,
-            v3_x - thick * 0.5,
-            v3_y + thick * 0.3,
-        ]),
-        json!([
-            v3_x + thick * 0.5,
-            v3_y - thick * 0.3,
-            v3_x + thick * 0.5,
-            v3_y + thick * 0.3,
-        ]),
-    ];
+    let mut lines = Vec::new();
+
+    // Barra 1: v1 -> v2 (con "quiebre" imposible)
+    lines.push(json!([
+        v1_x - thick * 0.3,
+        v1_y - thick * 0.5,
+        v2_x + thick * 0.5,
+        v2_y - thick * 0.3
+    ]));
+    lines.push(json!([
+        v1_x + thick * 0.3,
+        v1_y - thick * 0.5,
+        v2_x - thick * 0.5,
+        v2_y + thick * 0.3
+    ]));
+
+    // Barra 2: v2 -> v3
+    lines.push(json!([
+        v2_x + thick * 0.5,
+        v2_y - thick * 0.3,
+        v3_x - thick * 0.5,
+        v3_y - thick * 0.3
+    ]));
+    lines.push(json!([
+        v2_x + thick * 0.5,
+        v2_y + thick * 0.3,
+        v3_x - thick * 0.5,
+        v3_y + thick * 0.3
+    ]));
+
+    // Barra 3: v3 -> v1 (con "quiebre" imposible)
+    lines.push(json!([
+        v3_x + thick * 0.3,
+        v3_y - thick * 0.5,
+        v1_x + thick * 0.3,
+        v1_y + thick * 0.5
+    ]));
+    lines.push(json!([
+        v3_x - thick * 0.3,
+        v3_y + thick * 0.5,
+        v1_x - thick * 0.3,
+        v1_y + thick * 0.5
+    ]));
+
+    // Líneas de conexión "imposibles" en las esquinas
+    // Esquina v1
+    lines.push(json!([
+        v1_x - thick * 0.3,
+        v1_y - thick * 0.5,
+        v1_x - thick * 0.3,
+        v1_y + thick * 0.5
+    ]));
+    lines.push(json!([
+        v1_x + thick * 0.3,
+        v1_y - thick * 0.5,
+        v1_x + thick * 0.3,
+        v1_y + thick * 0.5
+    ]));
+
+    // Esquina v2
+    lines.push(json!([
+        v2_x - thick * 0.5,
+        v2_y - thick * 0.3,
+        v2_x - thick * 0.5,
+        v2_y + thick * 0.3
+    ]));
+    lines.push(json!([
+        v2_x + thick * 0.5,
+        v2_y - thick * 0.3,
+        v2_x + thick * 0.5,
+        v2_y + thick * 0.3
+    ]));
+
+    // Esquina v3
+    lines.push(json!([
+        v3_x - thick * 0.5,
+        v3_y - thick * 0.3,
+        v3_x - thick * 0.5,
+        v3_y + thick * 0.3
+    ]));
+    lines.push(json!([
+        v3_x + thick * 0.5,
+        v3_y - thick * 0.3,
+        v3_x + thick * 0.5,
+        v3_y + thick * 0.3
+    ]));
 
     json!(lines)
 }
@@ -152,26 +157,30 @@ pub fn impossible_cube(center_x: f64, center_y: f64, size: f64) -> Value {
     let b_tr_x = center_x + s + offset; // back top-right
     let b_tr_y = center_y - s - offset;
 
-    let lines = vec![
-        // Cara frontal
-        json!([f_bl_x, f_bl_y, f_br_x, f_br_y]), // bottom
-        json!([f_br_x, f_br_y, f_tr_x, f_tr_y]), // right
-        json!([f_tr_x, f_tr_y, f_tl_x, f_tl_y]), // top
-        json!([f_tl_x, f_tl_y, f_bl_x, f_bl_y]), // left
-        // Cara trasera
-        json!([b_bl_x, b_bl_y, b_br_x, b_br_y]), // bottom
-        json!([b_br_x, b_br_y, b_tr_x, b_tr_y]), // right
-        json!([b_tr_x, b_tr_y, b_tl_x, b_tl_y]), // top
-        json!([b_tl_x, b_tl_y, b_bl_x, b_bl_y]), // left
-        // Conexiones frontal-trasera (algunas "imposibles")
-        json!([f_bl_x, f_bl_y, b_bl_x, b_bl_y]),
-        json!([f_br_x, f_br_y, b_br_x, b_br_y]),
-        json!([f_tl_x, f_tl_y, b_tl_x, b_tl_y]),
-        json!([f_tr_x, f_tr_y, b_tr_x, b_tr_y]),
-        // Líneas adicionales para efecto imposible
-        json!([f_bl_x + s * 0.3, f_bl_y, b_bl_x - s * 0.3, b_bl_y]),
-        json!([f_tr_x - s * 0.3, f_tr_y, b_tr_x + s * 0.3, b_tr_y]),
-    ];
+    let mut lines = Vec::new();
+
+    // Cara frontal
+    lines.push(json!([f_bl_x, f_bl_y, f_br_x, f_br_y])); // bottom
+    lines.push(json!([f_br_x, f_br_y, f_tr_x, f_tr_y])); // right
+    lines.push(json!([f_tr_x, f_tr_y, f_tl_x, f_tl_y])); // top
+    lines.push(json!([f_tl_x, f_tl_y, f_bl_x, f_bl_y])); // left
+
+    // Cara trasera
+    lines.push(json!([b_bl_x, b_bl_y, b_br_x, b_br_y])); // bottom
+    lines.push(json!([b_br_x, b_br_y, b_tr_x, b_tr_y])); // right
+    lines.push(json!([b_tr_x, b_tr_y, b_tl_x, b_tl_y])); // top
+    lines.push(json!([b_tl_x, b_tl_y, b_bl_x, b_bl_y])); // left
+
+    // Conexiones frontal-trasera (algunas "imposibles")
+    lines.push(json!([f_bl_x, f_bl_y, b_bl_x, b_bl_y]));
+    lines.push(json!([f_br_x, f_br_y, b_br_x, b_br_y]));
+    lines.push(json!([f_tl_x, f_tl_y, b_tl_x, b_tl_y]));
+    lines.push(json!([f_tr_x, f_tr_y, b_tr_x, b_tr_y]));
+
+    // Líneas adicionales para efecto imposible
+    // Conexión cruzada que crea la imposibilidad
+    lines.push(json!([f_bl_x + s * 0.3, f_bl_y, b_bl_x - s * 0.3, b_bl_y]));
+    lines.push(json!([f_tr_x - s * 0.3, f_tr_y, b_tr_x + s * 0.3, b_tr_y]));
 
     json!(lines)
 }

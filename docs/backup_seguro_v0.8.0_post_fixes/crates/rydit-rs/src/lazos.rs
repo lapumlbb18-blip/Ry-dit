@@ -118,7 +118,7 @@ fn bezier_linear(params: &Vec<Value>) -> Value {
     let p0_y = params[1].as_f64().unwrap_or(0.0);
     let p1_x = params[2].as_f64().unwrap_or(0.0);
     let p1_y = params[3].as_f64().unwrap_or(0.0);
-    let t = params[4].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
+    let t = params[4].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
 
     let x = (1.0 - t) * p0_x + t * p1_x;
     let y = (1.0 - t) * p0_y + t * p1_y;
@@ -137,7 +137,7 @@ fn bezier_quadratic(params: &Vec<Value>) -> Value {
     let p1_y = params[3].as_f64().unwrap_or(0.0);
     let p2_x = params[4].as_f64().unwrap_or(0.0);
     let p2_y = params[5].as_f64().unwrap_or(0.0);
-    let t = params[6].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
+    let t = params[6].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
 
     let mt = 1.0 - t;
     let x = mt * mt * p0_x + 2.0 * mt * t * p1_x + t * t * p2_x;
@@ -159,7 +159,7 @@ fn bezier_cubic(params: &Vec<Value>) -> Value {
     let p2_y = params[5].as_f64().unwrap_or(0.0);
     let p3_x = params[6].as_f64().unwrap_or(0.0);
     let p3_y = params[7].as_f64().unwrap_or(0.0);
-    let t = params[8].as_f64().unwrap_or(0.0).clamp(0.0, 1.0);
+    let t = params[8].as_f64().unwrap_or(0.0).max(0.0).min(1.0);
 
     let mt = 1.0 - t;
     let mt2 = mt * mt;
@@ -370,7 +370,7 @@ fn anim_squash(params: &Vec<Value>) -> Value {
         return json!({"error": "anim::squash requires 1 param: factor (0.5-2.0)"});
     }
 
-    let factor = params[0].as_f64().unwrap_or(1.0).clamp(0.5, 2.0);
+    let factor = params[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
     json!([factor, 1.0 / factor])
 }
 
@@ -379,7 +379,7 @@ fn anim_stretch(params: &Vec<Value>) -> Value {
         return json!({"error": "anim::stretch requires 1 param: factor (0.5-2.0)"});
     }
 
-    let factor = params[0].as_f64().unwrap_or(1.0).clamp(0.5, 2.0);
+    let factor = params[0].as_f64().unwrap_or(1.0).max(0.5).min(2.0);
     json!([1.0 / factor, factor])
 }
 

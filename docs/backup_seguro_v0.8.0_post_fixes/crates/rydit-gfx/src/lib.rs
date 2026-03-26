@@ -50,7 +50,6 @@ use migui::{Color as MiguiColor, MiguiBackend, Rect as MiguiRect};
 
 use std::collections::HashMap;
 use std::ffi::CString;
-use std::str::FromStr;
 
 /// Sistema de audio con raylib
 /// Nota: Sound y Music son structs FFI que contienen pointers internos
@@ -471,6 +470,31 @@ impl ColorRydit {
         }
     }
 
+    /// Crear desde string
+    pub fn from_str(s: &str) -> Self {
+        match s.to_lowercase().as_str() {
+            "rojo" | "red" => ColorRydit::Rojo,
+            "verde" | "green" => ColorRydit::Verde,
+            "azul" | "blue" => ColorRydit::Azul,
+            "amarillo" | "yellow" => ColorRydit::Amarillo,
+            "blanco" | "white" => ColorRydit::Blanco,
+            "negro" | "black" => ColorRydit::Negro,
+            "magenta" | "fucsia" => ColorRydit::Magenta,
+            "rosa" | "pink" => ColorRydit::Rosa,
+            "naranja" | "orange" => ColorRydit::Naranja,
+            "gris" | "gray" | "grey" => ColorRydit::Gris,
+            "cyan" | "celeste" => ColorRydit::Cyan,
+            "morado" | "purple" | "violeta" => ColorRydit::Morado,
+            "cafe" | "brown" | "marron" => ColorRydit::Cafe,
+            "lima" | "lime" => ColorRydit::Lima,
+            "azuloscuro" | "navy" | "azul oscuro" => ColorRydit::AzulOscuro,
+            "oliva" | "olive" => ColorRydit::Oliva,
+            "turquesa" | "teal" => ColorRydit::Turquesa,
+            "vino" | "maroon" | "granate" => ColorRydit::Vino,
+            _ => ColorRydit::Blanco,
+        }
+    }
+
     /// Crear desde Color de migui
     pub fn from_migui(color: MiguiColor) -> Self {
         // Convertir componentes RGB directamente
@@ -516,35 +540,6 @@ impl ColorRydit {
         }
 
         mejor_color
-    }
-}
-
-// Implementación del trait FromStr para ColorRydit
-impl FromStr for ColorRydit {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "rojo" | "red" => Ok(ColorRydit::Rojo),
-            "verde" | "green" => Ok(ColorRydit::Verde),
-            "azul" | "blue" => Ok(ColorRydit::Azul),
-            "amarillo" | "yellow" => Ok(ColorRydit::Amarillo),
-            "blanco" | "white" => Ok(ColorRydit::Blanco),
-            "negro" | "black" => Ok(ColorRydit::Negro),
-            "magenta" | "fucsia" => Ok(ColorRydit::Magenta),
-            "rosa" | "pink" => Ok(ColorRydit::Rosa),
-            "naranja" | "orange" => Ok(ColorRydit::Naranja),
-            "gris" | "gray" | "grey" => Ok(ColorRydit::Gris),
-            "cyan" | "celeste" => Ok(ColorRydit::Cyan),
-            "morado" | "purple" | "violeta" => Ok(ColorRydit::Morado),
-            "cafe" | "brown" | "marron" => Ok(ColorRydit::Cafe),
-            "lima" | "lime" => Ok(ColorRydit::Lima),
-            "azuloscuro" | "navy" | "azul oscuro" => Ok(ColorRydit::AzulOscuro),
-            "oliva" | "olive" => Ok(ColorRydit::Oliva),
-            "turquesa" | "teal" => Ok(ColorRydit::Turquesa),
-            "vino" | "maroon" | "granate" => Ok(ColorRydit::Vino),
-            _ => Ok(ColorRydit::Blanco),
-        }
     }
 }
 
@@ -1129,14 +1124,14 @@ mod tests {
 
     #[test]
     fn test_color_from_str() {
-        assert_eq!(ColorRydit::from_str("rojo").unwrap(), ColorRydit::Rojo);
-        assert_eq!(ColorRydit::from_str("RED").unwrap(), ColorRydit::Rojo);
-        assert_eq!(ColorRydit::from_str("verde").unwrap(), ColorRydit::Verde);
-        assert_eq!(ColorRydit::from_str("azul").unwrap(), ColorRydit::Azul);
-        assert_eq!(ColorRydit::from_str("amarillo").unwrap(), ColorRydit::Amarillo);
-        assert_eq!(ColorRydit::from_str("blanco").unwrap(), ColorRydit::Blanco);
-        assert_eq!(ColorRydit::from_str("negro").unwrap(), ColorRydit::Negro);
-        assert_eq!(ColorRydit::from_str("desconocido").unwrap(), ColorRydit::Blanco);
+        assert_eq!(ColorRydit::from_str("rojo"), ColorRydit::Rojo);
+        assert_eq!(ColorRydit::from_str("RED"), ColorRydit::Rojo);
+        assert_eq!(ColorRydit::from_str("verde"), ColorRydit::Verde);
+        assert_eq!(ColorRydit::from_str("azul"), ColorRydit::Azul);
+        assert_eq!(ColorRydit::from_str("amarillo"), ColorRydit::Amarillo);
+        assert_eq!(ColorRydit::from_str("blanco"), ColorRydit::Blanco);
+        assert_eq!(ColorRydit::from_str("negro"), ColorRydit::Negro);
+        assert_eq!(ColorRydit::from_str("desconocido"), ColorRydit::Blanco);
     }
 
     #[test]
@@ -1167,7 +1162,7 @@ mod tests {
         let colores = vec!["rojo", "verde", "azul", "amarillo", "blanco", "negro"];
 
         for color_str in colores {
-            let color_rydit = ColorRydit::from_str(color_str).unwrap();
+            let color_rydit = ColorRydit::from_str(color_str);
             let color = color_rydit.to_color();
             // Solo verificamos que el alpha sea 255 (completamente opaco)
             assert_eq!(color.a, 255, "Color {} debe tener alpha 255", color_str);
