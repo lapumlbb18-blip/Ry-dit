@@ -6,7 +6,11 @@
 
 **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.7.3.4-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![crates.io](https://img.shields.io/crates/v/rydit-core.svg)](https://crates.io/crates/rydit-core)
+[![crates.io](https://img.shields.io/crates/v/rydit-science.svg)](https://crates.io/crates/rydit-science)
+[![crates.io](https://img.shields.io/crates/v/rydit-physics.svg)](https://crates.io/crates/rydit-physics)
+[![crates.io](https://img.shields.io/crates/v/rydit-anim.svg)](https://crates.io/crates/rydit-anim)
+[![Version](https://img.shields.io/badge/version-v0.7.34-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-190%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
@@ -582,6 +586,57 @@ Este proyecto está siendo revisado por la comunidad de desarrolladores. Las eva
 ---
 
 ## 📦 Instalación y Dependencias
+
+### Crates en crates.io (NUEVO ✅)
+
+**RyDit ahora está disponible en crates.io**. Puedes usar los módulos individuales en tus proyectos Rust:
+
+```toml
+[dependencies]
+rydit-core = "0.7.34"      # Trait RyditModule + Registry
+rydit-science = "0.7.34"   # Bezier, Stats, Geometry, Optical illusions
+rydit-physics = "0.7.34"   # Projectile, Gravity, N-body
+rydit-anim = "0.7.34"      # Easing, Squash & Stretch
+```
+
+```bash
+# Instalar crates individuales
+cargo add rydit-core
+cargo add rydit-science
+cargo add rydit-physics
+cargo add rydit-anim
+
+# Ver en crates.io
+# https://crates.io/crates/rydit-core
+# https://crates.io/crates/rydit-science
+# https://crates.io/crates/rydit-physics
+# https://crates.io/crates/rydit-anim
+```
+
+### Ejemplo de Uso
+
+```rust
+use rydit_science::ScienceModule;
+use rydit_core::RyditModule;
+use serde_json::json;
+
+// Curva Bezier cúbica
+let science = ScienceModule;
+let point = science.execute("bezier::cubic", 
+    json!([0.0, 0.0, 30.0, 100.0, 70.0, 100.0, 100.0, 0.0, 0.5])
+).unwrap();
+println!("Punto en t=0.5: {:?}", point); // [50.0, 75.0]
+
+// Estadísticas
+let mean = science.execute("stats::mean", json!([1.0, 2.0, 3.0, 4.0, 5.0])).unwrap();
+println!("Media: {:?}", mean); // 3.0
+
+// Geometría - Triángulo de Penrose
+let penrose = science.execute("geometry::penrose", json!([400.0, 300.0, 100.0])).unwrap();
+println!("Líneas de Penrose: {:?}", penrose);
+```
+
+---
 
 ### Android/Termux (Plataforma Primaria)
 
