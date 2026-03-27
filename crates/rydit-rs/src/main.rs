@@ -20,7 +20,7 @@ mod modules; // ← MÓDULOS EXTENSIBLES (assets, audio, particles, http)
 pub use eval::evaluar_expr;
 
 // Re-exportar helpers de config y json
-pub use config::{cargar_modulo, configurar_entorno_termux};
+pub use config::{cargar_modulo, configurar_entorno_termux, configurar_display, mostrar_configuracion};
 pub use json_helpers::{valor_rydit_a_serde, valor_serde_a_rydit};
 
 // Re-exportar ejecutores

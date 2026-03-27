@@ -15,27 +15,49 @@ pub fn configurar_entorno_termux() {
 
     if es_termux {
         println!("[RYDIT] Termux detectado - Configurando entorno gráfico...");
-
-        // Configurar DISPLAY si no está establecido
-        if env::var("DISPLAY").is_err() {
-            env::set_var("DISPLAY", ":0");
-            println!("[RYDIT] DISPLAY=:0 configurado automáticamente");
-        }
-
-        // Configurar driver zink si no está establecido
-        if env::var("MESA_LOADER_DRIVER_OVERRIDE").is_err() {
-            env::set_var("MESA_LOADER_DRIVER_OVERRIDE", "zink");
-            println!("[RYDIT] zink GPU driver configurado automáticamente");
-        }
-
-        // Configurar DRI3 si no está establecido
-        if env::var("DRI3").is_err() {
-            env::set_var("DRI3", "1");
-            println!("[RYDIT] DRI3=1 configurado automáticamente");
-        }
-
+        configurar_display();
         println!("[RYDIT] ✅ Entorno gráfico listo para Termux-X11");
     }
+}
+
+/// Configurar DISPLAY, zink y DRI3 explícitamente
+pub fn configurar_display() {
+    // Configurar DISPLAY si no está establecido
+    if env::var("DISPLAY").is_err() {
+        env::set_var("DISPLAY", ":0");
+        println!("[CONFIG] DISPLAY=:0 configurado");
+    } else {
+        let display = env::var("DISPLAY").unwrap_or_default();
+        println!("[CONFIG] DISPLAY={} (existente)", display);
+    }
+
+    // Configurar driver zink si no está establecido
+    if env::var("MESA_LOADER_DRIVER_OVERRIDE").is_err() {
+        env::set_var("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+        println!("[CONFIG] MESA_LOADER_DRIVER_OVERRIDE=zink configurado");
+    } else {
+        let driver = env::var("MESA_LOADER_DRIVER_OVERRIDE").unwrap_or_default();
+        println!("[CONFIG] MESA_LOADER_DRIVER_OVERRIDE={} (existente)", driver);
+    }
+
+    // Configurar DRI3 si no está establecido
+    if env::var("DRI3").is_err() {
+        env::set_var("DRI3", "1");
+        println!("[CONFIG] DRI3=1 configurado");
+    } else {
+        let dri3 = env::var("DRI3").unwrap_or_default();
+        println!("[CONFIG] DRI3={} (existente)", dri3);
+    }
+}
+
+/// Mostrar configuración actual de entorno
+pub fn mostrar_configuracion() {
+    println!("\n=== CONFIGURACIÓN DE ENTORNO ===");
+    println!("DISPLAY: {}", env::var("DISPLAY").unwrap_or_else(|_| "No configurado".to_string()));
+    println!("MESA_LOADER_DRIVER_OVERRIDE: {}", env::var("MESA_LOADER_DRIVER_OVERRIDE").unwrap_or_else(|_| "No configurado".to_string()));
+    println!("DRI3: {}", env::var("DRI3").unwrap_or_else(|_| "No configurado".to_string()));
+    println!("TERMUX_VERSION: {}", env::var("TERMUX_VERSION").unwrap_or_else(|_| "No detectado".to_string()));
+    println!("===============================\n");
 }
 
 // =============================================================================

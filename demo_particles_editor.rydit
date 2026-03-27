@@ -1,0 +1,255 @@
+# ✨ Demo Particles Editor v0.5.1
+# Editor visual de sistema de partículas
+
+shield.init
+
+# ========================================
+# Estado del editor
+# ========================================
+dark.slot efecto_actual = "fire"
+dark.slot count = 50
+dark.slot gravedad = 0.1
+dark.slot mouse_x = 400
+dark.slot mouse_y = 300
+dark.slot emit_continuous = 1
+
+# ========================================
+# Instrucciones
+# ========================================
+voz "=== Particles Editor Demo v0.5.1 ==="
+voz "Efectos disponibles:"
+voz "  1 - Fuego (fire)"
+voz "  2 - Humo (smoke)"
+voz "  3 - Chispas (spark)"
+voz "  4 - Explosión (explosion)"
+voz "  5 - Lluvia (rain)"
+voz ""
+voz "Controles:"
+voz "  Mouse - Posición de emisión"
+voz "  Click - Emitir partículas"
+voz "  C - Toggle emisión continua"
+voz "  + - Más partículas"
+voz "  - - Menos partículas"
+voz "  G - Toggle gravedad"
+voz "  ESC - Salir"
+voz ""
+
+# ========================================
+# Game loop
+# ========================================
+ryda frame < 5000 {
+    # ========================================
+    # Obtener posición del mouse
+    # ========================================
+    dark.slot mouse_x = input::mouse_x()
+    dark.slot mouse_y = input::mouse_y()
+    
+    # ========================================
+    # Limpiar pantalla (fondo oscuro)
+    # ========================================
+    # (se hace automáticamente)
+    
+    # ========================================
+    # UI - Título
+    # ========================================
+    draw.text("✨ Particles Editor Demo", 250, 20, 28, "amarillo")
+    draw.text("v0.5.1", 650, 25, 16, "blanco")
+    
+    # ========================================
+    # UI - Información del efecto
+    # ========================================
+    draw.text("Efecto:", 20, 70, 20, "blanco")
+    
+    # Color según efecto
+    dark.slot color_efecto = onif efecto_actual == "fire" "naranja" 
+                             blelse onif efecto_actual == "smoke" "gris"
+                             blelse onif efecto_actual == "spark" "amarillo"
+                             blelse onif efecto_actual == "explosion" "rojo"
+                             blelse "azul"
+    
+    draw.text(efecto_actual, 100, 70, 20, color_efecto)
+    
+    # ========================================
+    # UI - Cantidad de partículas
+    # ========================================
+    draw.text("Cantidad: " + count, 20, 100, 18, "blanco")
+    
+    # ========================================
+    # UI - Gravedad
+    # ========================================
+    draw.text("Gravedad: " + gravedad, 20, 130, 18, "blanco")
+    
+    # ========================================
+    # UI - Emisión continua
+    # ========================================
+    onif emit_continuous {
+        draw.text("Emisión: CONTINUA", 20, 160, 18, "verde")
+    } blelse {
+        draw.text("Emisión: MANUAL (click)", 20, 160, 18, "rojo")
+    }
+    
+    # ========================================
+    # UI - Botones de efectos
+    # ========================================
+    # Fuego
+    draw.rect(200, 60, 80, 35, "naranja")
+    draw.text("1: Fuego", 210, 72, 16, "blanco")
+    
+    # Humo
+    draw.rect(300, 60, 80, 35, "gris")
+    draw.text("2: Humo", 315, 72, 16, "blanco")
+    
+    # Chispas
+    draw.rect(400, 60, 80, 35, "amarillo")
+    draw.text("3: Chispas", 405, 72, 16, "negro")
+    
+    # Explosión
+    draw.rect(500, 60, 80, 35, "rojo")
+    draw.text("4: Explosión", 505, 72, 16, "blanco")
+    
+    # Lluvia
+    draw.rect(600, 60, 80, 35, "azul")
+    draw.text("5: Lluvia", 615, 72, 16, "blanco")
+    
+    # ========================================
+    # UI - Cursor en posición del mouse
+    # ========================================
+    draw.circle(mouse_x, mouse_y, 10, "blanco")
+    draw.circle(mouse_x, mouse_y, 15, "rojo")
+    
+    # ========================================
+    # Emitir partículas (continuo)
+    # ========================================
+    onif emit_continuous {
+        particles::emit(mouse_x, mouse_y, efecto_actual, count / 10)
+    }
+    
+    # ========================================
+    # Actualizar partículas
+    # ========================================
+    particles::update()
+    
+    # ========================================
+    # Dibujar partículas (simulado con círculos)
+    # NOTA: El dibujado real requiere integración con gfx
+    # Por ahora mostramos información
+    # ========================================
+    dark.slot total = particles::count()
+    draw.text("Partículas activas: " + total, 20, 200, 18, "verde")
+    
+    # ========================================
+    # Input - Cambiar efecto (1-5)
+    # ========================================
+    onif tecla_presionada("1") {
+        dark.slot efecto_actual = "fire"
+        voz "🔥 Efecto: Fuego"
+    }
+    
+    onif tecla_presionada("2") {
+        dark.slot efecto_actual = "smoke"
+        voz "💨 Efecto: Humo"
+    }
+    
+    onif tecla_presionada("3") {
+        dark.slot efecto_actual = "spark"
+        voz "✨ Efecto: Chispas"
+    }
+    
+    onif tecla_presionada("4") {
+        dark.slot efecto_actual = "explosion"
+        voz "💥 Efecto: Explosión"
+    }
+    
+    onif tecla_presionada("5") {
+        dark.slot efecto_actual = "rain"
+        voz "🌧️ Efecto: Lluvia"
+    }
+    
+    # ========================================
+    # Input - Emitir manual (click)
+    # ========================================
+    onif input::is_mouse_button_pressed(0) {
+        onif not emit_continuous {
+            particles::emit(mouse_x, mouse_y, efecto_actual, count)
+            voz "✨ Emitiendo " + count + " partículas"
+        }
+    }
+    
+    # ========================================
+    # Input - Toggle emisión continua (C)
+    # ========================================
+    onif tecla_presionada("c") {
+        dark.slot emit_continuous = not emit_continuous
+        onif emit_continuous {
+            voz "▶ Emisión continua: ON"
+        } blelse {
+            voz "⏸ Emisión continua: OFF"
+        }
+    }
+    
+    # ========================================
+    # Input - Más partículas (+)
+    # ========================================
+    onif tecla_presionada("+") {
+        dark.slot count = count + 10
+        onif count > 200 {
+            dark.slot count = 200
+        }
+        voz "Cantidad: " + count
+    }
+    
+    # ========================================
+    # Input - Menos partículas (-)
+    # ========================================
+    onif tecla_presionada("-") {
+        dark.slot count = count - 10
+        onif count < 10 {
+            dark.slot count = 10
+        }
+        voz "Cantidad: " + count
+    }
+    
+    # ========================================
+    # Input - Toggle gravedad (G)
+    # ========================================
+    onif tecla_presionada("g") {
+        onif gravedad > 0 {
+            dark.slot gravedad = -0.1
+            particles::gravity(gravedad)
+            voz "Gravedad: Negativa (anti-gravedad)"
+        } blelse {
+            dark.slot gravedad = 0.1
+            particles::gravity(gravedad)
+            voz "Gravedad: Normal"
+        }
+    }
+    
+    # ========================================
+    # Input - Limpiar partículas (L)
+    # ========================================
+    onif tecla_presionada("l") {
+        particles::clear()
+        voz "🧹 Partículas limpiadas"
+    }
+    
+    # ========================================
+    # Input - Salir (ESC)
+    # ========================================
+    onif tecla_presionada("escape") {
+        voz "👋 Saliendo..."
+        break
+    }
+    
+    # ========================================
+    # Información
+    # ========================================
+    draw.text("=== Demo Particles Module v0.5.1 ===", 200, 500, 16, "gris")
+    draw.text("Prueba: particles::emit(), particles::update(), particles::gravity()", 100, 530, 14, "gris")
+    draw.text("Presiona ESC para salir", 280, 570, 16, "blanco")
+}
+
+# ========================================
+# Limpieza
+# ========================================
+particles::clear()
+voz "=== Particles Editor Demo - Finalizado ==="

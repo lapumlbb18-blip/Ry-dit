@@ -1,0 +1,189 @@
+# 🎵 Demo Audio Player v0.5.1
+# Reproductor de audio con UI
+
+shield.init
+
+# ========================================
+# Estado del reproductor
+# ========================================
+dark.slot playing = 0
+dark.slot volumen = 0.5
+dark.slot cancion_actual = 0
+
+# ========================================
+# Cargar sonidos de ejemplo (si existen)
+# ========================================
+# NOTA: Los archivos de audio deben existir en la ruta especificada
+# Para este demo, usamos beep() como fallback
+
+voz "=== Audio Player Demo v0.5.1 ==="
+voz "Controles:"
+voz "  ESPACIO - Play/Pause"
+voz "  F - Beep agudo"
+voz "  G - Beep grave"
+voz "  C - Click UI"
+voz "  + - Subir volumen"
+voz "  - - Bajar volumen"
+voz "  ESC - Salir"
+voz ""
+
+# ========================================
+# Game loop
+# ========================================
+ryda frame < 2000 {
+    # ========================================
+    # Limpiar pantalla
+    # ========================================
+    # (se hace automáticamente)
+    
+    # ========================================
+    # UI - Título
+    # ========================================
+    draw.text("🎵 Audio Player Demo", 250, 30, 28, "amarillo")
+    draw.text("v0.5.1", 650, 35, 16, "blanco")
+    
+    # ========================================
+    # UI - Estado
+    # ========================================
+    onif playing {
+        draw.text("▶ REPRODUCIENDO", 50, 100, 24, "verde")
+    } blelse {
+        draw.text("⏸ PAUSA", 50, 100, 24, "rojo")
+    }
+    
+    # ========================================
+    # UI - Volumen
+    # ========================================
+    draw.text("Volumen:", 50, 150, 20, "blanco")
+    
+    # Barra de volumen
+    dark.slot bar_width = volumen * 200
+    draw.rect(150, 145, bar_width, 25, "verde")
+    draw.rectangle_lines(150, 145, 200, 25, 2, "blanco")
+    
+    draw.text((volumen * 100) + "%", 360, 150, 20, "blanco")
+    
+    # ========================================
+    # UI - Controles
+    # ========================================
+    draw.text("Controles:", 50, 200, 20, "amarillo")
+    
+    # Botón Play/Pause (simulado)
+    onif playing {
+        draw.rect(50, 230, 100, 40, "rojo")
+        draw.text("PAUSA", 70, 245, 18, "blanco")
+    } blelse {
+        draw.rect(50, 230, 100, 40, "verde")
+        draw.text("PLAY", 75, 245, 18, "blanco")
+    }
+    
+    # Botones de efectos
+    draw.rect(200, 230, 80, 40, "azul")
+    draw.text("BEEP ↑", 210, 245, 16, "blanco")
+    
+    draw.rect(300, 230, 80, 40, "azul")
+    draw.text("BEEP ↓", 310, 245, 16, "blanco")
+    
+    draw.rect(400, 230, 80, 40, "naranja")
+    draw.text("CLICK", 420, 245, 16, "blanco")
+    
+    # ========================================
+    # Input - Play/Pause (ESPACIO)
+    # ========================================
+    onif tecla_presionada("space") {
+        playing = not playing
+        onif playing {
+            # Intentar reproducir música (si está cargada)
+            # audio::play_music()
+            voz "▶ Play"
+        } blelse {
+            # audio::stop_music()
+            voz "⏸ Pausa"
+        }
+    }
+    
+    # ========================================
+    # Input - Beep agudo (F)
+    # ========================================
+    onif tecla_presionada("f") {
+        audio::beep(800, 100)
+        voz "🎵 Beep agudo (800 Hz)"
+    }
+    
+    # ========================================
+    # Input - Beep grave (G)
+    # ========================================
+    onif tecla_presionada("g") {
+        audio::beep(400, 150)
+        voz "🎵 Beep grave (400 Hz)"
+    }
+    
+    # ========================================
+    # Input - Click UI (C)
+    # ========================================
+    onif tecla_presionada("c") {
+        audio::click()
+        voz "🔊 Click UI"
+    }
+    
+    # ========================================
+    # Input - Subir volumen (+)
+    # ========================================
+    onif tecla_presionada("+") {
+        dark.slot volumen = volumen + 0.1
+        onif volumen > 1.0 {
+            dark.slot volumen = 1.0
+        }
+        audio::music_volume(volumen)
+        voz "🔊 Volumen: " + (volumen * 100) + "%"
+    }
+    
+    # ========================================
+    # Input - Bajar volumen (-)
+    # ========================================
+    onif tecla_presionada("-") {
+        dark.slot volumen = volumen - 0.1
+        onif volumen < 0.0 {
+            dark.slot volumen = 0.0
+        }
+        audio::music_volume(volumen)
+        voz "🔈 Volumen: " + (volumen * 100) + "%"
+    }
+    
+    # ========================================
+    # Input - Salir (ESC)
+    # ========================================
+    onif tecla_presionada("escape") {
+        voz "👋 Saliendo..."
+        break
+    }
+    
+    # ========================================
+    # Visualización - Ondas de audio (simuladas)
+    # ========================================
+    onif playing {
+        # Dibujar ondas animadas
+        dark.slot offset = (frame % 100) / 100.0
+        
+        ryda i < 20 {
+            dark.slot x = 500 + i * 15
+            dark.slot altura = (i % 5 + 1) * 10 + offset * 20
+            dark.slot color = onif i % 3 == 0 "rojo" blelse onif i % 3 == 1 "amarillo" blelse "verde"
+            
+            draw.rect(x, 300 - altura / 2, 10, altura, color)
+        }
+    }
+    
+    # ========================================
+    # Información
+    # ========================================
+    draw.text("=== Demo Audio Module v0.5.1 ===", 250, 400, 16, "gris")
+    draw.text("Prueba: audio::beep(), audio::click(), audio::music_volume()", 150, 430, 14, "gris")
+    draw.text("Presiona ESC para salir", 280, 570, 16, "blanco")
+}
+
+# ========================================
+# Limpieza
+# ========================================
+audio::stop_music()
+voz "=== Audio Player Demo - Finalizado ==="
