@@ -1,4 +1,4 @@
-# 📋 PLANIFICACIÓN v0.5.1 - AUDIO + HTTP + DATA SCIENCE
+# 📋 PLANIFICACIÓN v0.5.1 - AUDIO + HTTP + CSV + ASSETS + PARTICLES
 
 **Fecha**: 2026-03-26 (Próxima sesión)
 **Versión actual**: v0.5.0 ✅ ESTABLE
@@ -11,7 +11,7 @@
 ### 1. Audio - Sonidos Básicos ⭐⭐⭐
 **Prioridad**: ALTA
 
-#### Features a Implementar
+#### Features
 - `audio::beep(frecuencia, duracion)` - Sonido tipo beep
 - `audio::click()` - Sonido de click UI
 - `audio::play_sound("path")` - Reproducir archivo WAV/MP3
@@ -21,7 +21,7 @@
 ### 2. HTTP Request - GET Sencillo ⭐⭐
 **Prioridad**: MEDIA
 
-#### Features a Implementar
+#### Features
 - `http::get(url)` - GET request sencillo
 - `http::post(url, data)` - POST request (opcional)
 
@@ -30,26 +30,83 @@
 ### 3. Data Science - CSV ⭐⭐
 **Prioridad**: MEDIA
 
-#### Features a Implementar
-**Lo que falta:**
-- ❌ `csv::read("file.csv")` - Leer archivos CSV
-- ❌ `csv::write(data, "file.csv")` - Escribir CSV
-- ❌ `stats::std_dev([1,2,3,4,5])` - Desviación estándar
-- ❌ `stats::variance([1,2,3,4,5])` - Varianza
-- ❌ `plot::ascii(data)` - Gráficos ASCII en consola
+#### Features
+- `csv::read("file.csv")` - Leer archivos CSV
+- `csv::write(data, "file.csv")` - Escribir CSV
+- `stats::std_dev([1,2,3,4,5])` - Desviación estándar
+- `stats::variance([1,2,3,4,5])` - Varianza
+- `plot::ascii(data)` - Gráficos ASCII en consola
 
 ---
 
-### 4. Documentación ⭐
+### 4. Assets Manager ⭐⭐⭐
+**Prioridad**: ALTA
+
+#### Arquitectura Modular
+**NO es crate nuevo** - Usa `RyditModule` existente:
+- `crates/rydit-rs/src/modules/assets.rs` - Assets Module
+
+#### Features
+- `assets::sprite(id, path)` - Crear sprite 2D
+- `assets::draw(id, x, y, scale)` - Dibujar sprite
+- `assets::draw_scaled(id, x, y, scale)` - Dibujar escalado
+- `assets::load(id, path)` - Cargar textura
+
+#### Uso
+```rydit
+# Crear y dibujar sprite
+dark.slot tank = assets::sprite("tank", "sprites/tank.png")
+assets::draw(tank, 400, 300, 2.0)
+
+# O directo:
+assets::load("tank", "sprites/tank.png")
+assets::draw_scaled("tank", 400, 300, 2.0)
+```
+
+---
+
+### 5. Partículas en rydit-anim ⭐⭐⭐
+**Prioridad**: ALTA
+
+#### Arquitectura
+**NO es crate nuevo** - En `rydit-anim` existente:
+- `crates/rydit-anim/src/particles.rs` - Particle System
+
+#### Features
+- `particles::emit(x, y, effect)` - Emitir partículas
+- `particles::update()` - Actualizar sistema
+- `particles::draw()` - Dibujar partículas
+
+#### Efectos
+- 🔥 `particles::emit(x, y, "fire")` - Fuego
+- 💨 `particles::emit(x, y, "smoke")` - Humo
+- ✨ `particles::emit(x, y, "spark")` - Chispas
+- 💥 `particles::emit(x, y, "explosion")` - Explosión
+
+#### Uso
+```rydit
+# En game loop
+particles::emit(400, 300, "fire")
+particles::update()
+particles::draw()
+```
+
+---
+
+### 6. Documentación ⭐
 **Prioridad**: BAJA
 
 #### Tasks
 - [ ] Actualizar README con ejemplos de audio
 - [ ] Actualizar README con ejemplos de HTTP
 - [ ] Actualizar README con ejemplos de CSV
+- [ ] Actualizar README con ejemplos de Assets
+- [ ] Actualizar README con ejemplos de Partículas
 - [ ] Crear demo de audio (beep + sonidos)
 - [ ] Crear demo de HTTP (API call simple)
 - [ ] Crear demo de CSV (leer/escribir datos)
+- [ ] Crear demo de Assets (tanque + helicóptero)
+- [ ] Crear demo de Partículas (fuego + humo + explosión)
 
 ---
 
@@ -60,9 +117,10 @@
 - `crates/rydit-http/` - HTTP requests (GET, POST)
 
 ### Existentes (a modificar)
-- `crates/rydit-rs/src/main.rs` - Exponer funciones `audio::`, `http::`, `csv::`
-- `crates/rydit-gfx/` - Posible integración con audio
-- `crates/rydit-science/` - Agregar CSV + stats avanzados + plot
+- `crates/rydit-rs/src/` - Agregar `modules/assets.rs`
+- `crates/rydit-rs/src/main.rs` - Exponer funciones `audio::`, `http::`, `csv::`, `assets::`
+- `crates/rydit-anim/src/` - Agregar `particles.rs`
+- `crates/rydit-science/src/` - Agregar `csv.rs`, `stats_advanced.rs`
 
 ---
 
@@ -90,8 +148,24 @@
 5. Crear demo `demo_csv.rydit`
 6. Tests
 
-### Sesión 4: Integración + Docs
-1. Demo combinado (audio + HTTP + CSV)
+### Sesión 4: Assets Manager (Estilo Godot)
+1. Crear `crates/rydit-rs/src/modules/assets.rs`
+2. Implementar `assets::sprite()`, `assets::draw()`, `assets::load()`
+3. Usar `Assets` struct que YA existe en `rydit-gfx`
+4. Registrar módulo en `RyditModule`
+5. Crear demo `demo_assets.rydit` (tanque + helicóptero)
+6. Tests
+
+### Sesión 5: Partículas en rydit-anim
+1. Crear `crates/rydit-anim/src/particles.rs`
+2. Implementar `ParticleSystem`, `Particle` structs
+3. Implementar `emit()`, `update()`, `draw()`
+4. Agregar a `rydit-anim` module
+5. Crear demo `demo_particulas.rydit` (fuego + humo + explosión)
+6. Tests
+
+### Sesión 6: Integración + Docs
+1. Demo combinado (audio + HTTP + CSV + Assets + Partículas)
 2. Actualizar README
 3. Actualizar QWEN.md
 4. Release v0.5.1
@@ -107,8 +181,10 @@
 | CSV read/write | ~150 | 5+ | ✅ |
 | Stats avanzados | ~50 | 4+ | ✅ |
 | Plot ASCII | ~80 | 2+ | ✅ |
+| Assets Manager | ~200 | 8+ | ✅ |
+| Partículas | ~250 | 10+ | ✅ |
 
-**Total estimado**: ~430 líneas nuevas, 19+ tests, 3-4 demos
+**Total estimado**: ~880 líneas nuevas, 37+ tests, 6-7 demos
 
 ---
 
@@ -126,6 +202,14 @@
 - Parsing de CSV con comas, quotes, escapes
 - Solución: Usar crate `csv` de Rust
 
+### Assets
+- El struct `Assets` YA existe en `rydit-gfx` ✅
+- Solo falta exponer como módulo ✅
+
+### Partículas
+- Sistema de partículas puede ser complejo
+- Solución: Implementar versión simple primero (círculos)
+
 ---
 
 ## ✅ CRITERIOS DE ACEPTACIÓN
@@ -138,16 +222,51 @@
 - [ ] `stats::std_dev()` calcula desviación estándar
 - [ ] `stats::variance()` calcula varianza
 - [ ] `plot::ascii()` imprime gráfico en consola
-- [ ] 19+ tests passing
-- [ ] 3-4 demos funcionales
+- [ ] `assets::sprite()` crea sprites estilo Godot
+- [ ] `assets::draw()` dibuja sprites cargados
+- [ ] `particles::emit()` emite partículas (fuego, humo, etc.)
+- [ ] `particles::update()` actualiza sistema
+- [ ] `particles::draw()` dibuja partículas
+- [ ] 37+ tests passing
+- [ ] 6-7 demos funcionales
 - [ ] README actualizado
+
+---
+
+## 🎯 ARQUITECTURA MODULAR
+
+### Sistema Universal Ry (v0.8.2+)
+```
+┌─────────────────────────────────────────────────────────┐
+│  RyDit Core (RyditModule trait)                         │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  rydit-rs/src/modules/                           │   │
+│  │  ├── assets.rs         ← Assets Manager          │   │
+│  │  └── mod.rs            ← Registro                │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  crates/rydit-anim/src/                          │   │
+│  │  └── particles.rs      ← Particle System         │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │  crates/rydit-science/src/                       │   │
+│  │  ├── csv.rs            ← CSV Reader/Writer       │   │
+│  │  └── stats_advanced.rs ← std_dev, variance       │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.5.1 - Audio + HTTP + Data Science**
+**🛡️ RyDit v0.5.1 - Audio + HTTP + CSV + Assets + Partículas**
 
-*~430 líneas | 19+ tests | 3-4 demos | 0 dependencias críticas*
+*~880 líneas | 37+ tests | 6-7 demos | Arquitectura Modular*
 
 </div>

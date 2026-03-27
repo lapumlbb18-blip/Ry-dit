@@ -531,7 +531,7 @@ Crates:
 | **v0.8.3** | ✅ | **Fix Warnings** (50→~15 warnings, -70%) | 2026-03-26 |
 | **v0.8.4** | ✅ | **FIX GRÁFICOS** (draw.text con expresiones, game loop estable) | 2026-03-26 |
 | **v0.5.0** | ✅ | **RELEASE ESTABLE** (7 demos funcionales, 157 tests) | 2026-03-26 |
-| **v0.5.1** | 🔜 | **Audio + HTTP** (sonidos básicos, GET request) | Próxima sesión |
+| **v0.5.1** | 🔜 | **Audio + HTTP + CSV + Assets + Partículas** | Próxima sesión |
 | **v0.7.3.x** | ⏳ | **rydit-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
 | **v0.8.0.0** | 🔮 | **Publicación crates.io + Linux/Windows** | 4-6 semanas |
 | **v1.0.0** | 🔮 | Production Ready | 6-8 meses |
