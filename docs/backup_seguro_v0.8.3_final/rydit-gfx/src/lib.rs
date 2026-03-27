@@ -1053,14 +1053,6 @@ impl Assets {
     }
 
     /// Dibujar textura en pantalla
-    ///
-    /// # Arguments (en orden):
-    /// 1. `d` - Draw handle de raylib
-    /// 2. `id` - ID del sprite cargado
-    /// 3-4. `x, y` - Posición en pantalla
-    /// 5-6. `_w, _h` - Dimensiones (actualmente no usadas)
-    /// 7. `color` - Color de tinte
-    #[allow(clippy::too_many_arguments)]
     pub fn draw_texture(
         &self,
         d: &mut RaylibDrawHandle,

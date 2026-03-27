@@ -2203,18 +2203,6 @@ fn evaluar_expr_gfx(
 
 // EVALUAR EXPRESION MODO MIGUI
 
-/// Evaluar expresión en modo Migui GUI
-///
-/// # Arguments (en orden):
-/// 1. `expr` - Expresión a evaluar
-/// 2. `executor` - Executor con memoria
-/// 3. `gui` - Instancia de Migui
-/// 4. `checkbox_states` - Estados de checkboxes
-/// 5. `slider_states` - Estados de sliders
-/// 6. `textbox_states` - Estados de textboxes
-/// 7. `window_states` - Estados de ventanas
-/// 8. `funcs` - Funciones de usuario
-#[allow(clippy::too_many_arguments)]
 pub fn evaluar_expr_migui(
     expr: &Expr,
     executor: &mut Executor,
@@ -3255,19 +3243,6 @@ pub fn evaluar_expr_migui(
 // EJECUTAR STATEMENT MODO MIGUI
 
 /// Ejecutar statement en modo migui
-///
-/// # Arguments (en orden):
-/// 1. `stmt` - Statement a ejecutar
-/// 2. `executor` - Executor con memoria
-/// 3. `funcs` - Funciones de usuario
-/// 4. `gui` - Instancia de Migui
-/// 5. `loaded_modules` - Módulos cargados
-/// 6. `importing_stack` - Stack de imports
-/// 7. `checkbox_states` - Estados de checkboxes
-/// 8. `slider_states` - Estados de sliders
-/// 9. `textbox_states` - Estados de textboxes
-/// 10. `window_states` - Estados de ventanas
-#[allow(clippy::too_many_arguments)]
 pub fn ejecutar_stmt_migui(
     stmt: &Stmt,
     executor: &mut Executor,
