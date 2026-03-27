@@ -133,14 +133,14 @@ fn parse_function(
     // Capturar cuerpo de la función
     let mut body = String::new();
     let mut brace_count = 1;
-    
-    while let Some(next_line) = lines.next() {
+
+    for next_line in lines {
         body.push_str(next_line);
         body.push('\n');
-        
+
         brace_count += next_line.matches('{').count();
         brace_count -= next_line.matches('}').count();
-        
+
         if brace_count == 0 {
             break;
         }
@@ -153,6 +153,7 @@ fn parse_function(
 pub struct ScriptModule {
     metadata: ScriptMetadata,
     exports: Vec<ExportedFunction>,
+    #[allow(dead_code)]  // Reservado para implementación futura de runtime
     source_code: String,
 }
 

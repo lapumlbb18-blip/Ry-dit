@@ -10,7 +10,6 @@ mod executor;
 mod json_helpers;
 mod lazos; // ← PROTOCOLO LAZOS
 mod module;
-mod module_loader; // ← CARGA DINÁMICA v0.8.2
 // mod physics;  ← AHORA ES CRATE EXTERNO: use rydit_physics::PhysicsModule;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use rydit_science::ScienceModule;

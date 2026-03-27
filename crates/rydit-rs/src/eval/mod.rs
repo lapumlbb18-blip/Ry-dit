@@ -1456,14 +1456,11 @@ pub fn evaluar_expr(
                         "<rect width='{}' height='{}' fill='white'/>",
                         w, h
                     ));
+                    let first_y = h - padding
+                        - ((nums[0] - min_val) / range * (h - 2 * padding) as f64) as i32;
                     let mut path = format!(
-                        "<polyline points='{}' fill='none' stroke='blue' stroke-width='2'/>",
-                        format!(
-                            "{},{}",
-                            padding,
-                            h - padding
-                                - ((nums[0] - min_val) / range * (h - 2 * padding) as f64) as i32
-                        )
+                        "<polyline points='{},{}' fill='none' stroke='blue' stroke-width='2'/>",
+                        padding, first_y
                     );
                     for (i, &val) in nums.iter().enumerate().skip(1) {
                         let x = padding

@@ -16,29 +16,27 @@ pub fn lazos_loop() {
     eprintln!("[LAZOS] Modo: stdin/stdout JSON-RPC");
     eprintln!("[LAZOS] Presiona Ctrl+D para salir");
 
-    for line in stdin.lock().lines() {
-        if let Ok(line) = line {
-            // Parsear request JSON
-            let request: Value = match serde_json::from_str(&line) {
-                Ok(req) => req,
-                Err(e) => {
-                    let error = json!({
-                        "jsonrpc": "2.0",
-                        "error": format!("Invalid JSON: {e}"),
-                        "id": null
-                    });
-                    println!("{error}");
-                    continue;
-                }
-            };
+    for line in stdin.lock().lines().flatten() {
+        // Parsear request JSON
+        let request: Value = match serde_json::from_str(&line) {
+            Ok(req) => req,
+            Err(e) => {
+                let error = json!({
+                    "jsonrpc": "2.0",
+                    "error": format!("Invalid JSON: {e}"),
+                    "id": null
+                });
+                println!("{error}");
+                continue;
+            }
+        };
 
-            // Ejecutar comando
-            let response = ejecutar_comando_lazos(&request);
+        // Ejecutar comando
+        let response = ejecutar_comando_lazos(&request);
 
-            // Responder
-            writeln!(stdout, "{}", response).unwrap();
-            stdout.flush().unwrap();
-        }
+        // Responder
+        writeln!(stdout, "{}", response).unwrap();
+        stdout.flush().unwrap();
     }
 
     eprintln!("[LAZOS] Protocolo finalizado");
