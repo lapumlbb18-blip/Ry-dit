@@ -1,4 +1,4 @@
-# 📋 PLANIFICACIÓN v0.5.1 - AUDIO + HTTP
+# 📋 PLANIFICACIÓN v0.5.1 - AUDIO + HTTP + DATA SCIENCE
 
 **Fecha**: 2026-03-26 (Próxima sesión)
 **Versión actual**: v0.5.0 ✅ ESTABLE
@@ -16,34 +16,6 @@
 - `audio::click()` - Sonido de click UI
 - `audio::play_sound("path")` - Reproducir archivo WAV/MP3
 
-#### Implementación
-```rust
-// crates/rydit-gfx/src/lib.rs o crates/rydit-audio/
-pub struct AudioPlayer {
-    // raylib audio context
-}
-
-impl AudioPlayer {
-    pub fn beep(&mut self, frequency: f32, duration: f32);
-    pub fn click(&mut self);
-    pub fn load_sound(&mut self, path: &str) -> Result<Sound, String>;
-    pub fn play_sound(&mut self, sound: &Sound);
-}
-```
-
-#### Uso en RyDit
-```rydit
-# Beep simple
-audio::beep(440, 0.5)  # 440Hz, 0.5 segundos
-
-# Click UI
-audio::click()
-
-# Cargar y reproducir
-dark.slot sonido = audio::load_sound("sounds/explosion.wav")
-audio::play(sonido)
-```
-
 ---
 
 ### 2. HTTP Request - GET Sencillo ⭐⭐
@@ -53,52 +25,44 @@ audio::play(sonido)
 - `http::get(url)` - GET request sencillo
 - `http::post(url, data)` - POST request (opcional)
 
-#### Implementación
-```rust
-// crates/rydit-http/ o en rydit-rs
-use ureq; // o reqwest
+---
 
-pub fn http_get(url: &str) -> Result<String, String> {
-    match ureq::get(url).call() {
-        Ok(response) => Ok(response.into_string()?),
-        Err(e) => Err(format!("HTTP Error: {}", e)),
-    }
-}
-```
+### 3. Data Science - CSV ⭐⭐
+**Prioridad**: MEDIA
 
-#### Uso en RyDit
-```rydit
-# GET request
-dark.slot respuesta = http::get("https://api.example.com/data")
-voz respuesta
-
-# Parsear JSON (si es JSON)
-dark.slot datos = json::parse(respuesta)
-voz datos["key"]
-```
+#### Features a Implementar
+**Lo que falta:**
+- ❌ `csv::read("file.csv")` - Leer archivos CSV
+- ❌ `csv::write(data, "file.csv")` - Escribir CSV
+- ❌ `stats::std_dev([1,2,3,4,5])` - Desviación estándar
+- ❌ `stats::variance([1,2,3,4,5])` - Varianza
+- ❌ `plot::ascii(data)` - Gráficos ASCII en consola
 
 ---
 
-### 3. Documentación ⭐
+### 4. Documentación ⭐
 **Prioridad**: BAJA
 
 #### Tasks
 - [ ] Actualizar README con ejemplos de audio
 - [ ] Actualizar README con ejemplos de HTTP
+- [ ] Actualizar README con ejemplos de CSV
 - [ ] Crear demo de audio (beep + sonidos)
 - [ ] Crear demo de HTTP (API call simple)
+- [ ] Crear demo de CSV (leer/escribir datos)
 
 ---
 
 ## 📦 CRATES INVOLUCRADOS
 
 ### Nuevos (a crear)
-- `rydit-audio/` - Audio (beep, sonidos, música)
-- `rydit-http/` - HTTP requests (GET, POST)
+- `crates/rydit-audio/` - Audio (beep, sonidos, música)
+- `crates/rydit-http/` - HTTP requests (GET, POST)
 
 ### Existentes (a modificar)
-- `rydit-rs/src/main.rs` - Exponer funciones `audio::`, `http::`
-- `rydit-gfx/` - Posible integración con audio
+- `crates/rydit-rs/src/main.rs` - Exponer funciones `audio::`, `http::`, `csv::`
+- `crates/rydit-gfx/` - Posible integración con audio
+- `crates/rydit-science/` - Agregar CSV + stats avanzados + plot
 
 ---
 
@@ -118,8 +82,16 @@ voz datos["key"]
 4. Crear demo `demo_http.rydit`
 5. Tests
 
-### Sesión 3: Integración + Docs
-1. Demo combinado (audio + HTTP)
+### Sesión 3: CSV + Stats Avanzados
+1. Crear `crates/rydit-science/src/csv.rs`
+2. Implementar `csv::read()`, `csv::write()`
+3. Agregar `stats::std_dev()`, `stats::variance()` a `rydit-science`
+4. Implementar `plot::ascii()`
+5. Crear demo `demo_csv.rydit`
+6. Tests
+
+### Sesión 4: Integración + Docs
+1. Demo combinado (audio + HTTP + CSV)
 2. Actualizar README
 3. Actualizar QWEN.md
 4. Release v0.5.1
@@ -132,9 +104,11 @@ voz datos["key"]
 |---------|--------|-------|------|
 | Audio beep/click | ~100 | 5+ | ✅ |
 | HTTP GET | ~50 | 3+ | ✅ |
-| Documentación | - | - | ✅ |
+| CSV read/write | ~150 | 5+ | ✅ |
+| Stats avanzados | ~50 | 4+ | ✅ |
+| Plot ASCII | ~80 | 2+ | ✅ |
 
-**Total estimado**: ~150 líneas nuevas, 8+ tests, 2 demos
+**Total estimado**: ~430 líneas nuevas, 19+ tests, 3-4 demos
 
 ---
 
@@ -148,6 +122,10 @@ voz datos["key"]
 - Requiere TLS/SSL para HTTPS
 - Solución: `ureq` con `native-tls` o `rustls`
 
+### CSV
+- Parsing de CSV con comas, quotes, escapes
+- Solución: Usar crate `csv` de Rust
+
 ---
 
 ## ✅ CRITERIOS DE ACEPTACIÓN
@@ -155,16 +133,21 @@ voz datos["key"]
 - [ ] `audio::beep()` funciona en Termux-X11
 - [ ] `audio::click()` suena al hacer click en UI
 - [ ] `http::get()` retorna datos de API pública
-- [ ] 8+ tests passing
-- [ ] 2 demos funcionales
+- [ ] `csv::read()` lee archivos CSV correctamente
+- [ ] `csv::write()` escribe archivos CSV
+- [ ] `stats::std_dev()` calcula desviación estándar
+- [ ] `stats::variance()` calcula varianza
+- [ ] `plot::ascii()` imprime gráfico en consola
+- [ ] 19+ tests passing
+- [ ] 3-4 demos funcionales
 - [ ] README actualizado
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.5.1 - Audio + HTTP**
+**🛡️ RyDit v0.5.1 - Audio + HTTP + Data Science**
 
-*~150 líneas | 8+ tests | 2 demos | 0 dependencias críticas*
+*~430 líneas | 19+ tests | 3-4 demos | 0 dependencias críticas*
 
 </div>
