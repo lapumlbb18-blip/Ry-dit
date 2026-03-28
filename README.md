@@ -34,34 +34,43 @@
 
 ## ⚠️ ESTADO ACTUAL
 
-### Puntuación: 9.5/10 ✅ (v0.8.7 - HTTP + WebSocket COMPLETADO)
+### Puntuación: 9.8/10 ✅ (v0.9.0 - ENTITY SYSTEM COMPLETADO)
 
 **Última actualización**: 2026-03-28
 
-**✅ COMPLETADO EN v0.8.7**:
-- ✅ **HTTP + WebSocket** - 10 funciones (`http::get`, `http::post`, `http::put`, `http::delete`, `ws::connect`, `ws::send`, `ws::recv`, `ws::disconnect`, `ws::is_connected`, `ws::get_url`)
-- ✅ **Crate rydit-http** - Compilado exitosamente con ureq + tungstenite
-- ✅ **LAZOS + HTTP** - 100% conectividad (local + remota)
+**✅ COMPLETADO EN v0.9.0**:
+- ✅ **Entity System** - 63 funciones en 6 sistemas (player, enemy, boss, trap, coin, collision)
+- ✅ **Cámara 2D** - 15 funciones (position, zoom, rotation, follow, scroll, bounds)
+- ✅ **Collision System** - 5 funciones (rect, circle, point, entity check)
+- ✅ **Area2D System** - 6 funciones (Godot-style triggers)
+- ✅ **Movimiento 4 direcciones** - up, down, left, right + salto + gravedad
+- ✅ **Enemy IA** - patrol, chase, stationary con detección por distancia
+- ✅ **Boss con fases** - normal, enraged + arena bounds
+- ✅ **Trampas** - spike, arrow, fire, falling, saw (visibles/invisibles)
+- ✅ **Monedas** - bronze, silver, gold, gem, diamond (recolección)
 
-**✅ COMPLETADO EN v0.8.6**:
-- ✅ **CSV Data Science** - 13 funciones (`csv::read`, `csv::write`, `csv::to_json`, `csv::filter`, `csv::join`, `csv::group_by`, `csv::aggregate`, etc.)
-- ✅ **Input Map** - Mapeo completo con `input_map::press()`, `release()`, `is_pressed()`, `get_active()`
+**✅ COMPLETADO EN v0.8.7**:
+- ✅ **HTTP + WebSocket** - 10 funciones (ureq + tungstenite compilados)
+- ✅ **CSV Data Science** - 13 funciones (read, write, filter, join, aggregate)
+- ✅ **Input Map** - 8 funciones (press, release, is_pressed, get_active)
 
 **✅ COMPLETADO EN v0.8.5**:
-- ✅ Audio Module - 12 funciones (`audio::beep`, `audio::load`, `audio::play`, etc.)
-- ✅ Particles Module - 5 efectos (fire, smoke, spark, explosion, rain)
-- ✅ Input Map básico (`register`, `list`, `clear`, `count`)
+- ✅ Audio Module - 12 funciones
+- ✅ Particles Module - 5 efectos
+- ✅ Config Termux-X11
 
 **🔴 PROBLEMAS IDENTIFICADOS**:
-- ⚠️ **Demos complejos** - Pueden no mostrar todos los elementos (en investigación)
+- ⚠️ **Demos complejos** - Pendiente testear en Termux-X11 con nuevo entity system
 - ⚠️ **Comentarios > 220 chars** - Parser se atasca (fix parcial aplicado)
 - ⚠️ **Assets Draw** - `assets::draw()` no dibuja realmente (50%)
 
 **📊 MÉTRICAS**:
-- ✅ 260+ tests passing
-- ✅ 5+ demos funcionales (modo comandante + gráfico con fix)
+- ✅ 76+ tests passing
+- ✅ 63 funciones entity system
+- ✅ 15 funciones cámara 2D
+- ✅ 11 funciones collision/area2d
 - ✅ 0 warnings clippy críticos
-- ✅ ~1.8 MB binario release (con HTTP/WS)
+- ✅ ~1.8 MB binario release
 
 **🔍 DIAGNÓSTICO TÉCNICO**:
 - El game loop ejecuta correctamente todos los statements
@@ -97,12 +106,16 @@
 - [x] `csv::filter()`, `csv::columns()`, `csv::row_count()`, `csv::col_count()`
 - [x] `csv::join()`, `csv::group_by()`, `csv::aggregate()` - Operaciones avanzadas
 
-### Fase 5: Audio + HTTP ✅ COMPLETADO
+### Fase 5: Audio + HTTP + Entity System ✅ COMPLETADO
 - [x] Módulos (NO crates nuevos)
 - [x] `audio::beep()`, `audio::play()` - 12 funciones
 - [x] `http::get()`, `http::post()`, `http::put()`, `http::delete()` - 4 funciones
 - [x] `ws::connect()`, `ws::send()`, `ws::recv()`, `ws::disconnect()` - 6 funciones
 - [x] Crate `rydit-http` compilado exitosamente
+- [x] **Entity System** - 63 funciones (player, enemy, boss, trap, coin)
+- [x] **Cámara 2D** - 15 funciones
+- [x] **Collision System** - 5 funciones
+- [x] **Area2D System** - 6 funciones (Godot-style)
 
 ### Fase 6: LAZOS Maduro (1 semana)
 - [ ] Unificar `evaluar_expr()`

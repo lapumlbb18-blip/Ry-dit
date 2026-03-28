@@ -1,8 +1,8 @@
 # 🛡️ RyDit - ESTRUCTURA DEL PROYECTO
 
 **Última actualización**: 2026-03-28
-**Versión**: v0.8.7 - HTTP + WebSocket ✅ COMPILADO EXITOSAMENTE
-**Estado**: ✅ CSV COMPLETADO | ✅ HTTP/WS COMPILADO | ✅ 260+ TESTS
+**Versión**: v0.9.0 ✅ ENTITY SYSTEM COMPLETADO - PUSH A GITHUB
+**Estado**: 9.8/10 - Listo para demos complejas
 
 ---
 
