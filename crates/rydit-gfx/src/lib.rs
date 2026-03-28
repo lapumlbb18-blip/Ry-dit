@@ -38,6 +38,9 @@
 // Módulo de partículas v0.5.3
 pub mod particles;
 
+// Módulo de cámara 2D v0.9.0
+pub mod camera;
+
 // Módulo de debug log v0.8.5
 pub mod debug_log;
 

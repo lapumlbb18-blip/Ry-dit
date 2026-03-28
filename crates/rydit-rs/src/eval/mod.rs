@@ -1906,6 +1906,106 @@ pub fn evaluar_expr(
                 return audio::audio_list(args, executor, funcs);
             }
 
+            // ========================================================================
+            // CÁMARA 2D (v0.9.0)
+            // ========================================================================
+
+            // camera::set_position(x, y) - Establecer posición
+            if name == "camera::set_position" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_set_position(args, executor, funcs);
+            }
+
+            // camera::get_position() - Obtener posición
+            if name == "camera::get_position" {
+                use crate::modules::camera;
+                return camera::camera_get_position(args, executor, funcs);
+            }
+
+            // camera::set_zoom(level) - Establecer zoom
+            if name == "camera::set_zoom" && args.len() == 1 {
+                use crate::modules::camera;
+                return camera::camera_set_zoom(args, executor, funcs);
+            }
+
+            // camera::get_zoom() - Obtener zoom
+            if name == "camera::get_zoom" {
+                use crate::modules::camera;
+                return camera::camera_get_zoom(args, executor, funcs);
+            }
+
+            // camera::set_rotation(angle) - Establecer rotación
+            if name == "camera::set_rotation" && args.len() == 1 {
+                use crate::modules::camera;
+                return camera::camera_set_rotation(args, executor, funcs);
+            }
+
+            // camera::get_rotation() - Obtener rotación
+            if name == "camera::get_rotation" {
+                use crate::modules::camera;
+                return camera::camera_get_rotation(args, executor, funcs);
+            }
+
+            // camera::scroll(dx, dy) - Scroll relativo
+            if name == "camera::scroll" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_scroll(args, executor, funcs);
+            }
+
+            // camera::scroll_to(x, y) - Scroll absoluto
+            if name == "camera::scroll_to" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_scroll_to(args, executor, funcs);
+            }
+
+            // camera::set_bounds(min_x, min_y, max_x, max_y) - Límites
+            if name == "camera::set_bounds" && args.len() == 4 {
+                use crate::modules::camera;
+                return camera::camera_set_bounds(args, executor, funcs);
+            }
+
+            // camera::clear_bounds() - Limpiar límites
+            if name == "camera::clear_bounds" {
+                use crate::modules::camera;
+                return camera::camera_clear_bounds(args, executor, funcs);
+            }
+
+            // camera::follow(target_x, target_y) - Seguir objetivo
+            if name == "camera::follow" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_follow(args, executor, funcs);
+            }
+
+            // camera::follow_smooth(target_x, target_y, smooth) - Seguir suave
+            if name == "camera::follow_smooth" && args.len() == 3 {
+                use crate::modules::camera;
+                return camera::camera_follow_smooth(args, executor, funcs);
+            }
+
+            // camera::set_follow_offset(offset_x, offset_y) - Offset seguimiento
+            if name == "camera::set_follow_offset" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_set_follow_offset(args, executor, funcs);
+            }
+
+            // camera::world_to_screen(wx, wy) - Convertir mundo a pantalla
+            if name == "camera::world_to_screen" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_world_to_screen(args, executor, funcs);
+            }
+
+            // camera::screen_to_world(sx, sy) - Convertir pantalla a mundo
+            if name == "camera::screen_to_world" && args.len() == 2 {
+                use crate::modules::camera;
+                return camera::camera_screen_to_world(args, executor, funcs);
+            }
+
+            // camera::reset() - Resetear cámara
+            if name == "camera::reset" {
+                use crate::modules::camera;
+                return camera::camera_reset(args, executor, funcs);
+            }
+
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
             if name == "input_map::register" && args.len() == 2 {
