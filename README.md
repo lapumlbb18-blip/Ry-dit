@@ -80,28 +80,36 @@
 
 ## 🔧 PRÓXIMAS FASES DE MADURACIÓN
 
-### Fase 1: GPU Instancing (v0.9.5 - v1.0.0)
-- [ ] FFI OpenGL (`gl-rs` crate)
+### Fase 1: GPU Instancing + Shaders (v0.9.5 - v1.0.0)
+- [ ] FFI OpenGL (`gl-rs` crate) en rydit-gfx
 - [ ] Shaders GLSL vertex + fragment
 - [ ] `glDrawArraysInstanced()` básico
 - [ ] Demo: 10,000+ partículas @ 60 FPS
+- [ ] Ubicación: `crates/rydit-gfx/src/gpu_instancing.rs`
 
-### Fase 2: Optimización Render Queue (v0.9.2)
+### Fase 2: ECS - Entity Component System (v1.1.0)
+- [ ] Crate nuevo: `crates/rydit-ecs/`
+- [ ] ENTT o bevy_ecs
+- [ ] Components: Position, Velocity, Sprite
+- [ ] Systems: Movement, Render, Physics
+- [ ] Integración en executor.rs
+
+### Fase 3: Optimización Render Queue (v0.9.2)
 - [ ] Separar por tipo (círculos, rects, líneas)
 - [ ] Mejor batching interno
 - [ ] Posible: 2000 partículas @ 60 FPS
 
-### Fase 3: ECS + N-Body (v1.1.0)
-- [ ] Entity Component System (ENTT)
+### Fase 4: N-Body Gravity (v1.2.0)
 - [ ] N-body gravity simulation
 - [ ] 100,000+ entities estables
+- [ ] Integración con ECS + GPU
 
-### Fase 4: Fluid Dynamics (v1.2.0)
+### Fase 5: Fluid Dynamics (v1.3.0)
 - [ ] SPH (Smoothed Particle Hydrodynamics)
 - [ ] Fluid surface simulation
 - [ ] Wave dynamics
 
-### Fase 5: Parser Maduro (v1.3.0)
+### Fase 6: Parser Maduro (v1.4.0)
 - [ ] Refactorizar `lizer/src/lib.rs` completo
 - [ ] Paréntesis que funcionen SIEMPRE
 - [ ] Expresiones complejas sin dolor
@@ -183,11 +191,12 @@
 |---------|--------|----------|-------|
 | **v0.9.0** | ✅ | 3 Capas Críticas (Command Queue, Double Buffer, Platform Sync) | 2026-03-28 |
 | **v0.9.2** | 🔜 | Optimización Render Queue | Futuro |
-| **v0.9.5** | 🔮 | GPU Instancing (FFI OpenGL) | Futuro |
+| **v0.9.5** | 🔮 | GPU Instancing (FFI OpenGL en rydit-gfx) | Futuro |
 | **v1.0.0** | 🔮 | 10,000+ partículas @ 60 FPS | Futuro |
-| **v1.1.0** | 🔮 | ECS + N-Body Gravity | Futuro |
-| **v1.2.0** | 🔮 | Fluid Dynamics | Futuro |
-| **v1.3.0** | 🔮 | Parser Maduro | Futuro |
+| **v1.1.0** | 🔮 | ECS (Entity Component System) | Futuro |
+| **v1.2.0** | 🔮 | N-Body Gravity | Futuro |
+| **v1.3.0** | 🔮 | Fluid Dynamics | Futuro |
+| **v1.4.0** | 🔮 | Parser Maduro | Futuro |
 
 </div>
 

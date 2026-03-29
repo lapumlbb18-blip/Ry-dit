@@ -115,6 +115,7 @@ v0.9.0: Render Queue ✅ → v0.9.5: FFI OpenGL ⚠️ → v1.0.0: GPU Instancin
 - [ ] Prototipo de shader vertex/fragment
 - [ ] `glDrawArraysInstanced()` básico
 - [ ] Demo: 10,000 partículas @ 60 FPS
+- [ ] Ubicación: `crates/rydit-gfx/src/gpu_instancing.rs`
 
 ### v0.9.2 - Optimización Render Queue
 - [ ] Separar por tipo (círculos, rects, líneas)
@@ -122,8 +123,8 @@ v0.9.0: Render Queue ✅ → v0.9.5: FFI OpenGL ⚠️ → v1.0.0: GPU Instancin
 - [ ] Posible: 2000 partículas @ 60 FPS
 
 ### v0.9.5 - FFI OpenGL Opcional
-- [ ] Crate separado: `rydit-gpu`
-- [ ] Solo para demos masivos
+- [ ] Crate separado: `rydit-gpu` (o integrado en rydit-gfx)
+- [ ] Solo para demos masivas
 - [ ] Fallback a Render Queue
 
 ### v1.0.0 - GPU Instancing Maduro
@@ -131,6 +132,18 @@ v0.9.0: Render Queue ✅ → v0.9.5: FFI OpenGL ⚠️ → v1.0.0: GPU Instancin
 - [ ] 1 draw call por frame
 - [ ] Shaders GLSL custom
 - [ ] API unificada
+
+### v1.1.0 - ECS (Entity Component System)
+- [ ] Crate nuevo: `crates/rydit-ecs/`
+- [ ] ENTT o bevy_ecs
+- [ ] Components: Position, Velocity, Sprite
+- [ ] Systems: Movement, Render, Physics
+- [ ] Integración en executor.rs
+
+### v1.2.0 - N-Body Gravity
+- [ ] N-body gravity simulation
+- [ ] 100,000+ entities estables
+- [ ] Integración con ECS + GPU
 
 ---
 
@@ -154,11 +167,27 @@ v0.9.0: Render Queue ✅ → v0.9.5: FFI OpenGL ⚠️ → v1.0.0: GPU Instancin
 - [ ] Batch por tipo
 - [ ] 2000 partículas @ 60 FPS
 
+### v0.9.5 (Futuro - FFI OpenGL)
+- [ ] Integrado en rydit-gfx
+- [ ] Para demos masivas
+- [ ] 10,000+ partículas
+
 ### v1.0.0 (Futuro - GPU Instancing Maduro)
 - [ ] 10,000+ partículas reales
 - [ ] 1 draw call por frame
 - [ ] Shaders custom
 - [ ] API unificada
+
+### v1.1.0 (Futuro - ECS)
+- [ ] Crate rydit-ecs/
+- [ ] ENTT o bevy_ecs
+- [ ] Components + Systems
+- [ ] Integración executor.rs
+
+### v1.2.0 (Futuro - N-Body Gravity)
+- [ ] 100,000+ entities estables
+- [ ] Gravity simulation
+- [ ] ECS + GPU integration
 
 ---
 

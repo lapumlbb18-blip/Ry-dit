@@ -94,25 +94,29 @@
 
 ---
 
-### v0.9.5 - FFI OpenGL Opcional 🔮
+### v0.9.5 - FFI OpenGL en rydit-gfx 🔮
 
 **Fecha**: Futuro (4-6 semanas)
 
+**Ubicación**: `crates/rydit-gfx/src/gpu_instancing.rs`
+
 **Features**:
-- [ ] Crate separado: `rydit-gpu`
-- [ ] Solo para demos masivos
-- [ ] Fallback a Render Queue
-- [ ] API unificada
+- [ ] Agregar `gl-rs` crate a rydit-gfx
+- [ ] Shaders GLSL (vertex + fragment)
+- [ ] VAO + VBO para instancing
+- [ ] `glDrawArraysInstanced()` básico
+- [ ] Demo: 10,000+ partículas @ 60 FPS
+- [ ] Fallback a Render Queue si no hay GPU
 
 **Riesgos**:
-- ⚠️ Medio (complejidad)
-- ⚠️ Requiere unsafe
-- ⚠️ Más código que mantener
+- ⚠️ Requiere unsafe (FFI OpenGL)
+- ⚠️ Complejidad media-alta
+- ⚠️ Testing más difícil
 
 **Beneficios**:
-- ✅ 5000 partículas @ 60 FPS
-- ✅ Opcional (no rompe compatibilidad)
-- ✅ Para quien lo necesite
+- ✅ 10x más partículas (10,000 vs 1000)
+- ✅ Shaders GLSL custom
+- ✅ Binarios .rs pueden usarlo directo
 
 ---
 
@@ -120,22 +124,47 @@
 
 **Fecha**: Futuro (6-8 semanas)
 
+**Ubicación**: `crates/rydit-gfx/src/gpu_instancing.rs`
+
 **Features**:
 - [ ] 10,000+ partículas reales
 - [ ] 1 draw call por frame
 - [ ] Shaders GLSL custom
 - [ ] API unificada
-- [ ] Compute shaders para física
+- [ ] Documentación completa
 
 **Riesgos**:
-- 🔴 Alto (cambio de arquitectura)
-- 🔴 Requiere OpenGL ES 3.0+
-- 🔴 Curva de aprendizaje
+- ⚠️ Requiere FFI OpenGL estable
+- ⚠️ Testing en múltiples plataformas
 
 **Beneficios**:
-- ✅ 10x más partículas (10,000 vs 1000)
+- ✅ 100,000+ partículas posibles
 - ✅ GPU-bound (no CPU-bound)
 - ✅ Comparable a Python ModernGL
+
+---
+
+### v1.1.0 - ECS (Entity Component System) 🔮
+
+**Fecha**: Futuro (8-10 semanas)
+
+**Ubicación**: `crates/rydit-ecs/` (crate nuevo)
+
+**Features**:
+- [ ] Crate separado: `crates/rydit-ecs/`
+- [ ] ENTT o bevy_ecs
+- [ ] Components: Position, Velocity, Sprite
+- [ ] Systems: Movement, Render, Physics
+- [ ] Integración en executor.rs
+
+**Riesgos**:
+- ⚠️ Crate nuevo que mantener
+- ⚠️ Curva de aprendizaje ECS
+
+**Beneficios**:
+- ✅ 100,000+ entities estables
+- ✅ Reutilizable
+- ✅ Testing independiente
 
 ---
 
