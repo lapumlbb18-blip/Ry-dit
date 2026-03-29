@@ -44,6 +44,9 @@ pub mod camera;
 // Módulo de debug log v0.8.5
 pub mod debug_log;
 
+// Módulo de render queue v0.9.0 - Command Queue + Double Buffering + Platform Sync
+pub mod render_queue;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 

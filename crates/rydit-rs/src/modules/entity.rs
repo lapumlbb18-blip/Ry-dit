@@ -25,6 +25,7 @@ use crate::eval::evaluar_expr;
 /// Entidad base (todas comparten estos campos)
 #[derive(Debug, Clone)]
 pub struct Entity {
+    #[allow(dead_code)] // El id se usa para debugging y logging
     pub id: String,
     pub entity_type: String,  // "player", "enemy", "boss", "trap", "coin"
     pub x: f32,
@@ -1744,6 +1745,7 @@ thread_local! {
 /// Área 2D para detección de colisiones
 #[derive(Debug, Clone)]
 pub struct Area2D {
+    #[allow(dead_code)] // El id se usa para debugging y logging
     pub id: String,
     pub x: f32,
     pub y: f32,

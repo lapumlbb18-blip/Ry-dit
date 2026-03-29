@@ -1,201 +1,249 @@
-# 🛡️ RyDit - ROADMAP COMPLETO
+# 🛡️ RyDit Engine - ROADMAP v0.9.0
 
 **Última actualización**: 2026-03-28
-**Versión actual**: v0.8.7 ✅ HTTP + WebSocket COMPILADO
-**Próxima versión**: v0.9.0 - Parser Maduro
+**Versión actual**: v0.9.0 ✅ 3 CAPAS CRÍTICAS COMPLETADAS
+**Próxima versión**: v0.9.1 - GPU Particles (FFI Experimental)
 
 ---
 
-## 📊 PROGRESO ACTUAL
+## 📊 ESTADO ACTUAL (v0.9.0)
 
-### Puntuación: 9.5/10 ✅
+### ✅ Completado
+- [x] **Command Queue** - 8192+ draw calls por frame
+- [x] **Double Buffering** - Front/back buffer separation
+- [x] **Platform Sync** - XFlush/XSync para Termux-X11
+- [x] **0 warnings** clippy (4 → 0)
+- [x] **Tests verificados** - 500+ frames en producción
+- [x] **260+ tests** passing
+- [x] **Documentación** completa
 
-| Categoría | Progreso | Estado |
-|-----------|----------|--------|
-| **Parser** | 85% | ✅ Funcional |
-| **Executor** | 100% | ✅ Completo |
-| **Módulos** | 95% | ✅ Casi completo |
-| **Tests** | 100% | ✅ 260+ passing |
-| **Documentación** | 90% | ✅ Completa |
-| **Demos** | 60% | ⚠️ Faltan complejos |
+### ⚠️ Deuda Técnica
+| Ítem | Estado | Prioridad | Impacto |
+|------|--------|-----------|---------|
+| **GPU Instancing** | ⚠️ Pendiente | Media | 10K+ partículas |
+| **Shaders GLSL** | ⚠️ Pendiente | Media | GPU rendering |
+| **FFI OpenGL** | ⚠️ Pendiente | Baja | Opcional |
 
 ---
 
-## 🎯 VERSIONES COMPLETADAS
+## 🎯 ROADMAP EVOLUTIVO
 
-### ✅ v0.8.7 - HTTP + WebSocket (2026-03-28)
-**Funciones agregadas**: 10
-- `http::get()`, `http::post()`, `http::put()`, `http::delete()`
-- `ws::connect()`, `ws::send()`, `ws::recv()`, `ws::disconnect()`, `ws::is_connected()`, `ws::get_url()`
+### v0.9.0 - 3 Capas Críticas ✅ COMPLETADO
 
-**Crate nuevo**: `rydit-http`
-- ureq v2.9 + tungstenite v0.21
-- 7 tests passing
-- Compilado exitosamente en Termux
+**Fecha**: 2026-03-28
 
-**Conectividad**: 100% ✅
-- Local: LAZOS (JSON-RPC stdin/stdout)
-- Remota HTTP: HTTP/HTTPS
-- Remota WS: WebSocket real-time
-
-### ✅ v0.8.6 - CSV Data Science (2026-03-28)
-**Funciones agregadas**: 13
-- `csv::read()`, `csv::write()`, `csv::to_json()`, `csv::from_json()`
-- `csv::filter()`, `csv::columns()`, `csv::row_count()`, `csv::col_count()`
-- `csv::join()`, `csv::group_by()`, `csv::aggregate()`
-- `csv::parse()`, `csv::parse_no_headers()` (existentes)
-
-**Módulo**: `modules/csv.rs` (885 líneas)
-
-### ✅ v0.8.5 - Input Map + Audio + Particles (2026-03-27)
-**Funciones agregadas**: 25
-- Input Map: 8 funciones (`press`, `release`, `is_pressed`, etc.)
-- Audio: 12 funciones (`beep`, `load`, `play`, etc.)
-- Particles: 5 efectos (fire, smoke, spark, explosion, rain)
-
-### ✅ v0.8.2 - Sistema Universal Ry (2026-03-26)
 **Features**:
-- ModuleMetadata struct + builder pattern
-- RyditModule trait extendido
-- ModuleRegistry mejorado
-- DynamicModuleLoader para carga dinámica
-- Hot reload en REPL
-- Scripts como módulos
+- ✅ Command Queue (8192+ draw calls)
+- ✅ Double Buffering (front/back)
+- ✅ Platform Sync (XFlush/XSync)
+- ✅ 0 warnings clippy
+- ✅ 500+ frames verificados
 
-### ✅ v0.7.3.x - Split en Crates (2026-03-26)
-**Crates creados**:
-- rydit-core (trait + registry)
-- rydit-science (Bezier + Stats)
-- rydit-physics (Projectile + NBody)
-- rydit-anim (Easing + Squash/Stretch)
+**Archivos clave**:
+- `crates/rydit-gfx/src/render_queue.rs` (540 líneas)
+- `crates/rydit-gfx/examples/demo_render_queue.rs` (200 líneas)
+- `docs/3_CAPAS_CRITICAS_V0.9.0.md`
+
+**Rendimiento**:
+- 1000 partículas @ 60 FPS (límite práctico)
+- 8192+ draw calls acumulados
+- 1 begin_draw() por frame
 
 ---
 
-## 🔮 PRÓXIMAS VERSIONES
+### v0.9.1 - GPU Particles (FFI Experimental) 🔜
 
-### v0.9.0 - Parser Maduro (2-3 semanas)
-**Prioridad**: 🔴 CRÍTICA
+**Fecha**: Próxima sesión (2-3 semanas)
+
+**Features**:
+- [ ] Investigar `gl-rs` crate
+- [ ] Prototipo shader vertex/fragment GLSL
+- [ ] `glDrawArraysInstanced()` básico
+- [ ] Demo: 5000 partículas @ 60 FPS
+- [ ] FFI OpenGL seguro
+
+**Riesgos**:
+- ⚠️ Requiere `unsafe` massivo
+- ⚠️ Duplica código de raylib
+- ⚠️ Gestión manual de memoria GPU
+
+**Beneficios**:
+- ✅ 5x más partículas (5000 vs 1000)
+- ✅ Shaders GLSL custom
+- ✅ Aprendizaje de GPU programming
+
+---
+
+### v0.9.2 - Optimización Render Queue 🔜
+
+**Fecha**: Después de v0.9.1 (1-2 semanas)
+
+**Features**:
+- [ ] Separar por tipo (círculos, rects, líneas)
+- [ ] Mejor batching interno
+- [ ] Posible: 2000 partículas @ 60 FPS
+- [ ] Statistics por tipo
+
+**Riesgos**:
+- ✅ Bajo (optimización incremental)
+
+**Beneficios**:
+- ✅ 2x más partículas sin FFI
+- ✅ Sin unsafe
+- ✅ Fácil de mantener
+
+---
+
+### v0.9.5 - FFI OpenGL Opcional 🔮
+
+**Fecha**: Futuro (4-6 semanas)
+
+**Features**:
+- [ ] Crate separado: `rydit-gpu`
+- [ ] Solo para demos masivos
+- [ ] Fallback a Render Queue
+- [ ] API unificada
+
+**Riesgos**:
+- ⚠️ Medio (complejidad)
+- ⚠️ Requiere unsafe
+- ⚠️ Más código que mantener
+
+**Beneficios**:
+- ✅ 5000 partículas @ 60 FPS
+- ✅ Opcional (no rompe compatibilidad)
+- ✅ Para quien lo necesite
+
+---
+
+### v1.0.0 - GPU Instancing Maduro 🔮
+
+**Fecha**: Futuro (6-8 semanas)
+
+**Features**:
+- [ ] 10,000+ partículas reales
+- [ ] 1 draw call por frame
+- [ ] Shaders GLSL custom
+- [ ] API unificada
+- [ ] Compute shaders para física
+
+**Riesgos**:
+- 🔴 Alto (cambio de arquitectura)
+- 🔴 Requiere OpenGL ES 3.0+
+- 🔴 Curva de aprendizaje
+
+**Beneficios**:
+- ✅ 10x más partículas (10,000 vs 1000)
+- ✅ GPU-bound (no CPU-bound)
+- ✅ Comparable a Python ModernGL
+
+---
+
+### v1.1.0 - Parser Maduro 🔮
+
+**Fecha**: Futuro (8-10 semanas)
 
 **Features**:
 - [ ] Refactorizar `lizer/src/lib.rs` completo
-- [ ] Comentarios en cualquier posición (>220 chars)
-- [ ] Expresiones complejas sin límites
-- [ ] Arrays multidimensionales reales
 - [ ] Paréntesis que funcionen SIEMPRE
+- [ ] Expresiones complejas sin dolor
+- [ ] Arrays multidimensionales reales
+- [ ] Comentarios en cualquier posición
 
-**Impacto**: 7/10 → 9/10
+**Riesgos**:
+- 🔴 Alto (puede romper código existente)
 
-### v0.9.5 - rydit-gfx Maduro (1-2 semanas)
-**Prioridad**: 🟡 MEDIA
-
-**Features**:
-- [ ] Assets Draw real (integración game loop)
-- [ ] Soporte multi-ventana
-- [ ] Hardware acceleration correcta
-- [ ] Fallback software si Zink falla
-
-**Impacto**: 8/10 → 9/10
-
-### v1.0.0 - Release Estable (2-3 meses)
-**Prioridad**: 🔴 CRÍTICA
-
-**Features**:
-- [ ] Parser 100% robusto
-- [ ] 20+ demos complejos funcionando
-- [ ] Documentación completa
-- [ ] Tests de integración
-- [ ] Binarios estables (Linux + Windows + Android)
-
-**Impacto**: 9/10 → 10/10 ✅
+**Beneficios**:
+- ✅ Lenguaje más robusto
+- ✅ Mejor experiencia de desarrollo
+- ✅ Soporte para código complejo
 
 ---
 
-## 📈 MÉTRICAS DE PROGRESO
+## 📈 COMPARATIVA DE RENDIMIENTO
 
-### Líneas de Código
-| Versión | Líneas Rust | Crates | Tests | Binario |
-|---------|-------------|--------|-------|---------|
-| v0.5.0 | ~12,000 | 9 | 157 | ~1.7 MB |
-| v0.8.5 | ~19,500 | 12 | 211 | ~1.7 MB |
-| v0.8.6 | ~20,400 | 12 | 250 | ~1.7 MB |
-| v0.8.7 | ~21,300 | 13 | 260 | ~1.8 MB |
-| v1.0.0 | ~25,000 | 13 | 300+ | ~2.0 MB |
-
-### Funciones por Módulo
-| Módulo | v0.5.0 | v0.8.5 | v0.8.6 | v0.8.7 | v1.0.0 |
-|--------|--------|--------|--------|--------|--------|
-| Audio | 0 | 12 | 12 | 12 | 12 |
-| Particles | 0 | 5 | 5 | 5 | 5 |
-| Input Map | 0 | 4 | 8 | 8 | 8 |
-| CSV | 2 | 2 | 13 | 13 | 13 |
-| HTTP | 0 | 0 | 0 | 10 | 10 |
-| WebSocket | 0 | 0 | 0 | 6 | 6 |
-| Assets | 0 | 3 | 5 | 5 | 5 |
-| **TOTAL** | **2** | **26** | **46** | **59** | **64** |
+| Versión | Partículas | Draw Calls | FPS | Complejidad |
+|---------|------------|------------|-----|-------------|
+| **v0.8.x** | 500 | 500 | 30 | Baja |
+| **v0.9.0** | 1000 | 1000 | 60 | Media |
+| **v0.9.1** | 5000 | 100 | 60 | Alta |
+| **v0.9.5** | 5000 | 10 | 60 | Alta |
+| **v1.0.0** | 10,000+ | 1 | 60 | Muy Alta |
 
 ---
 
-## 🎨 DEMOS PENDIENTES
+## 🎯 DECISIONES CRÍTICAS
 
-### v0.9.0 - Parser Maduro
-- [ ] `demo_parser_complejo.rydit` - Expresiones anidadas
-- [ ] `demo_arrays_multidimensionales.rydit` - Matrices 3D
-- [ ] `demo_comentarios.rydit` - Comentarios >220 chars
+### ¿GPU Instancing ahora o después?
 
-### v1.0.0 - Release Estable
-- [ ] `demo_http_api.rydit` - Consumir API REST
-- [ ] `demo_websocket_chat.rydit` - Chat en tiempo real
-- [ ] `demo_csv_analisis.rydit` - Análisis de datos CSV
-- [ ] `demo_juego_completo.rydit` - Juego con todos los features
-- [ ] `demo_lazos_python.rydit` - Integración LAZOS + Python
+**AHORA (v0.9.1-v1.0.0)**:
+- ✅ Para demos masivos de partículas
+- ✅ Aprendizaje de GPU programming
+- ⚠️ Requiere 4-6 semanas adicionales
 
----
+**DESPUÉS (post v1.0.0)**:
+- ✅ Render Queue es SUFICIENTE para 90% de casos
+- ✅ Enfocarse en otras features
+- ⚠️ Límite de 1000 partículas
 
-## 🏆 OBJETIVOS A LARGO PLAZO
+### ¿FFI OpenGL o wgpu?
 
-### 2026 Q2 (Abril-Junio)
-- [ ] v1.0.0 Release estable
-- [ ] Documentación completa en español
-- [ ] 20+ demos funcionales
-- [ ] Tutoriales en YouTube
+**FFI OpenGL (recomendado)**:
+- ✅ Mantiene compatibilidad con raylib
+- ⚠️ Requiere unsafe
+- ✅ Más control directo
 
-### 2026 Q3 (Julio-Septiembre)
-- [ ] v1.1.0 - WebSocket async (tokio)
-- [ ] v1.2.0 - Multiplayer real-time
-- [ ] v1.3.0 - Editor visual (opcional)
-
-### 2026 Q4 (Octubre-Diciembre)
-- [ ] v2.0.0 - 3D básico (raylib 3D)
-- [ ] v2.1.0 - Shaders GLSL custom
-- [ ] v2.2.0 - ECS (Entity Component System)
+**wgpu (alternativa)**:
+- ✅ API moderna (Vulkan/Metal/DX12)
+- ❌ Cambia arquitectura completa
+- ❌ Pierde ventajas de raylib
 
 ---
 
-## 📝 NOTAS DE VERSIÓN
+## 📊 MÉTRICAS DE ÉXITO
 
-### Convenciones de Versionamiento
-```
-v0.MAJOR.MINOR.PATCH
-v0.8.7 → Minor release (features nuevos)
-v0.9.0 → Minor release (parser maduro)
-v1.0.0 → Major release (estable)
-```
+### v0.9.0 ✅
+- [x] 8192+ draw calls
+- [x] 0 warnings clippy
+- [x] 500+ frames verificados
+- [x] 60 FPS estables
 
-### Criterios de Release
-- ✅ Todos los tests passing
-- ✅ 0 warnings clippy críticos
-- ✅ cargo fmt aplicado
-- ✅ Documentación actualizada
-- ✅ Demos funcionales
+### v0.9.1 (Objetivo)
+- [ ] 5000 partículas @ 60 FPS
+- [ ] Shaders GLSL funcionando
+- [ ] Demo de partículas masivas
+
+### v1.0.0 (Objetivo)
+- [ ] 10,000+ partículas @ 60 FPS
+- [ ] 1 draw call por frame
+- [ ] API unificada
+
+---
+
+## 🔗 REFERENCIAS
+
+### Documentos
+- [3_CAPAS_CRITICAS_V0.9.0.md](docs/3_CAPAS_CRITICAS_V0.9.0.md)
+- [PANORAMA_GPU_INSTANCING_V0.9.x.md](docs/PANORAMA_GPU_INSTANCING_V0.9.x.md)
+- [VERIFICACION_PRODUCCION_V0.9.0.md](docs/VERIFICACION_PRODUCCION_V0.9.0.md)
+
+### Código
+- `crates/rydit-gfx/src/render_queue.rs`
+- `crates/rydit-gfx/examples/demo_render_queue.rs`
+
+### Externas
+- [Learn OpenGL - Instancing](https://learnopengl.com/Advanced-OpenGL/Instancing)
+- [gl-rs crate](https://github.com/bjz/gl-rs)
+- [wgpu](https://github.com/gfx-rs/wgpu)
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.8.7 - 9.5/10**
+**🛡️ RyDit Engine - ROADMAP v0.9.0**
 
-*HTTP + WebSocket ✅ | CSV ✅ | Input Map ✅ | 260+ tests | 0 warnings*
+*v0.9.0 ✅ | v0.9.1 🔜 | v1.0.0 🔮*
 
-**Próximo: v0.9.0 - Parser Maduro → v1.0.0 Release Estable**
+**Próxima sesión: v0.9.1 - GPU Particles (FFI) o Optimización**
 
 </div>

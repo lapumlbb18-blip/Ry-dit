@@ -231,13 +231,11 @@ pub fn csv_from_json(
 
     // Extraer headers del primer objeto
     let mut headers: Vec<String> = Vec::new();
-    if let Some(first) = objects.first() {
-        if let Valor::Array(obj_fields) = first {
-            for field in obj_fields {
-                if let Valor::Array(tuple) = field {
-                    if let Some(Valor::Texto(h)) = tuple.first() {
-                        headers.push(h.clone());
-                    }
+    if let Some(Valor::Array(obj_fields)) = objects.first() {
+        for field in obj_fields {
+            if let Valor::Array(tuple) = field {
+                if let Some(Valor::Texto(h)) = tuple.first() {
+                    headers.push(h.clone());
                 }
             }
         }
@@ -658,7 +656,7 @@ pub fn csv_group_by(
 
             groups
                 .entry(key)
-                .or_insert_with(Vec::new)
+                .or_default()
                 .push(row_val.clone());
         }
     }
