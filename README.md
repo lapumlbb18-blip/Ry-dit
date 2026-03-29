@@ -1,4 +1,4 @@
-# 🛡️ RyDit - Motor de Videojuegos 2D + Lenguaje de Scripting en Rust para Android/Termux
+# 🛡️ RyDit - Motor Simulador de Escenas 2D + Lenguaje de Scripting en Rust para Android/Termux
 
 <div align="center">
 
@@ -6,9 +6,9 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.8.5--dev-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-157%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.8.5--dev--ready-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-260%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.9.0--ready-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -22,7 +22,15 @@
 
 ## 🎯 ¿Qué es RyDit?
 
-**RyDit** es un **motor de videojuegos 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
+**RyDit** es un **motor simulador de escenas 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
+
+**Casos de Uso:**
+- 🎮 Desarrollo de juegos 2D
+- 🔬 Visualización científica
+- 📚 Educación STEM
+- 🎨 Animaciones interactivas
+- 🧪 Simulaciones físicas
+- 📊 Prototipado rápido
 
 **Filosofía Actual:**
 - 🐌 **Sin prisa** - Madurar cada feature antes de lanzar
@@ -66,30 +74,34 @@
 - Draw commands se ejecutan (500+ frames verificados)
 - **FIX APLICADO**: `drop(DrawHandle)` explícito + Platform Sync
 - **RENDER QUEUE**: 8192+ draw calls acumulados
-- **GPU INSTANCING**: Posible en v1.0.0 (FFI OpenGL)
+- **PRÓXIMO**: GPU Instancing para 10,000+ partículas
 
 ---
 
 ## 🔧 PRÓXIMAS FASES DE MADURACIÓN
 
-### Fase 1: GPU Particles (v0.9.1 - v0.9.5)
-- [ ] FFI OpenGL experimental (`gl-rs` crate)
+### Fase 1: GPU Instancing (v0.9.5 - v1.0.0)
+- [ ] FFI OpenGL (`gl-rs` crate)
 - [ ] Shaders GLSL vertex + fragment
 - [ ] `glDrawArraysInstanced()` básico
-- [ ] Demo: 5000 partículas @ 60 FPS
+- [ ] Demo: 10,000+ partículas @ 60 FPS
 
 ### Fase 2: Optimización Render Queue (v0.9.2)
 - [ ] Separar por tipo (círculos, rects, líneas)
 - [ ] Mejor batching interno
 - [ ] Posible: 2000 partículas @ 60 FPS
 
-### Fase 3: GPU Instancing Maduro (v1.0.0)
-- [ ] 10,000+ partículas reales
-- [ ] 1 draw call por frame
-- [ ] Shaders custom
-- [ ] API unificada
+### Fase 3: ECS + N-Body (v1.1.0)
+- [ ] Entity Component System (ENTT)
+- [ ] N-body gravity simulation
+- [ ] 100,000+ entities estables
 
-### Fase 4: Parser Maduro (v1.1.0)
+### Fase 4: Fluid Dynamics (v1.2.0)
+- [ ] SPH (Smoothed Particle Hydrodynamics)
+- [ ] Fluid surface simulation
+- [ ] Wave dynamics
+
+### Fase 5: Parser Maduro (v1.3.0)
 - [ ] Refactorizar `lizer/src/lib.rs` completo
 - [ ] Paréntesis que funcionen SIEMPRE
 - [ ] Expresiones complejas sin dolor
@@ -170,11 +182,12 @@
 | Versión | Estado | Features | Fecha |
 |---------|--------|----------|-------|
 | **v0.9.0** | ✅ | 3 Capas Críticas (Command Queue, Double Buffer, Platform Sync) | 2026-03-28 |
-| **v0.9.1** | 🔜 | GPU Particles (FFI experimental) | Próxima sesión |
 | **v0.9.2** | 🔜 | Optimización Render Queue | Futuro |
-| **v0.9.5** | 🔮 | FFI OpenGL opcional | Futuro |
-| **v1.0.0** | 🔮 | GPU Instancing maduro (10K+ partículas) | Futuro |
-| **v1.1.0** | 🔮 | Parser maduro | Futuro |
+| **v0.9.5** | 🔮 | GPU Instancing (FFI OpenGL) | Futuro |
+| **v1.0.0** | 🔮 | 10,000+ partículas @ 60 FPS | Futuro |
+| **v1.1.0** | 🔮 | ECS + N-Body Gravity | Futuro |
+| **v1.2.0** | 🔮 | Fluid Dynamics | Futuro |
+| **v1.3.0** | 🔮 | Parser Maduro | Futuro |
 
 </div>
 
