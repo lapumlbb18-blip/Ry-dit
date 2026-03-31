@@ -1,349 +1,340 @@
-# 🛡️ RyDit Engine - ROADMAP v0.10.0
+# 🛡️ RyDit Engine - ROADMAP COMPLETO v0.10.2 - v0.11.0
 
 **Última actualización**: 2026-03-30
-**Versión actual**: v0.9.4 ✅ ENTITY SYSTEM COMPLETADO
-**Próxima versión**: v0.10.0 - GPU INSTANCING + SHADERS
-**Versión futura**: v0.10.2 - 🛡️ INVERSIÓN DE CONTROL (Core manda, Script configura)
+**Versión actual**: v0.10.2 ✅ INVERSIÓN DE CONTROL + AST CACHING
+**Commit**: `209069e`
 
 ---
 
-## 📊 ESTADO ACTUAL (v0.9.4)
+## 📊 ESTADO ACTUAL (v0.10.2)
 
-### ✅ Completado en v0.9.4
-- [x] **Level Manager** - 13 funciones (load, transition, checkpoints)
-- [x] **Tilemap System** - 12 funciones (create, fill_rect, draw)
-- [x] **Collision System** - 13 funciones (AABB, Area2D, resolve)
-- [x] **Window Manager** - 17 funciones (title, fullscreen, vsync, fps)
-- [x] **Entity System** - 50+ funciones (player, enemy, boss, trap, coin)
-- [x] **Cámara 2D** - 15 funciones (follow, zoom, scroll)
-- [x] **Physics 2D** - 20 funciones (gravedad, fricción, colisión)
-- [x] **0 warnings** clippy
-- [x] **260+ tests** passing
-- [x] **Demo Platformer** - platformer_v094.rydit
-
-### 🛡️ ARQUITECTURA v0.10.2: INVERSIÓN DE CONTROL
-
-**Problema detectado**:
-- ⚠️ Script manda sobre Core (arquitectura incorrecta)
-- ⚠️ Parser sobrecargado (3K líneas haciendo trabajo de core)
-- ⚠️ `main.rs` solo 4K líneas (muy poco para ser core)
-- ⚠️ 2000 partículas colapsan el evaluator
-
-**Comparativa con motores**:
-
-| Motor | Core | Scripting | Ratio |
-|-------|------|-----------|-------|
-| **Godot** | ~500K | GDScript | 10:1 |
-| **Unity** | ~1M+ | C# | 5:1 |
-| **Unreal** | ~5M+ | C++/BP | 50:1 |
-| **RyDit** | ~4K | .rydit | **1.3:1** ⚠️ |
-
-**Solución v0.10.0**:
-- 🛡️ Core manda (rydit-rs hace game loop nativo)
-- 🛡️ Script configura (.rydit solo parámetros)
-- 🛡️ GPU Instancing (100K+ partículas)
-- 🛡️ ECS Entt (100K+ entidades)
-- 🛡️ Shaders GLSL nativos
-- 🛡️ Comando nativo de RyDit: `./rydit-rs --scene <nombre>`
-
-### 🔥 En Proceso (v0.10.0)
-| Ítem | Estado | Prioridad | Impacto | Ubicación |
-|------|--------|-----------|---------|-----------|
-| **Inversión de Control** | 🛡️ Planeado | 🔴 CRÍTICA | Arquitectura correcta | `executor.rs`, `main.rs` |
-| **GPU Instancing** | # en proceso | 🔴 CRÍTICA | 100K+ partículas | `rydit-gfx/src/gpu_instancing.rs` |
-| **Shaders GLSL** | # en proceso | 🔴 CRÍTICA | GPU rendering | `rydit-gfx/shaders/` |
-| **FFI OpenGL** | # en proceso | 🔴 CRÍTICA | gl-rs crate | `rydit-gfx/Cargo.toml` |
-| **ECS (ENTT)** | # en proceso | 🟡 ALTA | 100K+ entities | `crates/rydit-ecs/` (nuevo) |
-
-### ⚠️ Futuro (post v0.10.0)
-| Ítem | Estado | Prioridad | Impacto |
-|------|--------|-----------|---------|
-| **N-Body Gravity** | ⚠️ Pendiente | Media | Simulaciones cósmicas |
-| **Fluid Dynamics** | ⚠️ Pendiente | Media | Éxodo 14, Jesús aguas |
-| **Parser Maduro** | ⚠️ Pendiente | Baja | Expresiones complejas |
+### ✅ Completado en v0.10.2
+- [x] **GPU Instancing** - 100K+ partículas (gl-rs, shaders GLSL)
+- [x] **ECS** - Entity Component System (bevy-inspired)
+- [x] **ECS Renderer** - Integración ECS + rlgl
+- [x] **AST Caching** - 10x más rápido (parse_cached)
+- [x] **Límites Parser** - Removidos (game loops infinitos)
+- [x] **scene_runner** - Inversión de Control (326KB)
+- [x] **Config Parser** - .rydit como configuración
+- [x] **Demos** - ecs_demo_10k, gpu_demo_100k
+- [x] **Git Push** - main actualizado
+- [x] **Google Drive Sync** - alucard18:RyDit_Backup
 
 ---
 
-## 🎯 ROADMAP EVOLUTIVO
+## 🔥 TAREAS PENDIENTES (ORDENADAS POR PRIORIDAD)
 
-### v0.9.0 - 3 Capas Críticas ✅ COMPLETADO
+### **PRIORIDAD 🔴 CRÍTICA** (Esta semana - v0.10.3)
 
-**Fecha**: 2026-03-28
-
-**Features**:
-- ✅ Command Queue (8192+ draw calls)
-- ✅ Double Buffering (front/back)
-- ✅ Platform Sync (XFlush/XSync)
-- ✅ 0 warnings clippy
-- ✅ 500+ frames verificados
-
-**Archivos clave**:
-- `crates/rydit-gfx/src/render_queue.rs` (540 líneas)
-- `crates/rydit-gfx/examples/demo_render_queue.rs` (200 líneas)
-- `docs/3_CAPAS_CRITICAS_V0.9.0.md`
-
-**Rendimiento**:
-- 1000 partículas @ 60 FPS (límite práctico)
-- 8192+ draw calls acumulados
-- 1 begin_draw() por frame
+| # | Tarea | Tiempo | Riesgo | Impacto | Estado |
+|---|-------|--------|--------|---------|--------|
+| **1** | **Fixear rydit-rs binario** | 2-3 horas | 🟡 Medio | Alto | ⏸️ Pendiente |
+| **2** | **Reescribir particles.rs** | 4-6 horas | 🟡 Medio | Medio | ⏸️ Pendiente |
+| **3** | **Testear demos en Termux-X11** | 2-3 horas | 🟢 Bajo | Alto | ⏸️ Pendiente |
 
 ---
 
-### v0.10.0 - GPU Instancing + Shaders GLSL # en proceso
+### **PRIORIDAD 🟡 ALTA** (Próxima semana - v0.10.4)
 
-**Fecha**: 2026-03-29 (en progreso)
-
-**Features**:
-- [ ] # en proceso: FFI OpenGL (`gl-rs` crate) en `rydit-gfx/Cargo.toml`
-- [ ] # en proceso: Shaders GLSL vertex + fragment en `rydit-gfx/shaders/`
-- [ ] # en proceso: `glDrawArraysInstanced()` básico
-- [ ] # en proceso: Demo: 10,000+ partículas @ 60 FPS
-- [ ] # en proceso: FFI OpenGL seguro
-
-**Ubicación**: `crates/rydit-gfx/src/gpu_instancing.rs`
-
-**Riesgos**:
-- ⚠️ Requiere `unsafe` massivo
-- ⚠️ Duplica código de raylib
-- ⚠️ Gestión manual de memoria GPU
-
-**Beneficios**:
-- ✅ 100x más partículas (100,000 vs 1000)
-- ✅ Shaders GLSL custom
-- ✅ Aprendizaje de GPU programming
+| # | Tarea | Tiempo | Riesgo | Impacto | Estado |
+|---|-------|--------|--------|---------|--------|
+| **4** | **Activar RyditModule trait** | 1-2 días | 🟡 Medio | Alto | ⏸️ Pendiente |
+| **5** | **Reorganizar repositorio GitHub** | 3-4 horas | 🟢 Bajo | Medio | ⏸️ Pendiente |
+| **6** | **Documentar migración legacy → scene** | 2-3 horas | 🟢 Bajo | Medio | ⏸️ Pendiente |
 
 ---
 
-### v0.10.1 - ECS (Entity Component System) # en proceso
+### **PRIORIDAD 🟢 MEDIA** (v0.10.5 - v0.11.0)
 
-**Fecha**: Después de v0.10.0 (3-4 semanas)
-
-**Features**:
-- [ ] # en proceso: Crate nuevo: `crates/rydit-ecs/`
-- [ ] # en proceso: ENTT o bevy_ecs
-- [ ] # en proceso: Components: Position, Velocity, Sprite
-- [ ] # en proceso: Systems: Movement, Render, Physics
-- [ ] # en proceso: Integración en executor.rs
-
-**Ubicación**: `crates/rydit-ecs/` (crate nuevo)
-
-**Riesgos**:
-- ⚠️ Crate nuevo que mantener
-- ⚠️ Curva de aprendizaje ECS
-
-**Beneficios**:
-- ✅ 100,000+ entities estables
-- ✅ Reutilizable
-- ✅ Testing independiente
+| # | Tarea | Tiempo | Riesgo | Impacto | Estado |
+|---|-------|--------|--------|---------|--------|
+| **7** | **Parser óptimo (zero-copy)** | 1-2 días | 🔴 Alto | Alto | ⏸️ Futuro |
+| **8** | **Bytecode compilation** | 2-3 días | 🔴 Alto | Medio | ⏸️ Futuro |
+| **9** | **AST Cache con TTL** | 4-6 horas | 🟡 Medio | Bajo | ⏸️ Futuro |
+| **10** | **Testear caching en producción** | 1-2 horas | 🟢 Bajo | Medio | ⏸️ Pendiente |
 
 ---
 
-### v0.10.2 - Integración GPU + ECS # en proceso
+## 📋 DETALLE DE TAREAS
 
-**Fecha**: Después de v0.10.1 (2-3 semanas)
+### **1. Fixear rydit-rs binario** (2-3 horas) 🔴
 
-**Features**:
-- [ ] # en proceso: executor.rs usa rydit-ecs
-- [ ] # en proceso: executor.rs usa GPU Instancing
-- [ ] # en proceso: Crear exodo_gpu.rs (100K+ partículas)
-- [ ] # en proceso: .rydit llama a exodo_gpu
+**Problema**: 64 errores de compilación
 
-**Ubicación**: `crates/rydit-rs/src/executor.rs`
+**Causa**: Módulos comentados (level, tilemap, collision, window) todavía se usan en:
+- `main.rs` - Funciones de módulos
+- `executor.rs` - Inicialización
+- `eval/mod.rs` - Registro de funciones
 
-**Beneficios**:
-- ✅ 100K+ partículas @ 60 FPS
-- ✅ .rydit + .rs trabajando juntos
-- ✅ Visión hecha realidad
+**Solución**:
+```bash
+# 1. Buscar referencias
+grep -rn "modules::level" crates/rydit-rs/src/
+grep -rn "modules::tilemap" crates/rydit-rs/src/
+grep -rn "modules::collision" crates/rydit-rs/src/
+grep -rn "modules::window" crates/rydit-rs/src/
 
----
+# 2. Comentar cada referencia
+# 3. Compilar
+cargo build --release --bin rydit-rs
+```
 
-### v0.10.3 - N-Body Gravity ⚠️ Pendiente
-
-**Fecha**: Futuro (3-4 semanas)
-
-**Features**:
-- [ ] N-body gravity simulation
-- [ ] 100,000+ entities estables
-- [ ] Integración con ECS + GPU
-
-**Beneficios**:
-- ✅ Escenas cósmicas (Génesis 1, Sistema Solar)
+**Archivos afectados**: ~10 archivos
 
 ---
 
-### v0.10.4 - Fluid Dynamics ⚠️ Pendiente
+### **2. Reescribir particles.rs** (4-6 horas) 🔴
 
-**Fecha**: Futuro (4-6 semanas)
+**Problema**: particles_module.rs en `disabled/` depende de `eval::evaluar_expr_gfx`
 
-**Features**:
-- [ ] SPH (Smoothed Particle Hydrodynamics)
-- [ ] Fluid surface simulation
-- [ ] Wave dynamics
+**Solución**:
+```rust
+// particles_module.rs - Versión nueva
+use rydit_gfx::particles::{ParticleEmitter, ParticleSystem};
 
-**Beneficios**:
-- ✅ Éxodo 14 (división de aguas)
-- ✅ Jesús caminando sobre aguas
+// NO usar eval::evaluar_expr_gfx
+// Usar directamente funciones de rydit_gfx
 
----
+pub fn create_emitter(name: &str, x: f32, y: f32, rate: f32) {
+    // Implementación directa sin evaluator
+}
+```
 
-### v1.0.0 - Simulador de Escenas Completo 🔮
-
-**Fecha**: Futuro (5-6 semanas)
-
-**Features**:
-- [ ] GPU Instancing maduro
-- [ ] ECS completo
-- [ ] N-Body + Fluid Dynamics
-- [ ] Primera escena bíblica: Éxodo 14
-- [ ] Multi-plataforma (Linux, Windows, macOS, Android)
-
-**Features**:
-- [ ] 10,000+ partículas reales
-- [ ] 1 draw call por frame
-- [ ] Shaders GLSL custom
-- [ ] API unificada
-- [ ] Documentación completa
-
-**Riesgos**:
-- ⚠️ Requiere FFI OpenGL estable
-- ⚠️ Testing en múltiples plataformas
-
-**Beneficios**:
-- ✅ 100,000+ partículas posibles
-- ✅ GPU-bound (no CPU-bound)
-- ✅ Comparable a Python ModernGL
+**Archivos afectados**: 
+- `crates/rydit-rs/src/bin/particles_module.rs` (reescribir)
+- `crates/rydit-gfx/src/particles.rs` (quizás actualizar)
 
 ---
 
-### v1.1.0 - ECS (Entity Component System) 🔮
+### **3. Testear demos en Termux-X11** (2-3 horas) 🔴
 
-**Fecha**: Futuro (8-10 semanas)
+**Objetivo**: Verificar que todas las demos funcionan en producción
 
-**Ubicación**: `crates/rydit-ecs/` (crate nuevo)
+**Demos a testear**:
+```bash
+# ECS Demo
+./target/release/ecs_demo_10k
 
-**Features**:
-- [ ] Crate separado: `crates/rydit-ecs/`
-- [ ] ENTT o bevy_ecs
-- [ ] Components: Position, Velocity, Sprite
-- [ ] Systems: Movement, Render, Physics
-- [ ] Integración en executor.rs
+# GPU Demo
+./target/release/gpu_demo_100k
 
-**Riesgos**:
-- ⚠️ Crate nuevo que mantener
-- ⚠️ Curva de aprendizaje ECS
+# Scene Runner
+./target/release/scene_runner demos/nivel_config.rydit
 
-**Beneficios**:
-- ✅ 100,000+ entities estables
-- ✅ Reutilizable
-- ✅ Testing independiente
+# Legacy (si se fixea)
+./target/release/rydit-rs --gfx demos/test_loop.rydit
+```
 
----
-
-### v1.1.0 - Parser Maduro 🔮
-
-**Fecha**: Futuro (8-10 semanas)
-
-**Features**:
-- [ ] Refactorizar `lizer/src/lib.rs` completo
-- [ ] Paréntesis que funcionen SIEMPRE
-- [ ] Expresiones complejas sin dolor
-- [ ] Arrays multidimensionales reales
-- [ ] Comentarios en cualquier posición
-
-**Riesgos**:
-- 🔴 Alto (puede romper código existente)
-
-**Beneficios**:
-- ✅ Lenguaje más robusto
-- ✅ Mejor experiencia de desarrollo
-- ✅ Soporte para código complejo
+**Verificar**:
+- ✅ 60 FPS estables
+- ✅ Sin crashes
+- ✅ Input funciona (W,A,S,D, ESC)
+- ✅ AST caching activo (debería decir "cached")
 
 ---
 
-## 📈 COMPARATIVA DE RENDIMIENTO
+### **4. Activar RyditModule trait** (1-2 días) 🟡
 
-| Versión | Partículas | Draw Calls | FPS | Complejidad |
-|---------|------------|------------|-----|-------------|
-| **v0.8.x** | 500 | 500 | 30 | Baja |
-| **v0.9.0** | 1000 | 1000 | 60 | Media |
-| **v0.9.1** | 5000 | 100 | 60 | Alta |
-| **v0.9.5** | 5000 | 10 | 60 | Alta |
-| **v1.0.0** | 10,000+ | 1 | 60 | Muy Alta |
+**Estado actual**: Trait existe en `crates/rydit-core/src/lib.rs` pero NO se usa
 
----
+**Plan**:
+```rust
+// crates/rydit-physics/src/lib.rs
+use rydit_core::{RyditModule, ModuleResult, ModuleMetadata};
 
-## 🎯 DECISIONES CRÍTICAS
+pub struct PhysicsModule;
 
-### ¿GPU Instancing ahora o después?
+impl RyditModule for PhysicsModule {
+    fn name(&self) -> &'static str { "physics" }
+    fn version(&self) -> &'static str { "0.9.3" }
+    
+    fn register(&self) -> HashMap<&'static str, &'static str> {
+        let mut cmds = HashMap::new();
+        cmds.insert("apply_gravity", "Aplicar gravedad");
+        cmds.insert("resolve_collision", "Resolver colisión");
+        cmds
+    }
+    
+    fn execute(&self, cmd: &str, params: Value) -> ModuleResult {
+        match cmd {
+            "apply_gravity" => { /* ... */ },
+            _ => Err(ModuleError { ... }),
+        }
+    }
+}
+```
 
-**AHORA (v0.9.1-v1.0.0)**:
-- ✅ Para demos masivos de partículas
-- ✅ Aprendizaje de GPU programming
-- ⚠️ Requiere 4-6 semanas adicionales
-
-**DESPUÉS (post v1.0.0)**:
-- ✅ Render Queue es SUFICIENTE para 90% de casos
-- ✅ Enfocarse en otras features
-- ⚠️ Límite de 1000 partículas
-
-### ¿FFI OpenGL o wgpu?
-
-**FFI OpenGL (recomendado)**:
-- ✅ Mantiene compatibilidad con raylib
-- ⚠️ Requiere unsafe
-- ✅ Más control directo
-
-**wgpu (alternativa)**:
-- ✅ API moderna (Vulkan/Metal/DX12)
-- ❌ Cambia arquitectura completa
-- ❌ Pierde ventajas de raylib
+**Archivos afectados**:
+- `crates/rydit-physics/src/lib.rs` (implementar)
+- `crates/rydit-core/src/lib.rs` (quizás actualizar)
+- `main.rs` (registrar módulo)
 
 ---
 
-## 📊 MÉTRICAS DE ÉXITO
+### **5. Reorganizar repositorio GitHub** (3-4 horas) 🟡
 
-### v0.9.0 ✅
-- [x] 8192+ draw calls
-- [x] 0 warnings clippy
-- [x] 500+ frames verificados
-- [x] 60 FPS estables
+**Problema actual**:
+- Muchos archivos en root
+- `docs/` mezclado con código
+- Sin estructura clara
 
-### v0.9.1 (Objetivo)
-- [ ] 5000 partículas @ 60 FPS
-- [ ] Shaders GLSL funcionando
-- [ ] Demo de partículas masivas
+**Nueva estructura propuesta**:
+```
+rydit-engine/
+├── .github/              # GitHub Actions, templates
+├── crates/               # Todos los crates Rust
+│   ├── lizer/           # Parser + AST caching
+│   ├── rydit-core/      # RyditModule trait
+│   ├── rydit-ecs/       # ECS
+│   ├── rydit-gfx/       # GPU + ECS renderer
+│   └── rydit-rs/        # Binario principal
+├── demos/               # Demos .rydit
+├── docs/                # Documentación
+│   ├── api/            # API docs
+│   ├── guides/         # Guías
+│   └── roadmap/        # Roadmaps
+├── scripts/            # Scripts de build/test
+├── tests/              # Integration tests
+└── README.md
+```
 
-### v1.0.0 (Objetivo)
-- [ ] 10,000+ partículas @ 60 FPS
-- [ ] 1 draw call por frame
-- [ ] API unificada
+**Acciones**:
+1. Mover archivos a carpetas correctas
+2. Actualizar CI/CD
+3. Actualizar README con nueva estructura
 
 ---
 
-## 🔗 REFERENCIAS
+### **6. Documentar migración legacy → scene** (2-3 horas) 🟡
 
-### Documentos
-- [3_CAPAS_CRITICAS_V0.9.0.md](docs/3_CAPAS_CRITICAS_V0.9.0.md)
-- [PANORAMA_GPU_INSTANCING_V0.9.x.md](docs/PANORAMA_GPU_INSTANCING_V0.9.x.md)
-- [VERIFICACION_PRODUCCION_V0.9.0.md](docs/VERIFICACION_PRODUCCION_V0.9.0.md)
+**Objetivo**: Guía para migrar de .rydit legacy a scene_runner
 
-### Código
-- `crates/rydit-gfx/src/render_queue.rs`
-- `crates/rydit-gfx/examples/demo_render_queue.rs`
+**Contenido**:
+```markdown
+# Guía de Migración: Legacy → Scene Runner
 
-### Externas
-- [Learn OpenGL - Instancing](https://learnopengl.com/Advanced-OpenGL/Instancing)
-- [gl-rs crate](https://github.com/bjz/gl-rs)
-- [wgpu](https://github.com/gfx-rs/wgpu)
+## Antes (Legacy)
+```rydit
+ryda frame < 10000 {
+    dibujar.circulo(x, y, radio, "rojo")
+    # Lógica compleja aquí
+}
+```
+
+## Después (Scene Runner)
+```rust
+// mi_juego.rs
+use rydit_ecs::EcsWorld;
+use rydit_gfx::ecs_render::EcsRenderer;
+
+fn main() {
+    let mut world = EcsWorld::new();
+    let mut renderer = EcsRenderer::new();
+    
+    // Game loop nativo
+    while !gfx.should_close() {
+        world.update(0.016);
+        renderer.render(&world);
+    }
+}
+```
+
+## Config .rydit (opcional)
+```rydit
+entidad "jugador" {
+    tipo: "player"
+    x: 100
+    y: 200
+}
+```
+```
+
+---
+
+### **7. Parser óptimo (zero-copy)** (1-2 días) 🟢
+
+**Problema**: Token enum con Strings (copias)
+
+**Solución**:
+```rust
+// ANTES:
+pub enum Token {
+    Ident(String),  // ❌ Copia
+}
+
+// DESPUÉS:
+pub enum Token<'a> {
+    Ident(&'a str),  // ✅ Referencia
+}
+```
+
+**Impacto**: 2-3x más rápido, menos allocaciones
+
+**Riesgo**: Cambia TODAS las signatures (alto)
+
+---
+
+### **8. Bytecode compilation** (2-3 días) 🟢
+
+**Idea**: Compilar AST → bytecode una vez, ejecutar bytecode muchas veces
+
+```rust
+pub enum OpCode {
+    PushNum(f64),
+    PushText(String),
+    Call { name: String, args: u8 },
+    JumpIfFalse(usize),
+}
+
+// Compilar una vez
+let bytecode = compile_to_bytecode(&ast);
+
+// Ejecutar muchas veces (game loop)
+execute_bytecode(&bytecode);
+```
+
+**Impacto**: 5-10x más rápido para lógica compleja
+
+---
+
+## 📈 TIMELINE ESTIMADO
+
+| Semana | Versión | Tareas | Estado |
+|--------|---------|--------|--------|
+| **Semana 1** | v0.10.3 | Fix rydit-rs, Reescribir particles, Testear demos | ⏸️ Pendiente |
+| **Semana 2** | v0.10.4 | RyditModule, Reorganizar repo, Documentar migración | ⏸️ Futuro |
+| **Semana 3-4** | v0.10.5 | Parser zero-copy, Bytecode | ⏸️ Futuro |
+| **Semana 5** | v0.11.0 | AST Cache TTL, Testing producción | ⏸️ Futuro |
+
+---
+
+## 🎯 RESUMEN DE TAREAS
+
+| Prioridad | Cantidad | Tiempo Total |
+|-----------|----------|--------------|
+| 🔴 Crítica | 3 tareas | 8-12 horas |
+| 🟡 Alta | 3 tareas | 2-3 días |
+| 🟢 Media | 4 tareas | 4-6 días |
+| **TOTAL** | **10 tareas** | **~2 semanas** |
+
+---
+
+## 🛡️ MÉTRICAS DE PROGRESO
+
+| Métrica | Valor |
+|---------|-------|
+| Tareas completadas (v0.10.2) | 10+ |
+| Tareas pendientes | 10 |
+| Tiempo estimado total | ~2 semanas |
+| Riesgo promedio | 🟡 Medio |
+| Impacto promedio | 🟡 Alto |
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit Engine - ROADMAP v0.9.0**
+**🛡️ RyDit v0.10.2 - ROADMAP COMPLETO**
 
-*v0.9.0 ✅ | v0.9.1 🔜 | v1.0.0 🔮*
-
-**Próxima sesión: v0.9.1 - GPU Particles (FFI) o Optimización**
+*10 tareas pendientes | ~2 semanas | Prioridad: Fix rydit-rs + Testear demos*
 
 </div>

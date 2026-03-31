@@ -191,11 +191,21 @@ pub fn ejecutar_programa_gfx(
                     use crate::modules::assets;
                     let assets_ref = assets::get_assets();
                     let assets_borrow = assets_ref.borrow();
-                    queue.execute(gfx, &assets_borrow);
-
-                    // ✅ v0.9.2: Dibujar partículas (después de queue, directo con begin_draw)
-                    // use crate::modules::particles;  // ✅ v0.10.2: Temporalmente comentado
-                    // particles::draw_particles(gfx);  // ✅ v0.10.2: Temporalmente comentado
+                    
+                    // ✅ v0.10.4: Ejecutar queue y dibujar partículas en el mismo begin_draw
+                    {
+                        let mut d = gfx.begin_draw();
+                        
+                        // Ejecutar RenderQueue con handle existente
+                        queue.execute_with_handle(&mut d, &assets_borrow);
+                        
+                        // ✅ v0.10.4: Dibujar partículas (misma sesión de dibujado)
+                        use crate::modules::particles;
+                        particles::draw_particles_with_handle(&mut d);
+                        
+                        // Drop explícito para forzar buffer swap
+                        drop(d);
+                    }
 
                     eprintln!(
                         "[EXECUTOR] Frame {} completado - Queue ejecutada (stats: {})",
@@ -268,15 +278,21 @@ pub fn ejecutar_programa_gfx(
                         color: crate::ColorRydit::Blanco,
                     });
 
-                    // Ejecutar queue con assets
+                    // ✅ v0.10.4: Ejecutar queue con assets y partículas en mismo begin_draw
                     use crate::modules::assets;
                     let assets_ref = assets::get_assets();
                     let assets_borrow = assets_ref.borrow();
-                    queue.execute(gfx, &assets_borrow);
-
-                    // ✅ v0.9.2: Dibujar partículas
-                    // use crate::modules::particles;  // ✅ v0.10.2: Temporalmente comentado
-                    // particles::draw_particles(gfx);  // ✅ v0.10.2: Temporalmente comentado
+                    
+                    {
+                        let mut d = gfx.begin_draw();
+                        queue.execute_with_handle(&mut d, &assets_borrow);
+                        
+                        // ✅ v0.10.4: Dibujar partículas
+                        use crate::modules::particles;
+                        particles::draw_particles_with_handle(&mut d);
+                        
+                        drop(d);
+                    }
 
                     if escape {
                         break;
@@ -327,11 +343,21 @@ pub fn ejecutar_programa_gfx(
                 color: crate::ColorRydit::Blanco,
             });
 
-            // Ejecutar queue con assets
+            // ✅ v0.10.4: Ejecutar queue con assets y partículas en mismo begin_draw
             use crate::modules::assets;
             let assets_ref = assets::get_assets();
             let assets_borrow = assets_ref.borrow();
-            queue.execute(gfx, &assets_borrow);
+            
+            {
+                let mut d = gfx.begin_draw();
+                queue.execute_with_handle(&mut d, &assets_borrow);
+                
+                // ✅ v0.10.4: Dibujar partículas
+                use crate::modules::particles;
+                particles::draw_particles_with_handle(&mut d);
+                
+                drop(d);
+            }
 
             if escape {
                 break;

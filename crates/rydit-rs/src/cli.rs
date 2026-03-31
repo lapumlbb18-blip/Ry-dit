@@ -5,10 +5,11 @@
 use std::{env, fs};
 
 use blast_core::Executor;
-// ✅ v0.10.2: Lizer y Parser ya no se usan directamente (usamos parse_cached)
-// use lizer::{Lizer, Parser};
 use migui::Migui;
 use rydit_gfx::RyditGfx;
+
+// ✅ v0.10.4: ConfigParser desde lib.rs
+use crate::config_parser::ConfigParser;
 
 use crate::{
     ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui, init_global_loader,
@@ -48,7 +49,6 @@ pub fn run() {
         let escena = if args.len() > 2 { &args[2] } else { "demos/nivel_config.rydit" };
         
         // Importar y ejecutar scene_runner
-        use crate::config_parser::ConfigParser;
         use rydit_ecs::EcsWorld;
         use rydit_gfx::{ColorRydit, Key};
         use rydit_gfx::ecs_render::EcsRenderer;

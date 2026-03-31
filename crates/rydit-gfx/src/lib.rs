@@ -884,6 +884,31 @@ impl RyditGfx {
         }
     }
 
+    /// Cargar textura desde archivo (placeholder)
+    pub fn load_texture(&mut self, path: &str) -> Texture2D {
+        // ⚠️ Placeholder: Implementación completa pendiente
+        // Intentar cargar con raylib FFI
+        unsafe {
+            let c_path = std::ffi::CString::new(path).unwrap();
+            let tex = raylib::ffi::LoadTexture(c_path.as_ptr());
+            // Convertir FFI Texture2D a raylib::prelude::Texture2D
+            std::mem::transmute(tex)
+        }
+    }
+
+    /// Dibujar textura (placeholder - dibuja rect)
+    pub fn draw_texture(&mut self, _texture: &Texture2D, x: i32, y: i32, color: ColorRydit) {
+        // ⚠️ Placeholder: Usar textura real cuando esté implementado
+        self.draw_rect(x, y, 32, 32, color);
+    }
+
+    /// Dibujar textura escalada (placeholder)
+    pub fn draw_texture_ex(&mut self, _texture: &Texture2D, x: i32, y: i32, scale: f32, color: ColorRydit) {
+        // ⚠️ Placeholder: Usar textura real cuando esté implementado
+        let size = (32.0 * scale) as i32;
+        self.draw_rect(x, y, size, size, color);
+    }
+
     /// Verificar tecla presionada
     pub fn is_key_pressed(&self, key: Key) -> bool {
         self.handle.is_key_pressed(key.to_raylib())

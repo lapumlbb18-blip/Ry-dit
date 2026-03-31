@@ -230,6 +230,49 @@ impl RenderQueue {
         self.frame_count = 0;
     }
 
+    /// ✅ v0.10.4: Ejecutar comandos con DrawHandle existente (para integrar con partículas)
+    pub fn execute_with_handle(&mut self, d: &mut crate::DrawHandle, assets: &Assets) {
+        if self.commands.is_empty() {
+            return;
+        }
+
+        // Actualizar estadísticas
+        if self.frame_count > self.max_frame_count {
+            self.max_frame_count = self.frame_count;
+        }
+        self.total_executed += self.frame_count;
+
+        for command in self.commands.drain(..) {
+            match command {
+                DrawCommand::Circle { x, y, radius, color } => {
+                    d.draw_circle(x, y, radius, color);
+                }
+                DrawCommand::Rect { x, y, w, h, color } => {
+                    d.draw_rectangle(x, y, w, h, color);
+                }
+                DrawCommand::Line { x1, y1, x2, y2, color } => {
+                    d.draw_line(x1, y1, x2, y2, color);
+                }
+                DrawCommand::Text { text, x, y, size, color } => {
+                    d.draw_text(&text, x, y, size, color);
+                }
+                DrawCommand::Triangle { v1, v2, v3, color } => {
+                    d.draw_triangle(v1, v2, v3, color);
+                }
+                DrawCommand::Texture { id, x, y, scale, rotation, color } => {
+                    // d es DrawHandle, usar d.draw para obtener RaylibDrawHandle
+                    assets.draw_texture_ex_by_id(&mut d.draw, &id, x, y, scale, rotation, color);
+                }
+                DrawCommand::Clear { color } => {
+                    d.clear(color);
+                }
+            }
+        }
+
+        // Reset contador de frame
+        self.frame_count = 0;
+    }
+
     /// Limpiar queue sin ejecutar
     pub fn clear(&mut self) {
         self.commands.clear();

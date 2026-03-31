@@ -1,8 +1,9 @@
 // crates/rydit-rs/src/lib.rs
-// RyDit Engine - Biblioteca principal v0.10.2
-// ✅ MÍNIMA: Solo exportar config_parser para scene_runner
+// RyDit Engine - Biblioteca principal v0.10.4
+// ✅ v0.10.4: Exportar config_parser
 
 pub mod config_parser;
 
 pub use rydit_gfx;
 pub use rydit_ecs;
+pub use config_parser::ConfigParser;

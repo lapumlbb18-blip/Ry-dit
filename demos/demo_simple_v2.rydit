@@ -1,0 +1,21 @@
+# 🛡️ RyDit v0.10.2 - Demo Simple v2
+# Versión simplificada para parser actual
+
+dark.slot frame = 0
+dark.slot x = 200
+dark.slot y = 300
+
+ryda frame < 10000 {
+    dibujar.circulo(400, 300, 50, "naranja")
+    dibujar.circulo(x, y, 30, "cyan")
+    dibujar.circulo(600, y, 30, "magenta")
+    
+    texto "RyDit v0.10.2" en 10, 10, tamano 20, color "blanco"
+    texto frame en 10, 40, tamano 16, color "verde"
+    
+    onif tecla_presionada("escape") {
+        romper
+    }
+    
+    frame = frame + 1
+}

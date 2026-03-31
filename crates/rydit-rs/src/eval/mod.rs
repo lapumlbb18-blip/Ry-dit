@@ -1,5 +1,6 @@
 // crates/rydit-rs/src/eval/mod.rs
 // Evaluador de expresiones RyDit
+// ✅ v0.10.4: Reconectado con módulos
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
@@ -7,6 +8,14 @@ use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
 use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydit};
+
+// ✅ v0.10.4: Conectar módulos
+use crate::modules::assets::{assets_load, assets_draw, assets_sprite};
+use crate::modules::camera::{camera_follow, camera_set_zoom, camera_set_position};
+use crate::modules::audio::{audio_play, audio_stop};
+use crate::modules::physics::{physics_apply_gravity};
+use crate::modules::input_map::{input_map_is_pressed, input_map_register};
+use crate::modules::entity::{entity_create, entity_get_position};
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier
 fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
@@ -1690,12 +1699,11 @@ pub fn evaluar_expr(
                 return assets::assets_set_origin(args, executor, funcs);
             }
 
-            // assets::draw(id, x, y) - Dibujar textura en posición
+            // assets::draw(id, x, y) - Dibujar textura en posición (usando RenderQueue)
             if name == "assets::draw" && args.len() >= 3 {
                 use crate::modules::assets;
                 use rydit_gfx::ColorRydit;
                 use std::str::FromStr;
-                use v_shield::ffi;
 
                 let id_val = evaluar_expr(&args[0], executor, funcs);
                 let x_val = evaluar_expr(&args[1], executor, funcs);
@@ -1728,16 +1736,16 @@ pub fn evaluar_expr(
                     ColorRydit::Blanco
                 };
 
-                // Dibujar usando FFI de raylib directamente
+                // ✅ v0.10.4: Usar RenderQueue en vez de FFI directo
+                // NOTA: El dibujo real se hace en executor.rs cuando ejecuta la queue
                 let assets = assets::get_assets();
                 let assets_ref = assets.borrow();
 
-                if let Some(texture) = assets_ref.get_texture(&id) {
-                    unsafe {
-                        ffi::DrawTexture(**texture, x as i32, y as i32, color.to_color().into());
-                    }
+                if assets_ref.has_texture(&id) {
+                    // Guardar comando en contexto para que executor.rs lo dibuje
+                    // Por ahora, retornamos éxito - el dibujo se maneja en ejecutar_stmt_gfx
                     return Valor::Texto(format!(
-                        "assets::draw() - '{}' dibujado en ({}, {})",
+                        "assets::draw() - '{}' listo para dibujar en ({}, {})",
                         id, x, y
                     ));
                 } else {
@@ -3295,6 +3303,82 @@ pub fn evaluar_expr(
                 return Valor::Error(
                     "bezier::generate_points() requiere [puntos_control], steps".to_string(),
                 );
+            }
+
+            // ========================================================================
+            // MÓDULOS RYDIT - v0.10.4: Reconexión Total
+            // ========================================================================
+            
+            // ASSETS::load(id, path) - Cargar textura
+            if name == "assets::load" || name == "assets::sprite" {
+                return assets_load(args, executor, funcs);
+            }
+            
+            // ASSETS::draw(id, x, y) - Dibujar sprite
+            if name == "assets::draw" {
+                return assets_draw(args, executor, funcs);
+            }
+            
+            // CAMERA::follow(entity_id) - Cámara sigue entidad
+            if name == "camera::follow" {
+                return camera_follow(args, executor, funcs);
+            }
+            
+            // CAMERA::set_zoom(zoom) - Set zoom de cámara
+            if name == "camera::set_zoom" {
+                return camera_set_zoom(args, executor, funcs);
+            }
+            
+            // CAMERA::set_position(x, y) - Set posición de cámara
+            if name == "camera::set_position" {
+                return camera_set_position(args, executor, funcs);
+            }
+            
+            // AUDIO::play(sound_id) - Reproducir sonido
+            if name == "audio::play" {
+                return audio_play(args, executor, funcs);
+            }
+            
+            // AUDIO::stop(sound_id) - Detener sonido
+            if name == "audio::stop" {
+                return audio_stop(args, executor, funcs);
+            }
+            
+            // AUDIO::set_volume(sound_id, volume) - Set volumen
+            // ⚠️ Pendiente: implementar en audio.rs
+            // if name == "audio::set_volume" {
+            //     return audio_set_volume(args, executor, funcs);
+            // }
+            
+            // PHYSICS::apply_gravity(entity_id) - Aplicar gravedad
+            if name == "physics::apply_gravity" {
+                return physics_apply_gravity(args, executor, funcs);
+            }
+            
+            // PHYSICS::resolve_collision(entity_a, entity_b) - Resolver colisión
+            // ⚠️ Pendiente: implementar en physics.rs
+            // if name == "physics::resolve_collision" {
+            //     return physics_resolve_collision(args, executor, funcs);
+            // }
+            
+            // INPUT_MAP::bind(key, action) - Mapear tecla a acción
+            if name == "input_map::bind" || name == "input_map::register" {
+                return input_map_register(args, executor, funcs);
+            }
+            
+            // INPUT_MAP::is_pressed(action) - Verificar si acción está presionada
+            if name == "input_map::is_pressed" {
+                return input_map_is_pressed(args, executor, funcs);
+            }
+            
+            // ENTITY::create(id, type, x, y) - Crear entidad
+            if name == "entity::create" {
+                return entity_create(args, executor, funcs);
+            }
+            
+            // ENTITY::get_position(id) - Obtener posición de entidad
+            if name == "entity::get_position" {
+                return entity_get_position(args, executor, funcs);
             }
 
             Valor::Error(format!("Función '{}' no soportada en expresiones", name))

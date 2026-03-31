@@ -1,17 +1,17 @@
 // crates/rydit-rs/src/modules/mod.rs
 // Módulos extensibles para RyDit
-// ✅ v0.10.2: Solo módulos que no dependen de eval::
+// ✅ v0.10.4: TODOS los módulos activos y conectados
 
 pub mod assets;
 pub mod audio;
+pub mod camera;
+pub mod collision;
 pub mod csv;
+pub mod entity;
 pub mod input_map;
 pub mod input_ime;
+pub mod level;
+pub mod particles;  // ✅ v0.10.4: Movido de disabled/
 pub mod physics;
-pub mod camera;
-pub mod entity;
-// pub mod particles;  // ✅ v0.10.2: Movido a bin/ para compilación scene_runner
-// pub mod level;      // ⚠️ Temporalmente comentado (depende de eval::)
-// pub mod tilemap;    // ⚠️ Temporalmente comentado (depende de eval::)
-// pub mod collision;  // ⚠️ Temporalmente comentado (depende de eval::)
-// pub mod window;     // ⚠️ Temporalmente comentado (depende de eval::)
+pub mod tilemap;
+pub mod window;

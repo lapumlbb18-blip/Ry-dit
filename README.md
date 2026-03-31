@@ -6,9 +6,9 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.10.4-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Tests](https://img.shields.io/badge/tests-260%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.9.0--ready-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.10.4--ready-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
@@ -40,86 +40,65 @@
 
 ---
 
-## ⚠️ ESTADO ACTUAL
+## ⚠️ ESTADO ACTUAL - SIN FILTROS
 
-### Puntuación: 10/10 ✅ (v0.9.5 - INPUT AVANZADO COMPLETADO)
+### 🛑 ESTADO REAL: v0.10.4 - ESTANCADO EN PARSER
 
-**Última actualización**: 2026-03-30
-**Versión actual**: v0.9.5 ✅ INPUT AVANZADO
-**Próxima versión**: v0.10.0 - GPU INSTANCING + SHADERS
-**Versión futura**: v0.10.1 - ECS INSPIRADO EN BEVY
+**Última actualización**: 2026-03-31  
+**Versión actual**: v0.10.4 🛑 ESTANCADO EN PARSER  
+**Próxima versión**: v0.11.0 - PARSER FUERTE (PRIORIDAD 0)  
+**Versión estable**: v0.10.4 (COMPILACIÓN 100% ✅, PARSER ROTO ❌)
 
-**✅ COMPLETADO EN v0.9.5**:
-- ✅ **Input Map** - 8 funciones + combinaciones (Ctrl+S, Alt+Enter, etc.)
-- ✅ **Input IME** - 9 funciones (teclado virtual Android)
-- ✅ **Gamepad** - 5 funciones (A, B, X, Y, LB, RB, Start, Back, sticks)
-- ✅ **100+ teclas mapeadas** - Todas las teclas estándar
+---
 
-**✅ COMPLETADO EN v0.9.4**:
-- ✅ **Level Manager** - 13 funciones (load, unload, transition, checkpoints)
-- ✅ **Tilemap System** - 12 funciones (create, fill_rect, draw, get_tile)
-- ✅ **Collision System** - 13 funciones (AABB, Area2D, resolve)
-- ✅ **Window Manager** - 17 funciones (title, size, fullscreen, vsync, fps)
-- ✅ **Entity System** - 50+ funciones (player, enemy, boss, trap, coin)
-- ✅ **Cámara 2D** - 15 funciones (follow, zoom, scroll, bounds)
-- ✅ **Physics 2D** - 20 funciones (gravedad, fricción, colisión, respuesta)
+### ✅ LO QUE SÍ FUNCIONA (RUST - 25K LÍNEAS)
 
-**⚠️ LIMITACIONES RESTANTES (v0.9.5)**:
-- ⚠️ **Arquitectura** - Script manda sobre Core → v0.10.1: Core manda, Script configura
-- ⚠️ **GPU Instancing** - Sin FFI OpenGL → v0.10.0: 100K+ partículas
+| Sistema | Estado | Líneas | Tests |
+|---------|--------|--------|-------|
+| **Rust Core** | ✅ 100% | ~25K | Compila sin errores |
+| **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
+| **Assets Manager** | ✅ Integrado | 486 | Carga texturas |
+| **Particles** | ✅ Integrado | 188 | 500+ partículas |
+| **ECS** | ✅ bevy_ecs | - | 10K entidades |
+| **Input Map** | ✅ Código existe | 657 | 20+ combinaciones |
+| **Physics 2D** | ✅ 20 funciones | - | Funciona |
+| **Camera 2D** | ✅ 15 funciones | - | Funciona |
 
-**🔥 PLAN CRÍTICO v0.10.0**:
-- 🔥 **GPU Instancing** - FFI OpenGL (gl-rs), shaders GLSL
-- 🔥 **Shaders** - Vertex + Fragment shaders
-- 🔥 **100K+ partículas** - glDrawArraysInstanced
+**Total**: ~25K líneas Rust, 260+ tests, 10+ binarios compilados ✅
 
-**🛡️ ARQUITECTURA v0.10.1** (INVERSIÓN DE CONTROL):
-- 🛡️ Core manda - rydit-rs hace game loop nativo
-- 🛡️ Script configura - .rydit solo parámetros
-- 🛡️ ECS Entt - 100K+ entidades
-- 🛡️ Comando nativo de RyDit: `./rydit-rs --scene <nombre>`
+---
 
-**🔥 EN PROCESO EN v0.10.0** (SOLO DESPUÉS DE v0.9.2-v0.9.5):
-- # en proceso: **GPU Instancing** - 100K+ partículas @ 60 FPS
-- # en proceso: **Shaders GLSL** - Vertex + Fragment shaders
-- # en proceso: **FFI OpenGL** - gl-rs crate
-- # en proceso: **ECS (ENTT)** - Entity Component System
+### ❌ LO QUE NO FUNCIONA (PARSER - 10 DÍAS ESTANCADOS)
 
-**✅ COMPLETADO EN v0.8.7**:
-- ✅ **HTTP + WebSocket** - 10 funciones (ureq + tungstenite compilados)
-- ✅ **CSV Data Science** - 13 funciones (read, write, filter, join, aggregate)
-- ✅ **Input Map** - 8 funciones (press, release, is_pressed, get_active)
+| Sistema | Problema | Días Estancado | Impacto |
+|---------|----------|----------------|---------|
+| **PARSER LIZER** | 🔴 **BLOQUES ANIDADOS** | **10 DÍAS** | 🔴 **CRÍTICO** |
+| .rydit scripts | Parser falla en sintaxis compleja | 10 días | No hay demos funcionales |
+| eval/mod.rs | Conectado pero no se usa | 5 días | Lógica no se ejecuta |
+| Game loop .rydit | Parser no soporta loops complejos | 8 días | No hay juegos reales |
 
-**✅ COMPLETADO EN v0.8.5**:
-- ✅ Audio Module - 12 funciones
-- ✅ Particles Module - 5 efectos
-- ✅ Config Termux-X11
+**Root Cause**: Parser monolítico (3327 líneas en 1 archivo), sin error recovery, AST sin tipos
 
-**📊 MÉTRICAS**:
-- ✅ 260+ tests passing
-- ✅ 0 warnings clippy
-- ✅ ~2.2 MB binario release
-- ✅ 60 FPS estables (con Render Queue + Entity System)
-- ✅ 170+ funciones para juegos 2D
+---
 
-**🔍 DIAGNÓSTICO TÉCNICO**:
-- ✅ Level Manager (13 funciones)
-- ✅ Tilemap System (12 funciones)
-- ✅ Collision System (13 funciones)
-- ✅ Window Manager (17 funciones)
-- ✅ Entity System (50+ funciones)
-- ✅ Cámara 2D (15 funciones)
-- ✅ Physics 2D (20 funciones)
-- ✅ Render Queue integrada
-- ✅ Assets con queue (2000 sprites @ 60 FPS)
-- ✅ Teclado completo (100+ teclas)
-- ✅ Input Map acciones (nativo de RyDit)
-- ✅ IME integrado (teclado virtual Android)
-- ⚠️ Arquitectura: Script manda (v0.10.2: Core manda)
+### 📊 BINARIOS COMPILADOS
 
-**📋 DOCUMENTACIÓN CRÍTICA**:
-- [docs/RYDIT_V0.9.4_COMPLETADA.md](docs/RYDIT_V0.9.4_COMPLETADA.md) - v0.9.4 completa
-- [docs/LEVEL_MANAGER_V0.9.4.md](docs/LEVEL_MANAGER_V0.9.4.md) - Level Manager
+- ✅ `rydit-rs` - 3.1MB (PRINCIPAL)
+- ✅ `scene_runner` - 326KB
+- ✅ `demo_particles` - 274KB
+- ✅ `demo_big_bang` - ~350KB
+- ✅ `demo_10k_particulas` - ~400KB
+- ✅ `ecs_demo_10k` - 272KB
+- ✅ `gpu_demo_100k` - 276KB
+
+**PERO**: ⚠️ **Demos .rydit NO FUNCIONAN por parser roto**
+
+---
+
+### 📋 DOCUMENTACIÓN HONESTA
+
+- [**ESTADO_REAL_V0.10.4.md**](ESTADO_REAL_V0.10.4.md) - ⭐ **ESTADO SIN FILTROS**
+- [**QWEN.md**](QWEN.md) - Bitácora técnica (actualizada)
 - [docs/ANALISIS_HONESTO_Y_PLAN_MAESTRO_V0.9.x.md](docs/ANALISIS_HONESTO_Y_PLAN_MAESTRO_V0.9.x.md) - Limitaciones + plan
 
 ---

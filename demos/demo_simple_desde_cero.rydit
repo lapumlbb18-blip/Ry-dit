@@ -1,0 +1,39 @@
+# 🛡️ RyDit v0.10.2 - Demo Simple desde Cero
+# Tamaño: 800x600 (como demo_particles)
+# Sin configuración, solo render
+
+# Inicialización
+dark.slot frame = 0
+dark.slot fps_counter = 0
+dark.slot last_fps = 60
+
+# Game loop infinito (como demo_particles)
+ryda frame < 100000 {
+    # Clear pantalla (negro como demo_particles)
+    
+    # Círculo central (como fuego en demo_particles)
+    dibujar.circulo(400, 300, 50, "naranja")
+    dibujar.circulo(400, 300, 40, "amarillo")
+    dibujar.circulo(400, 300, 30, "rojo")
+    
+    # Círculos animados (como partículas)
+    dark.slot offset = matematica::sin(frame / 20) * 100
+    dibujar.circulo(200, 300 + offset, 20, "cyan")
+    dibujar.circulo(600, 300 - offset, 20, "magenta")
+    
+    # Mostrar información (como demo_particles)
+    texto "=== RyDit v0.10.2 - Demo Simple ===" en 10, 10, tamano 20, color "blanco"
+    texto "FPS: " + fps() en 10, 35, tamano 16, color "verde"
+    texto "Frame: " + frame en 10, 55, tamano 16, color "amarillo"
+    texto "Tamaño: 800x600" en 10, 75, tamano 16, color "gris"
+    
+    # Controles en la parte inferior (como demo_particles)
+    texto "ESC: Salir" en 10, 570, tamano 16, color "gris"
+    
+    # Salir con ESC (como demo_particles)
+    onif tecla_presionada("escape") {
+        romper
+    }
+    
+    frame = frame + 1
+}
