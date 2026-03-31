@@ -453,6 +453,49 @@ pub fn camera_reset(
     Valor::Texto("camera::reset() - Cámara reseteada".to_string())
 }
 
+/// camera::apply_sdl2(x, y, screen_width, screen_height) - Aplicar cámara para SDL2
+pub fn camera_apply_sdl2(
+    args: &[Expr],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+) -> Valor {
+    if args.len() != 4 {
+        return Valor::Error("camera::apply_sdl2() requiere 4 argumentos: x, y, screen_width, screen_height".to_string());
+    }
+
+    let x_val = evaluar_expr(&args[0], executor, funcs);
+    let y_val = evaluar_expr(&args[1], executor, funcs);
+    let sw_val = evaluar_expr(&args[2], executor, funcs);
+    let sh_val = evaluar_expr(&args[3], executor, funcs);
+
+    let x = match x_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("camera::apply_sdl2() x debe ser número".to_string()),
+    };
+
+    let y = match y_val {
+        Valor::Num(n) => n as f32,
+        _ => return Valor::Error("camera::apply_sdl2() y debe ser número".to_string()),
+    };
+
+    let screen_width = match sw_val {
+        Valor::Num(n) => n as i32,
+        _ => return Valor::Error("camera::apply_sdl2() screen_width debe ser número".to_string()),
+    };
+
+    let screen_height = match sh_val {
+        Valor::Num(n) => n as i32,
+        _ => return Valor::Error("camera::apply_sdl2() screen_height debe ser número".to_string()),
+    };
+
+    let cam = get_camera();
+    let cam_ref = cam.borrow();
+    let (screen_x, screen_y) = cam_ref.apply_sdl2(x, y, screen_width, screen_height);
+
+    // Retornar como array [screen_x, screen_y]
+    Valor::Array(vec![Valor::Num(screen_x as f64), Valor::Num(screen_y as f64)])
+}
+
 // ============================================================================
 // TESTS
 // ============================================================================

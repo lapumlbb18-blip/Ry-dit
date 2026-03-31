@@ -57,17 +57,14 @@ impl NativeFontManager {
     }
 
     /// Renderizar texto a imagen (RGBA)
-    pub fn render_text(&mut self, text: &str, size: u32, color: (u8, u8, u8, u8)) -> Result<Vec<u8>, String> {
-        // Por ahora, usamos un fallback simple
-        // En producción, usaríamos ab_glyph para renderizar
-        
-        // Retornamos una imagen vacía como placeholder
-        // El render real se haría con ab_glyph + image crate
+    pub fn render_text(&mut self, _text: &str, _size: u32, _color: (u8, u8, u8, u8)) -> Result<Vec<u8>, String> {
+        // Placeholder: retorna imagen vacía
+        // En producción, usar ab_glyph para renderizar
         Ok(vec![0u8; 100 * 20 * 4])  // 100x20 pixels RGBA
     }
 
     /// Obtener dimensiones de texto
-    pub fn text_dimensions(&self, text: &str, size: u32) -> (u32, u32) {
+    pub fn text_dimensions(&self, text: &str, _size: u32) -> (u32, u32) {
         // Aproximación simple: 10px por carácter, 20px de alto
         (text.len() as u32 * 10, 20)
     }

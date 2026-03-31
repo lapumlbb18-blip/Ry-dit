@@ -11,7 +11,7 @@ use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydi
 
 // ✅ v0.10.4: Conectar módulos
 use crate::modules::assets::{assets_load, assets_draw, assets_sprite};
-use crate::modules::camera::{camera_follow, camera_set_zoom, camera_set_position};
+use crate::modules::camera::{camera_follow, camera_set_zoom, camera_set_position, camera_apply_sdl2};
 use crate::modules::audio::{audio_play, audio_stop};
 use crate::modules::physics::{physics_apply_gravity};
 use crate::modules::input_map::{input_map_is_pressed, input_map_register};
@@ -2012,6 +2012,11 @@ pub fn evaluar_expr(
             if name == "camera::reset" {
                 use crate::modules::camera;
                 return camera::camera_reset(args, executor, funcs);
+            }
+
+            // camera::apply_sdl2(x, y, screen_width, screen_height) - Aplicar cámara SDL2
+            if name == "camera::apply_sdl2" && args.len() == 4 {
+                return camera_apply_sdl2(args, executor, funcs);
             }
 
             // ========================================================================
