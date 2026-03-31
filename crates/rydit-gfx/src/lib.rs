@@ -65,6 +65,9 @@ pub mod audio_sdl2;
 // Módulo de Fuentes SDL2 v0.10.8 - SDL2_ttf (pendiente)
 pub mod font_sdl2;
 
+// Módulo de FFI Nativo SDL2 v0.10.8 - Texturas, Audio, Fuentes (nativo)
+pub mod sdl2_ffi;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 

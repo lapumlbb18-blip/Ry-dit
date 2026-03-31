@@ -22,6 +22,13 @@
 //! // gui.end_frame();
 //! ```
 
+// Backend SDL2 para MiGUI
+#[cfg(feature = "sdl2")]
+pub mod backend_sdl2;
+
+// Fuentes nativas en Rust (sin FFI)
+pub mod font_native;
+
 use std::str::FromStr;
 
 // ============================================================================
