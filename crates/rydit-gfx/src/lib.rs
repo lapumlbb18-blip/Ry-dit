@@ -1240,32 +1240,6 @@ impl Assets {
         }
     }
 
-    // ========================================================================
-    // SDL2 METHODS - v0.11.0
-    // ========================================================================
-
-    /// Cargar textura SDL2 desde archivo (FFI nativo)
-    pub fn load_texture_sdl2(
-        path: &str,
-        renderer: &mut sdl2::render::Canvas<sdl2::video::Window>
-    ) -> Result<sdl2::render::Texture, String> {
-        use std::path::Path;
-
-        if !Path::new(path).exists() {
-            return Err(format!("Archivo '{}' no encontrado", path));
-        }
-
-        // Cargar superficie con SDL2_image
-        let surface = sdl2::image::load(path)
-            .map_err(|e| format!("Error cargando imagen '{}': {}", path, e))?;
-
-        // Crear textura desde superficie
-        let texture = renderer.create_texture_from_surface(&surface)
-            .map_err(|e| format!("Error creando textura: {}", e))?;
-
-        Ok(texture)
-    }
-
     // ==================== TEXTURAS ====================
 
     /// Insertar textura cargada desde RyDit

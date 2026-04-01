@@ -27,19 +27,11 @@ impl FontManager {
     }
 
     /// Renderizar texto a superficie SDL2
-    pub fn render_text(&mut self, text: &str, size: u32, color: Color) -> Result<sdl2::surface::Surface, String> {
-        // Obtener dimensiones
-        let (width, height) = self.native.text_dimensions(text, size);
-        
-        // Crear superficie RGBA
-        let mut surface = sdl2::surface::Surface::new(width, height, sdl2::pixels::PixelFormatEnum::RGBA8888)
-            .map_err(|e| e.to_string())?;
-        
-        // Rellenar con color (placeholder - en producción renderizar con ab_glyph)
-        surface.fill(None, sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a))
-            .map_err(|e| e.to_string())?;
-        
-        Ok(surface)
+    pub fn render_text(&mut self, _text: &str, _size: u32, _color: Color) -> Result<sdl2::surface::Surface, String> {
+        // Placeholder: retorna superficie vacía
+        // En producción, usar ab_glyph o SDL2_ttf
+        sdl2::surface::Surface::new(100, 20, sdl2::pixels::PixelFormatEnum::RGBA8888)
+            .map_err(|e| e.to_string())
     }
 }
 
@@ -143,22 +135,13 @@ impl MiguiSdl2Backend {
                         (*x2 as i32, *y2 as i32)
                     ).ok();
                 }
-                crate::DrawCommand::DrawText { text, x, y, size, color } => {
-                    // Renderizar texto con SDL2_ttf
-                    if let Some(ref mut font_mgr) = self.font_manager {
-                        if let Ok(surface) = font_mgr.render_text(text, *size, *color) {
-                            let texture_creator = self.canvas.texture_creator();
-                            if let Ok(texture) = texture_creator.create_texture_from_surface(&surface) {
-                                let sdl_rect = sdl2::rect::Rect::new(
-                                    *x as i32,
-                                    *y as i32,
-                                    surface.width(),
-                                    surface.height()
-                                );
-                                self.canvas.copy(&texture, None, sdl_rect).ok();
-                            }
-                        }
-                    }
+                crate::DrawCommand::DrawText { text: _, x, y, size: _, color } => {
+                    // Placeholder: dibujar rect en vez de texto
+                    // En producción, usar SDL2_ttf o ab_glyph
+                    self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
+                        color.r, color.g, color.b, color.a
+                    ));
+                    self.canvas.fill_rect(sdl2::rect::Rect::new(*x as i32, *y as i32, 50, 20)).ok();
                 }
                 crate::DrawCommand::Clear { color } => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
