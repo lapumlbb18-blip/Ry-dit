@@ -9,13 +9,13 @@ pub struct Theme {
     pub button_normal: Color,
     pub button_hover: Color,
     pub button_border: Color,
-    
+
     // Colores de paneles
     pub panel_bg: Color,
     pub panel_border: Color,
     pub title_bar_bg: Color,
     pub title_text: Color,
-    
+
     // Colores de texto
     pub text_color: Color,
 }

@@ -2,7 +2,7 @@
 // Fuentes Nativas en Rust - v0.10.10
 // Usa ab_glyph (100% Rust, sin FFI)
 
-use ab_glyph::{Font, FontRef, ScaleFont};
+use ab_glyph::FontRef;
 use std::collections::HashMap;
 
 // ============================================================================
@@ -39,28 +39,33 @@ impl NativeFontManager {
     }
 
     /// Cargar fuente desde archivo TTF
-    pub fn load_font(&mut self, path: &str, size: u32) -> Result<(), String> {
+    pub fn load_font(&mut self, path: &str, _size: u32) -> Result<(), String> {
         use std::fs;
-        
-        let font_data = fs::read(path)
-            .map_err(|e| format!("Error leyendo fuente '{}': {}", path, e))?;
-        
+
+        let font_data =
+            fs::read(path).map_err(|e| format!("Error leyendo fuente '{}': {}", path, e))?;
+
         // Necesitamos que los datos vivan lo suficiente
         // En producción, usaríamos Arc o similar
         // Por ahora, solo verificamos que se puede cargar
         let _font = FontRef::try_from_slice(&font_data)
             .map_err(|e| format!("Error parseando fuente: {}", e))?;
-        
+
         // Guardamos los datos (en producción usaríamos Arc)
         // Por simplicidad, solo verificamos que funciona
         Ok(())
     }
 
     /// Renderizar texto a imagen (RGBA)
-    pub fn render_text(&mut self, _text: &str, _size: u32, _color: (u8, u8, u8, u8)) -> Result<Vec<u8>, String> {
+    pub fn render_text(
+        &mut self,
+        _text: &str,
+        _size: u32,
+        _color: (u8, u8, u8, u8),
+    ) -> Result<Vec<u8>, String> {
         // Placeholder: retorna imagen vacía
         // En producción, usar ab_glyph para renderizar
-        Ok(vec![0u8; 100 * 20 * 4])  // 100x20 pixels RGBA
+        Ok(vec![0u8; 100 * 20 * 4]) // 100x20 pixels RGBA
     }
 
     /// Obtener dimensiones de texto

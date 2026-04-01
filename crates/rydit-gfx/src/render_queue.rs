@@ -55,8 +55,8 @@
 //! queue.platform_sync();
 //! ```
 
-use crate::{ColorRydit, RyditGfx};
 use crate::Assets;
+use crate::{ColorRydit, RyditGfx};
 use std::collections::VecDeque;
 
 // ============================================================================
@@ -166,7 +166,10 @@ impl RenderQueue {
             // Buffer lleno: remover el comando más antiguo (política FIFO)
             self.commands.pop_front();
             #[cfg(debug_assertions)]
-            eprintln!("[RENDER QUEUE] WARNING: Buffer lleno ({}), removiendo comando antiguo", self.capacity);
+            eprintln!(
+                "[RENDER QUEUE] WARNING: Buffer lleno ({}), removiendo comando antiguo",
+                self.capacity
+            );
         }
 
         self.commands.push_back(command);
@@ -197,24 +200,56 @@ impl RenderQueue {
 
             for command in self.commands.drain(..) {
                 match command {
-                    DrawCommand::Circle { x, y, radius, color } => {
+                    DrawCommand::Circle {
+                        x,
+                        y,
+                        radius,
+                        color,
+                    } => {
                         d.draw_circle(x, y, radius, color);
                     }
                     DrawCommand::Rect { x, y, w, h, color } => {
                         d.draw_rectangle(x, y, w, h, color);
                     }
-                    DrawCommand::Line { x1, y1, x2, y2, color } => {
+                    DrawCommand::Line {
+                        x1,
+                        y1,
+                        x2,
+                        y2,
+                        color,
+                    } => {
                         d.draw_line(x1, y1, x2, y2, color);
                     }
-                    DrawCommand::Text { text, x, y, size, color } => {
+                    DrawCommand::Text {
+                        text,
+                        x,
+                        y,
+                        size,
+                        color,
+                    } => {
                         d.draw_text(&text, x, y, size, color);
                     }
                     DrawCommand::Triangle { v1, v2, v3, color } => {
                         d.draw_triangle(v1, v2, v3, color);
                     }
-                    DrawCommand::Texture { id, x, y, scale, rotation, color } => {
+                    DrawCommand::Texture {
+                        id,
+                        x,
+                        y,
+                        scale,
+                        rotation,
+                        color,
+                    } => {
                         // Dibujar textura con escala y rotación
-                        assets.draw_texture_ex_by_id(&mut d.draw, &id, x, y, scale, rotation, color);
+                        assets.draw_texture_ex_by_id(
+                            &mut d.draw,
+                            &id,
+                            x,
+                            y,
+                            scale,
+                            rotation,
+                            color,
+                        );
                     }
                     DrawCommand::Clear { color } => {
                         d.clear(color);
@@ -244,22 +279,46 @@ impl RenderQueue {
 
         for command in self.commands.drain(..) {
             match command {
-                DrawCommand::Circle { x, y, radius, color } => {
+                DrawCommand::Circle {
+                    x,
+                    y,
+                    radius,
+                    color,
+                } => {
                     d.draw_circle(x, y, radius, color);
                 }
                 DrawCommand::Rect { x, y, w, h, color } => {
                     d.draw_rectangle(x, y, w, h, color);
                 }
-                DrawCommand::Line { x1, y1, x2, y2, color } => {
+                DrawCommand::Line {
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    color,
+                } => {
                     d.draw_line(x1, y1, x2, y2, color);
                 }
-                DrawCommand::Text { text, x, y, size, color } => {
+                DrawCommand::Text {
+                    text,
+                    x,
+                    y,
+                    size,
+                    color,
+                } => {
                     d.draw_text(&text, x, y, size, color);
                 }
                 DrawCommand::Triangle { v1, v2, v3, color } => {
                     d.draw_triangle(v1, v2, v3, color);
                 }
-                DrawCommand::Texture { id, x, y, scale, rotation, color } => {
+                DrawCommand::Texture {
+                    id,
+                    x,
+                    y,
+                    scale,
+                    rotation,
+                    color,
+                } => {
                     // d es DrawHandle, usar d.draw para obtener RaylibDrawHandle
                     assets.draw_texture_ex_by_id(&mut d.draw, &id, x, y, scale, rotation, color);
                 }
@@ -327,7 +386,11 @@ impl std::fmt::Display for RenderQueueStats {
         write!(
             f,
             "RenderQueue {{ pending: {}, frame: {}, total: {}, max: {}, capacity: {} }}",
-            self.pending, self.frame_count, self.total_executed, self.max_frame_count, self.capacity
+            self.pending,
+            self.frame_count,
+            self.total_executed,
+            self.max_frame_count,
+            self.capacity
         )
     }
 }

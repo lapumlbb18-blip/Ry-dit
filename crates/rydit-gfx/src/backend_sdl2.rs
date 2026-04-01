@@ -5,13 +5,13 @@
 #![allow(clippy::too_many_arguments)]
 
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
-use sdl2::video::GLProfile;
-use sdl2::render::{Canvas, TextureCreator};
 use sdl2::image::InitFlag;
-use sdl2::rect::Rect;
+use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
+use sdl2::rect::Rect;
+use sdl2::render::{Canvas, TextureCreator};
 use sdl2::surface::Surface;
+use sdl2::video::GLProfile;
 
 use crate::input_sdl2::InputState;
 use crate::sdl2_ffi::FontFFI;
@@ -57,7 +57,7 @@ impl Sdl2Backend {
         gl_attr.set_context_profile(GLProfile::Core);
         gl_attr.set_context_version(3, 3);
         gl_attr.set_double_buffer(true);
-        gl_attr.set_multisample_samples(4);  // Anti-aliasing
+        gl_attr.set_multisample_samples(4); // Anti-aliasing
 
         // Crear ventana OpenGL
         let window = video_subsystem
@@ -69,10 +69,8 @@ impl Sdl2Backend {
             .map_err(|e| e.to_string())?;
 
         // Crear contexto OpenGL
-        let gl_context = window
-            .gl_create_context()
-            .map_err(|e| e.to_string())?;
-        
+        let gl_context = window.gl_create_context().map_err(|e| e.to_string())?;
+
         window
             .gl_make_current(&gl_context)
             .map_err(|e| e.to_string())?;
@@ -81,13 +79,13 @@ impl Sdl2Backend {
         gl::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
 
         // Inicializar SDL2_image (PNG, JPG) - GIF no disponible en esta versión
-        let _image_context = sdl2::image::init(InitFlag::PNG | InitFlag::JPG)
-            .map_err(|e| e.to_string())?;
+        let _image_context =
+            sdl2::image::init(InitFlag::PNG | InitFlag::JPG).map_err(|e| e.to_string())?;
 
         // Crear canvas para render 2D
         let canvas = window
             .into_canvas()
-            .present_vsync()  // VSync activado
+            .present_vsync() // VSync activado
             .build()
             .map_err(|e| e.to_string())?;
 
@@ -101,7 +99,7 @@ impl Sdl2Backend {
         let font = match FontFFI::init() {
             Ok(_) => {
                 println!("[SDL2-BACKEND]: SDL2_ttf inicializado");
-                None  // Font se carga bajo demanda
+                None // Font se carga bajo demanda
             }
             Err(e) => {
                 println!("[SDL2-BACKEND]: SDL2_ttf no disponible: {}", e);
@@ -142,19 +140,29 @@ impl Sdl2Backend {
                 Event::Quit { .. } => {
                     should_close = true;
                 }
-                Event::KeyDown { keycode: Some(keycode), repeat: false, .. } => {
+                Event::KeyDown {
+                    keycode: Some(keycode),
+                    repeat: false,
+                    ..
+                } => {
                     self.input.teclas.insert(keycode, true);
                     self.input.teclas_pressionadas_frame.push(keycode);
-                    
+
                     // ESC cierra la ventana
                     if keycode == Keycode::Escape {
                         should_close = true;
                     }
                 }
-                Event::KeyUp { keycode: Some(keycode), .. } => {
+                Event::KeyUp {
+                    keycode: Some(keycode),
+                    ..
+                } => {
                     self.input.teclas.insert(keycode, false);
                 }
-                Event::Window { win_event: sdl2::event::WindowEvent::Resized(w, h), .. } => {
+                Event::Window {
+                    win_event: sdl2::event::WindowEvent::Resized(w, h),
+                    ..
+                } => {
                     self.width = w as i32;
                     self.height = h as i32;
                     let viewport = Rect::new(0, 0, w as u32, h as u32);
@@ -172,7 +180,7 @@ impl Sdl2Backend {
         // Limpiar pantalla (negro por defecto)
         self.canvas.set_draw_color(Color::RGB(0, 0, 0));
         self.canvas.clear();
-        self.canvas.present();  // Presentar inmediatamente después de clear
+        self.canvas.present(); // Presentar inmediatamente después de clear
     }
 
     /// Finalizar frame de renderizado
@@ -183,7 +191,7 @@ impl Sdl2Backend {
     /// Verificar si la ventana debe cerrarse
     pub fn should_close(&self) -> bool {
         // SDL2 no tiene un método directo, usamos una bandera
-        false  // El cierre se maneja en procesar_eventos()
+        false // El cierre se maneja en procesar_eventos()
     }
 
     /// Obtener estado de una tecla (por nombre RyDit)
@@ -209,7 +217,7 @@ impl Sdl2Backend {
         let diameter = radius * 2;
         self.canvas.set_draw_color(Color::RGB(r, g, b));
         let rect = Rect::new(cx - radius, cy - radius, diameter as u32, diameter as u32);
-        let _ = self.canvas.fill_rect(rect);  // Ignorar error
+        let _ = self.canvas.fill_rect(rect); // Ignorar error
     }
 
     /// Cargar fuente SDL2_ttf
@@ -248,7 +256,10 @@ impl Sdl2Backend {
             let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
 
             // Crear textura desde superficie
-            let texture = match self.texture_creator.create_texture_from_surface(&sdl_surface) {
+            let texture = match self
+                .texture_creator
+                .create_texture_from_surface(&sdl_surface)
+            {
                 Ok(t) => t,
                 Err(e) => {
                     eprintln!("[SDL2-BACKEND]: Error creando textura: {}", e);

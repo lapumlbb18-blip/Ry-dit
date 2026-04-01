@@ -9,9 +9,7 @@ pub struct FontManager {
 
 impl FontManager {
     pub fn new() -> Self {
-        Self {
-            initialized: false,
-        }
+        Self { initialized: false }
     }
 
     /// Inicializar SDL2_ttf

@@ -6,7 +6,7 @@ use rydit_gfx::backend_sdl2::Sdl2Backend;
 // use rydit_gfx::backend_sdl2::TextureManager;  // ← Pendiente: fixear load_texture
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 
 // Partícula simple
 struct Particula {
@@ -24,9 +24,14 @@ struct Particula {
 impl Particula {
     fn new(x: f32, y: f32, vx: f32, vy: f32, r: u8, g: u8, b: u8) -> Self {
         Self {
-            x, y, vx, vy,
+            x,
+            y,
+            vx,
+            vy,
             vida: 1.0,
-            r, g, b,
+            r,
+            g,
+            b,
             size: 8.0,
         }
     }
@@ -34,7 +39,7 @@ impl Particula {
     fn actualizar(&mut self, dt: f32) {
         self.x += self.vx * dt;
         self.y += self.vy * dt;
-        self.vida -= dt * 0.5;  // Desvanece en 2 segundos
+        self.vida -= dt * 0.5; // Desvanece en 2 segundos
         self.size = 8.0 * self.vida;
     }
 
@@ -52,8 +57,8 @@ fn main() {
     println!("");
 
     // Crear backend SDL2
-    let mut backend = Sdl2Backend::new("Demo Partículas SDL2", 800, 600)
-        .expect("Failed to create SDL2 backend");
+    let mut backend =
+        Sdl2Backend::new("Demo Partículas SDL2", 800, 600).expect("Failed to create SDL2 backend");
 
     // Gestor de texturas (pendiente)
     // let mut texture_manager = TextureManager::new();
@@ -88,8 +93,8 @@ fn main() {
         }
 
         // Mover emisor con teclado
-        let velocidad = 200.0;  // píxeles por segundo
-        
+        let velocidad = 200.0; // píxeles por segundo
+
         if backend.is_key_pressed("w") || backend.is_key_pressed("arrow_up") {
             emisor_y -= velocidad * dt;
         }
@@ -149,8 +154,24 @@ fn main() {
         }
 
         // Dibujar UI (texto simple)
-        backend.draw_text(&format!("FPS: 60 | Particulas: {}", particulas.len()), 20, 30, 20, 0, 255, 0);
-        backend.draw_text(&format!("Creadas: {}", particulas_creadas), 20, 60, 16, 200, 200, 200);
+        backend.draw_text(
+            &format!("FPS: 60 | Particulas: {}", particulas.len()),
+            20,
+            30,
+            20,
+            0,
+            255,
+            0,
+        );
+        backend.draw_text(
+            &format!("Creadas: {}", particulas_creadas),
+            20,
+            60,
+            16,
+            200,
+            200,
+            200,
+        );
         backend.draw_text("W,A,S,D = Mover | SPACE = Emitir", 20, 550, 14, 255, 255, 0);
 
         backend.end_draw();

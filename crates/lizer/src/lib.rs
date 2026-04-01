@@ -471,11 +471,11 @@ pub struct Program {
 
 // ✅ v0.10.2: AST Caching para game loops repetitivos
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use std::sync::LazyLock;
+use std::sync::{Arc, Mutex};
 
 // Cache global de ASTs parseados
-static AST_CACHE: LazyLock<Mutex<HashMap<Arc<str>, Arc<Program>>>> = 
+static AST_CACHE: LazyLock<Mutex<HashMap<Arc<str>, Arc<Program>>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
 /// Lexer para RyDit
@@ -688,7 +688,9 @@ impl<'a> Lizer<'a> {
                     "draw.text" | "dibujar.texto" => Token::DrawText,
                     "draw.triangle" | "dibujar.triangulo" => Token::DrawTriangle,
                     "draw.ring" | "dibujar.anillo" => Token::DrawRing,
-                    "draw.rectangle_lines" | "dibujar.lineas_rectangulo" => Token::DrawRectangleLines,
+                    "draw.rectangle_lines" | "dibujar.lineas_rectangulo" => {
+                        Token::DrawRectangleLines
+                    }
                     "draw.ellipse" | "dibujar.elipse" => Token::DrawEllipse,
                     "draw.line_thick" | "dibujar.linea_gruesa" => Token::DrawLineThick,
                     // "input" se maneja como Ident especial
@@ -1134,7 +1136,7 @@ mod tests {
 pub fn parse_cached(source: &str) -> Result<Program> {
     // Usar source como hash
     let hash = Arc::from(source);
-    
+
     // Intentar obtener de cache
     {
         if let Ok(cache) = AST_CACHE.lock() {
@@ -1143,20 +1145,20 @@ pub fn parse_cached(source: &str) -> Result<Program> {
             }
         }
     }
-    
+
     // Parsear normalmente
     let mut lizer = Lizer::new(source);
     let tokens = lizer.scan();
     let mut parser = Parser::new(tokens);
     let program = parser.parse()?;
-    
+
     // Guardar en cache
     {
         if let Ok(mut cache) = AST_CACHE.lock() {
             cache.insert(hash, Arc::new(program.clone()));
         }
     }
-    
+
     Ok(program)
 }
 
@@ -1215,7 +1217,7 @@ impl Parser {
                 self.pos += 1;
                 return Ok(None);
             }
-            
+
             Token::ShieldInit => {
                 self.pos += 1;
                 Ok(Some(Stmt::Init))
@@ -1293,7 +1295,7 @@ impl Parser {
                 }
                 // Llave de cierre - consumir y parar
                 if matches!(self.tokens[self.pos], Token::LlaveDer) {
-                    self.pos += 1;  // ¡CONSUMIR LA LLAVE!
+                    self.pos += 1; // ¡CONSUMIR LA LLAVE!
                     break;
                 }
                 if let Some(stmt) = self.parse_statement()? {
@@ -1324,7 +1326,7 @@ impl Parser {
                 while self.pos < self.tokens.len() {
                     // Llave de cierre - consumir y parar
                     if matches!(self.tokens[self.pos], Token::LlaveDer) {
-                        self.pos += 1;  // ¡CONSUMIR LA LLAVE!
+                        self.pos += 1; // ¡CONSUMIR LA LLAVE!
                         break;
                     }
                     if let Some(stmt) = self.parse_statement()? {
@@ -1368,7 +1370,7 @@ impl Parser {
                 while self.pos < self.tokens.len() {
                     // Si encontramos llave de cierre, consumir y parar
                     if matches!(self.tokens[self.pos], Token::LlaveDer) {
-                        self.pos += 1;  // ¡CONSUMIR LA LLAVE!
+                        self.pos += 1; // ¡CONSUMIR LA LLAVE!
                         break;
                     }
                     // Parsear siguiente statement

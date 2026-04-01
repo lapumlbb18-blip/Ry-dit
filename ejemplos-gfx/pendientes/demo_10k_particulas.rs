@@ -3,7 +3,7 @@
 // Tamaño: 1280x720 (HD)
 // Partículas: 10,000 (estrés de CPU render)
 
-use rydit_gfx::{RyditGfx, ColorRydit, Key};
+use rydit_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - 10K Partículas EXTREME");
@@ -93,7 +93,7 @@ fn main() {
             let (x, y, brillo_base) = estrellas[i];
             let brillo = brillo_base + (frame as f32 * 0.05 + i as f32 * 0.01).sin() * 0.5;
             let size = 1.0 + brillo * 3.0;
-            
+
             let color = if brillo > 0.8 {
                 ColorRydit::Blanco
             } else if brillo > 0.5 {
@@ -101,7 +101,7 @@ fn main() {
             } else {
                 ColorRydit::Azul
             };
-            
+
             gfx.draw_circle(x as i32, y as i32, size as i32, color);
         }
 
@@ -158,32 +158,32 @@ fn main() {
 
         for i in 0..particulas.len() {
             let (x, y, vx, vy, color, mut vida) = particulas[i];
-            
+
             // Actualizar posición
             let nueva_x = x + vx;
             let nueva_y = y + vy;
-            
+
             // Gravedad y fricción
             let nueva_vy = vy + 0.1;
             let nueva_vx = vx * 0.99;
-            
+
             // Dibujar partícula
             let size = if vida > 100 { 4 } else { (vida / 25) as i32 };
             gfx.draw_circle(nueva_x as i32, nueva_y as i32, size.max(1), color);
-            
+
             // Estela/cometa (solo para algunas)
             if i % 3 == 0 && vida > 50 {
                 gfx.draw_circle(
                     (nueva_x - nueva_vx * 3.0) as i32,
                     (nueva_y - nueva_vy * 3.0) as i32,
                     2,
-                    ColorRydit::Gris
+                    ColorRydit::Gris,
                 );
             }
-            
+
             // Actualizar vida
             vida = vida.saturating_sub(1);
-            
+
             // Marcar para eliminar si muere o sale de pantalla
             if vida == 0 || nueva_x < -50.0 || nueva_x > 1330.0 || nueva_y > 770.0 {
                 particulas_a_eliminar.push(i);
@@ -205,7 +205,8 @@ fn main() {
                 match modo {
                     1 => {
                         // Explosión desde centro
-                        let angulo = (particulas.len() as f32 / 10000.0) * std::f32::consts::PI * 2.0;
+                        let angulo =
+                            (particulas.len() as f32 / 10000.0) * std::f32::consts::PI * 2.0;
                         let velocidad = 3.0 + (particulas.len() as f32 % 100.0) / 20.0;
                         particulas.push((
                             640.0,
@@ -222,7 +223,7 @@ fn main() {
                                 6 => ColorRydit::Azul,
                                 _ => ColorRydit::Verde,
                             },
-                            200
+                            200,
                         ));
                     }
                     2 => {
@@ -241,19 +242,64 @@ fn main() {
 
         // UI
         let fps = gfx.get_fps();
-        gfx.draw_text("=== 🔥 10K PARTÍCULAS EXTREME 🔥 ===", 20, 30, 28, ColorRydit::Blanco);
-        gfx.draw_text(&format!("FPS: {}", fps), 20, 70, 24, if fps > 50 { ColorRydit::Verde } else if fps > 30 { ColorRydit::Amarillo } else { ColorRydit::Rojo });
-        gfx.draw_text(&format!("Frame: {}", frame), 20, 105, 20, ColorRydit::Amarillo);
-        gfx.draw_text(&format!("Partículas: {} / 10000", particulas.len()), 20, 140, 20, ColorRydit::Cyan);
-        gfx.draw_text(&format!("Modo: {}", match modo {
-            0 => "Explosión inicial",
-            1 => "Explosión central",
-            2 => "Lluvia de meteoros",
-            3 => "Torbellino espiral",
-            4 => "Fuente de partículas",
-            _ => "Desconocido"
-        }), 20, 175, 18, ColorRydit::Magenta);
-        gfx.draw_text("W=Explosión | A=Lluvia | S=Torbellino | D=Fuente | R=Reiniciar", 20, 680, 16, ColorRydit::Gris);
+        gfx.draw_text(
+            "=== 🔥 10K PARTÍCULAS EXTREME 🔥 ===",
+            20,
+            30,
+            28,
+            ColorRydit::Blanco,
+        );
+        gfx.draw_text(
+            &format!("FPS: {}", fps),
+            20,
+            70,
+            24,
+            if fps > 50 {
+                ColorRydit::Verde
+            } else if fps > 30 {
+                ColorRydit::Amarillo
+            } else {
+                ColorRydit::Rojo
+            },
+        );
+        gfx.draw_text(
+            &format!("Frame: {}", frame),
+            20,
+            105,
+            20,
+            ColorRydit::Amarillo,
+        );
+        gfx.draw_text(
+            &format!("Partículas: {} / 10000", particulas.len()),
+            20,
+            140,
+            20,
+            ColorRydit::Cyan,
+        );
+        gfx.draw_text(
+            &format!(
+                "Modo: {}",
+                match modo {
+                    0 => "Explosión inicial",
+                    1 => "Explosión central",
+                    2 => "Lluvia de meteoros",
+                    3 => "Torbellino espiral",
+                    4 => "Fuente de partículas",
+                    _ => "Desconocido",
+                }
+            ),
+            20,
+            175,
+            18,
+            ColorRydit::Magenta,
+        );
+        gfx.draw_text(
+            "W=Explosión | A=Lluvia | S=Torbellino | D=Fuente | R=Reiniciar",
+            20,
+            680,
+            16,
+            ColorRydit::Gris,
+        );
         gfx.draw_text("ESC=Salir", 20, 705, 16, ColorRydit::Gris);
 
         gfx.end_draw();
@@ -262,7 +308,12 @@ fn main() {
 
         // Log cada segundo
         if frame % 60 == 0 {
-            println!("📊 Frame: {} | Partículas: {} | FPS: {}", frame, particulas.len(), fps);
+            println!(
+                "📊 Frame: {} | Partículas: {} | FPS: {}",
+                frame,
+                particulas.len(),
+                fps
+            );
         }
     }
 
@@ -270,13 +321,18 @@ fn main() {
     println!("🛡️ 10K partículas: CPU render al límite");
 }
 
-fn crear_explosion_masiva(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, u8)>, x: f32, y: f32, cantidad: usize) {
+fn crear_explosion_masiva(
+    particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, u8)>,
+    x: f32,
+    y: f32,
+    cantidad: usize,
+) {
     for i in 0..cantidad {
         let angulo = (i as f32 / cantidad as f32) * std::f32::consts::PI * 2.0;
         let velocidad = 2.0 + (i as f32 % 200.0) / 40.0;
         let vx = angulo.cos() * velocidad;
         let vy = angulo.sin() * velocidad;
-        
+
         let color = match i % 8 {
             0 => ColorRydit::Blanco,
             1 => ColorRydit::Amarillo,
@@ -287,23 +343,28 @@ fn crear_explosion_masiva(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, 
             6 => ColorRydit::Azul,
             _ => ColorRydit::Verde,
         };
-        
+
         particulas.push((x, y, vx, vy, color, 200));
     }
 }
 
-fn crear_torbellino(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, u8)>, x: f32, y: f32, cantidad: usize) {
+fn crear_torbellino(
+    particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, u8)>,
+    x: f32,
+    y: f32,
+    cantidad: usize,
+) {
     for i in 0..cantidad {
         let radio = 50.0 + (i as f32 / cantidad as f32) * 500.0;
         let angulo = (i as f32 / cantidad as f32) * std::f32::consts::PI * 16.0;
-        
+
         let px = x + angulo.cos() * radio;
         let py = y + angulo.sin() * radio;
-        
+
         // Velocidad tangencial (espiral)
         let vx = -angulo.sin() * 3.0 + angulo.cos() * 0.5;
         let vy = angulo.cos() * 3.0 + angulo.sin() * 0.5;
-        
+
         let color = match i % 8 {
             0 => ColorRydit::Blanco,
             1 => ColorRydit::Cyan,
@@ -314,7 +375,7 @@ fn crear_torbellino(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit, u8)>, 
             6 => ColorRydit::Azul,
             _ => ColorRydit::Magenta,
         };
-        
+
         particulas.push((px, py, vx, vy, color, 255));
     }
 }

@@ -86,10 +86,10 @@ impl Area2D {
         }
 
         // AABB collision check
-        self.x < other.x + other.width &&
-        self.x + self.width > other.x &&
-        self.y < other.y + other.height &&
-        self.y + self.height > other.y
+        self.x < other.x + other.width
+            && self.x + self.width > other.x
+            && self.y < other.y + other.height
+            && self.y + self.height > other.y
     }
 
     /// Obtener centro del área
@@ -126,13 +126,19 @@ pub fn collision_check_rect_rect(
         return Valor::Error("collision::check_rect_rect() requiere 8 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let [x1, y1, w1, h1, x2, y2, w2, h2] = vals[..] else {
-        return Valor::Error("collision::check_rect_rect() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::check_rect_rect() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     let collides = x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
@@ -150,13 +156,19 @@ pub fn collision_check_circle_circle(
         return Valor::Error("collision::check_circle_circle() requiere 6 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let [x1, y1, r1, x2, y2, r2] = vals[..] else {
-        return Valor::Error("collision::check_circle_circle() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::check_circle_circle() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     let dx = x2 - x1;
@@ -177,13 +189,19 @@ pub fn collision_check_rect_circle(
         return Valor::Error("collision::check_rect_circle() requiere 7 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let [rx, ry, rw, rh, cx, cy, cr] = vals[..] else {
-        return Valor::Error("collision::check_rect_circle() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::check_rect_circle() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     // Encontrar punto más cercano en el rectángulo al centro del círculo
@@ -210,13 +228,19 @@ pub fn collision_check_point_rect(
         return Valor::Error("collision::check_point_rect() requiere 6 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let [px, py, rx, ry, rw, rh] = vals[..] else {
-        return Valor::Error("collision::check_point_rect() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::check_point_rect() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     let collides = px >= rx && px <= rx + rw && py >= ry && py <= ry + rh;
@@ -234,13 +258,19 @@ pub fn collision_check_point_circle(
         return Valor::Error("collision::check_point_circle() requiere 5 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let [px, py, cx, cy, cr] = vals[..] else {
-        return Valor::Error("collision::check_point_circle() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::check_point_circle() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     let dx = px - cx;
@@ -261,13 +291,19 @@ pub fn collision_resolve(
         return Valor::Error("collision::resolve() requiere 8 argumentos".to_string());
     }
 
-    let vals: Vec<f32> = args.iter()
+    let vals: Vec<f32> = args
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => 0.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => 0.0,
+        })
         .collect();
 
     let [x1, y1, w1, h1, x2, y2, w2, h2] = vals[..] else {
-        return Valor::Error("collision::resolve() todos los argumentos deben ser números".to_string());
+        return Valor::Error(
+            "collision::resolve() todos los argumentos deben ser números".to_string(),
+        );
     };
 
     // Verificar si hay colisión
@@ -286,8 +322,16 @@ pub fn collision_resolve(
     let min_y = overlap_top.min(overlap_bottom);
 
     // Determinar dirección (negativo = izquierda/arriba, positivo = derecha/abajo)
-    let overlap_x = if overlap_left < overlap_right { -overlap_left } else { overlap_right };
-    let overlap_y = if overlap_top < overlap_bottom { -overlap_top } else { overlap_bottom };
+    let overlap_x = if overlap_left < overlap_right {
+        -overlap_left
+    } else {
+        overlap_right
+    };
+    let overlap_y = if overlap_top < overlap_bottom {
+        -overlap_top
+    } else {
+        overlap_bottom
+    };
 
     // Retornar el overlap en la dirección mínima
     if min_x.abs() < min_y.abs() {
@@ -312,9 +356,13 @@ pub fn area2d_create(
     }
 
     let id_val = evaluar_expr(&args[0], executor, funcs);
-    let vals: Vec<f32> = args[1..5].iter()
+    let vals: Vec<f32> = args[1..5]
+        .iter()
         .map(|arg| evaluar_expr(arg, executor, funcs))
-        .map(|v| match v { Valor::Num(n) => n as f32, _ => -1.0 })
+        .map(|v| match v {
+            Valor::Num(n) => n as f32,
+            _ => -1.0,
+        })
         .collect();
 
     let id = match id_val {
@@ -336,7 +384,10 @@ pub fn area2d_create(
     let area = Area2D::new(&id, x, y, w, h);
     areas_ref.insert(id.clone(), area);
 
-    Valor::Texto(format!("area2d::create() - Área '{}' creada en ({}, {})", id, x, y))
+    Valor::Texto(format!(
+        "area2d::create() - Área '{}' creada en ({}, {})",
+        id, x, y
+    ))
 }
 
 /// area2d::set_position(id, x, y) - Mover área
@@ -374,7 +425,10 @@ pub fn area2d_set_position(
     if let Some(area) = areas_ref.get_mut(&id) {
         area.x = x;
         area.y = y;
-        Valor::Texto(format!("area2d::set_position() - '{}' movida a ({}, {})", id, x, y))
+        Valor::Texto(format!(
+            "area2d::set_position() - '{}' movida a ({}, {})",
+            id, x, y
+        ))
     } else {
         Valor::Error(format!("area2d::set_position() el área '{}' no existe", id))
     }
@@ -401,10 +455,7 @@ pub fn area2d_get_position(
     let areas_ref = areas.borrow();
 
     if let Some(area) = areas_ref.get(&id) {
-        Valor::Array(vec![
-            Valor::Num(area.x as f64),
-            Valor::Num(area.y as f64),
-        ])
+        Valor::Array(vec![Valor::Num(area.x as f64), Valor::Num(area.y as f64)])
     } else {
         Valor::Error(format!("area2d::get_position() el área '{}' no existe", id))
     }
@@ -467,18 +518,21 @@ pub fn area2d_get_overlapping(
     };
 
     let areas = get_areas();
-    
+
     // Primero, obtener IDs de áreas que colisionan
     let mut overlapping_ids: Vec<String> = Vec::new();
-    
+
     {
         let areas_ref = areas.borrow();
         let my_area = areas_ref.get(&id);
-        
+
         if my_area.is_none() {
-            return Valor::Error(format!("area2d::get_overlapping() el área '{}' no existe", id));
+            return Valor::Error(format!(
+                "area2d::get_overlapping() el área '{}' no existe",
+                id
+            ));
         }
-        
+
         let my_id = id.clone();
         for (other_id, other_area) in areas_ref.iter() {
             if other_id != &my_id && my_area.unwrap().collides_with(other_area) {
@@ -486,7 +540,7 @@ pub fn area2d_get_overlapping(
             }
         }
     }
-    
+
     // Ahora actualizar el área con la lista
     {
         let mut areas_ref = areas.borrow_mut();
@@ -495,7 +549,8 @@ pub fn area2d_get_overlapping(
         }
     }
 
-    let valores: Vec<Valor> = overlapping_ids.iter()
+    let valores: Vec<Valor> = overlapping_ids
+        .iter()
         .map(|s| Valor::Texto(s.clone()))
         .collect();
 
@@ -523,7 +578,11 @@ pub fn area2d_set_active(
     let active = match active_val {
         Valor::Bool(a) => a,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("area2d::set_active() active debe ser booleano o número".to_string()),
+        _ => {
+            return Valor::Error(
+                "area2d::set_active() active debe ser booleano o número".to_string(),
+            )
+        }
     };
 
     let areas = get_areas();
@@ -531,7 +590,11 @@ pub fn area2d_set_active(
 
     if let Some(area) = areas_ref.get_mut(&id) {
         area.active = active;
-        Valor::Texto(format!("area2d::set_active() - '{}' {}", id, if active { "activada" } else { "desactivada" }))
+        Valor::Texto(format!(
+            "area2d::set_active() - '{}' {}",
+            id,
+            if active { "activada" } else { "desactivada" }
+        ))
     } else {
         Valor::Error(format!("area2d::set_active() el área '{}' no existe", id))
     }

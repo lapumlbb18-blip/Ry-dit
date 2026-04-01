@@ -122,7 +122,7 @@ impl InputMapState {
         if key_lower == "volumen_up" || key_lower == "volup" {
             self.volumen_up = true;
         }
-        
+
         // Verificar modificadores
         if key_lower == "ctrl_left" || key_lower == "ctrl_right" || key_lower == "ctrl" {
             self.ctrl = true;
@@ -146,7 +146,7 @@ impl InputMapState {
         if key_lower == "volumen_up" || key_lower == "volup" {
             self.volumen_up = false;
         }
-        
+
         // Verificar modificadores
         if key_lower == "ctrl_left" || key_lower == "ctrl_right" || key_lower == "ctrl" {
             self.ctrl = false;

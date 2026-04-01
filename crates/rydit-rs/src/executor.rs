@@ -7,8 +7,8 @@ use std::time::Instant;
 use blast_core::Executor;
 use lizer::Program;
 use migui::Migui;
+use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::RyditGfx;
-use rydit_gfx::render_queue::{RenderQueue, DrawCommand};
 
 use crate::{
     ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
@@ -63,7 +63,7 @@ pub fn ejecutar_programa_gfx(
 
     // Estado del input
     let mut input = InputEstado::new();
-    
+
     // 🆕 RyBot - Inspector + Registry
     let mut rybot = RyBot::new();
     rybot.info("RyBot", "Game loop iniciado");
@@ -103,7 +103,10 @@ pub fn ejecutar_programa_gfx(
 
     // Crear Render Queue (8192+ draw calls)
     let mut queue = RenderQueue::with_capacity(8192);
-    eprintln!("[EXECUTOR GFX] Render Queue creada: capacidad={}", queue.capacity());
+    eprintln!(
+        "[EXECUTOR GFX] Render Queue creada: capacidad={}",
+        queue.capacity()
+    );
 
     // Delta time para físicas consistentes
     use std::time::Instant;
@@ -121,11 +124,11 @@ pub fn ejecutar_programa_gfx(
                 // El While ES el game loop principal
                 let mut frame_count = 0;
                 let mut frame_start = Instant::now();
-                
+
                 loop {
                     // 🆕 RyBot begin frame
                     rybot.begin_frame();
-                    
+
                     // Input primero
                     input.actualizar(gfx);
                     let escape = gfx.is_key_pressed(rydit_gfx::Key::Escape);
@@ -156,9 +159,11 @@ pub fn ejecutar_programa_gfx(
                     }
 
                     // === FASE 1: Acumular comandos en Render Queue ===
-                    
+
                     // Clear screen
-                    queue.push(DrawCommand::Clear { color: crate::ColorRydit::Negro });
+                    queue.push(DrawCommand::Clear {
+                        color: crate::ColorRydit::Negro,
+                    });
 
                     eprintln!("[EXECUTOR] Body tiene {} statements", body.len());
                     for (i, s) in body.iter().enumerate() {
@@ -172,7 +177,7 @@ pub fn ejecutar_programa_gfx(
                             s,
                             executor,
                             funcs,
-                            &mut queue,  // ← Usar RenderQueue en vez de DrawHandle
+                            &mut queue, // ← Usar RenderQueue en vez de DrawHandle
                             &mut input,
                             &mut loaded_modules,
                             &mut importing_stack,
@@ -204,18 +209,18 @@ pub fn ejecutar_programa_gfx(
                     use crate::modules::assets;
                     let assets_ref = assets::get_assets();
                     let assets_borrow = assets_ref.borrow();
-                    
+
                     // ✅ v0.10.4: Ejecutar queue y dibujar partículas en el mismo begin_draw
                     {
                         let mut d = gfx.begin_draw();
-                        
+
                         // Ejecutar RenderQueue con handle existente
                         queue.execute_with_handle(&mut d, &assets_borrow);
-                        
+
                         // ✅ v0.10.4: Dibujar partículas (misma sesión de dibujado)
                         use crate::modules::particles;
                         particles::draw_particles_with_handle(&mut d);
-                        
+
                         // Drop explícito para forzar buffer swap
                         drop(d);
                     }
@@ -229,9 +234,9 @@ pub fn ejecutar_programa_gfx(
                     // 🆕 RyBot end frame
                     let frame_time = frame_start.elapsed().as_secs_f32() * 1000.0;
                     rybot.record_render(frame_time);
-                    rybot.set_entity_count(frame_count);  // Placeholder
+                    rybot.set_entity_count(frame_count); // Placeholder
                     rybot.end_frame(frame_time);
-                    
+
                     // Verificar módulos no usados cada 100 frames
                     if frame_count % 100 == 0 {
                         rybot.check_unused_modules();
@@ -275,7 +280,9 @@ pub fn ejecutar_programa_gfx(
                     queue.clear();
 
                     // Clear screen
-                    queue.push(DrawCommand::Clear { color: crate::ColorRydit::Negro });
+                    queue.push(DrawCommand::Clear {
+                        color: crate::ColorRydit::Negro,
+                    });
 
                     // Ejecutar statements (acumulan en queue)
                     for s in stmts {
@@ -283,7 +290,7 @@ pub fn ejecutar_programa_gfx(
                             s,
                             executor,
                             funcs,
-                            &mut queue,  // ← Usar RenderQueue
+                            &mut queue, // ← Usar RenderQueue
                             &mut input,
                             &mut loaded_modules,
                             &mut importing_stack,
@@ -306,15 +313,15 @@ pub fn ejecutar_programa_gfx(
                     use crate::modules::assets;
                     let assets_ref = assets::get_assets();
                     let assets_borrow = assets_ref.borrow();
-                    
+
                     {
                         let mut d = gfx.begin_draw();
                         queue.execute_with_handle(&mut d, &assets_borrow);
-                        
+
                         // ✅ v0.10.4: Dibujar partículas
                         use crate::modules::particles;
                         particles::draw_particles_with_handle(&mut d);
-                        
+
                         drop(d);
                     }
 
@@ -336,9 +343,11 @@ pub fn ejecutar_programa_gfx(
 
             // Clear queue
             queue.clear();
-            
+
             // Clear screen
-            queue.push(DrawCommand::Clear { color: crate::ColorRydit::Negro });
+            queue.push(DrawCommand::Clear {
+                color: crate::ColorRydit::Negro,
+            });
 
             // Ejecutar todos los statements que no son While/Block
             for stmt in &program.statements {
@@ -349,7 +358,7 @@ pub fn ejecutar_programa_gfx(
                             stmt,
                             executor,
                             funcs,
-                            &mut queue,  // ← Usar RenderQueue
+                            &mut queue, // ← Usar RenderQueue
                             &mut input,
                             &mut loaded_modules,
                             &mut importing_stack,
@@ -371,15 +380,15 @@ pub fn ejecutar_programa_gfx(
             use crate::modules::assets;
             let assets_ref = assets::get_assets();
             let assets_borrow = assets_ref.borrow();
-            
+
             {
                 let mut d = gfx.begin_draw();
                 queue.execute_with_handle(&mut d, &assets_borrow);
-                
+
                 // ✅ v0.10.4: Dibujar partículas
                 use crate::modules::particles;
                 particles::draw_particles_with_handle(&mut d);
-                
+
                 drop(d);
             }
 

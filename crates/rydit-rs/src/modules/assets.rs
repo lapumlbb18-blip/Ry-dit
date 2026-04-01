@@ -304,7 +304,10 @@ pub fn assets_set_position(
 
     // Guardar posición en estado interno (para implementación futura)
     // Por ahora, solo confirmamos
-    Valor::Texto(format!("assets::set_position() - '{}' en ({}, {})", id, x, y))
+    Valor::Texto(format!(
+        "assets::set_position() - '{}' en ({}, {})",
+        id, x, y
+    ))
 }
 
 /// assets::set_rotation(id, angle) - Rotar sprite
@@ -331,7 +334,10 @@ pub fn assets_set_rotation(
         _ => return Valor::Error("assets::set_rotation() angle debe ser número".to_string()),
     };
 
-    Valor::Texto(format!("assets::set_rotation() - '{}' rotado {} grados", id, angle))
+    Valor::Texto(format!(
+        "assets::set_rotation() - '{}' rotado {} grados",
+        id, angle
+    ))
 }
 
 /// assets::set_scale(id, scale_x, scale_y) - Escalar sprite
@@ -341,7 +347,9 @@ pub fn assets_set_scale(
     _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("assets::set_scale() requiere 3 argumentos: id, scale_x, scale_y".to_string());
+        return Valor::Error(
+            "assets::set_scale() requiere 3 argumentos: id, scale_x, scale_y".to_string(),
+        );
     }
 
     let id_val = evaluar_expr(&args[0], executor, _funcs);
@@ -364,7 +372,10 @@ pub fn assets_set_scale(
         _ => return Valor::Error("assets::set_scale() scale_y debe ser número".to_string()),
     };
 
-    Valor::Texto(format!("assets::set_scale() - '{}' escalado a ({}, {})", id, scale_x, scale_y))
+    Valor::Texto(format!(
+        "assets::set_scale() - '{}' escalado a ({}, {})",
+        id, scale_x, scale_y
+    ))
 }
 
 /// assets::set_color(id, color) - Cambiar color/tinte de sprite
@@ -391,7 +402,10 @@ pub fn assets_set_color(
         _ => return Valor::Error("assets::set_color() color debe ser texto".to_string()),
     };
 
-    Valor::Texto(format!("assets::set_color() - '{}' con color '{}'", id, color))
+    Valor::Texto(format!(
+        "assets::set_color() - '{}' con color '{}'",
+        id, color
+    ))
 }
 
 /// assets::set_flip(id, horizontal, vertical) - Flip horizontal/vertical
@@ -401,7 +415,9 @@ pub fn assets_set_flip(
     _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("assets::set_flip() requiere 3 argumentos: id, horizontal, vertical".to_string());
+        return Valor::Error(
+            "assets::set_flip() requiere 3 argumentos: id, horizontal, vertical".to_string(),
+        );
     }
 
     let id_val = evaluar_expr(&args[0], executor, _funcs);
@@ -417,7 +433,9 @@ pub fn assets_set_flip(
     let horizontal = match h_val {
         Valor::Bool(b) => b,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("assets::set_flip() horizontal debe ser bool o número".to_string()),
+        _ => {
+            return Valor::Error("assets::set_flip() horizontal debe ser bool o número".to_string())
+        }
     };
 
     let vertical = match v_val {
@@ -426,7 +444,10 @@ pub fn assets_set_flip(
         _ => return Valor::Error("assets::set_flip() vertical debe ser bool o número".to_string()),
     };
 
-    Valor::Texto(format!("assets::set_flip() - '{}' flip=({}, {})", id, horizontal, vertical))
+    Valor::Texto(format!(
+        "assets::set_flip() - '{}' flip=({}, {})",
+        id, horizontal, vertical
+    ))
 }
 
 /// assets::set_origin(id, origin_x, origin_y) - Punto de origen
@@ -436,7 +457,9 @@ pub fn assets_set_origin(
     _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("assets::set_origin() requiere 3 argumentos: id, origin_x, origin_y".to_string());
+        return Valor::Error(
+            "assets::set_origin() requiere 3 argumentos: id, origin_x, origin_y".to_string(),
+        );
     }
 
     let id_val = evaluar_expr(&args[0], executor, _funcs);
@@ -459,7 +482,10 @@ pub fn assets_set_origin(
         _ => return Valor::Error("assets::set_origin() origin_y debe ser número".to_string()),
     };
 
-    Valor::Texto(format!("assets::set_origin() - '{}' con origen ({}, {})", id, origin_x, origin_y))
+    Valor::Texto(format!(
+        "assets::set_origin() - '{}' con origen ({}, {})",
+        id, origin_x, origin_y
+    ))
 }
 
 // ============================================================================

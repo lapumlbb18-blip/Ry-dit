@@ -8,17 +8,17 @@ fn main() {
     println!("🛡️ RyBot CLI v0.11.0");
     println!("====================");
     println!();
-    
+
     // Parsear argumentos
     let args: Vec<String> = std::env::args().collect();
-    
+
     if args.len() < 2 {
         print_help();
         return;
     }
-    
+
     let command = &args[1];
-    
+
     match command.as_str() {
         "status" => cmd_status(),
         "inspect" => cmd_inspect(&args[2..]),
@@ -70,7 +70,7 @@ fn cmd_inspect(args: &[String]) {
         println!("Uso: inspect <entidad|module|modules>");
         return;
     }
-    
+
     match args[0].as_str() {
         "modules" => {
             println!("=== Módulos Registrados ===");
@@ -98,7 +98,7 @@ fn cmd_inspect(args: &[String]) {
 
 fn cmd_logs(args: &[String]) {
     let mut limit = 10;
-    
+
     // Parsear argumentos
     let mut i = 0;
     while i < args.len() {
@@ -113,7 +113,7 @@ fn cmd_logs(args: &[String]) {
             i += 1;
         }
     }
-    
+
     println!("=== Últimos {} eventos ===", limit);
     println!("(Ninguno - RyBot aún no integrado con main.rs)");
 }

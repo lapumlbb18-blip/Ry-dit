@@ -108,9 +108,11 @@ fn main() {
 
         // Crear Render Queue para este frame
         let mut queue = rydit_gfx::render_queue::RenderQueue::with_capacity(8192);
-        
+
         // Clear screen
-        queue.push(rydit_gfx::render_queue::DrawCommand::Clear { color: ColorRydit::Negro });
+        queue.push(rydit_gfx::render_queue::DrawCommand::Clear {
+            color: ColorRydit::Negro,
+        });
 
         // Dibujar partículas (usando el draw directo por ahora)
         // TODO: Integrar particles.draw con RenderQueue

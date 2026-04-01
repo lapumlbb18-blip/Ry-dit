@@ -80,7 +80,7 @@ impl Tilemap {
     /// Crear tilemap vacío
     pub fn new(width: u32, height: u32, tile_size: u32) -> Self {
         let tiles = vec![vec![Tile::default(); width as usize]; height as usize];
-        
+
         Self {
             width,
             height,
@@ -99,15 +99,15 @@ impl Tilemap {
     pub fn from_image(ruta: &str, tile_size: u32) -> Result<Self, String> {
         // En el futuro, esto cargará una imagen y la dividirá en tiles
         // Por ahora, creamos un tilemap vacío y registramos el tileset
-        
+
         // Calcular tamaño del tilemap basado en la imagen
         // (esto requeriría cargar la imagen primero)
         let width = 32; // Default
         let height = 32; // Default
-        
+
         let mut tilemap = Self::new(width, height, tile_size);
         tilemap.tileset_id = Some(ruta.to_string());
-        
+
         Ok(tilemap)
     }
 
@@ -249,11 +249,14 @@ pub fn tilemap_load(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.tileset_id = Some(ruta.clone());
     tm_ref.tile_size = tile_size;
 
-    Valor::Texto(format!("Tilemap cargado: {} (tile_size={})", ruta, tile_size))
+    Valor::Texto(format!(
+        "Tilemap cargado: {} (tile_size={})",
+        ruta, tile_size
+    ))
 }
 
 /// tilemap::create(width, height, tile_size) - Crear tilemap vacío
@@ -263,7 +266,9 @@ pub fn tilemap_create(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("tilemap::create() requiere 3 argumentos: width, height, tile_size".to_string());
+        return Valor::Error(
+            "tilemap::create() requiere 3 argumentos: width, height, tile_size".to_string(),
+        );
     }
 
     let width_val = evaluar_expr(&args[0], executor, funcs);
@@ -287,10 +292,13 @@ pub fn tilemap_create(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     *tm_ref = Tilemap::new(width, height, tile_size);
 
-    Valor::Texto(format!("Tilemap creado: {}x{} (tile_size={})", width, height, tile_size))
+    Valor::Texto(format!(
+        "Tilemap creado: {}x{} (tile_size={})",
+        width, height, tile_size
+    ))
 }
 
 /// tilemap::set_tile(x, y, tile_id) - Colocar tile
@@ -300,7 +308,9 @@ pub fn tilemap_set_tile(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("tilemap::set_tile() requiere 3 argumentos: x, y, tile_id".to_string());
+        return Valor::Error(
+            "tilemap::set_tile() requiere 3 argumentos: x, y, tile_id".to_string(),
+        );
     }
 
     let x_val = evaluar_expr(&args[0], executor, funcs);
@@ -324,7 +334,7 @@ pub fn tilemap_set_tile(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.set_tile(x, y, tile_id, 0);
 
     Valor::Texto(format!("Tile {} colocado en ({}, {})", tile_id, x, y))
@@ -355,7 +365,7 @@ pub fn tilemap_get_tile(
 
     let tm = get_tilemap();
     let tm_ref = tm.borrow();
-    
+
     match tm_ref.get_tile(x, y) {
         Some(tile) => Valor::Num(tile.id as f64),
         None => Valor::Error(format!("Tile en ({}, {}) fuera de rango", x, y)),
@@ -380,7 +390,9 @@ pub fn tilemap_fill_rect(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 5 {
-        return Valor::Error("tilemap::fill_rect() requiere 5 argumentos: x, y, w, h, tile_id".to_string());
+        return Valor::Error(
+            "tilemap::fill_rect() requiere 5 argumentos: x, y, w, h, tile_id".to_string(),
+        );
     }
 
     let x_val = evaluar_expr(&args[0], executor, funcs);
@@ -416,10 +428,13 @@ pub fn tilemap_fill_rect(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.fill_rect(x, y, w, h, tile_id);
 
-    Valor::Texto(format!("Rectángulo {}x{} llenado con tile {}", w, h, tile_id))
+    Valor::Texto(format!(
+        "Rectángulo {}x{} llenado con tile {}",
+        w, h, tile_id
+    ))
 }
 
 /// tilemap::clear() - Limpiar tilemap
@@ -430,7 +445,7 @@ pub fn tilemap_clear(
 ) -> Valor {
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.clear();
 
     Valor::Texto("Tilemap limpiado".to_string())
@@ -455,7 +470,7 @@ pub fn tilemap_set_layer_count(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.set_layer_count(count);
 
     Valor::Texto(format!("Capas establecidas a {}", count))
@@ -469,13 +484,10 @@ pub fn tilemap_get_size(
 ) -> Valor {
     let tm = get_tilemap();
     let tm_ref = tm.borrow();
-    
+
     let (width, height) = tm_ref.get_size();
 
-    Valor::Array(vec![
-        Valor::Num(width as f64),
-        Valor::Num(height as f64),
-    ])
+    Valor::Array(vec![Valor::Num(width as f64), Valor::Num(height as f64)])
 }
 
 /// tilemap::set_tileset(ruta) - Cambiar tileset
@@ -497,7 +509,7 @@ pub fn tilemap_set_tileset(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.tileset_id = Some(ruta.clone());
 
     Valor::Texto(format!("Tileset cambiado a: {}", ruta))
@@ -528,7 +540,7 @@ pub fn tilemap_set_offset(
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.offset_x = x;
     tm_ref.offset_y = y;
 
@@ -550,13 +562,20 @@ pub fn tilemap_set_visible(
     let visible = match visible_val {
         Valor::Bool(v) => v,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("tilemap::set_visible() visible debe ser booleano o número".to_string()),
+        _ => {
+            return Valor::Error(
+                "tilemap::set_visible() visible debe ser booleano o número".to_string(),
+            )
+        }
     };
 
     let tm = get_tilemap();
     let mut tm_ref = tm.borrow_mut();
-    
+
     tm_ref.visible = visible;
 
-    Valor::Texto(format!("Tilemap {}", if visible { "visible" } else { "oculto" }))
+    Valor::Texto(format!(
+        "Tilemap {}",
+        if visible { "visible" } else { "oculto" }
+    ))
 }

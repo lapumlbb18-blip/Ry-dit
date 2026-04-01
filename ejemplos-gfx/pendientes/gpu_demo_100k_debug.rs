@@ -2,41 +2,50 @@
 // Ejecutar: cargo run --bin gpu_demo_100k_debug
 // Tamaño: 1280x720 + logs detallados
 
-use rydit_gfx::gpu_instancing::{GPUInstancer, ParticleData};
-use rydit_gfx::{RyditGfx, ColorRydit, Key};
 use gl;
+use rydit_gfx::gpu_instancing::{GPUInstancer, ParticleData};
+use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::env;
 use std::path::PathBuf;
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - GPU Instancing 100K DEBUG");
     println!("==============================================");
-    
+
     // Debug: Variables de entorno
     println!("\n📋 Variables de entorno:");
-    println!("   DISPLAY={}", env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string()));
-    println!("   MESA_LOADER_DRIVER_OVERRIDE={}", env::var("MESA_LOADER_DRIVER_OVERRIDE").unwrap_or_else(|_| "no definido".to_string()));
-    println!("   DRI3={}", env::var("DRI3").unwrap_or_else(|_| "no definido".to_string()));
+    println!(
+        "   DISPLAY={}",
+        env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string())
+    );
+    println!(
+        "   MESA_LOADER_DRIVER_OVERRIDE={}",
+        env::var("MESA_LOADER_DRIVER_OVERRIDE").unwrap_or_else(|_| "no definido".to_string())
+    );
+    println!(
+        "   DRI3={}",
+        env::var("DRI3").unwrap_or_else(|_| "no definido".to_string())
+    );
     println!("   Working Directory: {:?}", env::current_dir().unwrap());
-    
+
     // Debug: Verificar shaders
     println!("\n🔍 Verificando shaders...");
     let mut base_path = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
     base_path.push("crates/rydit-gfx/shaders");
-    
+
     let vertex_path = base_path.join("vertex.glsl");
     let fragment_path = base_path.join("fragment.glsl");
-    
+
     println!("   Vertex shader: {:?}", vertex_path);
     println!("   Fragment shader: {:?}", fragment_path);
-    
+
     if !vertex_path.exists() {
         println!("   ❌ ERROR: vertex.glsl no existe!");
         return;
     } else {
         println!("   ✅ vertex.glsl existe");
     }
-    
+
     if !fragment_path.exists() {
         println!("   ❌ ERROR: fragment.glsl no existe!");
         return;
@@ -139,10 +148,18 @@ fn main() {
 
         // Mover cámara
         let speed = 10.0;
-        if gfx.is_key_down(Key::D) { offset_x += speed; }
-        if gfx.is_key_down(Key::A) { offset_x -= speed; }
-        if gfx.is_key_down(Key::S) { offset_y += speed; }
-        if gfx.is_key_down(Key::W) { offset_y -= speed; }
+        if gfx.is_key_down(Key::D) {
+            offset_x += speed;
+        }
+        if gfx.is_key_down(Key::A) {
+            offset_x -= speed;
+        }
+        if gfx.is_key_down(Key::S) {
+            offset_y += speed;
+        }
+        if gfx.is_key_down(Key::W) {
+            offset_y -= speed;
+        }
 
         gpu.set_camera(offset_x, offset_y);
 
@@ -164,16 +181,51 @@ fn main() {
         let current_fps = gfx.get_fps();
         if frame % 60 == 0 && current_fps != last_fps {
             last_fps = current_fps;
-            println!("📊 FPS: {} | Partículas: {} | Cámara: ({}, {})", 
-                     current_fps, particles.len(), offset_x, offset_y);
+            println!(
+                "📊 FPS: {} | Partículas: {} | Cámara: ({}, {})",
+                current_fps,
+                particles.len(),
+                offset_x,
+                offset_y
+            );
         }
 
         // UI en pantalla
-        gfx.draw_text("RyDit v0.10.2 - GPU Instancing 100K", 10, 25, 24, ColorRydit::Blanco);
-        gfx.draw_text(&format!("Partículas: {}", particles.len()), 10, 55, 18, ColorRydit::Verde);
-        gfx.draw_text(&format!("FPS: {}", current_fps), 10, 80, 18, ColorRydit::Cyan);
-        gfx.draw_text(&format!("Cámara: ({:.1}, {:.1})", offset_x, offset_y), 10, 105, 16, ColorRydit::Gris);
-        gfx.draw_text("W,A,S,D=Mover | R=Reiniciar | ESC=Salir", 10, 690, 14, ColorRydit::Gris);
+        gfx.draw_text(
+            "RyDit v0.10.2 - GPU Instancing 100K",
+            10,
+            25,
+            24,
+            ColorRydit::Blanco,
+        );
+        gfx.draw_text(
+            &format!("Partículas: {}", particles.len()),
+            10,
+            55,
+            18,
+            ColorRydit::Verde,
+        );
+        gfx.draw_text(
+            &format!("FPS: {}", current_fps),
+            10,
+            80,
+            18,
+            ColorRydit::Cyan,
+        );
+        gfx.draw_text(
+            &format!("Cámara: ({:.1}, {:.1})", offset_x, offset_y),
+            10,
+            105,
+            16,
+            ColorRydit::Gris,
+        );
+        gfx.draw_text(
+            "W,A,S,D=Mover | R=Reiniciar | ESC=Salir",
+            10,
+            690,
+            14,
+            ColorRydit::Gris,
+        );
 
         gfx.end_draw();
 
@@ -181,5 +233,9 @@ fn main() {
     }
 
     println!("\n✅ Demo completado: {} frames totales", frame);
-    println!("🛡️ GPU Instancing: {} partículas @ {} FPS", particles.len(), last_fps);
+    println!(
+        "🛡️ GPU Instancing: {} partículas @ {} FPS",
+        particles.len(),
+        last_fps
+    );
 }

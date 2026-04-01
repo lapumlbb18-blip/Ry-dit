@@ -3,8 +3,8 @@
 // Tamaño: 800x600 (como demo_particles)
 // Render nativo Rust (sin parser .rydit)
 
-use rydit_gfx::{ColorRydit, Key, RyditGfx, Assets};
-use rydit_gfx::render_queue::{RenderQueue, DrawCommand};
+use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
+use rydit_gfx::{Assets, ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - Demo Simple desde Cero");
@@ -22,7 +22,10 @@ fn main() {
 
     println!("[RYDIT-GFX]: Ventana creada 800x600");
     println!("[RYDIT-GFX]: Rust = Arquitecto, Raylib = Pincel");
-    println!("[RYDIT-GFX]: DISPLAY={}", std::env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string()));
+    println!(
+        "[RYDIT-GFX]: DISPLAY={}",
+        std::env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string())
+    );
 
     // Crear Render Queue
     let mut queue = RenderQueue::with_capacity(8192);
@@ -42,7 +45,9 @@ fn main() {
         let escape = gfx.is_key_pressed(Key::Escape);
 
         // FASE 1: Acumular comandos en queue
-        queue.push(DrawCommand::Clear { color: ColorRydit::Negro });
+        queue.push(DrawCommand::Clear {
+            color: ColorRydit::Negro,
+        });
 
         // Círculo central (como fuego en demo_particles)
         queue.push(DrawCommand::Circle {

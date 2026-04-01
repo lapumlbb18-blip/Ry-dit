@@ -2,8 +2,8 @@
 // Backend SDL2 para MiGUI - v0.10.10
 // Conecta MiGUI con SDL2 para render e input + Fuentes nativas Rust
 
-use crate::{Migui, Rect, Color};
 use crate::font_native::NativeFontManager;
+use crate::{Color, Migui, Rect};
 use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 use sdl2::render::{Canvas, Texture};
@@ -27,7 +27,12 @@ impl FontManager {
     }
 
     /// Renderizar texto a superficie SDL2
-    pub fn render_text(&mut self, _text: &str, _size: u32, _color: Color) -> Result<sdl2::surface::Surface, String> {
+    pub fn render_text(
+        &mut self,
+        _text: &str,
+        _size: u32,
+        _color: Color,
+    ) -> Result<sdl2::surface::Surface, String> {
         // Placeholder: retorna superficie vacía
         // En producción, usar ab_glyph o SDL2_ttf
         sdl2::surface::Surface::new(100, 20, sdl2::pixels::PixelFormatEnum::RGBA8888)
@@ -51,7 +56,7 @@ impl MiguiSdl2Backend {
     /// Crear nuevo backend SDL2 para MiGUI
     pub fn new(canvas: Canvas<Window>) -> Self {
         let font_manager = FontManager::new().ok();
-        
+
         Self {
             canvas,
             mouse_x: 0,
@@ -68,18 +73,26 @@ impl MiguiSdl2Backend {
             sdl2::event::Event::Quit { .. } => {
                 should_close = true;
             }
-            sdl2::event::Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+            sdl2::event::Event::KeyDown {
+                keycode: Some(Keycode::Escape),
+                ..
+            } => {
                 should_close = true;
             }
-            
+
             // Input de mouse - convertir a evento Migui
             sdl2::event::Event::MouseMotion { x, y, .. } => {
                 self.mouse_x = *x;
                 self.mouse_y = *y;
-                gui.handle_event(crate::Event::MouseMove { x: *x as f32, y: *y as f32 });
+                gui.handle_event(crate::Event::MouseMove {
+                    x: *x as f32,
+                    y: *y as f32,
+                });
             }
-            
-            sdl2::event::Event::MouseButtonDown { mouse_btn, x, y, .. } => {
+
+            sdl2::event::Event::MouseButtonDown {
+                mouse_btn, x, y, ..
+            } => {
                 if *mouse_btn == MouseButton::Left {
                     gui.handle_event(crate::Event::MouseDown {
                         button: crate::MouseButton::Left,
@@ -88,8 +101,10 @@ impl MiguiSdl2Backend {
                     });
                 }
             }
-            
-            sdl2::event::Event::MouseButtonUp { mouse_btn, x, y, .. } => {
+
+            sdl2::event::Event::MouseButtonUp {
+                mouse_btn, x, y, ..
+            } => {
                 if *mouse_btn == MouseButton::Left {
                     gui.handle_event(crate::Event::MouseUp {
                         button: crate::MouseButton::Left,
@@ -98,7 +113,7 @@ impl MiguiSdl2Backend {
                     });
                 }
             }
-            
+
             _ => {}
         }
 
@@ -108,7 +123,8 @@ impl MiguiSdl2Backend {
     /// Renderizar MiGUI con SDL2
     pub fn render(&mut self, gui: &mut Migui) {
         // Limpiar pantalla (color de fondo)
-        self.canvas.set_draw_color(sdl2::pixels::Color::RGB(30, 30, 30));
+        self.canvas
+            .set_draw_color(sdl2::pixels::Color::RGB(30, 30, 30));
         self.canvas.clear();
 
         // Renderizar comandos de MiGUI
@@ -116,36 +132,50 @@ impl MiguiSdl2Backend {
             match cmd {
                 crate::DrawCommand::DrawRect { rect, color } => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
-                        color.r, color.g, color.b, color.a
+                        color.r, color.g, color.b, color.a,
                     ));
                     let sdl_rect = sdl2::rect::Rect::new(
                         rect.x as i32,
                         rect.y as i32,
                         rect.w as u32,
-                        rect.h as u32
+                        rect.h as u32,
                     );
                     self.canvas.fill_rect(sdl_rect).ok();
                 }
-                crate::DrawCommand::DrawLine { x1, y1, x2, y2, color, .. } => {
+                crate::DrawCommand::DrawLine {
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    color,
+                    ..
+                } => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
-                        color.r, color.g, color.b, color.a
+                        color.r, color.g, color.b, color.a,
                     ));
-                    self.canvas.draw_line(
-                        (*x1 as i32, *y1 as i32),
-                        (*x2 as i32, *y2 as i32)
-                    ).ok();
+                    self.canvas
+                        .draw_line((*x1 as i32, *y1 as i32), (*x2 as i32, *y2 as i32))
+                        .ok();
                 }
-                crate::DrawCommand::DrawText { text: _, x, y, size: _, color } => {
+                crate::DrawCommand::DrawText {
+                    text: _,
+                    x,
+                    y,
+                    size: _,
+                    color,
+                } => {
                     // Placeholder: dibujar rect en vez de texto
                     // En producción, usar SDL2_ttf o ab_glyph
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
-                        color.r, color.g, color.b, color.a
+                        color.r, color.g, color.b, color.a,
                     ));
-                    self.canvas.fill_rect(sdl2::rect::Rect::new(*x as i32, *y as i32, 50, 20)).ok();
+                    self.canvas
+                        .fill_rect(sdl2::rect::Rect::new(*x as i32, *y as i32, 50, 20))
+                        .ok();
                 }
                 crate::DrawCommand::Clear { color } => {
                     self.canvas.set_draw_color(sdl2::pixels::Color::RGBA(
-                        color.r, color.g, color.b, color.a
+                        color.r, color.g, color.b, color.a,
                     ));
                     self.canvas.clear();
                 }

@@ -2,7 +2,7 @@
 // GPU Instancing - 100K+ partículas en un solo draw call
 // v0.10.1: FFI OpenGL + Shaders GLSL
 
-use gl::types::{GLuint, GLsizei};
+use gl::types::{GLsizei, GLuint};
 use std::ffi::CString;
 use std::fs;
 use std::path::Path;
@@ -14,9 +14,9 @@ use std::path::Path;
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct ParticleData {
-    pub offset: [f32; 2],    // Posición (x, y)
-    pub size: f32,            // Tamaño
-    pub color: [f32; 4],      // Color (r, g, b, a)
+    pub offset: [f32; 2], // Posición (x, y)
+    pub size: f32,        // Tamaño
+    pub color: [f32; 4],  // Color (r, g, b, a)
 }
 
 impl ParticleData {
@@ -51,22 +51,19 @@ impl GPUInstancer {
             let mut vao = 0;
             gl::GenVertexArrays(1, &mut vao);
             gl::BindVertexArray(vao);
-            
+
             // Crear VBO para quad geometry
             let mut vbo = 0;
             gl::GenBuffers(1, &mut vbo);
             gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-            
+
             // Quad de 4 vértices (2 triángulos) - 16 floats
             let quad_vertices: [f32; 16] = [
                 // Vértice 1
-                -0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32,
-                // Vértice 2
-                 0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32,
-                // Vértice 3
-                 0.5_f32,  0.5_f32, 0.0_f32, 1.0_f32,
-                // Vértice 4
-                -0.5_f32,  0.5_f32, 0.0_f32, 1.0_f32,
+                -0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32, // Vértice 2
+                0.5_f32, -0.5_f32, 0.0_f32, 1.0_f32, // Vértice 3
+                0.5_f32, 0.5_f32, 0.0_f32, 1.0_f32, // Vértice 4
+                -0.5_f32, 0.5_f32, 0.0_f32, 1.0_f32,
             ];
             gl::BufferData(
                 gl::ARRAY_BUFFER,
@@ -74,11 +71,11 @@ impl GPUInstancer {
                 quad_vertices.as_ptr() as *const _,
                 gl::STATIC_DRAW,
             );
-            
+
             // Crear instance VBO para datos de partículas
             let mut instance_vbo = 0;
             gl::GenBuffers(1, &mut instance_vbo);
-            
+
             // Configurar atributo de posición (location = 0)
             gl::VertexAttribPointer(
                 0,
@@ -89,7 +86,7 @@ impl GPUInstancer {
                 std::ptr::null(),
             );
             gl::EnableVertexAttribArray(0);
-            
+
             // Configurar atributos de instancia (location = 1, 2, 3)
             // Offset (location = 1)
             gl::VertexAttribPointer(
@@ -102,7 +99,7 @@ impl GPUInstancer {
             );
             gl::VertexAttribDivisor(1, 1);
             gl::EnableVertexAttribArray(1);
-            
+
             // Size (location = 2)
             gl::VertexAttribPointer(
                 2,
@@ -114,7 +111,7 @@ impl GPUInstancer {
             );
             gl::VertexAttribDivisor(2, 1);
             gl::EnableVertexAttribArray(2);
-            
+
             // Color (location = 3)
             gl::VertexAttribPointer(
                 3,
@@ -126,9 +123,9 @@ impl GPUInstancer {
             );
             gl::VertexAttribDivisor(3, 1);
             gl::EnableVertexAttribArray(3);
-            
+
             gl::BindVertexArray(0);
-            
+
             Self {
                 program: 0,
                 vao,
@@ -140,32 +137,30 @@ impl GPUInstancer {
             }
         }
     }
-    
+
     /// Cargar shaders desde archivos
-    pub fn load_shaders<P: AsRef<Path>>(&mut self, vertex_path: P, fragment_path: P) -> Result<(), String> {
+    pub fn load_shaders<P: AsRef<Path>>(
+        &mut self,
+        vertex_path: P,
+        fragment_path: P,
+    ) -> Result<(), String> {
         unsafe {
             let vertex_source = fs::read_to_string(vertex_path)
                 .map_err(|e| format!("Error leyendo vertex shader: {}", e))?;
             let fragment_source = fs::read_to_string(fragment_path)
                 .map_err(|e| format!("Error leyendo fragment shader: {}", e))?;
-            
-            let vertex_shader = self.compile_shader(
-                gl::VERTEX_SHADER,
-                &vertex_source,
-                "Vertex shader"
-            )?;
-            
-            let fragment_shader = self.compile_shader(
-                gl::FRAGMENT_SHADER,
-                &fragment_source,
-                "Fragment shader"
-            )?;
-            
+
+            let vertex_shader =
+                self.compile_shader(gl::VERTEX_SHADER, &vertex_source, "Vertex shader")?;
+
+            let fragment_shader =
+                self.compile_shader(gl::FRAGMENT_SHADER, &fragment_source, "Fragment shader")?;
+
             let program = gl::CreateProgram();
             gl::AttachShader(program, vertex_shader);
             gl::AttachShader(program, fragment_shader);
             gl::LinkProgram(program);
-            
+
             let mut success = 0;
             gl::GetProgramiv(program, gl::LINK_STATUS, &mut success);
             if success == 0 {
@@ -177,23 +172,28 @@ impl GPUInstancer {
                 gl::DeleteProgram(program);
                 return Err(format!("Error linkeando programa: {}", msg));
             }
-            
+
             gl::DetachShader(program, vertex_shader);
             gl::DetachShader(program, fragment_shader);
             gl::DeleteShader(vertex_shader);
             gl::DeleteShader(fragment_shader);
-            
+
             self.program = program;
             Ok(())
         }
     }
-    
-    unsafe fn compile_shader(&self, shader_type: GLuint, source: &str, name: &str) -> Result<GLuint, String> {
+
+    unsafe fn compile_shader(
+        &self,
+        shader_type: GLuint,
+        source: &str,
+        name: &str,
+    ) -> Result<GLuint, String> {
         let shader = gl::CreateShader(shader_type);
         let c_str = CString::new(source).unwrap();
         gl::ShaderSource(shader, 1, &c_str.as_ptr(), std::ptr::null());
         gl::CompileShader(shader);
-        
+
         let mut success = 0;
         gl::GetShaderiv(shader, gl::COMPILE_STATUS, &mut success);
         if success == 0 {
@@ -205,10 +205,10 @@ impl GPUInstancer {
             gl::DeleteShader(shader);
             return Err(format!("Error compilando {}: {}", name, msg));
         }
-        
+
         Ok(shader)
     }
-    
+
     pub fn set_particles(&mut self, particles: &[ParticleData]) {
         unsafe {
             gl::BindVertexArray(self.vao);
@@ -224,41 +224,54 @@ impl GPUInstancer {
             gl::BindVertexArray(0);
         }
     }
-    
+
     pub fn set_projection(&mut self, width: f32, height: f32) {
         self.projection = [
-            2.0 / width, 0.0, 0.0, 0.0,
-            0.0, -2.0 / height, 0.0, 0.0,
-            0.0, 0.0, -1.0, 0.0,
-            -1.0, 1.0, 0.0, 1.0,
+            2.0 / width,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -2.0 / height,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            -1.0,
+            1.0,
+            0.0,
+            1.0,
         ];
     }
-    
+
     pub fn set_camera(&mut self, x: f32, y: f32) {
         self.camera = [x, y];
     }
-    
+
     pub fn draw(&self) {
         if self.particle_count == 0 {
             return;
         }
-        
+
         unsafe {
             gl::UseProgram(self.program);
-            
-            let proj_loc = gl::GetUniformLocation(self.program, b"uProjection\0".as_ptr() as *const _);
+
+            let proj_loc =
+                gl::GetUniformLocation(self.program, b"uProjection\0".as_ptr() as *const _);
             let cam_loc = gl::GetUniformLocation(self.program, b"uCamera\0".as_ptr() as *const _);
-            
+
             gl::UniformMatrix4fv(proj_loc, 1, gl::FALSE, self.projection.as_ptr());
             gl::Uniform2f(cam_loc, self.camera[0], self.camera[1]);
-            
+
             gl::BindVertexArray(self.vao);
             gl::DrawArraysInstanced(gl::QUADS, 0, 4, self.particle_count as GLsizei);
             gl::BindVertexArray(0);
             gl::UseProgram(0);
         }
     }
-    
+
     pub fn cleanup(&self) {
         unsafe {
             gl::DeleteBuffers(1, &self.vbo);

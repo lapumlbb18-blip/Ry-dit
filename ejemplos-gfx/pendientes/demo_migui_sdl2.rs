@@ -1,8 +1,8 @@
 // Demo MiGUI + SDL2 - RyDit v0.10.9
 // Ejecutar: cargo run --bin demo_migui_sdl2 --release
 
-use migui::{Migui, Rect, Color, WidgetId};
 use migui::backend_sdl2::MiguiSdl2Backend;
+use migui::{Color, Migui, Rect, WidgetId};
 
 fn main() {
     println!("🛡️ RyDit v0.10.9 - Demo MiGUI + SDL2");
@@ -18,7 +18,11 @@ fn main() {
         .build()
         .expect("Failed to create window");
 
-    let canvas = window.into_canvas().present_vsync().build().expect("Failed to create canvas");
+    let canvas = window
+        .into_canvas()
+        .present_vsync()
+        .build()
+        .expect("Failed to create canvas");
     let mut event_pump = sdl_context.event_pump().expect("Failed to init event pump");
 
     // Crear backend MiGUI + SDL2
@@ -119,7 +123,11 @@ fn main() {
         );
 
         // Panel de información
-        let panel_color = if checkbox_checked { Color::GREEN } else { Color::GRAY };
+        let panel_color = if checkbox_checked {
+            Color::GREEN
+        } else {
+            Color::GRAY
+        };
         gui.panel(
             WidgetId::new("info_panel"),
             Rect::new(20.0, 350.0, 400.0, 150.0),
@@ -130,7 +138,9 @@ fn main() {
             WidgetId::new("info_text"),
             &format!(
                 "Estado:\n  Contador: {}\n  Slider: {:.0}\n  Checkbox: {}",
-                contador, slider_value, if checkbox_checked { "✓" } else { "✗" }
+                contador,
+                slider_value,
+                if checkbox_checked { "✓" } else { "✗" }
             ),
             Rect::new(30.0, 360.0, 380.0, 130.0),
         );

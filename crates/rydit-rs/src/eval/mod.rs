@@ -10,13 +10,15 @@ use std::collections::{HashMap, HashSet};
 use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydit};
 
 // ✅ v0.10.4: Conectar módulos
-use crate::modules::assets::{assets_load, assets_draw, assets_sprite};
-use crate::modules::camera::{camera_follow, camera_set_zoom, camera_set_position, camera_apply_sdl2};
+use crate::modules::assets::{assets_draw, assets_load, assets_sprite};
 use crate::modules::audio::{audio_play, audio_stop};
-use crate::modules::physics::{physics_apply_gravity};
-use crate::modules::input_map::{input_map_is_pressed, input_map_register};
+use crate::modules::camera::{
+    camera_apply_sdl2, camera_follow, camera_set_position, camera_set_zoom,
+};
 use crate::modules::entity::{entity_create, entity_get_position};
-use crate::modules::level::{level_load};
+use crate::modules::input_map::{input_map_is_pressed, input_map_register};
+use crate::modules::level::level_load;
+use crate::modules::physics::physics_apply_gravity;
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier
 fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
@@ -3314,74 +3316,74 @@ pub fn evaluar_expr(
             // ========================================================================
             // MÓDULOS RYDIT - v0.10.4: Reconexión Total
             // ========================================================================
-            
+
             // ASSETS::load(id, path) - Cargar textura
             if name == "assets::load" || name == "assets::sprite" {
                 return assets_load(args, executor, funcs);
             }
-            
+
             // ASSETS::draw(id, x, y) - Dibujar sprite
             if name == "assets::draw" {
                 return assets_draw(args, executor, funcs);
             }
-            
+
             // CAMERA::follow(entity_id) - Cámara sigue entidad
             if name == "camera::follow" {
                 return camera_follow(args, executor, funcs);
             }
-            
+
             // CAMERA::set_zoom(zoom) - Set zoom de cámara
             if name == "camera::set_zoom" {
                 return camera_set_zoom(args, executor, funcs);
             }
-            
+
             // CAMERA::set_position(x, y) - Set posición de cámara
             if name == "camera::set_position" {
                 return camera_set_position(args, executor, funcs);
             }
-            
+
             // AUDIO::play(sound_id) - Reproducir sonido
             if name == "audio::play" {
                 return audio_play(args, executor, funcs);
             }
-            
+
             // AUDIO::stop(sound_id) - Detener sonido
             if name == "audio::stop" {
                 return audio_stop(args, executor, funcs);
             }
-            
+
             // AUDIO::set_volume(sound_id, volume) - Set volumen
             // ⚠️ Pendiente: implementar en audio.rs
             // if name == "audio::set_volume" {
             //     return audio_set_volume(args, executor, funcs);
             // }
-            
+
             // PHYSICS::apply_gravity(entity_id) - Aplicar gravedad
             if name == "physics::apply_gravity" {
                 return physics_apply_gravity(args, executor, funcs);
             }
-            
+
             // PHYSICS::resolve_collision(entity_a, entity_b) - Resolver colisión
             // ⚠️ Pendiente: implementar en physics.rs
             // if name == "physics::resolve_collision" {
             //     return physics_resolve_collision(args, executor, funcs);
             // }
-            
+
             // INPUT_MAP::bind(key, action) - Mapear tecla a acción
             if name == "input_map::bind" || name == "input_map::register" {
                 return input_map_register(args, executor, funcs);
             }
-            
+
             // INPUT_MAP::is_pressed(action) - Verificar si acción está presionada
             if name == "input_map::is_pressed" {
                 return input_map_is_pressed(args, executor, funcs);
             }
-            
+
             // ENTITY::create(id, type, x, y) - Crear entidad
             if name == "entity::create" {
                 return entity_create(args, executor, funcs);
             }
-            
+
             // ENTITY::get_position(id) - Obtener posición de entidad
             if name == "entity::get_position" {
                 return entity_get_position(args, executor, funcs);

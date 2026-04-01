@@ -1,30 +1,76 @@
 # 🛡️ QWEN.md - Bitácora Técnica RyDit
 
-**Última actualización**: 2026-04-01
-**Versión actual**: v0.11.0 ✅ RYBOT + SDL2 + TOOLKIT
-**Versión anterior**: v0.10.6 ✅ SDL2 BACKEND FUNCIONANDO
-**Próxima versión**: v0.11.1 - FSR 1.0 + PARSER MODULAR
+**Última actualización**: 2026-04-01  
+**Versión actual**: v0.11.1 ✅ TESTS EN 3 NIVELES  
+**Versión anterior**: v0.11.0 ✅ RYBOT + SDL2 + TOOLKIT  
+**Próxima versión**: v0.11.2 - NIVEL 3 GRÁFICOS + DEMOS REALES  
 **Commit**: Ver `git log -n 1`
 
 ---
 
-## 🎉 v0.11.0 COMPLETADO - RYBOT + SDL2 + TOOLKIT (2026-04-01)
+## 🎉 v0.11.1 COMPLETADO - TESTS EN 3 NIVELES + BINARIOS ORGANIZADOS
 
 ### ✅ **LO QUE SÍ FUNCIONA AHORA**
 
-| Sistema | Estado | Líneas | Tests |
-|---------|--------|--------|-------|
-| **SDL2 Backend** | ✅ 100% | 360+ | Ventana + Input + Render |
-| **SDL2_ttf** | ✅ 100% | 370+ | Texto blended |
-| **SDL2_image** | ✅ 100% | FFI nativo | PNG/JPG cargados |
-| **Toolkit UI** | ✅ 90% | 200+ | Button, Label, Panel |
-| **RyBot Inspector** | ✅ 80% | 530+ | Registry + Alertas + CLI |
-| **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
-| **GPU Instancing** | ✅ 100% | - | 100K+ partículas |
-| **ECS** | ✅ 100% | - | 10K entidades |
-| **Sistema Ry** | ✅ 90% | 180K+ | Camera, Entity, Level |
+| Sistema | Estado | Tests | Notas |
+|---------|--------|-------|-------|
+| **Tests Nivel 1 (Núcleo)** | ✅ 100% | 13 passing | Lizer, Blast-core, RyditModule |
+| **Tests Nivel 2 (Integración)** | ✅ 100% | 3 passing | Rybot, Evaluator, Modules |
+| **Tests Nivel 3 (Gráficos)** | ⏳ Low-end | 1 compilando | SDL2, Audio, Input |
+| **SDL2 Backend** | ✅ 100% | - | Ventana + Input + Render |
+| **RyditModule Registry** | ✅ 100% | - | Physics, Anim, Science |
+| **Binarios Esenciales** | ✅ 7 | - | snake, platformer, tests |
+| **Binarios Organizados** | ✅ 100% | - | 54 → 7 esenciales (-87%) |
 
-**Total**: ~250K líneas Rust, 260+ tests, 15+ binarios compilados ✅
+**Total**: 16 tests automáticos (0.01s) + 3 tests manuales (low-end)
+
+---
+
+## 🎯 ROADMAP ACTUALIZADO v0.11.1
+
+| Versión | Estado | Features | Fecha |
+|---------|--------|----------|-------|
+| **v0.11.1** | ✅ COMPLETADO | Tests 3 niveles + Binarios organizados | 2026-04-01 |
+| **v0.11.2** | 🔮 Pendiente | Nivel 3 gráficos + demos reales | 2026-04-07 |
+| **v0.11.3** | 🔮 Pendiente | Snake reescrito + Platformer SDL2 | 2026-04-14 |
+| **v0.12.0** | 🔮 Meta | Parser fuerte + FSR 1.0 | 2026-04-21 |
+
+---
+
+## 🧪 TESTS EN 3 NIVELES - ARQUITECTURA
+
+### **Nivel 1: Núcleo** ✅
+- **Archivo**: `crates/rydit-test/tests/nivel1_core_test.rs`
+- **Tests**: 13 passing
+- **Tiempo**: 0.01s
+- **Dependencias**: 0 (sin gráficos)
+
+**Tests**:
+- ✅ Lizer (scan de tokens)
+- ✅ Blast-core (executor, scopes, valores)
+- ✅ RyditModule (registro, metadata)
+
+### **Nivel 2: Integración** ✅
+- **Archivo**: `crates/rydit-test/tests/nivel2_integration_test.rs`
+- **Tests**: 3 passing
+- **Tiempo**: 0.00s
+- **Dependencias**: 0 (sin gráficos)
+
+**Tests**:
+- ✅ Rybot (registry, alertas)
+- ✅ Evaluator (scripts .rydit)
+- ✅ Modules (assets, audio, physics)
+
+### **Nivel 3: Gráficos Low-End** ⏳
+- **Archivos**: `crates/rydit-rs/src/bin/nivel3_*.rs`
+- **Tests**: 3 creados (1 compilando)
+- **Tipo**: Manuales (Termux-X11)
+- **Dependencias**: SDL2, SDL2_mixer
+
+**Tests**:
+- ⏳ `nivel3_test_lowend.rs` → Gráficos SDL2
+- ⏳ `nivel3_test_audio_lowend.rs` → Audio SDL2
+- ⏳ `nivel3_test_input_lowend.rs` → Input SDL2
 
 ---
 

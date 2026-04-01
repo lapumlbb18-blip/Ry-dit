@@ -31,10 +31,10 @@ pub fn run() {
         } else {
             "demos/nivel_config.rydit"
         };
-        
+
         println!("🛡️ Iniciando Scene Runner v0.10.2");
         println!("   Escena: {}\n", escena);
-        
+
         // Ejecutar scene_runner directamente
         std::process::Command::new(std::env::current_exe().unwrap())
             .arg("--scene-run")
@@ -43,16 +43,20 @@ pub fn run() {
             .expect("Failed to run scene runner");
         return;
     }
-    
+
     // ✅ v0.10.2: SCENE RUN interno (llamado desde --scene)
     if args.len() > 1 && args[1] == "--scene-run" {
-        let escena = if args.len() > 2 { &args[2] } else { "demos/nivel_config.rydit" };
-        
+        let escena = if args.len() > 2 {
+            &args[2]
+        } else {
+            "demos/nivel_config.rydit"
+        };
+
         // Importar y ejecutar scene_runner
         use rydit_ecs::EcsWorld;
-        use rydit_gfx::{ColorRydit, Key};
         use rydit_gfx::ecs_render::EcsRenderer;
-        
+        use rydit_gfx::{ColorRydit, Key};
+
         // Parsear configuración
         let config = match ConfigParser::parse(escena) {
             Ok(c) => c,
@@ -61,49 +65,65 @@ pub fn run() {
                 std::process::exit(1);
             }
         };
-        
+
         // Crear ventana
         let mut gfx = RyditGfx::new(&config.nombre, 800, 600);
         gfx.set_target_fps(60);
-        
+
         // Crear ECS World
         let mut ecs_world = EcsWorld::new();
         ecs_world.set_gravity(0.0, config.gravedad);
-        
+
         // Spawnear entidades
         for ent in &config.entidades {
             ecs_world.create_sprite_entity(ent.x, ent.y, &ent.sprite, ent.ancho, ent.alto);
         }
-        
+
         // Renderer
         let mut renderer = EcsRenderer::new();
-        
+
         // Game loop nativo
         let mut frame = 0;
         while !gfx.should_close() {
             gfx.begin_draw();
             gfx.clear_background(ColorRydit::Negro);
-            
+
             // Input
             if gfx.is_key_pressed(Key::Escape) {
                 break;
             }
-            
+
             // Update
             ecs_world.update(0.016);
-            
+
             // Render
             renderer.render_colored(&ecs_world);
-            
+
             // UI
-            gfx.draw_text(&format!("🛡️ {}", config.nombre), 10, 20, 18, ColorRydit::Blanco);
-            gfx.draw_text(&format!("Entidades: {} | FPS: {}", ecs_world.entity_count(), gfx.get_fps()), 10, 45, 16, ColorRydit::Verde);
+            gfx.draw_text(
+                &format!("🛡️ {}", config.nombre),
+                10,
+                20,
+                18,
+                ColorRydit::Blanco,
+            );
+            gfx.draw_text(
+                &format!(
+                    "Entidades: {} | FPS: {}",
+                    ecs_world.entity_count(),
+                    gfx.get_fps()
+                ),
+                10,
+                45,
+                16,
+                ColorRydit::Verde,
+            );
             gfx.draw_text("ESC = Salir", 10, 580, 12, ColorRydit::Gris);
-            
+
             gfx.end_draw();
             frame += 1;
         }
-        
+
         println!("✅ Scene completada: {} frames", frame);
         return;
     }
@@ -189,13 +209,13 @@ fn run_gfx_mode(script: &str) {
         Ok(p) => {
             println!("[RYDIT] {} statements en AST (cached)", p.statements.len());
             p
-        },
+        }
         Err(e) => {
             println!("[ERROR] {}", e);
             return;
         }
     };
-    
+
     ejecutar_programa_gfx(&program, &mut executor, &mut funcs, &mut gfx);
 
     executor.mostrar_memoria();
@@ -222,13 +242,13 @@ fn run_migui_mode(script: &str) {
         Ok(p) => {
             println!("[MIGUI] {} statements en AST (cached)", p.statements.len());
             p
-        },
+        }
         Err(e) => {
             println!("[ERROR] {}", e);
             return;
         }
     };
-    
+
     ejecutar_programa_migui(&program, &mut executor, &mut funcs, &mut gui, &mut gfx);
 
     executor.mostrar_memoria();
@@ -252,13 +272,13 @@ fn run_comandante_mode(script: &str) {
         Ok(p) => {
             println!("[RYDIT] {} statements en AST (cached)", p.statements.len());
             p
-        },
+        }
         Err(e) => {
             println!("[ERROR] {}", e);
             return;
         }
     };
-    
+
     ejecutar_programa(&program, &mut executor, &mut funcs);
 
     executor.mostrar_memoria();

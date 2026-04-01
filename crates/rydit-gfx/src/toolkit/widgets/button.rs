@@ -65,7 +65,7 @@ impl Button {
         let text_width = self.text.len() as i32 * 8;
         let text_x = self.x + (self.width - text_width) / 2;
         let text_y = self.y + (self.height - 16) / 2;
-        
+
         backend.canvas.set_draw_color(Color::RGB(255, 255, 255));
         let text_rect = Rect::new(text_x, text_y, text_width as u32, 16);
         let _ = backend.canvas.fill_rect(text_rect);
@@ -73,7 +73,6 @@ impl Button {
 
     /// Verificar si el click está en el botón
     pub fn is_clicked(&self, x: i32, y: i32) -> bool {
-        x >= self.x && x <= self.x + self.width &&
-        y >= self.y && y <= self.y + self.height
+        x >= self.x && x <= self.x + self.width && y >= self.y && y <= self.y + self.height
     }
 }

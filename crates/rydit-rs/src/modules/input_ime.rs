@@ -4,8 +4,8 @@
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
-use std::collections::HashMap;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 // ============================================================================
@@ -40,7 +40,7 @@ impl IMEState {
         self.text.clear();
         self.cursor_pos = 0;
         self.text_changed = false;
-        
+
         // NOTA: En Android real, aquí llamaríamos a JNI para mostrar el teclado
         // InputMethodManager.showSoftInput()
         eprintln!("[IME] Teclado virtual mostrado (simulado)");
@@ -200,7 +200,7 @@ pub fn input_text(
 
     let ime = get_ime();
     let mut ime_ref = ime.borrow_mut();
-    
+
     if !ime_ref.visible {
         // Primera llamada: mostrar teclado
         ime_ref.show_keyboard();
@@ -243,7 +243,7 @@ pub fn input_simulate_text(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
-    
+
     if args.is_empty() {
         return Valor::Error("input::simulate_text() requiere 1 argumento: text".to_string());
     }
@@ -255,12 +255,12 @@ pub fn input_simulate_text(
 
     let ime = get_ime();
     let mut ime_ref = ime.borrow_mut();
-    
+
     // Simular input carácter por carácter
     ime_ref.text = text.clone();
     ime_ref.cursor_pos = text.len();
     ime_ref.text_changed = true;
-    
+
     Valor::Texto(format!("Texto simulado: {}", text))
 }
 
@@ -272,20 +272,20 @@ mod tests {
     fn test_ime_state() {
         let mut ime = IMEState::new();
         assert!(!ime.visible);
-        
+
         ime.show_keyboard();
         assert!(ime.visible);
-        
+
         ime.input_char('H');
         ime.input_char('o');
         ime.input_char('l');
         ime.input_char('a');
-        
+
         assert_eq!(ime.get_text(), "Hola");
-        
+
         ime.backspace();
         assert_eq!(ime.get_text(), "Hol");
-        
+
         ime.hide_keyboard();
         assert!(!ime.visible);
     }

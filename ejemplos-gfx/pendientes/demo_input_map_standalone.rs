@@ -2,7 +2,7 @@
 // Ejecutar: cargo run --bin demo_input_map_standalone
 // Tamaño: 1280x720
 
-use rydit_gfx::{RyditGfx, ColorRydit, Key};
+use rydit_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::HashMap;
 
 /// Input Map simple - Mapeo de teclas a acciones
@@ -26,7 +26,7 @@ impl InputMap {
         map.bind("space", "saltar");
         map.bind("r", "reset");
         map.bind("escape", "salir");
-        
+
         // Termux VolUP combos
         map.bind("volup_w", "arrow_up");
         map.bind("volup_a", "arrow_left");
@@ -37,7 +37,8 @@ impl InputMap {
     }
 
     fn bind(&mut self, tecla: &str, accion: &str) {
-        self.combinaciones.insert(tecla.to_string(), accion.to_string());
+        self.combinaciones
+            .insert(tecla.to_string(), accion.to_string());
     }
 
     fn press(&mut self, tecla: &str) {
@@ -84,7 +85,7 @@ fn main() {
     gfx.set_target_fps(60);
 
     let mut input = InputMap::new();
-    
+
     let mut jugador_x: f32 = 640.0;
     let mut jugador_y: f32 = 360.0;
     let velocidad = 5.0;
@@ -113,19 +114,19 @@ fn main() {
         } else {
             input.release("w");
         }
-        
+
         if gfx.is_key_pressed(Key::A) {
             input.press("a");
         } else {
             input.release("a");
         }
-        
+
         if gfx.is_key_pressed(Key::S) {
             input.press("s");
         } else {
             input.release("s");
         }
-        
+
         if gfx.is_key_pressed(Key::D) {
             input.press("d");
         } else {
@@ -225,13 +226,37 @@ fn main() {
         let fps = gfx.get_fps();
         gfx.draw_text("=== 🎮 Demo Input Map ===", 20, 30, 28, ColorRydit::Blanco);
         gfx.draw_text(&format!("FPS: {}", fps), 20, 70, 22, ColorRydit::Verde);
-        gfx.draw_text(&format!("Pos: ({:.0}, {:.0})", jugador_x, jugador_y), 20, 100, 18, ColorRydit::Cyan);
-        gfx.draw_text(&format!("Saltos: {} | Resets: {}", saltos, resets), 20, 130, 16, ColorRydit::Magenta);
-        
+        gfx.draw_text(
+            &format!("Pos: ({:.0}, {:.0})", jugador_x, jugador_y),
+            20,
+            100,
+            18,
+            ColorRydit::Cyan,
+        );
+        gfx.draw_text(
+            &format!("Saltos: {} | Resets: {}", saltos, resets),
+            20,
+            130,
+            16,
+            ColorRydit::Magenta,
+        );
+
         let acciones = input.get_active_actions();
-        gfx.draw_text(&format!("Acciones: {:?}", acciones), 20, 160, 16, ColorRydit::Amarillo);
-        
-        gfx.draw_text("W,A,S,D=Mover | Space=Saltar | R=Reset | ESC=Salir", 20, 690, 16, ColorRydit::Gris);
+        gfx.draw_text(
+            &format!("Acciones: {:?}", acciones),
+            20,
+            160,
+            16,
+            ColorRydit::Amarillo,
+        );
+
+        gfx.draw_text(
+            "W,A,S,D=Mover | Space=Saltar | R=Reset | ESC=Salir",
+            20,
+            690,
+            16,
+            ColorRydit::Gris,
+        );
 
         gfx.end_draw();
         frame += 1;

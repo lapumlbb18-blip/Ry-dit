@@ -62,7 +62,7 @@ impl Panel {
             let text_width = title.len() as i32 * 8;
             let text_x = self.x + (self.width - text_width) / 2;
             let text_y = self.y + 4;
-            
+
             backend.canvas.set_draw_color(theme.title_text);
             let text_rect = Rect::new(text_x, text_y, text_width as u32, 16);
             let _ = backend.canvas.fill_rect(text_rect);

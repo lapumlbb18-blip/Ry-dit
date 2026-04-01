@@ -77,25 +77,39 @@ impl InputState {
         self.mapeo_teclas.insert(Keycode::Num0, "0".to_string());
 
         // Especiales
-        self.mapeo_teclas.insert(Keycode::Space, "space".to_string());
-        self.mapeo_teclas.insert(Keycode::Return, "enter".to_string());
-        self.mapeo_teclas.insert(Keycode::Escape, "escape".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Space, "space".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Return, "enter".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Escape, "escape".to_string());
         self.mapeo_teclas.insert(Keycode::Tab, "tab".to_string());
-        self.mapeo_teclas.insert(Keycode::Backspace, "backspace".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Backspace, "backspace".to_string());
 
         // Flechas
-        self.mapeo_teclas.insert(Keycode::Up, "arrow_up".to_string());
-        self.mapeo_teclas.insert(Keycode::Down, "arrow_down".to_string());
-        self.mapeo_teclas.insert(Keycode::Left, "arrow_left".to_string());
-        self.mapeo_teclas.insert(Keycode::Right, "arrow_right".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Up, "arrow_up".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Down, "arrow_down".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Left, "arrow_left".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Right, "arrow_right".to_string());
 
         // Modificadores
-        self.mapeo_teclas.insert(Keycode::LShift, "shift_left".to_string());
-        self.mapeo_teclas.insert(Keycode::RShift, "shift_right".to_string());
-        self.mapeo_teclas.insert(Keycode::LCtrl, "ctrl_left".to_string());
-        self.mapeo_teclas.insert(Keycode::RCtrl, "ctrl_right".to_string());
-        self.mapeo_teclas.insert(Keycode::LAlt, "alt_left".to_string());
-        self.mapeo_teclas.insert(Keycode::RAlt, "alt_right".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::LShift, "shift_left".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::RShift, "shift_right".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::LCtrl, "ctrl_left".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::RCtrl, "ctrl_right".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::LAlt, "alt_left".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::RAlt, "alt_right".to_string());
 
         // Función
         self.mapeo_teclas.insert(Keycode::F1, "f1".to_string());
@@ -114,24 +128,37 @@ impl InputState {
         // Navegación
         self.mapeo_teclas.insert(Keycode::Home, "home".to_string());
         self.mapeo_teclas.insert(Keycode::End, "end".to_string());
-        self.mapeo_teclas.insert(Keycode::PageUp, "page_up".to_string());
-        self.mapeo_teclas.insert(Keycode::PageDown, "page_down".to_string());
-        self.mapeo_teclas.insert(Keycode::Insert, "insert".to_string());
-        self.mapeo_teclas.insert(Keycode::Delete, "delete".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::PageUp, "page_up".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::PageDown, "page_down".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Insert, "insert".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::Delete, "delete".to_string());
 
         // Android / Termux especiales
-        self.mapeo_teclas.insert(Keycode::VolumeUp, "volumen_up".to_string());
-        self.mapeo_teclas.insert(Keycode::VolumeDown, "volumen_down".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::VolumeUp, "volumen_up".to_string());
+        self.mapeo_teclas
+            .insert(Keycode::VolumeDown, "volumen_down".to_string());
     }
 
     /// Procesar un evento SDL2
     pub fn procesar_evento(&mut self, evento: &Event) {
         match evento {
-            Event::KeyDown { keycode: Some(keycode), repeat: false, .. } => {
+            Event::KeyDown {
+                keycode: Some(keycode),
+                repeat: false,
+                ..
+            } => {
                 self.teclas.insert(*keycode, true);
                 self.teclas_pressionadas_frame.push(*keycode);
             }
-            Event::KeyUp { keycode: Some(keycode), .. } => {
+            Event::KeyUp {
+                keycode: Some(keycode),
+                ..
+            } => {
                 self.teclas.insert(*keycode, false);
             }
             _ => {}
@@ -203,7 +230,13 @@ mod tests {
     #[test]
     fn test_mapeo_flechas() {
         let state = InputState::new();
-        assert_eq!(state.mapeo_teclas.get(&Keycode::Up), Some(&"arrow_up".to_string()));
-        assert_eq!(state.mapeo_teclas.get(&Keycode::Down), Some(&"arrow_down".to_string()));
+        assert_eq!(
+            state.mapeo_teclas.get(&Keycode::Up),
+            Some(&"arrow_up".to_string())
+        );
+        assert_eq!(
+            state.mapeo_teclas.get(&Keycode::Down),
+            Some(&"arrow_down".to_string())
+        );
     }
 }

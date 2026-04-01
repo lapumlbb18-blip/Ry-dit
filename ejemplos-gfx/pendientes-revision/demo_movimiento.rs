@@ -46,33 +46,40 @@ fn main() {
         // ✅ EVENT POLLING con SDL2 (funciona en Android)
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit {..} |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => {
                     running = false;
                     break 'running;
                 }
 
                 // ✅ TECLAS PRESIONADAS (evento inicial)
-                Event::KeyDown { keycode: Some(keycode), repeat: false, .. } => {
-                    match keycode {
-                        Keycode::W | Keycode::Up => jugador_y -= velocidad,
-                        Keycode::S | Keycode::Down => jugador_y += velocidad,
-                        Keycode::A | Keycode::Left => jugador_x -= velocidad,
-                        Keycode::D | Keycode::Right => jugador_x += velocidad,
-                        _ => {}
-                    }
-                }
+                Event::KeyDown {
+                    keycode: Some(keycode),
+                    repeat: false,
+                    ..
+                } => match keycode {
+                    Keycode::W | Keycode::Up => jugador_y -= velocidad,
+                    Keycode::S | Keycode::Down => jugador_y += velocidad,
+                    Keycode::A | Keycode::Left => jugador_x -= velocidad,
+                    Keycode::D | Keycode::Right => jugador_x += velocidad,
+                    _ => {}
+                },
 
                 // ✅ TECLAS MANTENIDAS (repeat = true) ← ESTO ES LA CLAVE
-                Event::KeyDown { keycode: Some(keycode), repeat: true, .. } => {
-                    match keycode {
-                        Keycode::W | Keycode::Up => jugador_y -= velocidad,
-                        Keycode::S | Keycode::Down => jugador_y += velocidad,
-                        Keycode::A | Keycode::Left => jugador_x -= velocidad,
-                        Keycode::D | Keycode::Right => jugador_x += velocidad,
-                        _ => {}
-                    }
-                }
+                Event::KeyDown {
+                    keycode: Some(keycode),
+                    repeat: true,
+                    ..
+                } => match keycode {
+                    Keycode::W | Keycode::Up => jugador_y -= velocidad,
+                    Keycode::S | Keycode::Down => jugador_y += velocidad,
+                    Keycode::A | Keycode::Left => jugador_x -= velocidad,
+                    Keycode::D | Keycode::Right => jugador_x += velocidad,
+                    _ => {}
+                },
 
                 _ => {}
             }

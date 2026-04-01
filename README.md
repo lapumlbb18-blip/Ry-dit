@@ -6,15 +6,15 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.10.4-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-260%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.10.4--ready-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.11.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-16%20passing%20(auto)-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.11.1--tests%20ready-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
-[![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
+[![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
-[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux)
+[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [🧪 Tests en 3 Niveles](#-tests-en-3-niveles)
 
 </div>
 
@@ -40,58 +40,80 @@
 
 ---
 
-## ⚠️ ESTADO ACTUAL - SIN FILTROS
+## 🔧 ESTADO ACTUAL - v0.11.1 TESTS READY
 
-### 🛑 ESTADO REAL: v0.10.4 - ESTANCADO EN PARSER
+### ✅ **ESTADO REAL: v0.11.1 - TESTS EN 3 NIVELES**
 
-**Última actualización**: 2026-03-31  
-**Versión actual**: v0.10.4 🛑 ESTANCADO EN PARSER  
-**Próxima versión**: v0.11.0 - PARSER FUERTE (PRIORIDAD 0)  
-**Versión estable**: v0.10.4 (COMPILACIÓN 100% ✅, PARSER ROTO ❌)
-
----
-
-### ✅ LO QUE SÍ FUNCIONA (RUST - 25K LÍNEAS)
-
-| Sistema | Estado | Líneas | Tests |
-|---------|--------|--------|-------|
-| **Rust Core** | ✅ 100% | ~25K | Compila sin errores |
-| **Render Queue** | ✅ 100% | 600+ | 8192+ draw calls |
-| **Assets Manager** | ✅ Integrado | 486 | Carga texturas |
-| **Particles** | ✅ Integrado | 188 | 500+ partículas |
-| **ECS** | ✅ bevy_ecs | - | 10K entidades |
-| **Input Map** | ✅ Código existe | 657 | 20+ combinaciones |
-| **Physics 2D** | ✅ 20 funciones | - | Funciona |
-| **Camera 2D** | ✅ 15 funciones | - | Funciona |
-
-**Total**: ~25K líneas Rust, 260+ tests, 10+ binarios compilados ✅
+**Última actualización**: 2026-04-01  
+**Versión actual**: v0.11.1 ✅ TESTS READY  
+**Próxima versión**: v0.11.2 - NIVEL 3 GRÁFICOS + DEMOS  
+**Estado**: COMPILACIÓN 100% ✅ | TESTS 16 PASSING ✅
 
 ---
 
-### ❌ LO QUE NO FUNCIONA (PARSER - 10 DÍAS ESTANCADOS)
+### ✅ **LO QUE SÍ FUNCIONA (v0.11.1)**
 
-| Sistema | Problema | Días Estancado | Impacto |
-|---------|----------|----------------|---------|
-| **PARSER LIZER** | 🔴 **BLOQUES ANIDADOS** | **10 DÍAS** | 🔴 **CRÍTICO** |
-| .rydit scripts | Parser falla en sintaxis compleja | 10 días | No hay demos funcionales |
-| eval/mod.rs | Conectado pero no se usa | 5 días | Lógica no se ejecuta |
-| Game loop .rydit | Parser no soporta loops complejos | 8 días | No hay juegos reales |
+| Sistema | Estado | Tests | Notas |
+|---------|--------|-------|-------|
+| **Tests Nivel 1 (Núcleo)** | ✅ 100% | 13 passing | Lizer, Blast-core, RyditModule |
+| **Tests Nivel 2 (Integración)** | ✅ 100% | 3 passing | Rybot, Evaluator, Modules |
+| **Tests Nivel 3 (Gráficos)** | ⏳ Low-end | 1 compilando | SDL2, Audio, Input |
+| **SDL2 Backend** | ✅ 100% | - | Ventana + Input + Render |
+| **RyditModule Registry** | ✅ 100% | - | 3 módulos registrados |
+| **Binarios Esenciales** | ✅ 7 | - | snake, platformer, tests |
 
-**Root Cause**: Parser monolítico (3327 líneas en 1 archivo), sin error recovery, AST sin tipos
+**Total Tests**: 16 automáticos (0.01s) + 3 manuales (low-end)
 
 ---
 
-### 📊 BINARIOS COMPILADOS
+### 🧪 **TESTS EN 3 NIVELES**
 
-- ✅ `rydit-rs` - 3.1MB (PRINCIPAL)
-- ✅ `scene_runner` - 326KB
-- ✅ `demo_particles` - 274KB
-- ✅ `demo_big_bang` - ~350KB
-- ✅ `demo_10k_particulas` - ~400KB
-- ✅ `ecs_demo_10k` - 272KB
-- ✅ `gpu_demo_100k` - 276KB
+#### **Nivel 1: Núcleo** ✅
+```bash
+cargo test --package rydit-test --test nivel1_core_test
+# 13 tests passing en 0.01s
+```
 
-**PERO**: ⚠️ **Demos .rydit NO FUNCIONAN por parser roto**
+**Tests**:
+- ✅ Lizer (scan de tokens)
+- ✅ Blast-core (executor, scopes)
+- ✅ RyditModule (registro, metadata)
+
+#### **Nivel 2: Integración** ✅
+```bash
+cargo test --package rydit-test --test nivel2_integration_test
+# 3 tests passing en 0.00s
+```
+
+**Tests**:
+- ✅ Rybot (registry, alertas)
+- ✅ Evaluator (scripts .rydit)
+- ✅ Modules (assets, audio, physics)
+
+#### **Nivel 3: Gráficos Low-End** ⏳
+```bash
+cargo build --bin nivel3_test_lowend
+./target/debug/nivel3_test_lowend
+# Test manual en Termux-X11
+```
+
+**Tests**:
+- ⏳ Gráficos SDL2 (círculo, rect, línea)
+- ⏳ Audio SDL2 (carga, reproducción)
+- ⏳ Input SDL2 (teclado, movimiento)
+
+---
+
+### 📊 **BINARIOS ORGANIZADOS**
+
+| Categoría | Cantidad | Estado |
+|-----------|----------|--------|
+| **Esenciales** (`src/bin/`) | 7 | ✅ snake, test_audio, test_callback, etc. |
+| **Plan B** (`ejemplos-gfx/pendientes-revision/`) | 11 | ⏳ Más compatibles |
+| **Pendientes** (`ejemplos-gfx/pendientes/`) | 21 | ⏳ Resto por verificar |
+| **Eliminados/Archive** | 15 | ✅ Legacy removido |
+
+**Reducción**: 54 → 7 esenciales (-87%)
 
 ---
 

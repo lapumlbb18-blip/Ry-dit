@@ -2,8 +2,8 @@
 // ECS Render - Integración de ECS con rydit-gfx usando rlgl
 // v0.10.0: ECS + rlgl para renderizado eficiente
 
-use rydit_ecs::EcsWorld;
 use raylib::ffi::*;
+use rydit_ecs::EcsWorld;
 
 // Constantes rlgl
 const RL_QUADS: i32 = 3;
@@ -54,7 +54,7 @@ impl EcsRenderer {
             unsafe {
                 rlPushMatrix();
                 rlTranslatef(screen_x, screen_y, 0.0);
-                
+
                 // Dibujar rectángulo
                 rlBegin(RL_QUADS);
                 rlColor4ub(255, 0, 0, 255); // Rojo por defecto
@@ -63,7 +63,7 @@ impl EcsRenderer {
                 rlVertex2f(screen_w, screen_h);
                 rlVertex2f(0.0, screen_h);
                 rlEnd();
-                
+
                 rlPopMatrix();
             }
         }
@@ -93,7 +93,7 @@ impl EcsRenderer {
             unsafe {
                 rlPushMatrix();
                 rlTranslatef(screen_x, screen_y, 0.0);
-                
+
                 rlBegin(RL_QUADS);
                 rlColor4ub(r, g, b, 255);
                 rlVertex2f(0.0, 0.0);
@@ -101,7 +101,7 @@ impl EcsRenderer {
                 rlVertex2f(screen_w, screen_h);
                 rlVertex2f(0.0, screen_h);
                 rlEnd();
-                
+
                 rlPopMatrix();
             }
         }
@@ -120,16 +120,16 @@ impl EcsRenderer {
             unsafe {
                 rlPushMatrix();
                 rlTranslatef(screen_x, screen_y, 0.0);
-                
+
                 rlBegin(RL_LINES);
                 rlColor4ub(255, 255, 0, 255); // Amarillo para cuerpos
-                
+
                 // Dibujar cruz para representar cuerpo
-                rlVertex2f(-size/2.0, 0.0);
-                rlVertex2f(size/2.0, 0.0);
-                rlVertex2f(0.0, -size/2.0);
-                rlVertex2f(0.0, size/2.0);
-                
+                rlVertex2f(-size / 2.0, 0.0);
+                rlVertex2f(size / 2.0, 0.0);
+                rlVertex2f(0.0, -size / 2.0);
+                rlVertex2f(0.0, size / 2.0);
+
                 rlEnd();
                 rlPopMatrix();
             }
@@ -155,39 +155,39 @@ impl Default for EcsRenderer {
 /// Crear demo de 10K entidades para testing
 pub fn create_demo_world(count: usize) -> EcsWorld {
     let mut world = EcsWorld::new();
-    
+
     // Crear entidades en posiciones aleatorias
     for i in 0..count {
         let x = (i % 100) as f32 * 10.0;
         let y = (i / 100) as f32 * 10.0;
         world.create_sprite_entity(x, y, "demo", 8.0, 8.0);
     }
-    
+
     world
 }
 
 /// Crear demo N-Body con múltiples cuerpos
 pub fn create_nbody_demo(body_count: usize) -> EcsWorld {
     let mut world = EcsWorld::new();
-    
+
     // Crear cuerpo central masivo (estático)
     world.create_static_body_entity(400.0, 300.0, 10000.0);
-    
+
     // Crear cuerpos orbitando
     for i in 0..body_count {
         let angle = (i as f32 / body_count as f32) * std::f32::consts::PI * 2.0;
         let radius = 100.0 + (i as f32 * 10.0);
-        
+
         let x = 400.0 + angle.cos() * radius;
         let y = 300.0 + angle.sin() * radius;
-        
+
         // Velocidad tangencial para órbita
         let vx = -angle.sin() * 50.0;
         let vy = angle.cos() * 50.0;
-        
+
         world.create_body_entity(x, y, 100.0, vx, vy);
     }
-    
+
     world
 }
 

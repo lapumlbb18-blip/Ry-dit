@@ -215,7 +215,9 @@ pub fn camera_set_bounds(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 4 {
-        return Valor::Error("camera::set_bounds() requiere 4 argumentos: min_x, min_y, max_x, max_y".to_string());
+        return Valor::Error(
+            "camera::set_bounds() requiere 4 argumentos: min_x, min_y, max_x, max_y".to_string(),
+        );
     }
 
     let min_x_val = evaluar_expr(&args[0], executor, funcs);
@@ -247,7 +249,10 @@ pub fn camera_set_bounds(
     let mut cam_ref = cam.borrow_mut();
     cam_ref.set_bounds(min_x, min_y, max_x, max_y);
 
-    Valor::Texto(format!("camera::set_bounds({}, {}, {}, {})", min_x, min_y, max_x, max_y))
+    Valor::Texto(format!(
+        "camera::set_bounds({}, {}, {}, {})",
+        min_x, min_y, max_x, max_y
+    ))
 }
 
 /// camera::clear_bounds() - Limpiar límites
@@ -274,7 +279,9 @@ pub fn camera_follow(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 2 {
-        return Valor::Error("camera::follow() requiere 2 argumentos: target_x, target_y".to_string());
+        return Valor::Error(
+            "camera::follow() requiere 2 argumentos: target_x, target_y".to_string(),
+        );
     }
 
     let tx_val = evaluar_expr(&args[0], executor, funcs);
@@ -304,7 +311,9 @@ pub fn camera_follow_smooth(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("camera::follow_smooth() requiere 3 argumentos: target_x, target_y, smooth".to_string());
+        return Valor::Error(
+            "camera::follow_smooth() requiere 3 argumentos: target_x, target_y, smooth".to_string(),
+        );
     }
 
     let tx_val = evaluar_expr(&args[0], executor, funcs);
@@ -330,7 +339,10 @@ pub fn camera_follow_smooth(
     let mut cam_ref = cam.borrow_mut();
     cam_ref.follow_smooth(target_x, target_y, smooth);
 
-    Valor::Texto(format!("camera::follow_smooth({}, {}, {})", target_x, target_y, smooth))
+    Valor::Texto(format!(
+        "camera::follow_smooth({}, {}, {})",
+        target_x, target_y, smooth
+    ))
 }
 
 /// camera::set_follow_offset(offset_x, offset_y) - Offset para seguimiento
@@ -340,7 +352,9 @@ pub fn camera_set_follow_offset(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 2 {
-        return Valor::Error("camera::set_follow_offset() requiere 2 argumentos: offset_x, offset_y".to_string());
+        return Valor::Error(
+            "camera::set_follow_offset() requiere 2 argumentos: offset_x, offset_y".to_string(),
+        );
     }
 
     let ox_val = evaluar_expr(&args[0], executor, funcs);
@@ -348,19 +362,26 @@ pub fn camera_set_follow_offset(
 
     let offset_x = match ox_val {
         Valor::Num(n) => n as f32,
-        _ => return Valor::Error("camera::set_follow_offset() offset_x debe ser número".to_string()),
+        _ => {
+            return Valor::Error("camera::set_follow_offset() offset_x debe ser número".to_string())
+        }
     };
 
     let offset_y = match oy_val {
         Valor::Num(n) => n as f32,
-        _ => return Valor::Error("camera::set_follow_offset() offset_y debe ser número".to_string()),
+        _ => {
+            return Valor::Error("camera::set_follow_offset() offset_y debe ser número".to_string())
+        }
     };
 
     let cam = get_camera();
     let mut cam_ref = cam.borrow_mut();
     cam_ref.set_follow_offset(offset_x, offset_y);
 
-    Valor::Texto(format!("camera::set_follow_offset({}, {})", offset_x, offset_y))
+    Valor::Texto(format!(
+        "camera::set_follow_offset({}, {})",
+        offset_x, offset_y
+    ))
 }
 
 // ============================================================================
@@ -460,7 +481,10 @@ pub fn camera_apply_sdl2(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 4 {
-        return Valor::Error("camera::apply_sdl2() requiere 4 argumentos: x, y, screen_width, screen_height".to_string());
+        return Valor::Error(
+            "camera::apply_sdl2() requiere 4 argumentos: x, y, screen_width, screen_height"
+                .to_string(),
+        );
     }
 
     let x_val = evaluar_expr(&args[0], executor, funcs);
@@ -493,7 +517,10 @@ pub fn camera_apply_sdl2(
     let (screen_x, screen_y) = cam_ref.apply_sdl2(x, y, screen_width, screen_height);
 
     // Retornar como array [screen_x, screen_y]
-    Valor::Array(vec![Valor::Num(screen_x as f64), Valor::Num(screen_y as f64)])
+    Valor::Array(vec![
+        Valor::Num(screen_x as f64),
+        Valor::Num(screen_y as f64),
+    ])
 }
 
 // ============================================================================

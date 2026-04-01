@@ -88,9 +88,11 @@ fn ejecutar_programa_gfx(
 
         // Clear queue
         queue.clear();
-        
+
         // Clear screen
-        queue.push(rydit_gfx::render_queue::DrawCommand::Clear { color: ColorRydit::Negro });
+        queue.push(rydit_gfx::render_queue::DrawCommand::Clear {
+            color: ColorRydit::Negro,
+        });
 
         // Ejecutar programa en cada frame (acumula en queue)
         for stmt in &program.statements {
@@ -110,7 +112,7 @@ fn ejecutar_programa_gfx(
         // NOTA: Para usar assets, necesitar:
         // let assets_ref = /* obtener assets */;
         // queue.execute(gfx, &assets_ref.borrow());
-        
+
         // Por ahora, ejecutamos directamente con begin_draw
         let mut d = gfx.begin_draw();
         d.clear(ColorRydit::Negro);

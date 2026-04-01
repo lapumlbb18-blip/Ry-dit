@@ -708,7 +708,7 @@ impl Key {
             Key::RightControl => KEY_RIGHT_CONTROL,
             Key::LeftAlt => KEY_LEFT_ALT,
             Key::RightAlt => KEY_RIGHT_ALT,
-            
+
             // Navegación
             Key::PageUp => KEY_PAGE_UP,
             Key::PageDown => KEY_PAGE_DOWN,
@@ -716,7 +716,7 @@ impl Key {
             Key::End => KEY_END,
             Key::Insert => KEY_INSERT,
             Key::Delete => KEY_DELETE,
-            
+
             // Función F1-F12
             Key::F1 => KEY_F1,
             Key::F2 => KEY_F2,
@@ -730,13 +730,13 @@ impl Key {
             Key::F10 => KEY_F10,
             Key::F11 => KEY_F11,
             Key::F12 => KEY_F12,
-            
+
             // Flechas
             Key::ArrowUp => KEY_UP,
             Key::ArrowDown => KEY_DOWN,
             Key::ArrowLeft => KEY_LEFT,
             Key::ArrowRight => KEY_RIGHT,
-            
+
             // Letras A-Z
             Key::A => KEY_A,
             Key::B => KEY_B,
@@ -764,7 +764,7 @@ impl Key {
             Key::X => KEY_X,
             Key::Y => KEY_Y,
             Key::Z => KEY_Z,
-            
+
             // Números 0-9
             Key::Num0 => KEY_ZERO,
             Key::Num1 => KEY_ONE,
@@ -868,11 +868,18 @@ impl RyditGfx {
             // Procesar eventos
             for event in event_pump.poll_iter() {
                 match event {
-                    sdl2::event::Event::KeyDown { keycode: Some(keycode), repeat: false, .. } => {
+                    sdl2::event::Event::KeyDown {
+                        keycode: Some(keycode),
+                        repeat: false,
+                        ..
+                    } => {
                         self.input_sdl2.teclas.insert(keycode, true);
                         self.input_sdl2.teclas_pressionadas_frame.push(keycode);
                     }
-                    sdl2::event::Event::KeyUp { keycode: Some(keycode), .. } => {
+                    sdl2::event::Event::KeyUp {
+                        keycode: Some(keycode),
+                        ..
+                    } => {
                         self.input_sdl2.teclas.insert(keycode, false);
                     }
                     _ => {}
@@ -924,7 +931,7 @@ impl RyditGfx {
         {
             let mut d = self.begin_draw();
             d.draw_circle(x, y, radius, color);
-            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+            drop(d); // ← Flush EXPLÍCITO para Zink/Vulkan
         }
     }
 
@@ -933,7 +940,7 @@ impl RyditGfx {
         {
             let mut d = self.begin_draw();
             d.draw_rectangle(x, y, w, h, color);
-            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+            drop(d); // ← Flush EXPLÍCITO para Zink/Vulkan
         }
     }
 
@@ -942,7 +949,7 @@ impl RyditGfx {
         {
             let mut d = self.begin_draw();
             d.draw_line(x1, y1, x2, y2, color);
-            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+            drop(d); // ← Flush EXPLÍCITO para Zink/Vulkan
         }
     }
 
@@ -951,7 +958,7 @@ impl RyditGfx {
         {
             let mut d = self.begin_draw();
             d.draw_text(text, x, y, size, color);
-            drop(d);  // ← Flush EXPLÍCITO para Zink/Vulkan
+            drop(d); // ← Flush EXPLÍCITO para Zink/Vulkan
         }
     }
 
@@ -974,7 +981,14 @@ impl RyditGfx {
     }
 
     /// Dibujar textura escalada (placeholder)
-    pub fn draw_texture_ex(&mut self, _texture: &Texture2D, x: i32, y: i32, scale: f32, color: ColorRydit) {
+    pub fn draw_texture_ex(
+        &mut self,
+        _texture: &Texture2D,
+        x: i32,
+        y: i32,
+        scale: f32,
+        color: ColorRydit,
+    ) {
         // ⚠️ Placeholder: Usar textura real cuando esté implementado
         let size = (32.0 * scale) as i32;
         self.draw_rect(x, y, size, size, color);
@@ -1315,7 +1329,13 @@ impl Assets {
         color: ColorRydit,
     ) {
         if let Some(texture) = self.textures.get(id) {
-            d.draw_texture_ex(texture, Vector2::new(x, y), rotation, scale, color.to_color());
+            d.draw_texture_ex(
+                texture,
+                Vector2::new(x, y),
+                rotation,
+                scale,
+                color.to_color(),
+            );
         }
     }
 
@@ -1372,7 +1392,7 @@ impl Assets {
         unsafe {
             // Envolver raw pointer en Surface
             let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
-            
+
             // Crear textura desde superficie
             let texture = texture_creator
                 .create_texture_from_surface(&sdl_surface)

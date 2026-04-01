@@ -5,8 +5,8 @@
 //! 2. Double Buffering
 //! 3. Platform Sync (X11)
 
+use rydit_gfx::render_queue::{DoubleBuffer, DrawCommand, PlatformSync, RenderQueue};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
-use rydit_gfx::render_queue::{DrawCommand, DoubleBuffer, PlatformSync, RenderQueue};
 
 fn main() {
     println!("🛡️ RyDit v0.9.0 - Demo Render Queue");
@@ -49,9 +49,11 @@ fn main() {
         frame += 1;
 
         // === FASE 1: Acumular comandos (Front Buffer) ===
-        
+
         // Limpiar pantalla
-        double_buffer.push(DrawCommand::Clear { color: ColorRydit::Negro });
+        double_buffer.push(DrawCommand::Clear {
+            color: ColorRydit::Negro,
+        });
 
         // === PRUEBA 1: Grid de círculos (100 círculos) ===
         for i in 0..10 {

@@ -5,7 +5,7 @@
 mod bindings;
 mod cli;
 mod config;
-mod config_parser;  // ✅ v0.10.4: Agregado para cli.rs
+mod config_parser; // ✅ v0.10.4: Agregado para cli.rs
 mod eval;
 mod executor;
 mod json_helpers;
@@ -49,8 +49,8 @@ pub use rydit_science::ScienceModule;
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Lizer, Parser, Stmt};
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
+use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
 use rydit_gfx::{ColorRydit, Key, RyditGfx};
-use rydit_gfx::render_queue::{RenderQueue, DrawCommand};
 use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 use std::sync::Mutex;
@@ -713,7 +713,7 @@ pub struct InputEstado {
     arrow_down: bool,
     arrow_left: bool,
     arrow_right: bool,
-    
+
     // Teclas especiales
     space: bool,
     enter: bool,
@@ -726,7 +726,7 @@ pub struct InputEstado {
     ctrl_right: bool,
     alt_left: bool,
     alt_right: bool,
-    
+
     // Navegación
     page_up: bool,
     page_down: bool,
@@ -734,7 +734,7 @@ pub struct InputEstado {
     end: bool,
     insert: bool,
     delete: bool,
-    
+
     // Función F1-F12
     f1: bool,
     f2: bool,
@@ -748,19 +748,47 @@ pub struct InputEstado {
     f10: bool,
     f11: bool,
     f12: bool,
-    
+
     // Letras A-Z (26 teclas)
-    key_a: bool, key_b: bool, key_c: bool, key_d: bool, key_e: bool,
-    key_f: bool, key_g: bool, key_h: bool, key_i: bool, key_j: bool,
-    key_k: bool, key_l: bool, key_m: bool, key_n: bool, key_o: bool,
-    key_p: bool, key_q: bool, key_r: bool, key_s: bool, key_t: bool,
-    key_u: bool, key_v: bool, key_w: bool, key_x: bool, key_y: bool,
+    key_a: bool,
+    key_b: bool,
+    key_c: bool,
+    key_d: bool,
+    key_e: bool,
+    key_f: bool,
+    key_g: bool,
+    key_h: bool,
+    key_i: bool,
+    key_j: bool,
+    key_k: bool,
+    key_l: bool,
+    key_m: bool,
+    key_n: bool,
+    key_o: bool,
+    key_p: bool,
+    key_q: bool,
+    key_r: bool,
+    key_s: bool,
+    key_t: bool,
+    key_u: bool,
+    key_v: bool,
+    key_w: bool,
+    key_x: bool,
+    key_y: bool,
     key_z: bool,
-    
+
     // Números 0-9 (10 teclas)
-    key_0: bool, key_1: bool, key_2: bool, key_3: bool, key_4: bool,
-    key_5: bool, key_6: bool, key_7: bool, key_8: bool, key_9: bool,
-    
+    key_0: bool,
+    key_1: bool,
+    key_2: bool,
+    key_3: bool,
+    key_4: bool,
+    key_5: bool,
+    key_6: bool,
+    key_7: bool,
+    key_8: bool,
+    key_9: bool,
+
     // Mouse v0.3.0
     mouse_x: i32,
     mouse_y: i32,
@@ -777,7 +805,7 @@ impl InputEstado {
             arrow_down: false,
             arrow_left: false,
             arrow_right: false,
-            
+
             // Especiales
             space: false,
             enter: false,
@@ -790,7 +818,7 @@ impl InputEstado {
             ctrl_right: false,
             alt_left: false,
             alt_right: false,
-            
+
             // Navegación
             page_up: false,
             page_down: false,
@@ -798,24 +826,61 @@ impl InputEstado {
             end: false,
             insert: false,
             delete: false,
-            
+
             // Función F1-F12
-            f1: false, f2: false, f3: false, f4: false,
-            f5: false, f6: false, f7: false, f8: false,
-            f9: false, f10: false, f11: false, f12: false,
-            
+            f1: false,
+            f2: false,
+            f3: false,
+            f4: false,
+            f5: false,
+            f6: false,
+            f7: false,
+            f8: false,
+            f9: false,
+            f10: false,
+            f11: false,
+            f12: false,
+
             // Letras A-Z
-            key_a: false, key_b: false, key_c: false, key_d: false, key_e: false,
-            key_f: false, key_g: false, key_h: false, key_i: false, key_j: false,
-            key_k: false, key_l: false, key_m: false, key_n: false, key_o: false,
-            key_p: false, key_q: false, key_r: false, key_s: false, key_t: false,
-            key_u: false, key_v: false, key_w: false, key_x: false, key_y: false,
+            key_a: false,
+            key_b: false,
+            key_c: false,
+            key_d: false,
+            key_e: false,
+            key_f: false,
+            key_g: false,
+            key_h: false,
+            key_i: false,
+            key_j: false,
+            key_k: false,
+            key_l: false,
+            key_m: false,
+            key_n: false,
+            key_o: false,
+            key_p: false,
+            key_q: false,
+            key_r: false,
+            key_s: false,
+            key_t: false,
+            key_u: false,
+            key_v: false,
+            key_w: false,
+            key_x: false,
+            key_y: false,
             key_z: false,
-            
+
             // Números 0-9
-            key_0: false, key_1: false, key_2: false, key_3: false, key_4: false,
-            key_5: false, key_6: false, key_7: false, key_8: false, key_9: false,
-            
+            key_0: false,
+            key_1: false,
+            key_2: false,
+            key_3: false,
+            key_4: false,
+            key_5: false,
+            key_6: false,
+            key_7: false,
+            key_8: false,
+            key_9: false,
+
             // Mouse
             mouse_x: 0,
             mouse_y: 0,
@@ -849,17 +914,54 @@ impl InputEstado {
             end: self.end,
             insert: self.insert,
             delete: self.delete,
-            f1: self.f1, f2: self.f2, f3: self.f3, f4: self.f4,
-            f5: self.f5, f6: self.f6, f7: self.f7, f8: self.f8,
-            f9: self.f9, f10: self.f10, f11: self.f11, f12: self.f12,
-            key_a: self.key_a, key_b: self.key_b, key_c: self.key_c, key_d: self.key_d, key_e: self.key_e,
-            key_f: self.key_f, key_g: self.key_g, key_h: self.key_h, key_i: self.key_i, key_j: self.key_j,
-            key_k: self.key_k, key_l: self.key_l, key_m: self.key_m, key_n: self.key_n, key_o: self.key_o,
-            key_p: self.key_p, key_q: self.key_q, key_r: self.key_r, key_s: self.key_s, key_t: self.key_t,
-            key_u: self.key_u, key_v: self.key_v, key_w: self.key_w, key_x: self.key_x, key_y: self.key_y,
+            f1: self.f1,
+            f2: self.f2,
+            f3: self.f3,
+            f4: self.f4,
+            f5: self.f5,
+            f6: self.f6,
+            f7: self.f7,
+            f8: self.f8,
+            f9: self.f9,
+            f10: self.f10,
+            f11: self.f11,
+            f12: self.f12,
+            key_a: self.key_a,
+            key_b: self.key_b,
+            key_c: self.key_c,
+            key_d: self.key_d,
+            key_e: self.key_e,
+            key_f: self.key_f,
+            key_g: self.key_g,
+            key_h: self.key_h,
+            key_i: self.key_i,
+            key_j: self.key_j,
+            key_k: self.key_k,
+            key_l: self.key_l,
+            key_m: self.key_m,
+            key_n: self.key_n,
+            key_o: self.key_o,
+            key_p: self.key_p,
+            key_q: self.key_q,
+            key_r: self.key_r,
+            key_s: self.key_s,
+            key_t: self.key_t,
+            key_u: self.key_u,
+            key_v: self.key_v,
+            key_w: self.key_w,
+            key_x: self.key_x,
+            key_y: self.key_y,
             key_z: self.key_z,
-            key_0: self.key_0, key_1: self.key_1, key_2: self.key_2, key_3: self.key_3, key_4: self.key_4,
-            key_5: self.key_5, key_6: self.key_6, key_7: self.key_7, key_8: self.key_8, key_9: self.key_9,
+            key_0: self.key_0,
+            key_1: self.key_1,
+            key_2: self.key_2,
+            key_3: self.key_3,
+            key_4: self.key_4,
+            key_5: self.key_5,
+            key_6: self.key_6,
+            key_7: self.key_7,
+            key_8: self.key_8,
+            key_9: self.key_9,
             mouse_x: self.mouse_x,
             mouse_y: self.mouse_y,
             mouse_left: self.mouse_left,
@@ -873,7 +975,7 @@ impl InputEstado {
         self.arrow_down = gfx.is_key_pressed(Key::ArrowDown);
         self.arrow_left = gfx.is_key_pressed(Key::ArrowLeft);
         self.arrow_right = gfx.is_key_pressed(Key::ArrowRight);
-        
+
         // Especiales
         self.space = gfx.is_key_pressed(Key::Space);
         self.enter = gfx.is_key_pressed(Key::Enter);
@@ -886,7 +988,7 @@ impl InputEstado {
         self.ctrl_right = gfx.is_key_pressed(Key::RightControl);
         self.alt_left = gfx.is_key_pressed(Key::LeftAlt);
         self.alt_right = gfx.is_key_pressed(Key::RightAlt);
-        
+
         // Navegación
         self.page_up = gfx.is_key_pressed(Key::PageUp);
         self.page_down = gfx.is_key_pressed(Key::PageDown);
@@ -894,7 +996,7 @@ impl InputEstado {
         self.end = gfx.is_key_pressed(Key::End);
         self.insert = gfx.is_key_pressed(Key::Insert);
         self.delete = gfx.is_key_pressed(Key::Delete);
-        
+
         // Función F1-F12
         self.f1 = gfx.is_key_pressed(Key::F1);
         self.f2 = gfx.is_key_pressed(Key::F2);
@@ -908,7 +1010,7 @@ impl InputEstado {
         self.f10 = gfx.is_key_pressed(Key::F10);
         self.f11 = gfx.is_key_pressed(Key::F11);
         self.f12 = gfx.is_key_pressed(Key::F12);
-        
+
         // Letras A-Z
         self.key_a = gfx.is_key_pressed(Key::A);
         self.key_b = gfx.is_key_pressed(Key::B);
@@ -936,7 +1038,7 @@ impl InputEstado {
         self.key_x = gfx.is_key_pressed(Key::X);
         self.key_y = gfx.is_key_pressed(Key::Y);
         self.key_z = gfx.is_key_pressed(Key::Z);
-        
+
         // Números 0-9
         self.key_0 = gfx.is_key_pressed(Key::Num0);
         self.key_1 = gfx.is_key_pressed(Key::Num1);
@@ -1053,7 +1155,7 @@ impl InputEstado {
             "arrow_down" | "abajo" => self.arrow_down,
             "arrow_left" | "izquierda" => self.arrow_left,
             "arrow_right" | "derecha" => self.arrow_right,
-            
+
             // Especiales
             "space" | "espacio" => self.space,
             "enter" | "entrada" => self.enter,
@@ -1066,7 +1168,7 @@ impl InputEstado {
             "ctrl_right" | "rctrl" => self.ctrl_right,
             "alt_left" | "lalt" => self.alt_left,
             "alt_right" | "ralt" => self.alt_right,
-            
+
             // Navegación
             "page_up" | "pagina_arriba" => self.page_up,
             "page_down" | "pagina_abajo" => self.page_down,
@@ -1074,24 +1176,61 @@ impl InputEstado {
             "end" | "fin" => self.end,
             "insert" | "insertar" => self.insert,
             "delete" | "borrar" => self.delete,
-            
+
             // Función F1-F12
-            "f1" => self.f1, "f2" => self.f2, "f3" => self.f3, "f4" => self.f4,
-            "f5" => self.f5, "f6" => self.f6, "f7" => self.f7, "f8" => self.f8,
-            "f9" => self.f9, "f10" => self.f10, "f11" => self.f11, "f12" => self.f12,
-            
+            "f1" => self.f1,
+            "f2" => self.f2,
+            "f3" => self.f3,
+            "f4" => self.f4,
+            "f5" => self.f5,
+            "f6" => self.f6,
+            "f7" => self.f7,
+            "f8" => self.f8,
+            "f9" => self.f9,
+            "f10" => self.f10,
+            "f11" => self.f11,
+            "f12" => self.f12,
+
             // Letras A-Z
-            "a" => self.key_a, "b" => self.key_b, "c" => self.key_c, "d" => self.key_d, "e" => self.key_e,
-            "f" => self.key_f, "g" => self.key_g, "h" => self.key_h, "i" => self.key_i, "j" => self.key_j,
-            "k" => self.key_k, "l" => self.key_l, "m" => self.key_m, "n" => self.key_n, "o" => self.key_o,
-            "p" => self.key_p, "q" => self.key_q, "r" => self.key_r, "s" => self.key_s, "t" => self.key_t,
-            "u" => self.key_u, "v" => self.key_v, "w" => self.key_w, "x" => self.key_x, "y" => self.key_y,
+            "a" => self.key_a,
+            "b" => self.key_b,
+            "c" => self.key_c,
+            "d" => self.key_d,
+            "e" => self.key_e,
+            "f" => self.key_f,
+            "g" => self.key_g,
+            "h" => self.key_h,
+            "i" => self.key_i,
+            "j" => self.key_j,
+            "k" => self.key_k,
+            "l" => self.key_l,
+            "m" => self.key_m,
+            "n" => self.key_n,
+            "o" => self.key_o,
+            "p" => self.key_p,
+            "q" => self.key_q,
+            "r" => self.key_r,
+            "s" => self.key_s,
+            "t" => self.key_t,
+            "u" => self.key_u,
+            "v" => self.key_v,
+            "w" => self.key_w,
+            "x" => self.key_x,
+            "y" => self.key_y,
             "z" => self.key_z,
-            
+
             // Números 0-9
-            "0" => self.key_0, "1" => self.key_1, "2" => self.key_2, "3" => self.key_3, "4" => self.key_4,
-            "5" => self.key_5, "6" => self.key_6, "7" => self.key_7, "8" => self.key_8, "9" => self.key_9,
-            
+            "0" => self.key_0,
+            "1" => self.key_1,
+            "2" => self.key_2,
+            "3" => self.key_3,
+            "4" => self.key_4,
+            "5" => self.key_5,
+            "6" => self.key_6,
+            "7" => self.key_7,
+            "8" => self.key_8,
+            "9" => self.key_9,
+
             _ => false,
         }
     }
@@ -1430,7 +1569,10 @@ fn ejecutar_stmt_gfx(
                 let assets = assets::get_assets();
                 let assets_ref = assets.borrow();
                 if !assets_ref.has_texture(&id) {
-                    eprintln!("[ERROR] assets::draw_scaled() La textura '{}' no existe", id);
+                    eprintln!(
+                        "[ERROR] assets::draw_scaled() La textura '{}' no existe",
+                        id
+                    );
                     return None;
                 }
 
@@ -1447,7 +1589,7 @@ fn ejecutar_stmt_gfx(
             // ✅ v0.9.2 - particles::create_emitter(nombre, x, y, rate)
             else if name == "particles::create_emitter" && args.len() >= 4 {
                 use crate::modules::particles;
-                
+
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let x_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let y_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -1473,23 +1615,22 @@ fn ejecutar_stmt_gfx(
                         executor.guardar("__RESULT__", r);
                     }
                 } else {
-                    eprintln!("[ERROR] particles::create_emitter() requiere (texto, num, num, num)");
+                    eprintln!(
+                        "[ERROR] particles::create_emitter() requiere (texto, num, num, num)"
+                    );
                 }
             }
             // particles::set_emitter_type(nombre, tipo)
             else if name == "particles::set_emitter_type" && args.len() == 2 {
                 use crate::modules::particles;
-                
+
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let tipo_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
 
                 if let (Valor::Texto(nombre), Valor::Texto(tipo)) = (nombre_val, tipo_val) {
                     let result = particles::ejecutar_funcion(
                         "particles::set_emitter_type",
-                        &[
-                            Expr::Texto(nombre.clone()),
-                            Expr::Texto(tipo.clone()),
-                        ],
+                        &[Expr::Texto(nombre.clone()), Expr::Texto(tipo.clone())],
                         executor,
                         input,
                         funcs,
@@ -1504,7 +1645,7 @@ fn ejecutar_stmt_gfx(
             // particles::remove_emitter(nombre)
             else if name == "particles::remove_emitter" && args.len() == 1 {
                 use crate::modules::particles;
-                
+
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Texto(nombre) = nombre_val {
                     let result = particles::ejecutar_funcion(
@@ -1522,7 +1663,7 @@ fn ejecutar_stmt_gfx(
             // particles::update(dt) - DEBE llamarse en cada frame
             else if name == "particles::update" && args.len() == 1 {
                 use crate::modules::particles;
-                
+
                 let dt_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Num(dt) = dt_val {
                     let result = particles::ejecutar_funcion(
@@ -1555,10 +1696,7 @@ fn ejecutar_stmt_gfx(
                 if let (Valor::Num(x), Valor::Num(y)) = (x_val, y_val) {
                     let result = particles::ejecutar_funcion(
                         "particles::set_gravity",
-                        &[
-                            Expr::Num(x),
-                            Expr::Num(y),
-                        ],
+                        &[Expr::Num(x), Expr::Num(y)],
                         executor,
                         input,
                         funcs,
@@ -1571,7 +1709,7 @@ fn ejecutar_stmt_gfx(
             // particles::particle_count()
             else if name == "particles::particle_count" && args.len() == 0 {
                 use crate::modules::particles;
-                
+
                 let result = particles::ejecutar_funcion(
                     "particles::particle_count",
                     &[],
@@ -1582,8 +1720,7 @@ fn ejecutar_stmt_gfx(
                 if let Some(r) = result {
                     executor.guardar("__RESULT__", r);
                 }
-            }
-            else {
+            } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
                 let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
 

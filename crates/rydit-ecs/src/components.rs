@@ -66,8 +66,8 @@ impl Sprite {
 /// Partícula para sistemas de partículas
 #[derive(Component, Clone, Copy, Debug)]
 pub struct Particle {
-    pub lifetime: f32,      // Tiempo de vida restante
-    pub max_lifetime: f32,  // Tiempo de vida máximo
+    pub lifetime: f32,     // Tiempo de vida restante
+    pub max_lifetime: f32, // Tiempo de vida máximo
     pub size: f32,
     pub rotation: f32,
 }
@@ -87,7 +87,7 @@ impl Particle {
 #[derive(Component, Clone, Copy, Debug)]
 pub struct Body {
     pub mass: f32,
-    pub is_static: bool,    // Si es true, no se mueve por gravedad
+    pub is_static: bool, // Si es true, no se mueve por gravedad
 }
 
 impl Body {
@@ -111,7 +111,7 @@ impl Body {
 pub struct Collider {
     pub width: f32,
     pub height: f32,
-    pub is_trigger: bool,   // Si es true, no hay respuesta física
+    pub is_trigger: bool, // Si es true, no hay respuesta física
 }
 
 impl Collider {
@@ -149,14 +149,14 @@ pub struct DespawnMarker;
 pub struct Gravity {
     pub x: f32,
     pub y: f32,
-    pub g_constant: f32,  // Constante gravitacional
+    pub g_constant: f32, // Constante gravitacional
 }
 
 impl Default for Gravity {
     fn default() -> Self {
         Self {
             x: 0.0,
-            y: 9.8,  // Gravedad terrestre por defecto
+            y: 9.8, // Gravedad terrestre por defecto
             g_constant: 6.674e-11,
         }
     }

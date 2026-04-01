@@ -173,7 +173,7 @@ impl WindowManager {
     #[allow(dead_code)] // Para futura implementación de delta time
     pub fn get_delta_time(&self) -> f32 {
         // En el futuro: implementar delta time real
-        0.016  // 60 FPS por defecto (1/60 = 0.016)
+        0.016 // 60 FPS por defecto (1/60 = 0.016)
     }
 }
 
@@ -325,7 +325,11 @@ pub fn window_set_fullscreen(
     let enabled = match enabled_val {
         Valor::Bool(e) => e,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("window::set_fullscreen() enabled debe ser booleano o número".to_string()),
+        _ => {
+            return Valor::Error(
+                "window::set_fullscreen() enabled debe ser booleano o número".to_string(),
+            )
+        }
     };
 
     let win = get_window();
@@ -385,7 +389,11 @@ pub fn window_set_vsync(
     let enabled = match enabled_val {
         Valor::Bool(e) => e,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("window::set_vsync() enabled debe ser booleano o número".to_string()),
+        _ => {
+            return Valor::Error(
+                "window::set_vsync() enabled debe ser booleano o número".to_string(),
+            )
+        }
     };
 
     let win = get_window();
@@ -421,7 +429,11 @@ pub fn window_set_resizable(
     let enabled = match enabled_val {
         Valor::Bool(e) => e,
         Valor::Num(n) => n != 0.0,
-        _ => return Valor::Error("window::set_resizable() enabled debe ser booleano o número".to_string()),
+        _ => {
+            return Valor::Error(
+                "window::set_resizable() enabled debe ser booleano o número".to_string(),
+            )
+        }
     };
 
     let win = get_window();

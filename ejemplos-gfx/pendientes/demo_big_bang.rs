@@ -3,7 +3,7 @@
 // Tamaño: 1280x720 (HD)
 // Efectos: Explosión, partículas, flash
 
-use rydit_gfx::{RyditGfx, ColorRydit, Key};
+use rydit_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - Demo Big Bang");
@@ -58,8 +58,10 @@ fn main() {
 
         // Nueva explosión con ESPACIO
         if gfx.is_key_pressed(Key::Space) {
-            let (mx, my) = (640.0 + (frame as f32 * 0.1).sin() * 300.0, 
-                           360.0 + (frame as f32 * 0.1).cos() * 200.0);
+            let (mx, my) = (
+                640.0 + (frame as f32 * 0.1).sin() * 300.0,
+                360.0 + (frame as f32 * 0.1).cos() * 200.0,
+            );
             crear_explosion(&mut particulas, mx, my);
             explosion_x = mx;
             explosion_y = my;
@@ -74,7 +76,7 @@ fn main() {
             let (x, y, brillo_base) = estrellas[i];
             let brillo = brillo_base + (frame as f32 * 0.1 + i as f32 * 0.01).sin() * 0.3;
             let size = 1.0 + brillo * 2.0;
-            
+
             // Parpadeo de estrellas
             let color = if brillo > 0.7 {
                 ColorRydit::Blanco
@@ -83,7 +85,7 @@ fn main() {
             } else {
                 ColorRydit::Azul
             };
-            
+
             gfx.draw_circle(x as i32, y as i32, size as i32, color);
         }
 
@@ -98,9 +100,12 @@ fn main() {
                 for i in 0..10 {
                     let radio = 50.0 + i as f32 * 80.0 + explosion_frame as f32 * 5.0;
                     let alpha = flash_intensity / (i as f32 + 1.0);
-                    gfx.draw_circle(explosion_x as i32, explosion_y as i32, 
-                                   radio as i32, 
-                                   ColorRydit::Blanco); // Flash intenso
+                    gfx.draw_circle(
+                        explosion_x as i32,
+                        explosion_y as i32,
+                        radio as i32,
+                        ColorRydit::Blanco,
+                    ); // Flash intenso
                 }
             }
 
@@ -108,7 +113,7 @@ fn main() {
             for i in 0..15 {
                 let radio_base = 20.0 + i as f32 * 40.0;
                 let radio = radio_base + explosion_frame as f32 * 8.0;
-                
+
                 // Colores que cambian con el tiempo
                 let color = match (explosion_frame / 10 + i) % 6 {
                     0 => ColorRydit::Blanco,
@@ -118,35 +123,37 @@ fn main() {
                     4 => ColorRydit::Magenta,
                     _ => ColorRydit::Cyan,
                 };
-                
-                gfx.draw_circle(explosion_x as i32, explosion_y as i32, 
-                               radio as i32, color);
+
+                gfx.draw_circle(explosion_x as i32, explosion_y as i32, radio as i32, color);
             }
 
             // Actualizar y dibujar partículas
             for i in 0..particulas.len() {
                 let (x, y, vx, vy, color) = particulas[i];
-                
+
                 // Mover partícula
                 let nueva_x = x + vx;
                 let nueva_y = y + vy + 0.5; // Gravedad
-                
+
                 // Dibujar partícula (cometa con cola)
                 gfx.draw_circle(nueva_x as i32, nueva_y as i32, 4, color);
-                
+
                 // Cola del cometa
-                gfx.draw_circle((nueva_x - vx * 2.0) as i32, 
-                               (nueva_y - vy * 2.0) as i32, 2, ColorRydit::Gris);
-                
+                gfx.draw_circle(
+                    (nueva_x - vx * 2.0) as i32,
+                    (nueva_y - vy * 2.0) as i32,
+                    2,
+                    ColorRydit::Gris,
+                );
+
                 // Actualizar partícula
                 particulas[i].0 = nueva_x;
                 particulas[i].1 = nueva_y;
             }
 
             // Eliminar partículas fuera de pantalla
-            particulas.retain(|(x, y, _, _, _)| {
-                *x > -50.0 && *x < 1330.0 && *y > -50.0 && *y < 770.0
-            });
+            particulas
+                .retain(|(x, y, _, _, _)| *x > -50.0 && *x < 1330.0 && *y > -50.0 && *y < 770.0);
 
             // Desactivar explosión cuando termine
             if explosion_frame > 200 && particulas.is_empty() {
@@ -156,16 +163,40 @@ fn main() {
 
         // UI
         let fps = gfx.get_fps();
-        gfx.draw_text("=== 🌟 BIG BANG - Explosión Cósmica 🌟 ===", 20, 30, 28, ColorRydit::Blanco);
+        gfx.draw_text(
+            "=== 🌟 BIG BANG - Explosión Cósmica 🌟 ===",
+            20,
+            30,
+            28,
+            ColorRydit::Blanco,
+        );
         gfx.draw_text(&format!("FPS: {}", fps), 20, 70, 22, ColorRydit::Verde);
-        gfx.draw_text(&format!("Frame: {}", frame), 20, 100, 20, ColorRydit::Amarillo);
-        gfx.draw_text(&format!("Partículas: {}", particulas.len()), 20, 130, 18, ColorRydit::Cyan);
-        
+        gfx.draw_text(
+            &format!("Frame: {}", frame),
+            20,
+            100,
+            20,
+            ColorRydit::Amarillo,
+        );
+        gfx.draw_text(
+            &format!("Partículas: {}", particulas.len()),
+            20,
+            130,
+            18,
+            ColorRydit::Cyan,
+        );
+
         if explosion_activa {
             gfx.draw_text("💥 EXPLOSIÓN ACTIVA", 20, 160, 24, ColorRydit::Rojo);
         }
-        
-        gfx.draw_text("ESPACIO = Nueva explosión | ESC = Salir", 20, 680, 18, ColorRydit::Gris);
+
+        gfx.draw_text(
+            "ESPACIO = Nueva explosión | ESC = Salir",
+            20,
+            680,
+            18,
+            ColorRydit::Gris,
+        );
 
         gfx.end_draw();
 
@@ -182,7 +213,7 @@ fn crear_explosion(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit)>, x: f3
         let velocidad = 5.0 + (i % 50) as f32 * 0.3;
         let vx = angulo.cos() * velocidad;
         let vy = angulo.sin() * velocidad;
-        
+
         let color = match i % 8 {
             0 => ColorRydit::Blanco,
             1 => ColorRydit::Amarillo,
@@ -193,7 +224,7 @@ fn crear_explosion(particulas: &mut Vec<(f32, f32, f32, f32, ColorRydit)>, x: f3
             6 => ColorRydit::Azul,
             _ => ColorRydit::Gris,
         };
-        
+
         particulas.push((x, y, vx, vy, color));
     }
 }

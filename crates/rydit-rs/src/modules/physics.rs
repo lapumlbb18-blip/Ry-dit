@@ -4,8 +4,8 @@
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
-use std::collections::HashMap;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 // ============================================================================
@@ -29,26 +29,29 @@ pub const DEFAULT_BOUNCE: f32 = 0.3;
 pub struct PhysicsBody {
     pub x: f32,
     pub y: f32,
-    pub vx: f32,  // Velocidad X
-    pub vy: f32,  // Velocidad Y
+    pub vx: f32, // Velocidad X
+    pub vy: f32, // Velocidad Y
     pub width: f32,
     pub height: f32,
     #[allow(dead_code)] // Para futuras físicas de masa
     pub mass: f32,
     #[allow(dead_code)] // Para futuras físicas personalizables
     pub gravity: f32,
-    pub friction: f32,     // Fricción
-    pub bounce: f32,       // Rebote
-    pub is_static: bool,   // Si es estático (no se mueve)
-    pub is_active: bool,   // Si está activo en la simulación
+    pub friction: f32,   // Fricción
+    pub bounce: f32,     // Rebote
+    pub is_static: bool, // Si es estático (no se mueve)
+    pub is_active: bool, // Si está activo en la simulación
 }
 
 impl PhysicsBody {
     pub fn new(x: f32, y: f32, w: f32, h: f32) -> Self {
         Self {
-            x, y,
-            vx: 0.0, vy: 0.0,
-            width: w, height: h,
+            x,
+            y,
+            vx: 0.0,
+            vy: 0.0,
+            width: w,
+            height: h,
             mass: 1.0,
             gravity: DEFAULT_GRAVITY,
             friction: DEFAULT_FRICTION,
@@ -85,10 +88,10 @@ impl PhysicsBody {
 
     /// Verificar colisión con otro cuerpo (AABB)
     pub fn collides_with(&self, other: &PhysicsBody) -> bool {
-        self.x < other.x + other.width &&
-        self.x + self.width > other.x &&
-        self.y < other.y + other.height &&
-        self.y + self.height > other.y
+        self.x < other.x + other.width
+            && self.x + self.width > other.x
+            && self.y < other.y + other.height
+            && self.y + self.height > other.y
     }
 
     /// Obtener overlap (superposición) con otro cuerpo
@@ -132,7 +135,7 @@ impl PhysicsBody {
         // Aplicar resolución
         if overlap_x != 0.0 {
             self.x += overlap_x;
-            self.vx = 0.0;  // Detener velocidad en X
+            self.vx = 0.0; // Detener velocidad en X
         }
         if overlap_y != 0.0 {
             self.y += overlap_y;
@@ -176,7 +179,7 @@ pub struct PhysicsWorld {
     pub bodies: HashMap<String, PhysicsBody>,
     #[allow(dead_code)] // Para futuras físicas globales personalizables
     pub gravity: f32,
-    pub bounds: Option<(f32, f32, f32, f32)>,  // (x, y, w, h)
+    pub bounds: Option<(f32, f32, f32, f32)>, // (x, y, w, h)
 }
 
 impl PhysicsWorld {
@@ -190,7 +193,8 @@ impl PhysicsWorld {
 
     /// Crear cuerpo físico
     pub fn create_body(&mut self, id: &str, x: f32, y: f32, w: f32, h: f32) {
-        self.bodies.insert(id.to_string(), PhysicsBody::new(x, y, w, h));
+        self.bodies
+            .insert(id.to_string(), PhysicsBody::new(x, y, w, h));
     }
 
     /// Obtener cuerpo
@@ -263,7 +267,9 @@ impl PhysicsWorld {
                     if is_b_static && !is_a_static {
                         // Solo A se mueve - obtener overlap primero
                         let overlap = {
-                            if let (Some(a), Some(b)) = (self.bodies.get(&id_a), self.bodies.get(&id_b)) {
+                            if let (Some(a), Some(b)) =
+                                (self.bodies.get(&id_a), self.bodies.get(&id_b))
+                            {
                                 a.get_overlap(b)
                             } else {
                                 (0.0, 0.0)
@@ -280,7 +286,9 @@ impl PhysicsWorld {
                     } else if is_a_static && !is_b_static {
                         // Solo B se mueve
                         let overlap = {
-                            if let (Some(a), Some(b)) = (self.bodies.get(&id_a), self.bodies.get(&id_b)) {
+                            if let (Some(a), Some(b)) =
+                                (self.bodies.get(&id_a), self.bodies.get(&id_b))
+                            {
                                 b.get_overlap(a)
                             } else {
                                 (0.0, 0.0)
@@ -297,7 +305,9 @@ impl PhysicsWorld {
                     } else if !is_a_static && !is_b_static {
                         // Ambos dinámicos
                         let (ox, oy) = {
-                            if let (Some(a), Some(b)) = (self.bodies.get(&id_a), self.bodies.get(&id_b)) {
+                            if let (Some(a), Some(b)) =
+                                (self.bodies.get(&id_a), self.bodies.get(&id_b))
+                            {
                                 a.get_overlap(b)
                             } else {
                                 (0.0, 0.0)
@@ -395,7 +405,9 @@ pub fn physics_create_body(
     use crate::eval::evaluar_expr;
 
     if args.len() != 5 {
-        return Valor::Error("physics::create_body() requiere 5 argumentos: id, x, y, w, h".to_string());
+        return Valor::Error(
+            "physics::create_body() requiere 5 argumentos: id, x, y, w, h".to_string(),
+        );
     }
 
     let id = match evaluar_expr(&args[0], executor, funcs) {
@@ -441,7 +453,7 @@ pub fn physics_update(
     let dt = if !args.is_empty() {
         match evaluar_expr(&args[0], executor, funcs) {
             Valor::Num(n) => n as f32,
-            _ => 1.0 / 60.0,  // Default: 60 FPS
+            _ => 1.0 / 60.0, // Default: 60 FPS
         }
     } else {
         1.0 / 60.0
@@ -527,7 +539,9 @@ pub fn physics_set_velocity(
     use crate::eval::evaluar_expr;
 
     if args.len() != 3 {
-        return Valor::Error("physics::set_velocity() requiere 3 argumentos: id, vx, vy".to_string());
+        return Valor::Error(
+            "physics::set_velocity() requiere 3 argumentos: id, vx, vy".to_string(),
+        );
     }
 
     let id = match evaluar_expr(&args[0], executor, funcs) {
@@ -574,7 +588,7 @@ pub fn physics_apply_gravity(
         _ => return Valor::Error("El ID debe ser texto".to_string()),
     };
 
-    let dt = 1.0 / 60.0;  // Asumir 60 FPS
+    let dt = 1.0 / 60.0; // Asumir 60 FPS
 
     let world = get_physics_world();
     let mut world_ref = world.borrow_mut();
@@ -623,7 +637,10 @@ pub fn physics_set_bounds(
     let mut world_ref = world.borrow_mut();
     world_ref.set_bounds(x, y, w, h);
 
-    Valor::Texto(format!("Límites del mundo establecidos: ({}, {}, {}, {})", x, y, w, h))
+    Valor::Texto(format!(
+        "Límites del mundo establecidos: ({}, {}, {}, {})",
+        x, y, w, h
+    ))
 }
 
 /// physics::check_collision(id_a, id_b) - Verificar colisión
@@ -635,7 +652,9 @@ pub fn physics_check_collision(
     use crate::eval::evaluar_expr;
 
     if args.len() != 2 {
-        return Valor::Error("physics::check_collision() requiere 2 argumentos: id_a, id_b".to_string());
+        return Valor::Error(
+            "physics::check_collision() requiere 2 argumentos: id_a, id_b".to_string(),
+        );
     }
 
     let id_a = match evaluar_expr(&args[0], executor, funcs) {
@@ -677,7 +696,7 @@ mod tests {
     fn test_physics_gravity() {
         let mut body = PhysicsBody::new(0.0, 0.0, 10.0, 10.0);
         body.apply_gravity(1.0 / 60.0);
-        assert!(body.vy > 0.0);  // Debe caer hacia abajo
+        assert!(body.vy > 0.0); // Debe caer hacia abajo
     }
 
     #[test]

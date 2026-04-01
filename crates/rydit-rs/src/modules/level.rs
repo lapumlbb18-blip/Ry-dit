@@ -72,7 +72,7 @@ impl LevelManager {
         // Establecer como nivel actual
         self.current_level = Some(level_name.to_string());
         self.current_path = Some(level_path.to_string());
-        
+
         // Limpiar checkpoints del nivel anterior
         self.checkpoints.clear();
         self.level_data.clear();
@@ -131,7 +131,7 @@ impl LevelManager {
         // Guardar path y nombre antes de unload
         let path = self.current_path.clone();
         let name = self.current_level.clone();
-        
+
         if let Some(path_str) = path {
             let name_str = name.unwrap_or_default();
             self.unload();
@@ -222,11 +222,11 @@ impl LevelManager {
     pub fn render_sdl2(
         &self,
         _canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
-        _texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>
+        _texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>,
     ) -> Result<(), String> {
         // Placeholder: renderizar fondo del nivel
         // En producción, renderizar tiles, entidades, decoración
-        
+
         // Renderizar fondo (color desde level_data)
         if let Some(Valor::Texto(ref bg_color)) = self.level_data.get("fondo") {
             let color = parse_color(bg_color);
@@ -236,7 +236,7 @@ impl LevelManager {
             _canvas.set_draw_color(sdl2::pixels::Color::RGB(30, 30, 30));
             _canvas.clear();
         }
-        
+
         Ok(())
     }
 
@@ -247,14 +247,14 @@ impl LevelManager {
         camera: &rydit_gfx::camera::Camera2D,
         texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>,
         screen_width: i32,
-        screen_height: i32
+        screen_height: i32,
     ) -> Result<(), String> {
         // Renderizar nivel con cámara
         self.render_sdl2(canvas, texture_manager)?;
-        
+
         // En producción, aplicar cámara a todos los elementos
         // let (screen_x, screen_y) = camera.apply_sdl2(...);
-        
+
         Ok(())
     }
 }
@@ -393,7 +393,7 @@ pub fn level_reload(
     // Guardar path antes de unload
     let path = lm_ref.current_path.clone();
     let name = lm_ref.current_level.clone();
-    
+
     if path.is_some() {
         lm_ref.unload();
         let path_str = path.unwrap();
@@ -429,7 +429,9 @@ pub fn level_set_checkpoint(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 3 {
-        return Valor::Error("level::set_checkpoint() requiere 3 argumentos: nombre, x, y".to_string());
+        return Valor::Error(
+            "level::set_checkpoint() requiere 3 argumentos: nombre, x, y".to_string(),
+        );
     }
 
     let nombre_val = evaluar_expr(&args[0], executor, funcs);
@@ -455,7 +457,10 @@ pub fn level_set_checkpoint(
     let mut lm_ref = lm.borrow_mut();
     lm_ref.set_checkpoint(&nombre, x, y);
 
-    Valor::Texto(format!("Checkpoint '{}' establecido en ({}, {})", nombre, x, y))
+    Valor::Texto(format!(
+        "Checkpoint '{}' establecido en ({}, {})",
+        nombre, x, y
+    ))
 }
 
 /// level::load_checkpoint(nombre) - Cargar checkpoint
@@ -556,7 +561,9 @@ pub fn level_transition_slide(
     funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
 ) -> Valor {
     if args.len() != 2 {
-        return Valor::Error("level::transition_slide() requiere 2 argumentos: direccion, duracion".to_string());
+        return Valor::Error(
+            "level::transition_slide() requiere 2 argumentos: direccion, duracion".to_string(),
+        );
     }
 
     let direccion_val = evaluar_expr(&args[0], executor, funcs);
@@ -576,5 +583,8 @@ pub fn level_transition_slide(
     let mut lm_ref = lm.borrow_mut();
     lm_ref.transition_slide(&direccion, duracion);
 
-    Valor::Texto(format!("Transición slide '{}' iniciada ({}ms)", direccion, duracion))
+    Valor::Texto(format!(
+        "Transición slide '{}' iniciada ({}ms)",
+        direccion, duracion
+    ))
 }

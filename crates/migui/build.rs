@@ -11,7 +11,7 @@ fn main() {
         "/data/data/com.termux/files/usr/share/fonts/TTF/DejaVuSans.ttf",
         "/usr/share/fonts/TTF/DejaVuSans.ttf",
     ];
-    
+
     for path in &font_paths {
         if Path::new(path).exists() {
             let dest = Path::new(&out_dir).join("font.ttf");
@@ -20,7 +20,7 @@ fn main() {
             return;
         }
     }
-    
+
     // Fallback: crear archivo vacío
     let dest = Path::new(&out_dir).join("font.ttf");
     fs::write(&dest, &[]).ok();

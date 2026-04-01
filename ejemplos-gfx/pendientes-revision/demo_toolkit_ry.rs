@@ -13,7 +13,7 @@ fn main() {
 
     // Crear backend SDL2
     let mut backend = Sdl2Backend::new("Toolkit RyDit v0.11.0", 800, 600).unwrap();
-    
+
     // Tema
     let theme = Theme::dark();
 
@@ -22,25 +22,17 @@ fn main() {
         .position(200, 150)
         .title("Toolkit RyDit");
 
-    let title = Label::new("¡HOLA MUNDO!")
-        .position(280, 180)
-        .size(24);
+    let title = Label::new("¡HOLA MUNDO!").position(280, 180).size(24);
 
     let subtitle = Label::new("UI Toolkit en rydit-gfx")
         .position(260, 220)
         .size(16);
 
-    let btn_jugar = Button::new("Jugar")
-        .position(300, 300)
-        .size(150, 40);
+    let btn_jugar = Button::new("Jugar").position(300, 300).size(150, 40);
 
-    let btn_opciones = Button::new("Opciones")
-        .position(300, 350)
-        .size(150, 40);
+    let btn_opciones = Button::new("Opciones").position(300, 350).size(150, 40);
 
-    let btn_salir = Button::new("Salir")
-        .position(300, 400)
-        .size(150, 40);
+    let btn_salir = Button::new("Salir").position(300, 400).size(150, 40);
 
     println!("[TOOLKIT RY DEMO]: Widgets creados");
     println!("[TOOLKIT RY DEMO]: Presiona ESC para salir");
@@ -53,10 +45,13 @@ fn main() {
         // Eventos
         for event in backend.event_pump.poll_iter() {
             match event {
-                Event::Quit {..} => {
+                Event::Quit { .. } => {
                     running = false;
                 }
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => {
                     running = false;
                 }
                 Event::MouseButtonDown { x, y, .. } => {

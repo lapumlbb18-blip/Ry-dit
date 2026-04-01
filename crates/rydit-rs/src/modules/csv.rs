@@ -654,10 +654,7 @@ pub fn csv_group_by(
                 _ => "unknown".to_string(),
             };
 
-            groups
-                .entry(key)
-                .or_default()
-                .push(row_val.clone());
+            groups.entry(key).or_default().push(row_val.clone());
         }
     }
 

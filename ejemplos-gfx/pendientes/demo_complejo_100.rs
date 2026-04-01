@@ -3,8 +3,8 @@
 // Tamaño: 1280x720 (HD)
 // Partículas: 100+ en movimiento
 
-use rydit_gfx::{ColorRydit, Key, RyditGfx, Assets};
-use rydit_gfx::render_queue::{RenderQueue, DrawCommand};
+use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
+use rydit_gfx::{Assets, ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - Demo Complejo 100 Partículas");
@@ -23,7 +23,10 @@ fn main() {
 
     println!("[RYDIT-GFX]: Ventana creada 1280x720");
     println!("[RYDIT-GFX]: Rust = Arquitecto, Raylib = Pincel");
-    println!("[RYDIT-GFX]: DISPLAY={}", std::env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string()));
+    println!(
+        "[RYDIT-GFX]: DISPLAY={}",
+        std::env::var("DISPLAY").unwrap_or_else(|_| "no definido".to_string())
+    );
 
     // Crear Render Queue (más grande para 100+ partículas)
     let mut queue = RenderQueue::with_capacity(16384);
@@ -36,7 +39,11 @@ fn main() {
         let y = (i / 10) as f32 * 72.0 + 36.0;
         let vx = (i as f32 * 0.1).sin() * 2.0;
         let vy = (i as f32 * 0.1).cos() * 2.0;
-        let color = if i % 2 == 0 { ColorRydit::Gris } else { ColorRydit::Azul };
+        let color = if i % 2 == 0 {
+            ColorRydit::Gris
+        } else {
+            ColorRydit::Azul
+        };
         particulas.push((x, y, vx, vy, color));
     }
 
@@ -56,16 +63,18 @@ fn main() {
         let escape = gfx.is_key_pressed(Key::Escape);
 
         // FASE 1: Acumular comandos en queue
-        queue.push(DrawCommand::Clear { color: ColorRydit::Negro });
+        queue.push(DrawCommand::Clear {
+            color: ColorRydit::Negro,
+        });
 
         // Dibujar las 100 partículas
         for i in 0..100 {
             let (x, y, vx, vy, color) = particulas[i];
-            
+
             // Actualizar posición (movimiento)
             let nueva_x = x + vx * (frame as f32 * 0.05).sin();
             let nueva_y = y + vy * (frame as f32 * 0.05).cos();
-            
+
             // Dibujar partícula
             queue.push(DrawCommand::Circle {
                 x: nueva_x as i32,
@@ -79,12 +88,12 @@ fn main() {
         for i in 0..50 {
             let (x1, y1, _, _, _) = particulas[i];
             let (x2, y2, _, _, _) = particulas[i + 50];
-            
+
             let x1_anim = x1 + particulas[i].2 * (frame as f32 * 0.05).sin();
             let y1_anim = y1 + particulas[i].3 * (frame as f32 * 0.05).cos();
             let x2_anim = x2 + particulas[i + 50].2 * (frame as f32 * 0.05).sin();
             let y2_anim = y2 + particulas[i + 50].3 * (frame as f32 * 0.05).cos();
-            
+
             queue.push(DrawCommand::Line {
                 x1: x1_anim as i32,
                 y1: y1_anim as i32,
@@ -101,7 +110,11 @@ fn main() {
                 x: 640,
                 y: 360,
                 radius: radio as i32,
-                color: if i % 2 == 0 { ColorRydit::Azul } else { ColorRydit::Gris },
+                color: if i % 2 == 0 {
+                    ColorRydit::Azul
+                } else {
+                    ColorRydit::Gris
+                },
             });
         }
 

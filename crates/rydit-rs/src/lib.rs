@@ -4,6 +4,6 @@
 
 pub mod config_parser;
 
-pub use rydit_gfx;
-pub use rydit_ecs;
 pub use config_parser::ConfigParser;
+pub use rydit_ecs;
+pub use rydit_gfx;

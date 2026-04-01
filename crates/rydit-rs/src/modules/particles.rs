@@ -118,7 +118,9 @@ pub fn ejecutar_funcion(
     if name == "particles::draw" && args.len() == 0 {
         // El draw se maneja especial en ejecutar_stmt_gfx
         // porque necesita acceso al DrawHandle
-        return Some(Valor::Texto("particles::draw() - listo para dibujar".to_string()));
+        return Some(Valor::Texto(
+            "particles::draw() - listo para dibujar".to_string(),
+        ));
     }
 
     // particles::set_gravity(gravity)

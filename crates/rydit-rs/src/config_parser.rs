@@ -49,12 +49,12 @@ pub struct ConfigParser;
 impl ConfigParser {
     /// Parsear archivo de configuración
     pub fn parse(ruta: &str) -> Result<NivelConfig, String> {
-        let contenido = fs::read_to_string(ruta)
-            .map_err(|e| format!("Error leyendo '{}': {}", ruta, e))?;
-        
+        let contenido =
+            fs::read_to_string(ruta).map_err(|e| format!("Error leyendo '{}': {}", ruta, e))?;
+
         Self::parse_contenido(&contenido)
     }
-    
+
     /// Parsear contenido de configuración
     fn parse_contenido(contenido: &str) -> Result<NivelConfig, String> {
         let mut config = NivelConfig {
@@ -65,18 +65,18 @@ impl ConfigParser {
             entidades: Vec::new(),
             checkpoints: HashMap::new(),
         };
-        
+
         let mut entidad_actual: Option<EntityConfig> = None;
         let mut bloque_actual = String::new();
-        
+
         for linea in contenido.lines() {
             let linea = linea.trim();
-            
+
             // Saltar comentarios y líneas vacías
             if linea.is_empty() || linea.starts_with('#') {
                 continue;
             }
-            
+
             // Metadata
             if linea.starts_with("@nombre") {
                 config.nombre = Self::extraer_texto(linea, "@nombre")?;
@@ -131,26 +131,24 @@ impl ConfigParser {
                     } else if linea.contains("vida:") {
                         ent.propiedades.insert(
                             "vida".to_string(),
-                            ValorConfig::Numero(Self::extraer_numero(linea, "vida:")?)
+                            ValorConfig::Numero(Self::extraer_numero(linea, "vida:")?),
                         );
                     } else if linea.contains("daño:") {
                         ent.propiedades.insert(
                             "daño".to_string(),
-                            ValorConfig::Numero(Self::extraer_numero(linea, "daño:")?)
+                            ValorConfig::Numero(Self::extraer_numero(linea, "daño:")?),
                         );
                     } else if linea.contains("velocidad:") {
                         ent.propiedades.insert(
                             "velocidad".to_string(),
-                            ValorConfig::Numero(Self::extraer_numero(linea, "velocidad:")?)
+                            ValorConfig::Numero(Self::extraer_numero(linea, "velocidad:")?),
                         );
                     } else if linea.contains("estatica:") {
                         let val = Self::extraer_texto(linea, "estatica:")?;
-                        ent.propiedades.insert(
-                            "estatica".to_string(),
-                            ValorConfig::Bool(val == "true")
-                        );
+                        ent.propiedades
+                            .insert("estatica".to_string(), ValorConfig::Bool(val == "true"));
                     }
-                    
+
                     // Fin de bloque entidad
                     if linea == "}" {
                         config.entidades.push(ent.clone());
@@ -188,19 +186,19 @@ impl ConfigParser {
                 }
             }
         }
-        
+
         // Agregar última entidad si existe
         if let Some(ent) = entidad_actual {
             config.entidades.push(ent);
         }
-        
+
         Ok(config)
     }
-    
+
     // ========================================================================
     // HELPERS
     // ========================================================================
-    
+
     fn extraer_texto(linea: &str, clave: &str) -> Result<String, String> {
         let partes: Vec<&str> = linea.splitn(2, clave).collect();
         if partes.len() < 2 {
@@ -209,18 +207,21 @@ impl ConfigParser {
         let valor = partes[1].trim().trim_matches('"').trim_matches('\'');
         Ok(valor.to_string())
     }
-    
+
     fn extraer_numero(linea: &str, clave: &str) -> Result<f32, String> {
         let texto = Self::extraer_texto(linea, clave)?;
-        texto.parse::<f32>()
+        texto
+            .parse::<f32>()
             .map_err(|e| format!("Error parseando número '{}': {}", texto, e))
     }
-    
+
     fn extraer_id(linea: &str) -> Result<String, String> {
         // entidad "nombre" { → extraer "nombre"
         let inicio = linea.find('"').ok_or("No se encontró '\"' en la línea")?;
-        let fin = linea[inicio+1..].find('"').ok_or("No se encontró cierre '\"'")?;
-        Ok(linea[inicio+1..inicio+1+fin].to_string())
+        let fin = linea[inicio + 1..]
+            .find('"')
+            .ok_or("No se encontró cierre '\"'")?;
+        Ok(linea[inicio + 1..inicio + 1 + fin].to_string())
     }
 }
 
@@ -231,19 +232,19 @@ impl ConfigParser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_extraer_texto() {
         let resultado = ConfigParser::extraer_texto("sprite: \"hero.png\"", "sprite:").unwrap();
         assert_eq!(resultado, "hero.png");
     }
-    
+
     #[test]
     fn test_extraer_numero() {
         let resultado = ConfigParser::extraer_numero("x: 100.5", "x:").unwrap();
         assert!((resultado - 100.5).abs() < 0.01);
     }
-    
+
     #[test]
     fn test_extraer_id() {
         let resultado = ConfigParser::extraer_id("entidad \"jugador\" {").unwrap();

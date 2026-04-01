@@ -46,20 +46,19 @@ extern "C" {
 
 #[link(name = "SDL2_mixer")]
 extern "C" {
-    fn Mix_Init(flags: c_int) -> c_int;
-    fn Mix_Quit();
-    fn Mix_OpenAudio(
-        frequency: c_int,
-        format: u16,
-        channels: c_int,
-        chunksize: c_int,
-    ) -> c_int;
-    fn Mix_CloseAudio();
-    fn Mix_LoadWAV(file: *const c_char) -> *mut Mix_Chunk;
-    fn Mix_LoadMUS(file: *const c_char) -> *mut Mix_Music;
-    fn Mix_PlayChannel(channel: c_int, chunk: *mut Mix_Chunk, loops: c_int) -> c_int;
-    fn Mix_PlayMusic(music: *mut Mix_Music, loops: c_int) -> c_int;
-    fn Mix_HaltMusic();
+    pub fn Mix_Init(flags: c_int) -> c_int;
+    pub fn Mix_Quit();
+    pub fn Mix_OpenAudio(frequency: c_int, format: u16, channels: c_int, chunksize: c_int)
+        -> c_int;
+    pub fn Mix_CloseAudio();
+    pub fn Mix_LoadWAV(file: *const c_char) -> *mut Mix_Chunk;
+    pub fn Mix_LoadMUS(file: *const c_char) -> *mut Mix_Music;
+    pub fn Mix_PlayChannel(channel: c_int, chunk: *mut Mix_Chunk, loops: c_int) -> c_int;
+    pub fn Mix_PlayMusic(music: *mut Mix_Music, loops: c_int) -> c_int;
+    pub fn Mix_HaltMusic();
+    pub fn Mix_HaltChannel(channel: c_int);
+    pub fn Mix_VolumeMusic(volume: c_int) -> c_int;
+    pub fn Mix_Volume(channel: c_int, volume: c_int) -> c_int;
 }
 
 const MIX_INIT_OGG: c_int = 0x00000002;
@@ -109,8 +108,8 @@ pub struct Mix_Music {
 }
 
 // Tipos básicos
-use std::os::raw::{c_char, c_int, c_void};
 use std::ffi::CString;
+use std::os::raw::{c_char, c_int, c_void};
 
 // ============================================================================
 // GESTOR DE TEXTURAS NATIVO
@@ -138,7 +137,7 @@ impl TextureFFI {
         unsafe {
             let c_path = CString::new(path).map_err(|e| e.to_string())?;
             let surface = IMG_Load(c_path.as_ptr());
-            
+
             if surface.is_null() {
                 Err(format!("Error cargando textura: {}", path))
             } else {
@@ -149,9 +148,7 @@ impl TextureFFI {
 
     /// Obtener dimensiones
     pub fn dimensions(&self) -> (i32, i32) {
-        unsafe {
-            ((*self.surface).w, (*self.surface).h)
-        }
+        unsafe { ((*self.surface).w, (*self.surface).h) }
     }
 
     /// Obtener superficie raw (para crear textura SDL2)
@@ -186,13 +183,13 @@ impl AudioFFI {
             if result == 0 {
                 return Err("Error inicializando SDL2_mixer".to_string());
             }
-            
+
             let audio_result = Mix_OpenAudio(44100, 0x8010, 2, 1024);
             if audio_result != 0 {
                 Mix_Quit();
                 return Err("Error abriendo audio".to_string());
             }
-            
+
             Ok(AudioFFI { initialized: true })
         }
     }
@@ -202,7 +199,7 @@ impl AudioFFI {
         unsafe {
             let c_path = CString::new(path).map_err(|e| e.to_string())?;
             let chunk = Mix_LoadWAV(c_path.as_ptr());
-            
+
             if chunk.is_null() {
                 Err(format!("Error cargando sonido: {}", path))
             } else {
@@ -216,7 +213,7 @@ impl AudioFFI {
         unsafe {
             let c_path = CString::new(path).map_err(|e| e.to_string())?;
             let music = Mix_LoadMUS(c_path.as_ptr());
-            
+
             if music.is_null() {
                 Err(format!("Error cargando música: {}", path))
             } else {
@@ -294,7 +291,7 @@ impl FontFFI {
         unsafe {
             let c_path = CString::new(path).map_err(|e| e.to_string())?;
             let font = TTF_OpenFont(c_path.as_ptr(), size as c_int);
-            
+
             if font.is_null() {
                 Err(format!("Error cargando fuente: {}", path))
             } else {
@@ -320,7 +317,13 @@ impl FontFFI {
     }
 
     /// Renderizar texto (Blended - más lento, con alpha suave)
-    pub fn render_text_blended(&self, text: &str, r: u8, g: u8, b: u8) -> Result<*mut SDL_Surface, String> {
+    pub fn render_text_blended(
+        &self,
+        text: &str,
+        r: u8,
+        g: u8,
+        b: u8,
+    ) -> Result<*mut SDL_Surface, String> {
         unsafe {
             let c_text = CString::new(text).map_err(|e| e.to_string())?;
             let color = SDL_Color { r, g, b, a: 255 };

@@ -33,7 +33,7 @@ fn main() {
     let mut velocidad_y: f32 = 0.0;
     let jugador_ancho: i32 = 40;
     let jugador_alto: i32 = 40;
-    
+
     // Físicas
     let gravedad: f32 = 800.0;
     let fuerza_salto: f32 = -500.0;
@@ -42,12 +42,12 @@ fn main() {
 
     // Plataformas (x, y, ancho, alto)
     let plataformas: Vec<Rect> = vec![
-        Rect::new(0, 550, 800, 50),      // Suelo
-        Rect::new(200, 480, 150, 20),    // Plataforma 1
-        Rect::new(450, 420, 150, 20),    // Plataforma 2
-        Rect::new(150, 350, 150, 20),    // Plataforma 3
-        Rect::new(500, 300, 200, 20),    // Plataforma 4
-        Rect::new(300, 220, 100, 20),    // Plataforma 5
+        Rect::new(0, 550, 800, 50),   // Suelo
+        Rect::new(200, 480, 150, 20), // Plataforma 1
+        Rect::new(450, 420, 150, 20), // Plataforma 2
+        Rect::new(150, 350, 150, 20), // Plataforma 3
+        Rect::new(500, 300, 200, 20), // Plataforma 4
+        Rect::new(300, 220, 100, 20), // Plataforma 5
     ];
 
     let mut running = true;
@@ -61,36 +61,45 @@ fn main() {
     println!();
 
     'running: while running {
-        let dt: f32 = 0.016;  // 60 FPS
+        let dt: f32 = 0.016; // 60 FPS
 
         // Eventos
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit {..} |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::Quit { .. }
+                | Event::KeyDown {
+                    keycode: Some(Keycode::Escape),
+                    ..
+                } => {
                     running = false;
                     break 'running;
                 }
 
                 // Teclas mantenidas (movimiento continuo)
-                Event::KeyDown { keycode: Some(keycode), repeat: false, .. } |
-                Event::KeyDown { keycode: Some(keycode), repeat: true, .. } => {
-                    match keycode {
-                        Keycode::D | Keycode::Right => {
-                            jugador_x += velocidad_movimiento * dt;
-                        }
-                        Keycode::A | Keycode::Left => {
-                            jugador_x -= velocidad_movimiento * dt;
-                        }
-                        Keycode::W | Keycode::Up | Keycode::Space => {
-                            if en_suelo {
-                                velocidad_y = fuerza_salto;
-                                en_suelo = false;
-                            }
-                        }
-                        _ => {}
-                    }
+                Event::KeyDown {
+                    keycode: Some(keycode),
+                    repeat: false,
+                    ..
                 }
+                | Event::KeyDown {
+                    keycode: Some(keycode),
+                    repeat: true,
+                    ..
+                } => match keycode {
+                    Keycode::D | Keycode::Right => {
+                        jugador_x += velocidad_movimiento * dt;
+                    }
+                    Keycode::A | Keycode::Left => {
+                        jugador_x -= velocidad_movimiento * dt;
+                    }
+                    Keycode::W | Keycode::Up | Keycode::Space => {
+                        if en_suelo {
+                            velocidad_y = fuerza_salto;
+                            en_suelo = false;
+                        }
+                    }
+                    _ => {}
+                },
                 _ => {}
             }
         }
@@ -104,7 +113,7 @@ fn main() {
             jugador_x as i32,
             jugador_y as i32,
             jugador_ancho as u32,
-            jugador_alto as u32
+            jugador_alto as u32,
         );
 
         // Colisiones con plataformas
@@ -125,17 +134,21 @@ fn main() {
                 // Colisión lateral
                 else if jugador_rect.right() <= plataforma.x + 10 {
                     jugador_x = plataforma.x as f32 - jugador_ancho as f32;
-                }
-                else if jugador_rect.left() >= plataforma.right() - 10 {
+                } else if jugador_rect.left() >= plataforma.right() - 10 {
                     jugador_x = plataforma.right() as f32;
                 }
             }
         }
 
         // Límites de pantalla
-        if jugador_x < 0.0 { jugador_x = 0.0; }
-        if jugador_x > 760.0 { jugador_x = 760.0; }
-        if jugador_y > 600.0 {  // Cayó al vacío
+        if jugador_x < 0.0 {
+            jugador_x = 0.0;
+        }
+        if jugador_x > 760.0 {
+            jugador_x = 760.0;
+        }
+        if jugador_y > 600.0 {
+            // Cayó al vacío
             jugador_x = 100.0;
             jugador_y = jugador_y_inicial;
             velocidad_y = 0.0;
@@ -158,7 +171,14 @@ fn main() {
         // Ojos del jugador (dirección)
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         let ojo_offset = if jugador_x > 100.0 { 25 } else { 5 };
-        canvas.fill_rect(Rect::new(jugador_x as i32 + ojo_offset, jugador_y as i32 + 10, 4, 4)).unwrap();
+        canvas
+            .fill_rect(Rect::new(
+                jugador_x as i32 + ojo_offset,
+                jugador_y as i32 + 10,
+                4,
+                4,
+            ))
+            .unwrap();
 
         canvas.present();
     }

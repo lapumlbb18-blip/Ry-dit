@@ -187,7 +187,13 @@ impl Camera2D {
     // ========================================================================
 
     /// Convertir coordenadas del mundo a pantalla
-    pub fn world_to_screen(&self, world_x: f32, world_y: f32, screen_width: i32, screen_height: i32) -> (i32, i32) {
+    pub fn world_to_screen(
+        &self,
+        world_x: f32,
+        world_y: f32,
+        screen_width: i32,
+        screen_height: i32,
+    ) -> (i32, i32) {
         // Aplicar transformación inversa: traslación → rotación → escala
         let mut x = world_x - self.x;
         let mut y = world_y - self.y;
@@ -215,7 +221,13 @@ impl Camera2D {
     }
 
     /// Convertir coordenadas de pantalla a mundo
-    pub fn screen_to_world(&self, screen_x: i32, screen_y: i32, screen_width: i32, screen_height: i32) -> (f32, f32) {
+    pub fn screen_to_world(
+        &self,
+        screen_x: i32,
+        screen_y: i32,
+        screen_width: i32,
+        screen_height: i32,
+    ) -> (f32, f32) {
         // Aplicar transformación: escala → rotación → traslación
         let mut x = screen_x as f32 - screen_width as f32 / 2.0;
         let mut y = screen_y as f32 - screen_height as f32 / 2.0;
@@ -262,15 +274,21 @@ impl Camera2D {
     ///
     /// Retorna las coordenadas transformadas para usar con SDL2.
     /// Usar junto con world_to_screen para coordenadas correctas.
-    pub fn apply_sdl2(&self, world_x: f32, world_y: f32, screen_width: i32, screen_height: i32) -> (i32, i32) {
+    pub fn apply_sdl2(
+        &self,
+        world_x: f32,
+        world_y: f32,
+        screen_width: i32,
+        screen_height: i32,
+    ) -> (i32, i32) {
         // Aplicar zoom
         let zoomed_x = (world_x - self.x) * self.zoom;
         let zoomed_y = (world_y - self.y) * self.zoom;
-        
+
         // Centrar en pantalla
         let screen_x = (zoomed_x + screen_width as f32 / 2.0) as i32;
         let screen_y = (zoomed_y + screen_height as f32 / 2.0) as i32;
-        
+
         (screen_x, screen_y)
     }
 
@@ -278,12 +296,12 @@ impl Camera2D {
     pub fn get_transform_matrix(&self) -> [f32; 6] {
         // [scale_x, shear_x, rotate_x, scale_y, shear_y, translate_y]
         [
-            self.zoom,  // scale_x
-            0.0,        // shear_x
+            self.zoom,                  // scale_x
+            0.0,                        // shear_x
             self.rotation.to_radians(), // rotate
-            self.zoom,  // scale_y
-            0.0,        // shear_y
-            0.0,        // translate (se calcula en runtime)
+            self.zoom,                  // scale_y
+            0.0,                        // shear_y
+            0.0,                        // translate (se calcula en runtime)
         ]
     }
 
