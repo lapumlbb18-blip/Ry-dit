@@ -70,6 +70,9 @@ pub mod font_sdl2;
 // Módulo de FFI Nativo SDL2 v0.10.8 - Texturas, Audio, Fuentes (nativo)
 pub mod sdl2_ffi;
 
+// 🆕 UI Toolkit v0.11.0 - Botones, Labels, Paneles
+pub mod toolkit;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
