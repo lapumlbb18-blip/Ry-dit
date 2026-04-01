@@ -1345,6 +1345,57 @@ impl Assets {
     pub fn clear(&mut self) {
         self.textures.clear();
     }
+
+    // ==================== FUNCIONES SDL2 (ESTÁTICAS) ====================
+
+    /// Cargar textura SDL2 desde archivo (usando FFI nativo)
+    /// Retorna la textura que debe ser gestionada por el caller
+    /// Nota: El lifetime de la textura está ligado al texture_creator
+    pub fn load_texture_sdl2<'a>(
+        path: &str,
+        texture_creator: &'a sdl2::render::TextureCreator<sdl2::video::WindowContext>,
+    ) -> Result<sdl2::render::Texture<'a>, String> {
+        use crate::sdl2_ffi::TextureFFI;
+        use sdl2::surface::Surface;
+        use std::path::Path;
+
+        if !Path::new(path).exists() {
+            return Err(format!("Archivo '{}' no encontrado", path));
+        }
+
+        // Cargar superficie con SDL2_image FFI
+        let texture_ffi = TextureFFI::load(path)?;
+        let surface_ptr = texture_ffi.surface();
+
+        unsafe {
+            // Envolver raw pointer en Surface
+            let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
+            
+            // Crear textura desde superficie
+            let texture = texture_creator
+                .create_texture_from_surface(&sdl_surface)
+                .map_err(|e| format!("Error creando textura SDL2: {}", e))?;
+
+            Ok(texture)
+        }
+    }
+
+    /// Dibujar textura SDL2 directamente (sin gestor de assets)
+    pub fn draw_texture_sdl2(
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        texture: &sdl2::render::Texture,
+        x: i32,
+        y: i32,
+        width: u32,
+        height: u32,
+    ) -> Result<(), String> {
+        let rect = sdl2::rect::Rect::new(x, y, width, height);
+        canvas
+            .copy(texture, None, rect)
+            .map_err(|e| format!("Error dibujando textura SDL2: {}", e))?;
+
+        Ok(())
+    }
 }
 
 impl Default for Assets {

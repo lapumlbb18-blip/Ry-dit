@@ -7,13 +7,15 @@
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::video::{Window, GLProfile, GLContext};
-use sdl2::render::{Canvas};
+use sdl2::render::{Canvas, TextureCreator};
 use sdl2::image::InitFlag;
 use sdl2::rect::Rect;
 use sdl2::pixels::Color;
+use sdl2::surface::Surface;
 use std::collections::HashMap;
 
 use crate::input_sdl2::InputState;
+use crate::sdl2_ffi::{FontFFI, SDL_Color};
 
 // ============================================================================
 // SDL2 BACKEND
@@ -38,6 +40,10 @@ pub struct Sdl2Backend {
     pub title: String,
     /// Contexto OpenGL (para GPU Instancing)
     pub gl_context: Option<sdl2::video::GLContext>,
+    /// TextureCreator para texturas 2D
+    pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
+    /// Fuente SDL2_ttf (opcional)
+    pub font: Option<FontFFI>,
 }
 
 impl Sdl2Backend {
@@ -89,6 +95,21 @@ impl Sdl2Backend {
         // Obtener event pump
         let event_pump = context.event_pump().map_err(|e| e.to_string())?;
 
+        // Crear TextureCreator para texturas 2D
+        let texture_creator = canvas.texture_creator();
+
+        // Inicializar SDL2_ttf (opcional, sin font por defecto)
+        let font = match FontFFI::init() {
+            Ok(_) => {
+                println!("[SDL2-BACKEND]: SDL2_ttf inicializado");
+                None  // Font se carga bajo demanda
+            }
+            Err(e) => {
+                println!("[SDL2-BACKEND]: SDL2_ttf no disponible: {}", e);
+                None
+            }
+        };
+
         println!("[SDL2-BACKEND]: Ventana creada {}x{}", width, height);
         println!("[SDL2-BACKEND]: OpenGL contexto 3.3 Core");
         println!("[SDL2-BACKEND]: VSync activado");
@@ -104,6 +125,8 @@ impl Sdl2Backend {
             height,
             title: title.to_string(),
             gl_context: Some(gl_context),
+            texture_creator,
+            font,
         })
     }
 
@@ -189,12 +212,59 @@ impl Sdl2Backend {
         let _ = self.canvas.fill_rect(rect);  // Ignorar error
     }
 
-    /// Dibujar texto (básico, sin SDL2_ttf aún)
-    pub fn draw_text(&mut self, text: &str, x: i32, y: i32, size: u16, r: u8, g: u8, b: u8) {
-        // Placeholder: en producción usar SDL2_ttf
-        // Por ahora solo dibujamos un rect como placeholder
-        let width = text.len() as i32 * size as i32 / 2;
-        self.draw_rect(x, y, width, size as i32, r, g, b);
+    /// Cargar fuente SDL2_ttf
+    pub fn load_font(&mut self, path: &str, size: i32) -> Result<(), String> {
+        let font = FontFFI::load(path, size)?;
+        self.font = Some(font);
+        println!("[SDL2-BACKEND]: Fuente cargada: {} ({}px)", path, size);
+        Ok(())
+    }
+
+    /// Dibujar texto con SDL2_ttf
+    pub fn draw_text(&mut self, text: &str, x: i32, y: i32, _size: u16, r: u8, g: u8, b: u8) {
+        // Verificar que tenemos una fuente cargada
+        let font = match &self.font {
+            Some(f) => f,
+            None => {
+                // Fallback: dibujar rectángulo placeholder
+                let width = text.len() as i32 * 10;
+                self.draw_rect(x, y, width, 16, r, g, b);
+                return;
+            }
+        };
+
+        // Renderizar texto a superficie
+        let surface_ptr = match font.render_text(text, r, g, b) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("[SDL2-BACKEND]: Error renderizando texto: {}", e);
+                return;
+            }
+        };
+
+        unsafe {
+            // Crear wrapper Surface alrededor del raw pointer
+            // La superficie será liberada cuando el wrapper se dropee
+            let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
+            
+            // Crear textura desde superficie
+            let texture = match self.texture_creator.create_texture_from_surface(&sdl_surface) {
+                Ok(t) => t,
+                Err(e) => {
+                    eprintln!("[SDL2-BACKEND]: Error creando textura: {}", e);
+                    return;
+                }
+            };
+
+            // Obtener dimensiones
+            let (w, h) = sdl_surface.size();
+
+            // Dibujar textura
+            let rect = Rect::new(x, y, w, h);
+            self.canvas.copy(&texture, None, rect).unwrap();
+            
+            // sdl_surface se dropea aquí y libera la superficie automáticamente
+        }
     }
 
     /// Obtener FPS objetivo (vsync = 60)
