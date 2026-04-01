@@ -1,14 +1,5 @@
 // crates/rydit-rs/src/modules/entity.rs
 // Entity System - Sistema de Entidades para RyDit
-//
-// Tipos de entidades:
-// - player: Personaje principal controlado por input
-// - enemy: Enemigos con IA (patrol, chase)
-// - boss: Jefes con fases y ataques especiales
-// - trap: Trampas (spike, arrow, fire)
-// - coin: Monedas y items recolectables
-//
-// Decoración usa Assets Manager directamente (no entity::)
 
 use blast_core::{Executor, Valor};
 use lizer::{Expr, Stmt};
@@ -17,6 +8,10 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use crate::eval::evaluar_expr;
+
+// Importar SDL2 para render
+use sdl2::render::{Canvas, Texture};
+use rydit_gfx::camera::Camera2D;
 
 // ============================================================================
 // ENTITY STRUCT
@@ -110,6 +105,87 @@ impl Entity {
     /// Establecer un dato en el HashMap
     pub fn set_data(&mut self, key: &str, value: Valor) {
         self.data.insert(key.to_string(), value);
+    }
+
+    /// Renderizar entidad con SDL2 (sin cámara)
+    pub fn render_sdl2(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>
+    ) -> Result<(), String> {
+        // Si tiene sprite, dibujar textura
+        if !self.sprite_id.is_empty() {
+            if let Some(texture) = texture_manager.get(&self.sprite_id) {
+                let dst = sdl2::rect::Rect::new(
+                    self.x as i32,
+                    self.y as i32,
+                    self.width as u32,
+                    self.height as u32
+                );
+                canvas.copy(texture, None, dst)
+                    .map_err(|e| format!("Error renderizando entidad: {}", e))?;
+            }
+        } else {
+            // Sin sprite: dibujar rect de color (debug)
+            canvas.set_draw_color(sdl2::pixels::Color::RGBA(255, 0, 0, 255));
+            let rect = sdl2::rect::Rect::new(
+                self.x as i32,
+                self.y as i32,
+                self.width as u32,
+                self.height as u32
+            );
+            canvas.fill_rect(rect).ok();
+        }
+        
+        Ok(())
+    }
+
+    /// Renderizar entidad con SDL2 + Cámara
+    pub fn render_with_camera_sdl2(
+        &self,
+        canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
+        camera: &rydit_gfx::camera::Camera2D,
+        texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>,
+        screen_width: i32,
+        screen_height: i32
+    ) -> Result<(), String> {
+        // Transformar coordenadas con cámara
+        let (screen_x, screen_y) = camera.apply_sdl2(
+            self.x,
+            self.y,
+            screen_width,
+            screen_height
+        );
+        
+        // Ajustar al centro de la entidad
+        let entity_screen_x = screen_x - (self.width as i32 / 2);
+        let entity_screen_y = screen_y - (self.height as i32 / 2);
+        
+        // Si tiene sprite, dibujar textura
+        if !self.sprite_id.is_empty() {
+            if let Some(texture) = texture_manager.get(&self.sprite_id) {
+                let dst = sdl2::rect::Rect::new(
+                    entity_screen_x,
+                    entity_screen_y,
+                    self.width as u32,
+                    self.height as u32
+                );
+                canvas.copy(texture, None, dst)
+                    .map_err(|e| format!("Error renderizando entidad: {}", e))?;
+            }
+        } else {
+            // Sin sprite: dibujar rect de color (debug)
+            canvas.set_draw_color(sdl2::pixels::Color::RGBA(0, 255, 0, 255));
+            let rect = sdl2::rect::Rect::new(
+                entity_screen_x,
+                entity_screen_y,
+                self.width as u32,
+                self.height as u32
+            );
+            canvas.fill_rect(rect).ok();
+        }
+        
+        Ok(())
     }
 }
 
