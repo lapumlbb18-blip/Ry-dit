@@ -161,7 +161,7 @@ impl ConfigParser {
             }
             // Checkpoints
             else if linea.starts_with("checkpoint") {
-                let id = Self::extraer_id(linea)?;
+                let _id = Self::extraer_id(linea)?;
                 bloque_actual = "checkpoint".to_string();
                 // Leer x, y en las siguientes líneas
                 // (implementación simplificada)
