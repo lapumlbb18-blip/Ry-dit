@@ -16,6 +16,7 @@ use crate::modules::audio::{audio_play, audio_stop};
 use crate::modules::physics::{physics_apply_gravity};
 use crate::modules::input_map::{input_map_is_pressed, input_map_register};
 use crate::modules::entity::{entity_create, entity_get_position};
+use crate::modules::level::{level_load};
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier
 fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
