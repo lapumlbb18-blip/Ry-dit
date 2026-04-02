@@ -65,7 +65,7 @@ pub fn repl_mode() {
                 continue;
             }
             _ => {
-                let tokens = Lexer::new(input).scan();
+                let tokens = Lexer::new(input.as_str()).scan();
                 let mut parser = Parser::new(tokens);
 
                 let (program, errors) = parser.parse();

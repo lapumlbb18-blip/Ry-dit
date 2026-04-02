@@ -84,10 +84,10 @@ fn main() {
 // EJECUTOR DE STATEMENTS (pública para módulos)
 
 /// Ejecutar un statement (pública para módulos)
-pub fn ejecutar_stmt<'a>(
-    stmt: &Stmt<'a>,
+pub fn ejecutar_stmt(
+    stmt: &Stmt,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
 ) -> (Option<bool>, Option<Valor>) {
@@ -393,7 +393,7 @@ pub fn ejecutar_stmt<'a>(
             // Agregar al stack de imports en progreso
             importing_stack.push(module.to_string());
 
-            // Lexer + Parser (module_content vive mientras se usan tokens)
+            // Lexer + Parser (module_content vive mientras se usa)
             let tokens = Lexer::new(&module_content).scan();
             let mut parser = Parser::new(tokens);
 
@@ -407,7 +407,7 @@ pub fn ejecutar_stmt<'a>(
                 return (None, None);
             }
 
-            // Recolectar nombres de funciones originales antes de ejecutar
+            // Recolectar nombres de funciones originales
             let mut original_funcs: Vec<String> = Vec::new();
             for s in &program.statements {
                 if let Stmt::Function { name, .. } = s {
@@ -415,7 +415,7 @@ pub fn ejecutar_stmt<'a>(
                 }
             }
 
-            // Ejecutar módulo en scope global (module_content todavía vivo aquí)
+            // Ejecutar módulo (module_content vive hasta aquí)
             for s in &program.statements {
                 match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
                     (Some(true), _) => {
@@ -429,9 +429,9 @@ pub fn ejecutar_stmt<'a>(
                     _ => {}
                 }
             }
-            // module_content se destruye aquí, después de usar
+            // module_content se destruye aquí
 
-            // Remover del stack de imports en progreso
+            // Remover del stack de imports
             importing_stack.pop();
 
             // Marcar módulo como cargado
@@ -452,16 +452,12 @@ pub fn ejecutar_stmt<'a>(
                 }
             }
 
-            // DEUDA #3 FIX: Eliminar funciones originales SOLO si no hay alias
-            // Si el usuario usó "import math", eliminar "sumar" y dejar solo "math::sumar"
-            // Si el usuario usó "import math as m", dejar "math::sumar" y "m::sumar"
+            // Eliminar funciones originales SOLO si no hay alias
             if alias.is_none() {
-                // Sin alias: eliminar funciones originales
                 for orig_name in &original_funcs {
                     funcs.remove(orig_name);
                 }
             }
-            // Con alias: las funciones originales se mantienen como module::func
 
             // Registrar alias si existe
             if let Some(alias_name) = alias {
@@ -1250,10 +1246,10 @@ impl InputEstado {
 }
 
 /// Ejecutar statement en modo gráfico
-pub fn ejecutar_stmt_gfx<'a>(
-    stmt: &Stmt<'a>,
+pub fn ejecutar_stmt_gfx(
+    stmt: &Stmt,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
     queue: &mut RenderQueue,
     input: &mut InputEstado,
     loaded_modules: &mut HashSet<String>,
@@ -4235,10 +4231,10 @@ pub fn evaluar_expr_migui(
 /// 9. `textbox_states` - Estados de textboxes
 /// 10. `window_states` - Estados de ventanas
 #[allow(clippy::too_many_arguments)]
-pub fn ejecutar_stmt_migui<'a>(
-    stmt: &Stmt<'a>,
+pub fn ejecutar_stmt_migui(
+    stmt: &Stmt,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
     gui: &mut Migui,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
