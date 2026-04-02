@@ -4027,7 +4027,7 @@ pub fn evaluar_expr_migui(
             let func_name = if func_name.contains("::") {
                 func_name.split("::").last().unwrap_or("").to_string()
             } else {
-                func_name.clone()
+                func_name.to_string()
             };
 
             let func_data = funcs.get(func_name.as_str()).map(|(p, b)| (p.clone(), b.clone()));
