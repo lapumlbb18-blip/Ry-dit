@@ -213,40 +213,80 @@ impl<'a> Lexer<'a> {
                     }
                 }
                 '+' => {
-                    tokens.push(Token::new(
-                        TokenKind::Mas,
-                        "+",
-                        Span::new(start_pos, i + 1, start_line, start_col),
-                    ));
-                    i += 1;
-                    column += 1;
+                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                        tokens.push(Token::new(
+                            TokenKind::MasIgual,
+                            "+=",
+                            Span::new(start_pos, i + 2, start_line, start_col),
+                        ));
+                        i += 2;
+                        column += 2;
+                    } else {
+                        tokens.push(Token::new(
+                            TokenKind::Mas,
+                            "+",
+                            Span::new(start_pos, i + 1, start_line, start_col),
+                        ));
+                        i += 1;
+                        column += 1;
+                    }
                 }
                 '-' => {
-                    tokens.push(Token::new(
-                        TokenKind::Menos,
-                        "-",
-                        Span::new(start_pos, i + 1, start_line, start_col),
-                    ));
-                    i += 1;
-                    column += 1;
+                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                        tokens.push(Token::new(
+                            TokenKind::MenosIgual,
+                            "-=",
+                            Span::new(start_pos, i + 2, start_line, start_col),
+                        ));
+                        i += 2;
+                        column += 2;
+                    } else {
+                        tokens.push(Token::new(
+                            TokenKind::Menos,
+                            "-",
+                            Span::new(start_pos, i + 1, start_line, start_col),
+                        ));
+                        i += 1;
+                        column += 1;
+                    }
                 }
                 '*' => {
-                    tokens.push(Token::new(
-                        TokenKind::Por,
-                        "*",
-                        Span::new(start_pos, i + 1, start_line, start_col),
-                    ));
-                    i += 1;
-                    column += 1;
+                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                        tokens.push(Token::new(
+                            TokenKind::PorIgual,
+                            "*=",
+                            Span::new(start_pos, i + 2, start_line, start_col),
+                        ));
+                        i += 2;
+                        column += 2;
+                    } else {
+                        tokens.push(Token::new(
+                            TokenKind::Por,
+                            "*",
+                            Span::new(start_pos, i + 1, start_line, start_col),
+                        ));
+                        i += 1;
+                        column += 1;
+                    }
                 }
                 '/' => {
-                    tokens.push(Token::new(
-                        TokenKind::Div,
-                        "/",
-                        Span::new(start_pos, i + 1, start_line, start_col),
-                    ));
-                    i += 1;
-                    column += 1;
+                    if i + 1 < chars.len() && chars[i + 1] == '=' {
+                        tokens.push(Token::new(
+                            TokenKind::DivIgual,
+                            "/=",
+                            Span::new(start_pos, i + 2, start_line, start_col),
+                        ));
+                        i += 2;
+                        column += 2;
+                    } else {
+                        tokens.push(Token::new(
+                            TokenKind::Div,
+                            "/",
+                            Span::new(start_pos, i + 1, start_line, start_col),
+                        ));
+                        i += 1;
+                        column += 1;
+                    }
                 }
                 '>' => {
                     if i + 1 < chars.len() && chars[i + 1] == '=' {
@@ -442,6 +482,15 @@ mod tests {
     fn test_string() {
         let tokens = Lexer::new("\"hola mundo\"").scan();
         assert!(tokens.iter().any(|t| t.kind == TokenKind::Texto));
+    }
+
+    #[test]
+    fn test_operadores_compuestos() {
+        let tokens = Lexer::new("+= -= *= /=").scan();
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::MasIgual));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::MenosIgual));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::PorIgual));
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::DivIgual));
     }
 
     #[test]

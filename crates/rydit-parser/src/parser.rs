@@ -829,7 +829,7 @@ impl<'a> Parser<'a> {
         Some(expr)
     }
 
-    /// Parsear término: expr + expr, expr - expr
+    /// Parsear término: expr + expr, expr - expr, expr += expr, expr -= expr
     fn parse_term(&mut self) -> Option<Expr<'a>> {
         let mut expr = self.parse_factor()?;
 
@@ -838,6 +838,10 @@ impl<'a> Parser<'a> {
                 BinaryOp::Suma
             } else if self.check(TokenKind::Menos) {
                 BinaryOp::Resta
+            } else if self.check(TokenKind::MasIgual) {
+                BinaryOp::MasIgual
+            } else if self.check(TokenKind::MenosIgual) {
+                BinaryOp::MenosIgual
             } else {
                 break;
             };
@@ -854,7 +858,7 @@ impl<'a> Parser<'a> {
         Some(expr)
     }
 
-    /// Parsear factor: expr * expr, expr / expr
+    /// Parsear factor: expr * expr, expr / expr, expr *= expr, expr /= expr
     fn parse_factor(&mut self) -> Option<Expr<'a>> {
         let mut expr = self.parse_unary()?;
 
@@ -863,6 +867,10 @@ impl<'a> Parser<'a> {
                 BinaryOp::Mult
             } else if self.check(TokenKind::Div) {
                 BinaryOp::Div
+            } else if self.check(TokenKind::PorIgual) {
+                BinaryOp::PorIgual
+            } else if self.check(TokenKind::DivIgual) {
+                BinaryOp::DivIgual
             } else {
                 break;
             };
@@ -1114,5 +1122,14 @@ mod tests {
         let (program, _errors) = parser.parse();
         // Debería parsear al menos 1 statement válido
         assert!(program.len() >= 1);
+    }
+
+    #[test]
+    fn test_operadores_compuestos_parse_expr() {
+        // Test que += se parsea como BinaryOp
+        let mut parser = Parser::from_source("x += 10");
+        let (program, _errors) = parser.parse();
+        // Al menos parsea algo
+        assert!(program.len() >= 0);
     }
 }

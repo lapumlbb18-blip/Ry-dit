@@ -85,6 +85,10 @@ pub enum BinaryOp {
     Resta,    // -
     Mult,     // *
     Div,      // /
+    MasIgual, // +=
+    MenosIgual, // -=
+    PorIgual, // *=
+    DivIgual, // /=
     
     // Comparación
     Mayor,      // >
@@ -106,6 +110,10 @@ impl fmt::Display for BinaryOp {
             BinaryOp::Resta => "-",
             BinaryOp::Mult => "*",
             BinaryOp::Div => "/",
+            BinaryOp::MasIgual => "+=",
+            BinaryOp::MenosIgual => "-=",
+            BinaryOp::PorIgual => "*=",
+            BinaryOp::DivIgual => "/=",
             BinaryOp::Mayor => ">",
             BinaryOp::Menor => "<",
             BinaryOp::Igual => "==",

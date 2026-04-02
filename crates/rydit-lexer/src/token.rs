@@ -72,6 +72,10 @@ pub enum TokenKind {
     Menos,              // -
     Por,                // *
     Div,                // /
+    MasIgual,           // +=
+    MenosIgual,         // -=
+    PorIgual,           // *=
+    DivIgual,           // /=
 
     // Operadores de comparación
     Mayor,              // >
@@ -138,6 +142,10 @@ impl fmt::Display for TokenKind {
             TokenKind::Menos => "-",
             TokenKind::Por => "*",
             TokenKind::Div => "/",
+            TokenKind::MasIgual => "+=",
+            TokenKind::MenosIgual => "-=",
+            TokenKind::PorIgual => "*=",
+            TokenKind::DivIgual => "/=",
             TokenKind::Mayor => ">",
             TokenKind::Menor => "<",
             TokenKind::Igual => "=",
