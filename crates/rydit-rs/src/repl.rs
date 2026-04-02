@@ -65,7 +65,7 @@ pub fn repl_mode() {
                 continue;
             }
             _ => {
-                let tokens = Lizer::new(input).scan();
+                let tokens = Lexer::new(input).scan();
                 let mut parser = Parser::new(tokens);
 
                 match parser.parse() {

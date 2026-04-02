@@ -392,7 +392,7 @@ pub fn ejecutar_stmt(
             importing_stack.push(module.clone());
 
             // Lexer + Parser
-            let tokens = Lizer::new(&module_content).scan();
+            let tokens = Lexer::new(&module_content).scan();
             let mut parser = Parser::new(tokens);
 
             let program = match parser.parse() {
@@ -1830,7 +1830,7 @@ fn ejecutar_stmt_gfx(
                 importing_stack.push(module.clone());
 
                 // Lexer + Parser
-                let tokens = Lizer::new(&content).scan();
+                let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
 
                 let program = match parser.parse() {
@@ -4507,7 +4507,7 @@ pub fn ejecutar_stmt_migui(
             if let Ok(content) = std::fs::read_to_string(&module_path) {
                 importing_stack.push(module.clone());
 
-                let tokens = Lizer::new(&content).scan();
+                let tokens = Lexer::new(&content).scan();
                 let mut parser = Parser::new(tokens);
 
                 let program = match parser.parse() {
