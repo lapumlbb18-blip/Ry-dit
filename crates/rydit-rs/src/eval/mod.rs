@@ -1396,7 +1396,7 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::get() url debe ser texto".to_string()),
                 };
-                return match ureq::get(&url) {
+                return match ureq::get(&url).call() {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1420,7 +1420,7 @@ pub fn evaluar_expr<'a>(
                         )
                     }
                 };
-                return match ureq::post(&url, &data) {
+                return match ureq::post(&url).send_string(&data) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1442,7 +1442,7 @@ pub fn evaluar_expr<'a>(
                         return Valor::Error("http::put() data debe ser texto o número".to_string())
                     }
                 };
-                return match ureq::put(&url, &data) {
+                return match ureq::put(&url).send_string(&data) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
@@ -1456,73 +1456,69 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::delete() url debe ser texto".to_string()),
                 };
-                return match ureq::delete(&url) {
+                return match ureq::delete(&url).call() {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::connect(url) - Conectar a WebSocket
-            if func_name == "ws::connect" && args.len() == 1 {
-                use crate::eval::evaluar_expr;
-                let url_val = evaluar_expr(&args[0], executor, funcs);
-                let url = match url_val {
-                    Valor::Texto(s) => s,
-                    _ => return Valor::Error("ws::connect() url debe ser texto".to_string()),
-                };
-                return match rydit_stream::ws_connect(&url) {
-                    Ok(msg) => Valor::Texto(msg),
-                    Err(e) => Valor::Error(e),
-                };
-            }
-
+            // 🔮 TODO: WebSocket functions - Implementar con tungstenite directo
+            // if func_name == "ws::connect" && args.len() == 1 {
+            //     use crate::eval::evaluar_expr;
+            //     let url_val = evaluar_expr(&args[0], executor, funcs);
+            //     let url = match url_val {
+            //         Valor::Texto(s) => s,
+            //         _ => return Valor::Error("ws::connect() url debe ser texto".to_string()),
+            //     };
+            //     return match TODO_ws_connect(&url) {
+            //         Ok(msg) => Valor::Texto(msg),
+            //         Err(e) => Valor::Error(e),
+            //     };
+            // }
             // ws::disconnect() - Desconectar WebSocket
-            if func_name == "ws::disconnect" {
-                return match rydit_stream::ws_disconnect() {
-                    Ok(msg) => Valor::Texto(msg),
-                    Err(e) => Valor::Error(e),
-                };
-            }
-
+            // if func_name == "ws::disconnect" {
+            //     return match TODO_ws_disconnect() {
+            //         Ok(msg) => Valor::Texto(msg),
+            //         Err(e) => Valor::Error(e),
+            //     };
+            // }
             // ws::send(message) - Enviar mensaje
-            if func_name == "ws::send" && args.len() == 1 {
-                use crate::eval::evaluar_expr;
-                let msg_val = evaluar_expr(&args[0], executor, funcs);
-                let msg = match msg_val {
-                    Valor::Texto(s) => s,
-                    Valor::Num(n) => n.to_string(),
-                    _ => {
-                        return Valor::Error(
-                            "ws::send() message debe ser texto o número".to_string(),
-                        )
-                    }
-                };
-                return match rydit_stream::ws_send(&msg) {
-                    Ok(msg) => Valor::Texto(msg),
-                    Err(e) => Valor::Error(e),
-                };
-            }
-
+            // if func_name == "ws::send" && args.len() == 1 {
+            //     use crate::eval::evaluar_expr;
+            //     let msg_val = evaluar_expr(&args[0], executor, funcs);
+            //     let msg = match msg_val {
+            //         Valor::Texto(s) => s,
+            //         Valor::Num(n) => n.to_string(),
+            //         _ => {
+            //             return Valor::Error(
+            //                 "ws::send() message debe ser texto o número".to_string(),
+            //             )
+            //         }
+            //     };
+            //     return match TODO_ws_send(&msg) {
+            //         Ok(msg) => Valor::Texto(msg),
+            //         Err(e) => Valor::Error(e),
+            //     };
+            // }
             // ws::recv() - Recibir mensaje
-            if func_name == "ws::recv" {
-                return match rydit_stream::ws_recv() {
-                    Ok(msg) => Valor::Texto(msg),
-                    Err(e) => Valor::Error(e),
-                };
-            }
-
+            // if func_name == "ws::recv" {
+            //     return match TODO_ws_recv() {
+            //         Ok(msg) => Valor::Texto(msg),
+            //         Err(e) => Valor::Error(e),
+            //     };
+            // }
             // ws::is_connected() - Verificar conexión
-            if func_name == "ws::is_connected" {
-                return Valor::Bool(rydit_stream::ws_is_connected());
-            }
-
+            // if func_name == "ws::is_connected" {
+            //     return Valor::Bool(TODO_ws_is_connected());
+            // }
             // ws::get_url() - Obtener URL actual
-            if func_name == "ws::get_url" {
-                return match rydit_stream::ws_get_url() {
-                    Some(url) => Valor::Texto(url),
-                    None => Valor::Vacio,
-                };
-            }
+            // if func_name == "ws::get_url" {
+            //     return match TODO_ws_get_url() {
+            //         Some(url) => Valor::Texto(url),
+            //         None => Valor::Vacio,
+            //     };
+            // }
 
             // --- ASSETS MANAGER (v0.5.1) ---
             // assets::load(id, path) - Cargar textura
