@@ -84,10 +84,10 @@ fn main() {
 // EJECUTOR DE STATEMENTS (pública para módulos)
 
 /// Ejecutar un statement (pública para módulos)
-pub fn ejecutar_stmt(
-    stmt: &Stmt,
+pub fn ejecutar_stmt<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
 ) -> (Option<bool>, Option<Valor>) {
@@ -1246,10 +1246,10 @@ impl InputEstado {
 }
 
 /// Ejecutar statement en modo gráfico
-pub fn ejecutar_stmt_gfx(
-    stmt: &Stmt,
+pub fn ejecutar_stmt_gfx<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     queue: &mut RenderQueue,
     input: &mut InputEstado,
     loaded_modules: &mut HashSet<String>,
@@ -4231,10 +4231,10 @@ pub fn evaluar_expr_migui(
 /// 9. `textbox_states` - Estados de textboxes
 /// 10. `window_states` - Estados de ventanas
 #[allow(clippy::too_many_arguments)]
-pub fn ejecutar_stmt_migui(
-    stmt: &Stmt,
+pub fn ejecutar_stmt_migui<'stmt>(
+    stmt: &'stmt Stmt<'stmt>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
     gui: &mut Migui,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
