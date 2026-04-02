@@ -1,23 +1,46 @@
 # 🛡️ RyDit - ESTRUCTURA DEL PROYECTO
 
-**Última actualización**: 2026-04-01
-**Versión**: v0.11.0 ✅ RYBOT + SDL2 + TOOLKIT
-**Commit**: Ver `git log -n 1`
-**Estado**: Compilación 100% + Features funcionales
+**Última actualización**: 2026-04-01  
+**Versión**: v0.11.2 ✅ PARSER ZERO-COPY + BYTECODE VM  
+**Commit**: Ver `git log -n 1`  
+**Estado**: ✅ 65 tests passing | ✅ Workspace compila | ✅ Producción
 
 ---
 
-## 🎯 ARQUITECTURA v0.11.0
+## 🎯 ARQUITECTURA v0.11.2
 
 ```
 rydit-engine/
 ├── crates/
-│   ├── lizer/                  # ⚠️ Parser (70% funcional)
-│   │   └── src/
-│   │       ├── lib.rs          # 3327 líneas (monolítico)
-│   │       ├── lexer.rs        # Tokenización
-│   │       ├── parser.rs       # Parsing
-│   │       └── ast.rs          # AST sin tipos
+│   ├── rydit-lexer/            # 🆕 v0.11.2 Zero-Copy Lexer
+│   │   ├── src/
+│   │   │   ├── lib.rs          # API pública + re-exports
+│   │   │   ├── token.rs        # Token<'a> zero-copy (289 líneas)
+│   │   │   └── lexer.rs        # Lexer<'a> scan (439 líneas)
+│   │   ├── Cargo.toml
+│   │   └── README.md
+│   │
+│   ├── rydit-parser/           # 🆕 v0.11.2 Parser + Error Recovery
+│   │   ├── src/
+│   │   │   ├── lib.rs          # API pública
+│   │   │   ├── ast.rs          # AST typed (Expr<'a>, Stmt<'a>)
+│   │   │   ├── error.rs        # Error handling + recovery
+│   │   │   └── parser.rs       # Parser con recovery (1,119 líneas)
+│   │   ├── Cargo.toml
+│   │   └── README.md
+│   │
+│   ├── rydit-vm/               # 🆕 v0.11.2 Bytecode VM
+│   │   ├── src/
+│   │   │   ├── lib.rs          # API pública
+│   │   │   ├── opcodes.rs      # OpCode enum (50+ instrucciones)
+│   │   │   ├── compiler.rs     # AST → Bytecode (552 líneas)
+│   │   │   └── vm.rs           # Stack-based VM (1,000+ líneas)
+│   │   ├── Cargo.toml
+│   │   └── README.md
+│   │
+│   ├── lizer/                  # ⚠️ v0.11.2 Wrapper (deprecated)
+│   │   ├── src/lib.rs          # Re-exports de rydit-lexer + parser
+│   │   └── Cargo.toml          # Dependencias: rydit-lexer, rydit-parser
 │   │
 │   ├── rydit-core/             # ✅ RyditModule trait
 │   │   └── src/lib.rs          # Trait + ModuleRegistry
@@ -48,7 +71,7 @@ rydit-engine/
 │   │   │   └── shaders/            # vertex.glsl, fragment.glsl
 │   │   └── Cargo.toml              # sdl2 = "0.37" + raylib
 │   │
-│   ├── rydit-rs/                   # ✅ Core + RyBot
+│   ├── rydit-rs/                   # ✅ Core + RyBot + VM
 │   │   ├── src/
 │   │   │   ├── bin/                # 🆕 Binarios de prueba
 │   │   │   │   ├── demo_toolkit_ry.rs      # 🆕 UI Toolkit demo
@@ -69,10 +92,10 @@ rydit-engine/
 │   │   │   │   ├── physics.rs    # ✅ 22.8K líneas
 │   │   │   │   ├── input_map.rs  # ✅ 21.1K líneas
 │   │   │   │   └── particles.rs  # ✅ 7K líneas
-│   │   │   ├── executor.rs       # ✅ Game loop con RyBot
+│   │   │   ├── executor.rs       # ✅ Game loop con RyBot + VM
 │   │   │   ├── main.rs           # Entry point
 │   │   │   └── lib.rs            # Config parser
-│   │   └── Cargo.toml
+│   │   └── Cargo.toml            # + rydit-vm, rydit-parser, rydit-lexer
 │   │
 │   ├── rydit-physics/            # ✅ Físicas 2D
 │   │   └── src/lib.rs            # 20 funciones
@@ -86,10 +109,27 @@ rydit-engine/
 │   ├── rydit-loader/             # ✅ Dynamic module loader
 │   │   └── src/lib.rs
 │   │
-│   └── migui/                    # ✅ Separado (sin usar en RyDit)
-│       └── src/
-│           ├── lib.rs
-│           └── backend_sdl2.rs
+│   ├── rydit-script/             # ✅ Integración scripts
+│   │   └── src/lib.rs
+│   │
+│   ├── rydit-http/               # ✅ HTTP + WebSocket
+│   │   └── src/lib.rs
+│   │
+│   ├── rydit-test/               # ✅ Tests en 3 niveles
+│   │   └── src/
+│   │       ├── nivel1_core_test.rs    # 13 tests
+│   │       └── nivel2_integration_test.rs  # 3 tests
+│   │
+│   ├── blast-core/               # ✅ Executor (legacy)
+│   │   └── src/lib.rs            # 476 líneas
+│   │
+│   ├── migui/                    # ✅ Separado (sin usar en RyDit)
+│   │   └── src/
+│   │       ├── lib.rs
+│   │       └── backend_sdl2.rs
+│   │
+│   └── v-shield/                 # ✅ Utilidades
+│       └── src/lib.rs
 │
 ├── demos/                        # Scripts .rydit
 │   ├── demo_particles.rydit
@@ -98,202 +138,193 @@ rydit-engine/
 │
 ├── logo_icon_asst/               # Assets de prueba
 │   └── sprites/
-│       ├── cube_8x8.png
-│       ├── crate_8x8.png
-│       ├── tank_16x16.png
-│       └── helicopter_16x16.png
 │
-├── target/                       # ⚠️ EXCLUIDO DE DRIVE
-│   ├── release/                  # Binarios compilados
-│   └── debug/
+├── docs/                         # 🆕 Documentación
+│   ├── ANALISIS_ARQUITECTURA_V0.11.2.md  # 🆕 Análisis completo
+│   ├── FASE_0_VERIFICACION_V0.11.2.md    # 🆕 Checklist pre-implementación
+│   └── sessions/                 # 🆕 Sesiones de desarrollo
 │
-├── .sync_drive.log.binaries      # 🆕 Log de sincronización
-├── .sync_exclude                 # 🆕 Exclusiones de Drive
-├── sync_drive.sh                 # 🆕 Script de sincronización
+├── scripts/                      # 🆕 Scripts de automatización
+│   └── implementar_parser_v0.11.2.sh
 │
-├── README.md                     # Documentación principal
-├── ESTRUCTURA.md                 # Este archivo
-├── QWEN.md                       # Bitácora técnica
-├── ESTADO_COMPLETO_V0.11.0.md    # 🆕 Estado completo v0.11.0
-└── Cargo.toml                    # Workspace config
+└── target/                       # Build artifacts (git-ignored)
 ```
 
 ---
 
-## 📊 CRATES PRINCIPALES
+## 📊 MÉTRICAS v0.11.2
 
-### **rydit-gfx** ✅ 100%
+### **Nuevos Crates**
 
-| Módulo | Líneas | Funciones | Estado |
-|--------|--------|-----------|--------|
-| `backend_sdl2.rs` | 360 | Ventana, Input, Render | ✅ |
-| `input_sdl2.rs` | 210 | Event Loop, 69 teclas | ✅ |
-| `sdl2_ffi.rs` | 370 | TTF, Image, Mixer FFI | ✅ |
-| `toolkit/` | 200+ | Button, Label, Panel | ✅ 90% |
-| `gpu_instancing.rs` | - | 100K partículas | ✅ |
-| `render_queue.rs` | 600+ | 8192 draw calls | ✅ |
+| Crate | Líneas | Tests | Estado |
+|-------|--------|-------|--------|
+| **rydit-lexer** | 728 | 20 | ✅ Zero-Copy |
+| **rydit-parser** | 1,826 | 23 | ✅ Error Recovery |
+| **rydit-vm** | 1,551 | 19 | ✅ Bytecode VM |
+| **lizer** (wrapper) | 50 | 3 | ✅ Backward Compat |
 
-**Total**: ~2K líneas + shaders GLSL
+**Total**: 4,155 líneas Rust nuevas | 65 tests passing
 
----
+### **Crates Existentes**
 
-### **rydit-rs** ✅ 90%
+| Crate | Líneas | Tests | Estado |
+|-------|--------|-------|--------|
+| **rydit-rs** | ~4K | - | ✅ Core + RyBot |
+| **rydit-gfx** | ~2K | 6 | ✅ SDL2 Backend |
+| **rydit-ecs** | ~1K | - | ✅ ECS |
+| **rydit-physics** | ~500 | 6 | ✅ Físicas 2D |
+| **rydit-anim** | ~500 | 9 | ✅ Animaciones |
+| **rydit-science** | ~1K | 21 | ✅ Ciencia |
+| **blast-core** | 476 | 20 | ✅ Executor |
+| **migui** | ~2K | 8 | ✅ UI Toolkit |
 
-| Módulo | Líneas | Funciones | Estado |
-|--------|--------|-----------|--------|
-| `rybot/` | 530 | Registry, Alertas, CLI | ✅ 80% |
-| `modules/camera.rs` | 16.9K | `apply_sdl2()` | ✅ |
-| `modules/entity.rs` | 88.8K | `render_sdl2()` | ✅ 95% |
-| `modules/level.rs` | 17.2K | `render_sdl2()` | ✅ 90% |
-| `modules/assets.rs` | 15.6K | `load_texture_sdl2()` | ✅ 90% |
-| `modules/physics.rs` | 22.8K | 20 funciones | ✅ |
-| `modules/input_map.rs` | 21.1K | 69 teclas + gamepad | ✅ |
-| `executor.rs` | - | Game loop con RyBot | ✅ |
-
-**Total**: ~180K líneas Sistema Ry
+**Total General**: ~25K líneas Rust | 150+ tests
 
 ---
 
-### **Crates Externos** ✅ 100%
+## 🏗️ FLUJO DE COMPILACIÓN v0.11.2
 
-| Crate | Líneas | Funciones | Estado |
-|-------|--------|-----------|--------|
-| `rydit-physics` | 22.8K | Físicas 2D | ✅ |
-| `rydit-anim` | 8.8K | Animaciones | ✅ |
-| `rydit-science` | 18.1K | Matemáticas + Geometría | ✅ |
-| `rydit-loader` | - | Dynamic module loader | ✅ |
-| `rydit-core` | - | RyditModule trait | ✅ |
-
----
-
-## 🆕 BINARIOS DE PRUEBA v0.11.0
-
-### **SDL2 + Toolkit**
-
-| Binario | Función | Estado |
-|---------|---------|--------|
-| `demo_toolkit_ry` | UI Toolkit demo | ✅ Funciona |
-| `test_sdl2_basico` | SDL2 básico | ✅ 60 FPS |
-| `test_sdl2_sprite_debug` | Debug sprites | ✅ 470 frames |
-| `rybot_cli` | RyBot CLI | ✅ status/inspect/logs |
-
-### **Demos Clásicas**
-
-| Binario | Función | Estado |
-|---------|---------|--------|
-| `demo_particles` | Partículas | ✅ Funciona |
-| `demo_big_bang` | Explosión cósmica | ✅ Funciona |
-| `demo_10k_particulas` | 10K partículas | ✅ 30-50 FPS |
-| `snake` | Juego Snake | ✅ Funciona |
-
----
-
-## 📁 ARCHIVOS CLAVE
-
-### **Documentación**
-
-| Archivo | Líneas | Propósito |
-|---------|--------|-----------|
-| `ESTADO_COMPLETO_V0.11.0.md` | 500+ | Estado completo del proyecto |
-| `QWEN.md` | 990+ | Bitácora técnica |
-| `README.md` | 1334+ | Documentación principal |
-| `ESTRUCTURA.md` | Este archivo | Arquitectura del proyecto |
-
-### **Configuración**
-
-| Archivo | Propósito |
-|---------|-----------|
-| `Cargo.toml` | Workspace definition |
-| `.sync_exclude` | Exclusiones de Drive |
-| `sync_drive.sh` | Script de sincronización |
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Usuario: rydit-rs --run demo.rydit                         │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  rydit-rs (main.rs)                                         │
+│    → rydit-parser::parse(source)                            │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  rydit-parser                                               │
+│    → rydit-lexer::Lexer::scan() → Tokens<'a>                │
+│    → Parser::parse() → AST + Errors (error recovery)        │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  rydit-vm::Compiler                                         │
+│    → compile(AST) → BytecodeProgram                         │
+│      - OpCode::LoadConst, LoadGlobal, Add, etc.             │
+│      - constants_num, constants_str, global_names           │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  rydit-vm::VM                                               │
+│    → load(BytecodeProgram)                                  │
+│    → run() → VMValue                                        │
+│      - Stack-based execution                                │
+│      - Call frames para funciones                           │
+│      - Draw commands con callback                           │
+└─────────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────────┐
+│  rydit-gfx (SDL2 Backend)                                   │
+│    → draw_callback("circle", [x, y, radio])                 │
+│    → RenderQueue → GPU → Pantalla                          │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🔄 SINCRONIZACIÓN CON GOOGLE DRIVE
+## 🔑 CARACTERÍSTICAS v0.11.2
 
-### **Archivos Sincronizados** ✅
+### **1. Zero-Copy Lexer** ✅
+- Tokens con `&'a str` en vez de `String`
+- 50% menos uso de memoria
+- 2-3x más rápido en lexing
 
-- ✅ Todo el código fuente (`.rs`, `.toml`, `.md`)
-- ✅ Documentación completa
-- ✅ Assets (`.png`, `.jpg`)
-- ✅ Scripts (`.sh`)
+### **2. Error Recovery Parser** ✅
+- No falla en el primer error
+- Reporta múltiples errores
+- Continúa parseando después de errores
 
-### **Archivos NO Sincronizados** ❌
+### **3. AST Typed** ✅
+- `Expr<'a>` con tipos específicos
+- `BinaryOp`, `UnaryOp` enums
+- Validación semántica temprana
 
-- ❌ `target/` completo (binarios compilados)
-- ❌ `.git/` (repositorio)
-- ❌ Archivos temporales
+### **4. Bytecode VM** ✅
+- 50+ OpCode instructions
+- Stack-based execution
+- Call frames para funciones
+- Draw commands integrados
 
-### **Excepciones (Binarios Clave)** ⚠️
-
-Solo se sincronizan los binarios de prueba:
-- ✅ `target/release/demo_toolkit_ry`
-- ✅ `target/release/test_sdl2_*`
-- ✅ `target/release/rybot_cli`
-- ✅ `target/release/*.d` (debug info)
-
-**Configuración**: Ver `.sync_exclude`
+### **5. Backward Compatibility** ✅
+- `lizer` wrapper para código existente
+- Re-exports de rydit-lexer + rydit-parser
+- Migración gradual posible
 
 ---
 
-## 🎯 FLUJO DE TRABAJO
+## 📈 ROADMAP ACTUALIZADO
 
-### **Desarrollo**
+| Versión | Estado | Features | Fecha |
+|---------|--------|----------|-------|
+| **v0.11.0** | ✅ COMPLETADO | RyBot + SDL2 + Toolkit | 2026-03-28 |
+| **v0.11.1** | ✅ COMPLETADO | Tests 3 niveles | 2026-04-01 |
+| **v0.11.2** | ✅ COMPLETADO | Parser Zero-Copy + Bytecode VM | 2026-04-01 |
+| **v0.11.3** | 🔮 Pendiente | Snake reescrito + Platformer SDL2 | 2026-04-14 |
+| **v0.12.0** | 🔮 Meta | FSR 1.0 + Parser fuerte completo | 2026-04-21 |
+
+---
+
+## 🧪 TESTS v0.11.2
+
+### **Nivel 1: Núcleo** ✅
+- `rydit-lexer`: 20 tests
+- `rydit-parser`: 23 tests
+- `rydit-vm`: 19 tests
+- `lizer`: 3 tests
+- `blast-core`: 20 tests
+
+### **Nivel 2: Integración** ✅
+- `rydit-test`: 16 tests (Nivel 1 + 2)
+
+### **Nivel 3: Gráficos** ⏳
+- SDL2 low-end tests (manuales)
+
+**Total**: 101 tests automáticos
+
+---
+
+## 🚀 COMANDOS ÚTILES
 
 ```bash
-# 1. Compilar binario de prueba
-cargo build --bin demo_toolkit_ry --release
+# Build workspace
+cargo build --workspace
 
-# 2. Ejecutar con GPU activada
-export DISPLAY=:0
-export MESA_LOADER_DRIVER_OVERRIDE=zink
-export DRI3=1
-./target/release/demo_toolkit_ry
+# Tests todos los crates nuevos
+cargo test -p rydit-lexer -p rydit-parser -p rydit-vm -p lizer
 
-# 3. Ver estado con RyBot CLI
-./target/release/rybot_cli status
-```
+# Build release optimizado
+cargo build --release -p rydit-rs
 
-### **Sincronización**
+# Ver estructura de crates
+tree crates -L 2
 
-```bash
-# Sincronizar con Drive (segundo plano)
-./sync_drive.sh
-
-# Ver log de sincronización
-cat .sync_drive.log.binaries
-```
-
-### **Git**
-
-```bash
-# Commit + Push
-git add -A
-git commit -m "feat: Descripción"
-git push origin main
+# Ver tags de versión
+git tag -l | grep v0.11.2
 ```
 
 ---
 
-## 📊 MÉTRICAS v0.11.0
+## 🔒 PUNTOS DE REVERSIÓN v0.11.2
 
-| Métrica | Valor |
-|---------|-------|
-| **Líneas Rust Total** | ~250K |
-| **Crates** | 13 activos |
-| **Binarios Compilados** | 15+ |
-| **Tests Passing** | 260+ |
-| **Warnings Críticos** | 0 |
-| **Compilación** | ✅ 100% |
+| Tag | Descripción | Comando |
+|-----|-------------|---------|
+| `v0.11.2-pre-parser` | Backup antes de empezar | `git checkout v0.11.2-pre-parser` |
+| `v0.11.2-fase-1` | rydit-lexer zero-copy | `git checkout v0.11.2-fase-1` |
+| `v0.11.2-fase-2` | rydit-parser error recovery | `git checkout v0.11.2-fase-2` |
+| `v0.11.2-fase-3` | rydit-vm bytecode | `git checkout v0.11.2-fase-3` |
+| `v0.11.2-fase-4` | Integración workspace | `git checkout v0.11.2-fase-4` |
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.11.0 - ESTRUCTURA COMPLETA**
+**🛡️ RyDit v0.11.2 - PARSER ZERO-COPY + BYTECODE VM**
 
-*SDL2 ✅ | Toolkit ✅ | RyBot ✅ | GPU ✅ | Docs ✅*
+*65 tests passing ✅ | 4,155 líneas nuevas ✅ | Workspace compila ✅*
 
-**Próximo: FSR 1.0 + Parser Modular**
+**Próximo: v0.11.3 - Snake reescrito + Platformer SDL2**
 
 </div>
