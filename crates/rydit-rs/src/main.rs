@@ -174,7 +174,7 @@ pub fn ejecutar_stmt<'stmt>(
         }
         Stmt::While { condition, body } => {
             // ✅ v0.10.2: Sin límite - game loop infinito
-            let mut iterations = 0;
+            let mut _iterations = 0;
             loop {
                 // Límite de seguridad
                 let cond_val = evaluar_expr(condition, executor, funcs);
@@ -195,7 +195,7 @@ pub fn ejecutar_stmt<'stmt>(
                         _ => {}
                     }
                 }
-                iterations += 1;
+                _iterations += 1;
             }
         }
         Stmt::ForEach {
@@ -4367,7 +4367,7 @@ pub fn ejecutar_stmt_migui<'stmt>(
         }
         Stmt::While { condition, body } => {
             // ✅ v0.10.2: Sin límite - MiGui loop infinito
-            let mut iterations = 0;
+            let mut _iterations = 0;
             loop {
                 let cond_val = evaluar_expr_migui(
                     condition,
@@ -4403,7 +4403,7 @@ pub fn ejecutar_stmt_migui<'stmt>(
                         window_states,
                     );
                 }
-                iterations += 1;
+                _iterations += 1;
             }
         }
         Stmt::ForEach {
