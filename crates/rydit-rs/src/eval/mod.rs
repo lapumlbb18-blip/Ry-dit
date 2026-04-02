@@ -54,7 +54,7 @@ pub fn evaluar_expr<'a>(
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
             // Input especial
-            if name == "__INPUT__" {
+            if func_name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
@@ -90,16 +90,23 @@ pub fn evaluar_expr<'a>(
                 Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
-        Expr::Call { name, args } => {
+        Expr::Call { callee, args } => {
             // Llamada a función builtin: tecla_presionada("tecla")
-            if name == "tecla_presionada" && args.len() == 1 {
+            // callee puede ser Expr::Var("nombre") o expresión compleja
+            let func_name = if let Expr::Var(name) = callee.as_ref() {
+                *name
+            } else {
+                return Valor::Error("Call requiere función válida".to_string());
+            };
+            
+            if func_name == "tecla_presionada" && args.len() == 1 {
                 // Función especial para input - retorna 0 por defecto (no presionada)
                 // El valor real se obtiene del contexto gráfico
                 return Valor::Num(0.0);
             }
 
             // Funciones aritméticas builtin
-            if name == "sumar" && args.len() >= 2 {
+            if func_name == "sumar" && args.len() >= 2 {
                 let mut suma = 0.0;
                 for arg in args {
                     if let Valor::Num(n) = evaluar_expr(arg, executor, funcs) {
@@ -111,7 +118,7 @@ pub fn evaluar_expr<'a>(
                 return Valor::Num(suma);
             }
 
-            if name == "restar" && args.len() == 2 {
+            if func_name == "restar" && args.len() == 2 {
                 let a = evaluar_expr(&args[0], executor, funcs);
                 let b = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Num(a), Valor::Num(b)) = (a, b) {
@@ -121,7 +128,7 @@ pub fn evaluar_expr<'a>(
                 }
             }
 
-            if name == "multiplicar" && args.len() >= 2 {
+            if func_name == "multiplicar" && args.len() >= 2 {
                 let mut producto = 1.0;
                 for arg in args {
                     if let Valor::Num(n) = evaluar_expr(arg, executor, funcs) {
@@ -133,7 +140,7 @@ pub fn evaluar_expr<'a>(
                 return Valor::Num(producto);
             }
 
-            if name == "dividir" && args.len() == 2 {
+            if func_name == "dividir" && args.len() == 2 {
                 let a = evaluar_expr(&args[0], executor, funcs);
                 let b = evaluar_expr(&args[1], executor, funcs);
                 if let (Valor::Num(a), Valor::Num(b)) = (a, b) {
@@ -225,7 +232,7 @@ pub fn evaluar_expr<'a>(
             // ================================================================
 
             // sin(x) - Alias de math::sin(x)
-            if name == "sin" && args.len() == 1 {
+            if func_name == "sin" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
                     return Valor::Num(x.sin());
                 } else {
@@ -234,7 +241,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // cos(x) - Alias de math::cos(x)
-            if name == "cos" && args.len() == 1 {
+            if func_name == "cos" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
                     return Valor::Num(x.cos());
                 } else {
@@ -243,7 +250,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // tan(x) - Alias de math::tan(x)
-            if name == "tan" && args.len() == 1 {
+            if func_name == "tan" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
                     return Valor::Num(x.tan());
                 } else {
@@ -252,7 +259,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // sqrt(x) - Alias de math::sqrt(x)
-            if name == "sqrt" && args.len() == 1 {
+            if func_name == "sqrt" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
                     if x >= 0.0 {
                         return Valor::Num(x.sqrt());
@@ -962,21 +969,21 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // --- EASING FUNCTIONS (Slow In & Slow Out - Principio #6) ---
-            if name == "anim::ease_in" && args.len() == 1 {
+            if func_name == "anim::ease_in" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
                     let t = t.clamp(0.0, 1.0);
                     return Valor::Num(t * t);
                 }
                 return Valor::Error("anim::ease_in() requiere número (0.0-1.0)".to_string());
             }
-            if name == "anim::ease_out" && args.len() == 1 {
+            if func_name == "anim::ease_out" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
                     let t = t.clamp(0.0, 1.0);
                     return Valor::Num(t * (2.0 - t));
                 }
                 return Valor::Error("anim::ease_out() requiere número (0.0-1.0)".to_string());
             }
-            if name == "anim::ease_in_out" && args.len() == 1 {
+            if func_name == "anim::ease_in_out" && args.len() == 1 {
                 if let Valor::Num(t) = evaluar_expr(&args[0], executor, funcs) {
                     let t = t.clamp(0.0, 1.0);
                     return Valor::Num(if t < 0.5 {
@@ -989,14 +996,14 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- SQUASH & STRETCH (Principio #1) ---
-            if name == "anim::squash" && args.len() == 1 {
+            if func_name == "anim::squash" && args.len() == 1 {
                 if let Valor::Num(factor) = evaluar_expr(&args[0], executor, funcs) {
                     let factor = factor.clamp(0.5, 2.0);
                     return Valor::Array(vec![Valor::Num(factor), Valor::Num(1.0 / factor)]);
                 }
                 return Valor::Error("anim::squash() requiere número (0.5-2.0)".to_string());
             }
-            if name == "anim::stretch" && args.len() == 1 {
+            if func_name == "anim::stretch" && args.len() == 1 {
                 if let Valor::Num(factor) = evaluar_expr(&args[0], executor, funcs) {
                     let factor = factor.clamp(0.5, 2.0);
                     return Valor::Array(vec![Valor::Num(1.0 / factor), Valor::Num(factor)]);
@@ -1005,7 +1012,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- ANTICIPATION (Principio #2) ---
-            if name == "anim::anticipate" && args.len() == 3 {
+            if func_name == "anim::anticipate" && args.len() == 3 {
                 let pos = evaluar_expr(&args[0], executor, funcs);
                 let target = evaluar_expr(&args[1], executor, funcs);
                 let amount = evaluar_expr(&args[2], executor, funcs);
@@ -1019,7 +1026,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- ILUSIONES ÓPTICAS ---
-            if name == "illusion::muller_lyer" && args.len() == 4 {
+            if func_name == "illusion::muller_lyer" && args.len() == 4 {
                 let x = evaluar_expr(&args[0], executor, funcs);
                 let y = evaluar_expr(&args[1], executor, funcs);
                 let len = evaluar_expr(&args[2], executor, funcs);
@@ -1038,7 +1045,7 @@ pub fn evaluar_expr<'a>(
                     "illusion::muller_lyer() requiere (x, y, length, arrow_in)".to_string(),
                 );
             }
-            if name == "illusion::ponzo" && args.len() == 4 {
+            if func_name == "illusion::ponzo" && args.len() == 4 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1048,7 +1055,7 @@ pub fn evaluar_expr<'a>(
                 }
                 return Valor::Error("illusion::ponzo() requiere 4 números".to_string());
             }
-            if name == "illusion::phi_effect" && args.len() == 6 {
+            if func_name == "illusion::phi_effect" && args.len() == 6 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1071,7 +1078,7 @@ pub fn evaluar_expr<'a>(
                 }
                 return Valor::Error("illusion::phi_effect() requiere 6 números".to_string());
             }
-            if name == "illusion::fraser_spiral" && args.len() == 5 {
+            if func_name == "illusion::fraser_spiral" && args.len() == 5 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1099,7 +1106,7 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // --- PROJECTILE MOTION ---
-            if name == "physics::projectile" && args.len() == 4 {
+            if func_name == "physics::projectile" && args.len() == 4 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1128,7 +1135,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- PROJECTILE AT TIME ---
-            if name == "physics::projectile_at" && args.len() == 5 {
+            if func_name == "physics::projectile_at" && args.len() == 5 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1156,7 +1163,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- N-BODY GRAVITY (2 cuerpos) ---
-            if name == "physics::nbody_2" && args.len() == 7 {
+            if func_name == "physics::nbody_2" && args.len() == 7 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1193,7 +1200,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- WAVE EQUATION (1D) ---
-            if name == "physics::wave_1d" && args.len() == 4 {
+            if func_name == "physics::wave_1d" && args.len() == 4 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1212,7 +1219,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- WAVE 2D CIRCULAR ---
-            if name == "physics::wave_2d" && args.len() == 5 {
+            if func_name == "physics::wave_2d" && args.len() == 5 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1236,7 +1243,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- PENDULUM ---
-            if name == "physics::pendulum" && args.len() == 3 {
+            if func_name == "physics::pendulum" && args.len() == 3 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -1262,7 +1269,7 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // --- CSV PARSE ---
-            if name == "csv::parse" && args.len() == 1 {
+            if func_name == "csv::parse" && args.len() == 1 {
                 if let Valor::Texto(csv_content) = evaluar_expr(&args[0], executor, funcs) {
                     let mut reader = csv::ReaderBuilder::new()
                         .has_headers(true)
@@ -1288,7 +1295,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- CSV PARSE NO HEADERS ---
-            if name == "csv::parse_no_headers" && args.len() == 1 {
+            if func_name == "csv::parse_no_headers" && args.len() == 1 {
                 if let Valor::Texto(csv_content) = evaluar_expr(&args[0], executor, funcs) {
                     let mut reader = csv::ReaderBuilder::new()
                         .has_headers(false)
@@ -1315,88 +1322,88 @@ pub fn evaluar_expr<'a>(
 
             // --- CSV MODULE (v0.8.6) ---
             // csv::read(path) - Leer CSV desde archivo
-            if name == "csv::read" && args.len() == 1 {
+            if func_name == "csv::read" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_read(args, executor, funcs);
             }
 
             // csv::write(data, path) - Escribir CSV a archivo
-            if name == "csv::write" && args.len() == 2 {
+            if func_name == "csv::write" && args.len() == 2 {
                 use crate::modules::csv;
                 return csv::csv_write(args, executor, funcs);
             }
 
             // csv::to_json(csv_text) - Convertir CSV a JSON
-            if name == "csv::to_json" && args.len() == 1 {
+            if func_name == "csv::to_json" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_to_json(args, executor, funcs);
             }
 
             // csv::from_json(json_text) - Convertir JSON a CSV
-            if name == "csv::from_json" && args.len() == 1 {
+            if func_name == "csv::from_json" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_from_json(args, executor, funcs);
             }
 
             // csv::filter(data, column, value) - Filtrar filas
-            if name == "csv::filter" && args.len() == 3 {
+            if func_name == "csv::filter" && args.len() == 3 {
                 use crate::modules::csv;
                 return csv::csv_filter(args, executor, funcs);
             }
 
             // csv::columns(data) - Obtener columnas
-            if name == "csv::columns" && args.len() == 1 {
+            if func_name == "csv::columns" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_columns(args, executor, funcs);
             }
 
             // csv::row_count(data) - Contar filas
-            if name == "csv::row_count" && args.len() == 1 {
+            if func_name == "csv::row_count" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_row_count(args, executor, funcs);
             }
 
             // csv::col_count(data) - Contar columnas
-            if name == "csv::col_count" && args.len() == 1 {
+            if func_name == "csv::col_count" && args.len() == 1 {
                 use crate::modules::csv;
                 return csv::csv_col_count(args, executor, funcs);
             }
 
             // csv::join(csv1, csv2, column) - Unir CSVs
-            if name == "csv::join" && args.len() == 3 {
+            if func_name == "csv::join" && args.len() == 3 {
                 use crate::modules::csv;
                 return csv::csv_join(args, executor, funcs);
             }
 
             // csv::group_by(data, column) - Agrupar datos
-            if name == "csv::group_by" && args.len() == 2 {
+            if func_name == "csv::group_by" && args.len() == 2 {
                 use crate::modules::csv;
                 return csv::csv_group_by(args, executor, funcs);
             }
 
             // csv::aggregate(data, column, operation) - Agregar datos
-            if name == "csv::aggregate" && args.len() == 3 {
+            if func_name == "csv::aggregate" && args.len() == 3 {
                 use crate::modules::csv;
                 return csv::csv_aggregate(args, executor, funcs);
             }
 
             // --- HTTP + WEBSOCKET (v0.8.7) ---
             // http::get(url) - GET request
-            if name == "http::get" && args.len() == 1 {
+            if func_name == "http::get" && args.len() == 1 {
                 use crate::eval::evaluar_expr;
                 let url_val = evaluar_expr(&args[0], executor, funcs);
                 let url = match url_val {
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::get() url debe ser texto".to_string()),
                 };
-                return match rydit_http::http_get(&url) {
+                return match rydit_stream::http_get(&url) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // http::post(url, data) - POST request
-            if name == "http::post" && args.len() == 2 {
+            if func_name == "http::post" && args.len() == 2 {
                 use crate::eval::evaluar_expr;
                 let url_val = evaluar_expr(&args[0], executor, funcs);
                 let data_val = evaluar_expr(&args[1], executor, funcs);
@@ -1413,14 +1420,14 @@ pub fn evaluar_expr<'a>(
                         )
                     }
                 };
-                return match rydit_http::http_post(&url, &data) {
+                return match rydit_stream::http_post(&url, &data) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // http::put(url, data) - PUT request
-            if name == "http::put" && args.len() == 2 {
+            if func_name == "http::put" && args.len() == 2 {
                 use crate::eval::evaluar_expr;
                 let url_val = evaluar_expr(&args[0], executor, funcs);
                 let data_val = evaluar_expr(&args[1], executor, funcs);
@@ -1435,50 +1442,50 @@ pub fn evaluar_expr<'a>(
                         return Valor::Error("http::put() data debe ser texto o número".to_string())
                     }
                 };
-                return match rydit_http::http_put(&url, &data) {
+                return match rydit_stream::http_put(&url, &data) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // http::delete(url) - DELETE request
-            if name == "http::delete" && args.len() == 1 {
+            if func_name == "http::delete" && args.len() == 1 {
                 use crate::eval::evaluar_expr;
                 let url_val = evaluar_expr(&args[0], executor, funcs);
                 let url = match url_val {
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::delete() url debe ser texto".to_string()),
                 };
-                return match rydit_http::http_delete(&url) {
+                return match rydit_stream::http_delete(&url) {
                     Ok(response) => Valor::Texto(response),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::connect(url) - Conectar a WebSocket
-            if name == "ws::connect" && args.len() == 1 {
+            if func_name == "ws::connect" && args.len() == 1 {
                 use crate::eval::evaluar_expr;
                 let url_val = evaluar_expr(&args[0], executor, funcs);
                 let url = match url_val {
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("ws::connect() url debe ser texto".to_string()),
                 };
-                return match rydit_http::ws_connect(&url) {
+                return match rydit_stream::ws_connect(&url) {
                     Ok(msg) => Valor::Texto(msg),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::disconnect() - Desconectar WebSocket
-            if name == "ws::disconnect" {
-                return match rydit_http::ws_disconnect() {
+            if func_name == "ws::disconnect" {
+                return match rydit_stream::ws_disconnect() {
                     Ok(msg) => Valor::Texto(msg),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::send(message) - Enviar mensaje
-            if name == "ws::send" && args.len() == 1 {
+            if func_name == "ws::send" && args.len() == 1 {
                 use crate::eval::evaluar_expr;
                 let msg_val = evaluar_expr(&args[0], executor, funcs);
                 let msg = match msg_val {
@@ -1490,28 +1497,28 @@ pub fn evaluar_expr<'a>(
                         )
                     }
                 };
-                return match rydit_http::ws_send(&msg) {
+                return match rydit_stream::ws_send(&msg) {
                     Ok(msg) => Valor::Texto(msg),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::recv() - Recibir mensaje
-            if name == "ws::recv" {
-                return match rydit_http::ws_recv() {
+            if func_name == "ws::recv" {
+                return match rydit_stream::ws_recv() {
                     Ok(msg) => Valor::Texto(msg),
                     Err(e) => Valor::Error(e),
                 };
             }
 
             // ws::is_connected() - Verificar conexión
-            if name == "ws::is_connected" {
-                return Valor::Bool(rydit_http::ws_is_connected());
+            if func_name == "ws::is_connected" {
+                return Valor::Bool(rydit_stream::ws_is_connected());
             }
 
             // ws::get_url() - Obtener URL actual
-            if name == "ws::get_url" {
-                return match rydit_http::ws_get_url() {
+            if func_name == "ws::get_url" {
+                return match rydit_stream::ws_get_url() {
                     Some(url) => Valor::Texto(url),
                     None => Valor::Vacio,
                 };
@@ -1519,7 +1526,7 @@ pub fn evaluar_expr<'a>(
 
             // --- ASSETS MANAGER (v0.5.1) ---
             // assets::load(id, path) - Cargar textura
-            if name == "assets::load" && args.len() == 2 {
+            if func_name == "assets::load" && args.len() == 2 {
                 use crate::modules::assets;
 
                 // Evaluar ID
@@ -1563,7 +1570,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::sprite(id, path) - Alias de load
-            if name == "assets::sprite" && args.len() == 2 {
+            if func_name == "assets::sprite" && args.len() == 2 {
                 use crate::modules::assets;
 
                 // Evaluar ID
@@ -1608,7 +1615,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::exists(id) - Verificar si existe textura
-            if name == "assets::exists" && args.len() == 1 {
+            if func_name == "assets::exists" && args.len() == 1 {
                 use crate::modules::assets;
 
                 let id_val = evaluar_expr(&args[0], executor, funcs);
@@ -1633,7 +1640,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::unload(id) - Descargar textura
-            if name == "assets::unload" && args.len() == 1 {
+            if func_name == "assets::unload" && args.len() == 1 {
                 use crate::modules::assets;
 
                 let id_val = evaluar_expr(&args[0], executor, funcs);
@@ -1659,7 +1666,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::count() - Cantidad de texturas cargadas
-            if name == "assets::count" {
+            if func_name == "assets::count" {
                 use crate::modules::assets;
 
                 let assets = assets::get_assets();
@@ -1668,43 +1675,43 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::set_position(id, x, y) - Actualizar posición
-            if name == "assets::set_position" && args.len() == 3 {
+            if func_name == "assets::set_position" && args.len() == 3 {
                 use crate::modules::assets;
                 return assets::assets_set_position(args, executor, funcs);
             }
 
             // assets::set_rotation(id, angle) - Rotar sprite
-            if name == "assets::set_rotation" && args.len() == 2 {
+            if func_name == "assets::set_rotation" && args.len() == 2 {
                 use crate::modules::assets;
                 return assets::assets_set_rotation(args, executor, funcs);
             }
 
             // assets::set_scale(id, scale_x, scale_y) - Escalar sprite
-            if name == "assets::set_scale" && args.len() == 3 {
+            if func_name == "assets::set_scale" && args.len() == 3 {
                 use crate::modules::assets;
                 return assets::assets_set_scale(args, executor, funcs);
             }
 
             // assets::set_color(id, color) - Cambiar color/tinte
-            if name == "assets::set_color" && args.len() == 2 {
+            if func_name == "assets::set_color" && args.len() == 2 {
                 use crate::modules::assets;
                 return assets::assets_set_color(args, executor, funcs);
             }
 
             // assets::set_flip(id, horizontal, vertical) - Flip
-            if name == "assets::set_flip" && args.len() == 3 {
+            if func_name == "assets::set_flip" && args.len() == 3 {
                 use crate::modules::assets;
                 return assets::assets_set_flip(args, executor, funcs);
             }
 
             // assets::set_origin(id, origin_x, origin_y) - Punto de origen
-            if name == "assets::set_origin" && args.len() == 3 {
+            if func_name == "assets::set_origin" && args.len() == 3 {
                 use crate::modules::assets;
                 return assets::assets_set_origin(args, executor, funcs);
             }
 
             // assets::draw(id, x, y) - Dibujar textura en posición (usando RenderQueue)
-            if name == "assets::draw" && args.len() >= 3 {
+            if func_name == "assets::draw" && args.len() >= 3 {
                 use crate::modules::assets;
                 use rydit_gfx::ColorRydit;
                 use std::str::FromStr;
@@ -1758,7 +1765,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // assets::draw_scaled(id, x, y, scale) - Dibujar textura escalada
-            if name == "assets::draw_scaled" && args.len() >= 4 {
+            if func_name == "assets::draw_scaled" && args.len() >= 4 {
                 use crate::modules::assets;
                 use rydit_gfx::ColorRydit;
                 use std::str::FromStr;
@@ -1841,79 +1848,79 @@ pub fn evaluar_expr<'a>(
 
             // --- AUDIO MANAGER (v0.5.1) ---
             // audio::beep(frecuencia, duracion) - Generar beep
-            if name == "audio::beep" && args.len() == 2 {
+            if func_name == "audio::beep" && args.len() == 2 {
                 use crate::modules::audio;
                 return audio::audio_beep(args, executor, funcs);
             }
 
             // audio::click() - Sonido de click UI
-            if name == "audio::click" && args.is_empty() {
+            if func_name == "audio::click" && args.is_empty() {
                 use crate::modules::audio;
                 return audio::audio_click(args, executor, funcs);
             }
 
             // audio::load(id, path) - Cargar sonido
-            if name == "audio::load" && args.len() == 2 {
+            if func_name == "audio::load" && args.len() == 2 {
                 use crate::modules::audio;
                 return audio::audio_load_sound(args, executor, funcs);
             }
 
             // audio::play(id) - Reproducir sonido
-            if name == "audio::play" && args.len() == 1 {
+            if func_name == "audio::play" && args.len() == 1 {
                 use crate::modules::audio;
                 return audio::audio_play(args, executor, funcs);
             }
 
             // audio::stop(id) - Detener sonido
-            if name == "audio::stop" && args.len() == 1 {
+            if func_name == "audio::stop" && args.len() == 1 {
                 use crate::modules::audio;
                 return audio::audio_stop(args, executor, funcs);
             }
 
             // audio::volume(id, level) - Configurar volumen
-            if name == "audio::volume" && args.len() == 2 {
+            if func_name == "audio::volume" && args.len() == 2 {
                 use crate::modules::audio;
                 return audio::audio_volume(args, executor, funcs);
             }
 
             // audio::load_music(path) - Cargar música
-            if name == "audio::load_music" && args.len() == 1 {
+            if func_name == "audio::load_music" && args.len() == 1 {
                 use crate::modules::audio;
                 return audio::audio_load_music(args, executor, funcs);
             }
 
             // audio::play_music() - Reproducir música
-            if name == "audio::play_music" {
+            if func_name == "audio::play_music" {
                 use crate::modules::audio;
                 return audio::audio_play_music(args, executor, funcs);
             }
 
             // audio::stop_music() - Detener música
-            if name == "audio::stop_music" {
+            if func_name == "audio::stop_music" {
                 use crate::modules::audio;
                 return audio::audio_stop_music(args, executor, funcs);
             }
 
             // audio::is_playing() - Verificar si hay música
-            if name == "audio::is_playing" {
+            if func_name == "audio::is_playing" {
                 use crate::modules::audio;
                 return audio::audio_is_playing(args, executor, funcs);
             }
 
             // audio::music_volume(level) - Volumen de música
-            if name == "audio::music_volume" && args.len() == 1 {
+            if func_name == "audio::music_volume" && args.len() == 1 {
                 use crate::modules::audio;
                 return audio::audio_music_volume(args, executor, funcs);
             }
 
             // audio::count() - Cantidad de sonidos cargados
-            if name == "audio::count" {
+            if func_name == "audio::count" {
                 use crate::modules::audio;
                 return audio::audio_count(args, executor, funcs);
             }
 
             // audio::list() - Listar sonidos cargados
-            if name == "audio::list" {
+            if func_name == "audio::list" {
                 use crate::modules::audio;
                 return audio::audio_list(args, executor, funcs);
             }
@@ -1923,103 +1930,103 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // camera::set_position(x, y) - Establecer posición
-            if name == "camera::set_position" && args.len() == 2 {
+            if func_name == "camera::set_position" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_set_position(args, executor, funcs);
             }
 
             // camera::get_position() - Obtener posición
-            if name == "camera::get_position" {
+            if func_name == "camera::get_position" {
                 use crate::modules::camera;
                 return camera::camera_get_position(args, executor, funcs);
             }
 
             // camera::set_zoom(level) - Establecer zoom
-            if name == "camera::set_zoom" && args.len() == 1 {
+            if func_name == "camera::set_zoom" && args.len() == 1 {
                 use crate::modules::camera;
                 return camera::camera_set_zoom(args, executor, funcs);
             }
 
             // camera::get_zoom() - Obtener zoom
-            if name == "camera::get_zoom" {
+            if func_name == "camera::get_zoom" {
                 use crate::modules::camera;
                 return camera::camera_get_zoom(args, executor, funcs);
             }
 
             // camera::set_rotation(angle) - Establecer rotación
-            if name == "camera::set_rotation" && args.len() == 1 {
+            if func_name == "camera::set_rotation" && args.len() == 1 {
                 use crate::modules::camera;
                 return camera::camera_set_rotation(args, executor, funcs);
             }
 
             // camera::get_rotation() - Obtener rotación
-            if name == "camera::get_rotation" {
+            if func_name == "camera::get_rotation" {
                 use crate::modules::camera;
                 return camera::camera_get_rotation(args, executor, funcs);
             }
 
             // camera::scroll(dx, dy) - Scroll relativo
-            if name == "camera::scroll" && args.len() == 2 {
+            if func_name == "camera::scroll" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_scroll(args, executor, funcs);
             }
 
             // camera::scroll_to(x, y) - Scroll absoluto
-            if name == "camera::scroll_to" && args.len() == 2 {
+            if func_name == "camera::scroll_to" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_scroll_to(args, executor, funcs);
             }
 
             // camera::set_bounds(min_x, min_y, max_x, max_y) - Límites
-            if name == "camera::set_bounds" && args.len() == 4 {
+            if func_name == "camera::set_bounds" && args.len() == 4 {
                 use crate::modules::camera;
                 return camera::camera_set_bounds(args, executor, funcs);
             }
 
             // camera::clear_bounds() - Limpiar límites
-            if name == "camera::clear_bounds" {
+            if func_name == "camera::clear_bounds" {
                 use crate::modules::camera;
                 return camera::camera_clear_bounds(args, executor, funcs);
             }
 
             // camera::follow(target_x, target_y) - Seguir objetivo
-            if name == "camera::follow" && args.len() == 2 {
+            if func_name == "camera::follow" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_follow(args, executor, funcs);
             }
 
             // camera::follow_smooth(target_x, target_y, smooth) - Seguir suave
-            if name == "camera::follow_smooth" && args.len() == 3 {
+            if func_name == "camera::follow_smooth" && args.len() == 3 {
                 use crate::modules::camera;
                 return camera::camera_follow_smooth(args, executor, funcs);
             }
 
             // camera::set_follow_offset(offset_x, offset_y) - Offset seguimiento
-            if name == "camera::set_follow_offset" && args.len() == 2 {
+            if func_name == "camera::set_follow_offset" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_set_follow_offset(args, executor, funcs);
             }
 
             // camera::world_to_screen(wx, wy) - Convertir mundo a pantalla
-            if name == "camera::world_to_screen" && args.len() == 2 {
+            if func_name == "camera::world_to_screen" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_world_to_screen(args, executor, funcs);
             }
 
             // camera::screen_to_world(sx, sy) - Convertir pantalla a mundo
-            if name == "camera::screen_to_world" && args.len() == 2 {
+            if func_name == "camera::screen_to_world" && args.len() == 2 {
                 use crate::modules::camera;
                 return camera::camera_screen_to_world(args, executor, funcs);
             }
 
             // camera::reset() - Resetear cámara
-            if name == "camera::reset" {
+            if func_name == "camera::reset" {
                 use crate::modules::camera;
                 return camera::camera_reset(args, executor, funcs);
             }
 
             // camera::apply_sdl2(x, y, screen_width, screen_height) - Aplicar cámara SDL2
-            if name == "camera::apply_sdl2" && args.len() == 4 {
+            if func_name == "camera::apply_sdl2" && args.len() == 4 {
                 return camera_apply_sdl2(args, executor, funcs);
             }
 
@@ -2028,73 +2035,73 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // level::load(ruta) - Cargar nivel
-            if name == "level::load" && args.len() == 1 {
+            if func_name == "level::load" && args.len() == 1 {
                 use crate::modules::level;
                 return level::level_load(args, executor, funcs);
             }
 
             // level::unload() - Descargar nivel
-            if name == "level::unload" {
+            if func_name == "level::unload" {
                 use crate::modules::level;
                 return level::level_unload(args, executor, funcs);
             }
 
             // level::transition(ruta) - Transición a otro nivel
-            if name == "level::transition" && args.len() == 1 {
+            if func_name == "level::transition" && args.len() == 1 {
                 use crate::modules::level;
                 return level::level_transition(args, executor, funcs);
             }
 
             // level::get_current() - Obtener nivel actual
-            if name == "level::get_current" {
+            if func_name == "level::get_current" {
                 use crate::modules::level;
                 return level::level_get_current(args, executor, funcs);
             }
 
             // level::reload() - Recargar nivel
-            if name == "level::reload" {
+            if func_name == "level::reload" {
                 use crate::modules::level;
                 return level::level_reload(args, executor, funcs);
             }
 
             // level::get_name() - Obtener nombre del nivel
-            if name == "level::get_name" {
+            if func_name == "level::get_name" {
                 use crate::modules::level;
                 return level::level_get_name(args, executor, funcs);
             }
 
             // level::set_checkpoint(nombre, x, y) - Establecer checkpoint
-            if name == "level::set_checkpoint" && args.len() == 3 {
+            if func_name == "level::set_checkpoint" && args.len() == 3 {
                 use crate::modules::level;
                 return level::level_set_checkpoint(args, executor, funcs);
             }
 
             // level::load_checkpoint(nombre) - Cargar checkpoint
-            if name == "level::load_checkpoint" && args.len() == 1 {
+            if func_name == "level::load_checkpoint" && args.len() == 1 {
                 use crate::modules::level;
                 return level::level_load_checkpoint(args, executor, funcs);
             }
 
             // level::get_checkpoint(nombre) - Obtener posición de checkpoint
-            if name == "level::get_checkpoint" && args.len() == 1 {
+            if func_name == "level::get_checkpoint" && args.len() == 1 {
                 use crate::modules::level;
                 return level::level_get_checkpoint(args, executor, funcs);
             }
 
             // level::list_checkpoints() - Listar checkpoints
-            if name == "level::list_checkpoints" {
+            if func_name == "level::list_checkpoints" {
                 use crate::modules::level;
                 return level::level_list_checkpoints(args, executor, funcs);
             }
 
             // level::transition_fade(duracion) - Transición fade
-            if name == "level::transition_fade" && args.len() == 1 {
+            if func_name == "level::transition_fade" && args.len() == 1 {
                 use crate::modules::level;
                 return level::level_transition_fade(args, executor, funcs);
             }
 
             // level::transition_slide(direccion, duracion) - Transición slide
-            if name == "level::transition_slide" && args.len() == 2 {
+            if func_name == "level::transition_slide" && args.len() == 2 {
                 use crate::modules::level;
                 return level::level_transition_slide(args, executor, funcs);
             }
@@ -2104,73 +2111,73 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // tilemap::load(ruta, tile_size) - Cargar tilemap
-            if name == "tilemap::load" && args.len() == 2 {
+            if func_name == "tilemap::load" && args.len() == 2 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_load(args, executor, funcs);
             }
 
             // tilemap::create(width, height, tile_size) - Crear tilemap vacío
-            if name == "tilemap::create" && args.len() == 3 {
+            if func_name == "tilemap::create" && args.len() == 3 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_create(args, executor, funcs);
             }
 
             // tilemap::set_tile(x, y, tile_id) - Colocar tile
-            if name == "tilemap::set_tile" && args.len() == 3 {
+            if func_name == "tilemap::set_tile" && args.len() == 3 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_set_tile(args, executor, funcs);
             }
 
             // tilemap::get_tile(x, y) - Obtener tile
-            if name == "tilemap::get_tile" && args.len() == 2 {
+            if func_name == "tilemap::get_tile" && args.len() == 2 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_get_tile(args, executor, funcs);
             }
 
             // tilemap::draw() - Dibujar tilemap
-            if name == "tilemap::draw" {
+            if func_name == "tilemap::draw" {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_draw(args, executor, funcs);
             }
 
             // tilemap::fill_rect(x, y, w, h, tile_id) - Llenar rectángulo
-            if name == "tilemap::fill_rect" && args.len() == 5 {
+            if func_name == "tilemap::fill_rect" && args.len() == 5 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_fill_rect(args, executor, funcs);
             }
 
             // tilemap::clear() - Limpiar tilemap
-            if name == "tilemap::clear" {
+            if func_name == "tilemap::clear" {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_clear(args, executor, funcs);
             }
 
             // tilemap::set_layer_count(count) - Establecer capas
-            if name == "tilemap::set_layer_count" && args.len() == 1 {
+            if func_name == "tilemap::set_layer_count" && args.len() == 1 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_set_layer_count(args, executor, funcs);
             }
 
             // tilemap::get_size() - Obtener tamaño
-            if name == "tilemap::get_size" {
+            if func_name == "tilemap::get_size" {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_get_size(args, executor, funcs);
             }
 
             // tilemap::set_tileset(ruta) - Cambiar tileset
-            if name == "tilemap::set_tileset" && args.len() == 1 {
+            if func_name == "tilemap::set_tileset" && args.len() == 1 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_set_tileset(args, executor, funcs);
             }
 
             // tilemap::set_offset(x, y) - Establecer offset
-            if name == "tilemap::set_offset" && args.len() == 2 {
+            if func_name == "tilemap::set_offset" && args.len() == 2 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_set_offset(args, executor, funcs);
             }
 
             // tilemap::set_visible(visible) - Establecer visibilidad
-            if name == "tilemap::set_visible" && args.len() == 1 {
+            if func_name == "tilemap::set_visible" && args.len() == 1 {
                 use crate::modules::tilemap;
                 return tilemap::tilemap_set_visible(args, executor, funcs);
             }
@@ -2180,85 +2187,85 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // collision::check_rect_rect(...) - Colisión rect vs rect
-            if name == "collision::check_rect_rect" && args.len() == 8 {
+            if func_name == "collision::check_rect_rect" && args.len() == 8 {
                 use crate::modules::collision;
                 return collision::collision_check_rect_rect(args, executor, funcs);
             }
 
             // collision::check_circle_circle(...) - Colisión circle vs circle
-            if name == "collision::check_circle_circle" && args.len() == 6 {
+            if func_name == "collision::check_circle_circle" && args.len() == 6 {
                 use crate::modules::collision;
                 return collision::collision_check_circle_circle(args, executor, funcs);
             }
 
             // collision::check_rect_circle(...) - Colisión rect vs circle
-            if name == "collision::check_rect_circle" && args.len() == 7 {
+            if func_name == "collision::check_rect_circle" && args.len() == 7 {
                 use crate::modules::collision;
                 return collision::collision_check_rect_circle(args, executor, funcs);
             }
 
             // collision::check_point_rect(...) - Punto vs rect
-            if name == "collision::check_point_rect" && args.len() == 6 {
+            if func_name == "collision::check_point_rect" && args.len() == 6 {
                 use crate::modules::collision;
                 return collision::collision_check_point_rect(args, executor, funcs);
             }
 
             // collision::check_point_circle(...) - Punto vs circle
-            if name == "collision::check_point_circle" && args.len() == 5 {
+            if func_name == "collision::check_point_circle" && args.len() == 5 {
                 use crate::modules::collision;
                 return collision::collision_check_point_circle(args, executor, funcs);
             }
 
             // collision::resolve(...) - Resolver colisión
-            if name == "collision::resolve" && args.len() == 8 {
+            if func_name == "collision::resolve" && args.len() == 8 {
                 use crate::modules::collision;
                 return collision::collision_resolve(args, executor, funcs);
             }
 
             // area2d::create(id, x, y, w, h) - Crear área 2D
-            if name == "area2d::create" && args.len() == 5 {
+            if func_name == "area2d::create" && args.len() == 5 {
                 use crate::modules::collision;
                 return collision::area2d_create(args, executor, funcs);
             }
 
             // area2d::set_position(id, x, y) - Mover área
-            if name == "area2d::set_position" && args.len() == 3 {
+            if func_name == "area2d::set_position" && args.len() == 3 {
                 use crate::modules::collision;
                 return collision::area2d_set_position(args, executor, funcs);
             }
 
             // area2d::get_position(id) - Obtener posición
-            if name == "area2d::get_position" && args.len() == 1 {
+            if func_name == "area2d::get_position" && args.len() == 1 {
                 use crate::modules::collision;
                 return collision::area2d_get_position(args, executor, funcs);
             }
 
             // area2d::check(id, other_id) - Verificar colisión
-            if name == "area2d::check" && args.len() == 2 {
+            if func_name == "area2d::check" && args.len() == 2 {
                 use crate::modules::collision;
                 return collision::area2d_check(args, executor, funcs);
             }
 
             // area2d::get_overlapping(id) - Obtener superpuestas
-            if name == "area2d::get_overlapping" && args.len() == 1 {
+            if func_name == "area2d::get_overlapping" && args.len() == 1 {
                 use crate::modules::collision;
                 return collision::area2d_get_overlapping(args, executor, funcs);
             }
 
             // area2d::set_active(id, active) - Activar/desactivar
-            if name == "area2d::set_active" && args.len() == 2 {
+            if func_name == "area2d::set_active" && args.len() == 2 {
                 use crate::modules::collision;
                 return collision::area2d_set_active(args, executor, funcs);
             }
 
             // area2d::destroy(id) - Eliminar área
-            if name == "area2d::destroy" && args.len() == 1 {
+            if func_name == "area2d::destroy" && args.len() == 1 {
                 use crate::modules::collision;
                 return collision::area2d_destroy(args, executor, funcs);
             }
 
             // area2d::count() - Contar áreas
-            if name == "area2d::count" {
+            if func_name == "area2d::count" {
                 use crate::modules::collision;
                 return collision::area2d_count(args, executor, funcs);
             }
@@ -2268,115 +2275,115 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // window::set_title(titulo) - Establecer título
-            if name == "window::set_title" && args.len() == 1 {
+            if func_name == "window::set_title" && args.len() == 1 {
                 use crate::modules::window;
                 return window::window_set_title(args, executor, funcs);
             }
 
             // window::get_title() - Obtener título
-            if name == "window::get_title" {
+            if func_name == "window::get_title" {
                 use crate::modules::window;
                 return window::window_get_title(args, executor, funcs);
             }
 
             // window::set_size(width, height) - Establecer tamaño
-            if name == "window::set_size" && args.len() == 2 {
+            if func_name == "window::set_size" && args.len() == 2 {
                 use crate::modules::window;
                 return window::window_set_size(args, executor, funcs);
             }
 
             // window::get_size() - Obtener tamaño
-            if name == "window::get_size" {
+            if func_name == "window::get_size" {
                 use crate::modules::window;
                 return window::window_get_size(args, executor, funcs);
             }
 
             // window::get_width() - Obtener ancho
-            if name == "window::get_width" {
+            if func_name == "window::get_width" {
                 use crate::modules::window;
                 return window::window_get_width(args, executor, funcs);
             }
 
             // window::get_height() - Obtener alto
-            if name == "window::get_height" {
+            if func_name == "window::get_height" {
                 use crate::modules::window;
                 return window::window_get_height(args, executor, funcs);
             }
 
             // window::set_fullscreen(enabled) - Establecer fullscreen
-            if name == "window::set_fullscreen" && args.len() == 1 {
+            if func_name == "window::set_fullscreen" && args.len() == 1 {
                 use crate::modules::window;
                 return window::window_set_fullscreen(args, executor, funcs);
             }
 
             // window::is_fullscreen() - Verificar fullscreen
-            if name == "window::is_fullscreen" {
+            if func_name == "window::is_fullscreen" {
                 use crate::modules::window;
                 return window::window_is_fullscreen(args, executor, funcs);
             }
 
             // window::toggle_fullscreen() - Alternar fullscreen
-            if name == "window::toggle_fullscreen" {
+            if func_name == "window::toggle_fullscreen" {
                 use crate::modules::window;
                 return window::window_toggle_fullscreen(args, executor, funcs);
             }
 
             // window::set_windowed() - Forzar modo ventana
-            if name == "window::set_windowed" {
+            if func_name == "window::set_windowed" {
                 use crate::modules::window;
                 return window::window_set_windowed(args, executor, funcs);
             }
 
             // window::set_vsync(enabled) - Establecer VSync
-            if name == "window::set_vsync" && args.len() == 1 {
+            if func_name == "window::set_vsync" && args.len() == 1 {
                 use crate::modules::window;
                 return window::window_set_vsync(args, executor, funcs);
             }
 
             // window::is_vsync_enabled() - Verificar VSync
-            if name == "window::is_vsync_enabled" {
+            if func_name == "window::is_vsync_enabled" {
                 use crate::modules::window;
                 return window::window_is_vsync_enabled(args, executor, funcs);
             }
 
             // window::set_resizable(enabled) - Establecer redimensionable
-            if name == "window::set_resizable" && args.len() == 1 {
+            if func_name == "window::set_resizable" && args.len() == 1 {
                 use crate::modules::window;
                 return window::window_set_resizable(args, executor, funcs);
             }
 
             // window::minimize() - Minimizar ventana
-            if name == "window::minimize" {
+            if func_name == "window::minimize" {
                 use crate::modules::window;
                 return window::window_minimize(args, executor, funcs);
             }
 
             // window::maximize() - Maximizar ventana
-            if name == "window::maximize" {
+            if func_name == "window::maximize" {
                 use crate::modules::window;
                 return window::window_maximize(args, executor, funcs);
             }
 
             // window::restore() - Restaurar ventana
-            if name == "window::restore" {
+            if func_name == "window::restore" {
                 use crate::modules::window;
                 return window::window_restore(args, executor, funcs);
             }
 
             // window::set_fps_limit(fps) - Establecer límite de FPS
-            if name == "window::set_fps_limit" && args.len() == 1 {
+            if func_name == "window::set_fps_limit" && args.len() == 1 {
                 use crate::modules::window;
                 return window::window_set_fps_limit(args, executor, funcs);
             }
 
             // window::get_fps() - Obtener FPS
-            if name == "window::get_fps" {
+            if func_name == "window::get_fps" {
                 use crate::modules::window;
                 return window::window_get_fps(args, executor, funcs);
             }
 
             // window::get_delta_time() - Obtener delta time
-            if name == "window::get_delta_time" {
+            if func_name == "window::get_delta_time" {
                 use crate::modules::window;
                 return window::window_get_delta_time(args, executor, funcs);
             }
@@ -2386,229 +2393,229 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // entity::create(type, x, y) - Crear entidad
-            if name == "entity::create" && args.len() == 3 {
+            if func_name == "entity::create" && args.len() == 3 {
                 use crate::modules::entity;
                 return entity::entity_create(args, executor, funcs);
             }
 
             // entity::destroy(id) - Destruir entidad
-            if name == "entity::destroy" && args.len() == 1 {
+            if func_name == "entity::destroy" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_destroy(args, executor, funcs);
             }
 
             // entity::get_by_type(type) - Obtener IDs por tipo
-            if name == "entity::get_by_type" && args.len() == 1 {
+            if func_name == "entity::get_by_type" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_get_by_type(args, executor, funcs);
             }
 
             // entity::count() - Contar entidades activas
-            if name == "entity::count" {
+            if func_name == "entity::count" {
                 use crate::modules::entity;
                 return entity::entity_count(args, executor, funcs);
             }
 
             // entity::count_by_type(type) - Contar por tipo
-            if name == "entity::count_by_type" && args.len() == 1 {
+            if func_name == "entity::count_by_type" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_count_by_type(args, executor, funcs);
             }
 
             // entity::get_all() - Obtener todas las entidades activas
-            if name == "entity::get_all" {
+            if func_name == "entity::get_all" {
                 use crate::modules::entity;
                 return entity::entity_get_all(args, executor, funcs);
             }
 
             // entity::set_position(id, x, y) - Establecer posición
-            if name == "entity::set_position" && args.len() == 3 {
+            if func_name == "entity::set_position" && args.len() == 3 {
                 use crate::modules::entity;
                 return entity::entity_set_position(args, executor, funcs);
             }
 
             // entity::get_position(id) - Obtener posición
-            if name == "entity::get_position" && args.len() == 1 {
+            if func_name == "entity::get_position" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_get_position(args, executor, funcs);
             }
 
             // entity::set_sprite(id, sprite_id) - Establecer sprite
-            if name == "entity::set_sprite" && args.len() == 2 {
+            if func_name == "entity::set_sprite" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::entity_set_sprite(args, executor, funcs);
             }
 
             // entity::set_collidable(id, collidable) - Establecer colisión
-            if name == "entity::set_collidable" && args.len() == 2 {
+            if func_name == "entity::set_collidable" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::entity_set_collidable(args, executor, funcs);
             }
 
             // entity::is_collidable(id) - Verificar colisión
-            if name == "entity::is_collidable" && args.len() == 1 {
+            if func_name == "entity::is_collidable" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_is_collidable(args, executor, funcs);
             }
 
             // entity::set_active(id, active) - Activar/desactivar
-            if name == "entity::set_active" && args.len() == 2 {
+            if func_name == "entity::set_active" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::entity_set_active(args, executor, funcs);
             }
 
             // entity::is_active(id) - Verificar si está activa
-            if name == "entity::is_active" && args.len() == 1 {
+            if func_name == "entity::is_active" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::entity_is_active(args, executor, funcs);
             }
 
             // player::set_speed(id, speed) - Velocidad
-            if name == "player::set_speed" && args.len() == 2 {
+            if func_name == "player::set_speed" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::player_set_speed(args, executor, funcs);
             }
 
             // player::get_speed(id) - Obtener velocidad
-            if name == "player::get_speed" && args.len() == 1 {
+            if func_name == "player::get_speed" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_get_speed(args, executor, funcs);
             }
 
             // player::move_left(id) - Mover izquierda
-            if name == "player::move_left" && args.len() == 1 {
+            if func_name == "player::move_left" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_move_left(args, executor, funcs);
             }
 
             // player::move_right(id) - Mover derecha
-            if name == "player::move_right" && args.len() == 1 {
+            if func_name == "player::move_right" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_move_right(args, executor, funcs);
             }
 
             // player::move_up(id) - Mover arriba
-            if name == "player::move_up" && args.len() == 1 {
+            if func_name == "player::move_up" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_move_up(args, executor, funcs);
             }
 
             // player::move_down(id) - Mover abajo
-            if name == "player::move_down" && args.len() == 1 {
+            if func_name == "player::move_down" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_move_down(args, executor, funcs);
             }
 
             // player::jump(id) - Saltar
-            if name == "player::jump" && args.len() == 1 {
+            if func_name == "player::jump" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_jump(args, executor, funcs);
             }
 
             // player::apply_gravity(id) - Aplicar gravedad
-            if name == "player::apply_gravity" && args.len() == 1 {
+            if func_name == "player::apply_gravity" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_apply_gravity(args, executor, funcs);
             }
 
             // player::get_state(id) - Obtener estado
-            if name == "player::get_state" && args.len() == 1 {
+            if func_name == "player::get_state" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_get_state(args, executor, funcs);
             }
 
             // player::is_grounded(id) - Verificar suelo
-            if name == "player::is_grounded" && args.len() == 1 {
+            if func_name == "player::is_grounded" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_is_grounded(args, executor, funcs);
             }
 
             // player::set_health(id, health) - Establecer vida
-            if name == "player::set_health" && args.len() == 2 {
+            if func_name == "player::set_health" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::player_set_health(args, executor, funcs);
             }
 
             // player::get_health(id) - Obtener vida
-            if name == "player::get_health" && args.len() == 1 {
+            if func_name == "player::get_health" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::player_get_health(args, executor, funcs);
             }
 
             // player::take_damage(id, amount) - Recibir daño
-            if name == "player::take_damage" && args.len() == 2 {
+            if func_name == "player::take_damage" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::player_take_damage(args, executor, funcs);
             }
 
             // enemy::set_ai_type(id, ai_type) - Tipo de IA
-            if name == "enemy::set_ai_type" && args.len() == 2 {
+            if func_name == "enemy::set_ai_type" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_ai_type(args, executor, funcs);
             }
 
             // enemy::set_patrol_points(id, points) - Puntos de patrulla
-            if name == "enemy::set_patrol_points" && args.len() == 2 {
+            if func_name == "enemy::set_patrol_points" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_patrol_points(args, executor, funcs);
             }
 
             // enemy::set_detection_range(id, range) - Rango de detección
-            if name == "enemy::set_detection_range" && args.len() == 2 {
+            if func_name == "enemy::set_detection_range" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_detection_range(args, executor, funcs);
             }
 
             // enemy::update_ai(id, player_id) - Actualizar IA
-            if name == "enemy::update_ai" && args.len() == 2 {
+            if func_name == "enemy::update_ai" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_update_ai(args, executor, funcs);
             }
 
             // enemy::is_alerted(id) - Verificar alerta
-            if name == "enemy::is_alerted" && args.len() == 1 {
+            if func_name == "enemy::is_alerted" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::enemy_is_alerted(args, executor, funcs);
             }
 
             // enemy::set_health(id, health) - Vida
-            if name == "enemy::set_health" && args.len() == 2 {
+            if func_name == "enemy::set_health" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_health(args, executor, funcs);
             }
 
             // enemy::set_damage(id, damage) - Daño
-            if name == "enemy::set_damage" && args.len() == 2 {
+            if func_name == "enemy::set_damage" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_damage(args, executor, funcs);
             }
 
             // enemy::set_reward(id, coins) - Recompensa
-            if name == "enemy::set_reward" && args.len() == 2 {
+            if func_name == "enemy::set_reward" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::enemy_set_reward(args, executor, funcs);
             }
 
             // boss::set_phases(id, phases) - Establecer fases
-            if name == "boss::set_phases" && args.len() == 2 {
+            if func_name == "boss::set_phases" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::boss_set_phases(args, executor, funcs);
             }
 
             // boss::get_current_phase(id) - Fase actual
-            if name == "boss::get_current_phase" && args.len() == 1 {
+            if func_name == "boss::get_current_phase" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::boss_get_current_phase(args, executor, funcs);
             }
 
             // boss::transition_to_phase(id, phase) - Transición de fase
-            if name == "boss::transition_to_phase" && args.len() == 2 {
+            if func_name == "boss::transition_to_phase" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::boss_transition_to_phase(args, executor, funcs);
             }
 
             // boss::set_arena_bounds(id, min_x, min_y, max_x, max_y) - Arena
-            if name == "boss::set_arena_bounds" && args.len() == 5 {
+            if func_name == "boss::set_arena_bounds" && args.len() == 5 {
                 use crate::modules::entity;
                 return entity::boss_set_arena_bounds(args, executor, funcs);
             }
@@ -2618,67 +2625,67 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // collision::check_rect_rect(...) - Colisión rectángulo
-            if name == "collision::check_rect_rect" && args.len() == 8 {
+            if func_name == "collision::check_rect_rect" && args.len() == 8 {
                 use crate::modules::entity;
                 return entity::collision_check_rect_rect(args, executor, funcs);
             }
 
             // collision::check_circle_circle(...) - Colisión círculo
-            if name == "collision::check_circle_circle" && args.len() == 6 {
+            if func_name == "collision::check_circle_circle" && args.len() == 6 {
                 use crate::modules::entity;
                 return entity::collision_check_circle_circle(args, executor, funcs);
             }
 
             // collision::check_rect_circle(...) - Colisión rect-círculo
-            if name == "collision::check_rect_circle" && args.len() == 7 {
+            if func_name == "collision::check_rect_circle" && args.len() == 7 {
                 use crate::modules::entity;
                 return entity::collision_check_rect_circle(args, executor, funcs);
             }
 
             // collision::check_point_rect(...) - Punto en rectángulo
-            if name == "collision::check_point_rect" && args.len() == 6 {
+            if func_name == "collision::check_point_rect" && args.len() == 6 {
                 use crate::modules::entity;
                 return entity::collision_check_point_rect(args, executor, funcs);
             }
 
             // collision::check(id1, id2) - Colisión entre entidades
-            if name == "collision::check" && args.len() == 2 {
+            if func_name == "collision::check" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::collision_check(args, executor, funcs);
             }
 
             // area2d::create(x, y, w, h) - Crear área 2D
-            if name == "area2d::create" && args.len() == 4 {
+            if func_name == "area2d::create" && args.len() == 4 {
                 use crate::modules::entity;
                 return entity::area2d_create(args, executor, funcs);
             }
 
             // area2d::set_position(id, x, y) - Mover área
-            if name == "area2d::set_position" && args.len() == 3 {
+            if func_name == "area2d::set_position" && args.len() == 3 {
                 use crate::modules::entity;
                 return entity::area2d_set_position(args, executor, funcs);
             }
 
             // area2d::get_position(id) - Obtener posición
-            if name == "area2d::get_position" && args.len() == 1 {
+            if func_name == "area2d::get_position" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::area2d_get_position(args, executor, funcs);
             }
 
             // area2d::check(id1, id2) - Verificar colisión
-            if name == "area2d::check" && args.len() == 2 {
+            if func_name == "area2d::check" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::area2d_check(args, executor, funcs);
             }
 
             // area2d::get_overlapping(id) - Obtener áreas superpuestas
-            if name == "area2d::get_overlapping" && args.len() == 1 {
+            if func_name == "area2d::get_overlapping" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::area2d_get_overlapping(args, executor, funcs);
             }
 
             // area2d::destroy(id) - Destruir área
-            if name == "area2d::destroy" && args.len() == 1 {
+            if func_name == "area2d::destroy" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::area2d_destroy(args, executor, funcs);
             }
@@ -2688,43 +2695,43 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // trap::set_type(id, type) - Tipo de trampa
-            if name == "trap::set_type" && args.len() == 2 {
+            if func_name == "trap::set_type" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::trap_set_type(args, executor, funcs);
             }
 
             // trap::set_damage(id, damage) - Daño
-            if name == "trap::set_damage" && args.len() == 2 {
+            if func_name == "trap::set_damage" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::trap_set_damage(args, executor, funcs);
             }
 
             // trap::set_trigger_range(id, range) - Rango
-            if name == "trap::set_trigger_range" && args.len() == 2 {
+            if func_name == "trap::set_trigger_range" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::trap_set_trigger_range(args, executor, funcs);
             }
 
             // trap::set_visible(id, visible) - Visible/invisible
-            if name == "trap::set_visible" && args.len() == 2 {
+            if func_name == "trap::set_visible" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::trap_set_visible(args, executor, funcs);
             }
 
             // trap::is_triggered(id) - Verificar activación
-            if name == "trap::is_triggered" && args.len() == 1 {
+            if func_name == "trap::is_triggered" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::trap_is_triggered(args, executor, funcs);
             }
 
             // trap::activate(id) - Activar
-            if name == "trap::activate" && args.len() == 1 {
+            if func_name == "trap::activate" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::trap_activate(args, executor, funcs);
             }
 
             // trap::reset(id) - Resetear
-            if name == "trap::reset" && args.len() == 1 {
+            if func_name == "trap::reset" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::trap_reset(args, executor, funcs);
             }
@@ -2734,80 +2741,80 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // coin::set_value(id, value) - Valor de moneda
-            if name == "coin::set_value" && args.len() == 2 {
+            if func_name == "coin::set_value" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::coin_set_value(args, executor, funcs);
             }
 
             // coin::set_type(id, type) - Tipo de moneda
-            if name == "coin::set_type" && args.len() == 2 {
+            if func_name == "coin::set_type" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::coin_set_type(args, executor, funcs);
             }
 
             // coin::get_value(id) - Obtener valor
-            if name == "coin::get_value" && args.len() == 1 {
+            if func_name == "coin::get_value" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::coin_get_value(args, executor, funcs);
             }
 
             // coin::collect(id, player_id) - Recolectar
-            if name == "coin::collect" && args.len() == 2 {
+            if func_name == "coin::collect" && args.len() == 2 {
                 use crate::modules::entity;
                 return entity::coin_collect(args, executor, funcs);
             }
 
             // coin::is_collected(id) - Verificar recolección
-            if name == "coin::is_collected" && args.len() == 1 {
+            if func_name == "coin::is_collected" && args.len() == 1 {
                 use crate::modules::entity;
                 return entity::coin_is_collected(args, executor, funcs);
             }
 
             // --- INPUT MAP (v0.5.1) ---
             // input_map::register(combo, action) - Registrar combinación
-            if name == "input_map::register" && args.len() == 2 {
+            if func_name == "input_map::register" && args.len() == 2 {
                 use crate::modules::input_map;
                 return input_map::input_map_register(args, executor, funcs);
             }
 
             // input_map::list() - Listar combinaciones
-            if name == "input_map::list" {
+            if func_name == "input_map::list" {
                 use crate::modules::input_map;
                 return input_map::input_map_list(args, executor, funcs);
             }
 
             // input_map::clear() - Limpiar combinaciones
-            if name == "input_map::clear" {
+            if func_name == "input_map::clear" {
                 use crate::modules::input_map;
                 return input_map::input_map_clear(args, executor, funcs);
             }
 
             // input_map::count() - Cantidad de combinaciones
-            if name == "input_map::count" {
+            if func_name == "input_map::count" {
                 use crate::modules::input_map;
                 return input_map::input_map_count(args, executor, funcs);
             }
 
             // input_map::press(key) - Registrar tecla presionada
-            if name == "input_map::press" && args.len() == 1 {
+            if func_name == "input_map::press" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::input_map_press(args, executor, funcs);
             }
 
             // input_map::release(key) - Registrar tecla soltada
-            if name == "input_map::release" && args.len() == 1 {
+            if func_name == "input_map::release" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::input_map_release(args, executor, funcs);
             }
 
             // input_map::is_pressed(action) - Verificar si acción está presionada
-            if name == "input_map::is_pressed" && args.len() == 1 {
+            if func_name == "input_map::is_pressed" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::input_map_is_pressed(args, executor, funcs);
             }
 
             // input_map::get_active() - Obtener acciones activas
-            if name == "input_map::get_active" {
+            if func_name == "input_map::get_active" {
                 use crate::modules::input_map;
                 return input_map::input_map_get_active(args, executor, funcs);
             }
@@ -2817,135 +2824,135 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // gamepad::is_connected() - Verificar gamepad
-            if name == "gamepad::is_connected" {
+            if func_name == "gamepad::is_connected" {
                 use crate::modules::input_map;
                 return input_map::gamepad_is_connected(args, executor, funcs);
             }
 
             // gamepad::press_button(button) - Presionar botón
-            if name == "gamepad::press_button" && args.len() == 1 {
+            if func_name == "gamepad::press_button" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::gamepad_press_button(args, executor, funcs);
             }
 
             // gamepad::release_button(button) - Soltar botón
-            if name == "gamepad::release_button" && args.len() == 1 {
+            if func_name == "gamepad::release_button" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::gamepad_release_button(args, executor, funcs);
             }
 
             // gamepad::is_pressed(button) - Verificar botón presionado
-            if name == "gamepad::is_pressed" && args.len() == 1 {
+            if func_name == "gamepad::is_pressed" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::gamepad_is_pressed(args, executor, funcs);
             }
 
             // gamepad::get_axis(stick) - Obtener eje analógico
-            if name == "gamepad::get_axis" && args.len() == 1 {
+            if func_name == "gamepad::get_axis" && args.len() == 1 {
                 use crate::modules::input_map;
                 return input_map::gamepad_get_axis(args, executor, funcs);
             }
 
             // --- INPUT IME (v0.9.2) ---
             // input::show_keyboard() - Mostrar teclado virtual
-            if name == "input::show_keyboard" {
+            if func_name == "input::show_keyboard" {
                 use crate::modules::input_ime;
                 return input_ime::input_show_keyboard(args, executor, funcs);
             }
 
             // input::hide_keyboard() - Ocultar teclado virtual
-            if name == "input::hide_keyboard" {
+            if func_name == "input::hide_keyboard" {
                 use crate::modules::input_ime;
                 return input_ime::input_hide_keyboard(args, executor, funcs);
             }
 
             // input::get_text() - Obtener texto ingresado
-            if name == "input::get_text" {
+            if func_name == "input::get_text" {
                 use crate::modules::input_ime;
                 return input_ime::input_get_text(args, executor, funcs);
             }
 
             // input::has_text() - Verificar si hay texto nuevo
-            if name == "input::has_text" {
+            if func_name == "input::has_text" {
                 use crate::modules::input_ime;
                 return input_ime::input_has_text(args, executor, funcs);
             }
 
             // input::clear_text() - Limpiar texto
-            if name == "input::clear_text" {
+            if func_name == "input::clear_text" {
                 use crate::modules::input_ime;
                 return input_ime::input_clear_text(args, executor, funcs);
             }
 
             // input::text(prompt) - Mostrar teclado y esperar input
-            if name == "input::text" {
+            if func_name == "input::text" {
                 use crate::modules::input_ime;
                 return input_ime::input_text(args, executor, funcs);
             }
 
             // input::is_keyboard_visible() - Verificar si teclado está visible
-            if name == "input::is_keyboard_visible" {
+            if func_name == "input::is_keyboard_visible" {
                 use crate::modules::input_ime;
                 return input_ime::input_is_keyboard_visible(args, executor, funcs);
             }
 
             // input::simulate_text(text) - Simular input (para demos)
-            if name == "input::simulate_text" {
+            if func_name == "input::simulate_text" {
                 use crate::modules::input_ime;
                 return input_ime::input_simulate_text(args, executor, funcs);
             }
 
             // --- PHYSICS (v0.9.3) ---
             // physics::create_body(id, x, y, w, h) - Crear cuerpo físico
-            if name == "physics::create_body" && args.len() == 5 {
+            if func_name == "physics::create_body" && args.len() == 5 {
                 use crate::modules::physics;
                 return physics::physics_create_body(args, executor, funcs);
             }
 
             // physics::update(dt) - Actualizar mundo físico
-            if name == "physics::update" {
+            if func_name == "physics::update" {
                 use crate::modules::physics;
                 return physics::physics_update(args, executor, funcs);
             }
 
             // physics::get_position(id) - Obtener posición
-            if name == "physics::get_position" && args.len() == 1 {
+            if func_name == "physics::get_position" && args.len() == 1 {
                 use crate::modules::physics;
                 return physics::physics_get_position(args, executor, funcs);
             }
 
             // physics::set_position(id, x, y) - Establecer posición
-            if name == "physics::set_position" && args.len() == 3 {
+            if func_name == "physics::set_position" && args.len() == 3 {
                 use crate::modules::physics;
                 return physics::physics_set_position(args, executor, funcs);
             }
 
             // physics::set_velocity(id, vx, vy) - Establecer velocidad
-            if name == "physics::set_velocity" && args.len() == 3 {
+            if func_name == "physics::set_velocity" && args.len() == 3 {
                 use crate::modules::physics;
                 return physics::physics_set_velocity(args, executor, funcs);
             }
 
             // physics::apply_gravity(id) - Aplicar gravedad
-            if name == "physics::apply_gravity" && args.len() == 1 {
+            if func_name == "physics::apply_gravity" && args.len() == 1 {
                 use crate::modules::physics;
                 return physics::physics_apply_gravity(args, executor, funcs);
             }
 
             // physics::set_bounds(x, y, w, h) - Establecer límites
-            if name == "physics::set_bounds" && args.len() == 4 {
+            if func_name == "physics::set_bounds" && args.len() == 4 {
                 use crate::modules::physics;
                 return physics::physics_set_bounds(args, executor, funcs);
             }
 
             // physics::check_collision(id_a, id_b) - Verificar colisión
-            if name == "physics::check_collision" && args.len() == 2 {
+            if func_name == "physics::check_collision" && args.len() == 2 {
                 use crate::modules::physics;
                 return physics::physics_check_collision(args, executor, funcs);
             }
 
             // --- STATISTICS: MEAN ---
-            if name == "stats::mean" && args.len() == 1 {
+            if func_name == "stats::mean" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("stats::mean() array vacío".to_string());
@@ -2967,7 +2974,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- STATISTICS: MEDIAN ---
-            if name == "stats::median" && args.len() == 1 {
+            if func_name == "stats::median" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("stats::median() array vacío".to_string());
@@ -2996,7 +3003,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- STATISTICS: STD DEV ---
-            if name == "stats::std_dev" && args.len() == 1 {
+            if func_name == "stats::std_dev" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("stats::std_dev() array vacío".to_string());
@@ -3023,7 +3030,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- STATISTICS: MIN ---
-            if name == "stats::min" && args.len() == 1 {
+            if func_name == "stats::min" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("stats::min() array vacío".to_string());
@@ -3047,7 +3054,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- STATISTICS: MAX ---
-            if name == "stats::max" && args.len() == 1 {
+            if func_name == "stats::max" && args.len() == 1 {
                 if let Valor::Array(arr) = evaluar_expr(&args[0], executor, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("stats::max() array vacío".to_string());
@@ -3071,7 +3078,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- PLOT: GENERATE ASCII CHART ---
-            if name == "plot::ascii_chart" && args.len() == 2 {
+            if func_name == "plot::ascii_chart" && args.len() == 2 {
                 if let (Valor::Array(data), Valor::Num(width)) = (
                     evaluar_expr(&args[0], executor, funcs),
                     evaluar_expr(&args[1], executor, funcs),
@@ -3115,7 +3122,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- PLOT: GENERATE SVG CHART (simple line chart) ---
-            if name == "plot::svg_chart" && args.len() == 3 {
+            if func_name == "plot::svg_chart" && args.len() == 3 {
                 if let (Valor::Array(data), Valor::Num(width), Valor::Num(height)) = (
                     evaluar_expr(&args[0], executor, funcs),
                     evaluar_expr(&args[1], executor, funcs),
@@ -3176,7 +3183,7 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // --- BEZIER LINEAL (2 puntos de control) ---
-            if name == "bezier::linear" && args.len() == 5 {
+            if func_name == "bezier::linear" && args.len() == 5 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -3195,7 +3202,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- BEZIER CUADRÁTICA (3 puntos de control) ---
-            if name == "bezier::quadratic" && args.len() == 7 {
+            if func_name == "bezier::quadratic" && args.len() == 7 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -3216,7 +3223,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- BEZIER CÚBICA (4 puntos de control) ---
-            if name == "bezier::cubic" && args.len() == 9 {
+            if func_name == "bezier::cubic" && args.len() == 9 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -3245,7 +3252,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- DERIVADA BEZIER CÚBICA (tangente) ---
-            if name == "bezier::cubic_derivative" && args.len() == 9 {
+            if func_name == "bezier::cubic_derivative" && args.len() == 9 {
                 let vals: Vec<Valor> = args
                     .iter()
                     .map(|a| evaluar_expr(a, executor, funcs))
@@ -3270,7 +3277,7 @@ pub fn evaluar_expr<'a>(
             }
 
             // --- GENERAR PUNTOS DE CURVA BEZIER ---
-            if name == "bezier::generate_points" && args.len() == 2 {
+            if func_name == "bezier::generate_points" && args.len() == 2 {
                 if let (Valor::Array(control_points), Valor::Num(steps)) = (
                     evaluar_expr(&args[0], executor, funcs),
                     evaluar_expr(&args[1], executor, funcs),
@@ -3319,74 +3326,74 @@ pub fn evaluar_expr<'a>(
             // ========================================================================
 
             // ASSETS::load(id, path) - Cargar textura
-            if name == "assets::load" || name == "assets::sprite" {
+            if func_name == "assets::load" || name == "assets::sprite" {
                 return assets_load(args, executor, funcs);
             }
 
             // ASSETS::draw(id, x, y) - Dibujar sprite
-            if name == "assets::draw" {
+            if func_name == "assets::draw" {
                 return assets_draw(args, executor, funcs);
             }
 
             // CAMERA::follow(entity_id) - Cámara sigue entidad
-            if name == "camera::follow" {
+            if func_name == "camera::follow" {
                 return camera_follow(args, executor, funcs);
             }
 
             // CAMERA::set_zoom(zoom) - Set zoom de cámara
-            if name == "camera::set_zoom" {
+            if func_name == "camera::set_zoom" {
                 return camera_set_zoom(args, executor, funcs);
             }
 
             // CAMERA::set_position(x, y) - Set posición de cámara
-            if name == "camera::set_position" {
+            if func_name == "camera::set_position" {
                 return camera_set_position(args, executor, funcs);
             }
 
             // AUDIO::play(sound_id) - Reproducir sonido
-            if name == "audio::play" {
+            if func_name == "audio::play" {
                 return audio_play(args, executor, funcs);
             }
 
             // AUDIO::stop(sound_id) - Detener sonido
-            if name == "audio::stop" {
+            if func_name == "audio::stop" {
                 return audio_stop(args, executor, funcs);
             }
 
             // AUDIO::set_volume(sound_id, volume) - Set volumen
             // ⚠️ Pendiente: implementar en audio.rs
-            // if name == "audio::set_volume" {
+            // if func_name == "audio::set_volume" {
             //     return audio_set_volume(args, executor, funcs);
             // }
 
             // PHYSICS::apply_gravity(entity_id) - Aplicar gravedad
-            if name == "physics::apply_gravity" {
+            if func_name == "physics::apply_gravity" {
                 return physics_apply_gravity(args, executor, funcs);
             }
 
             // PHYSICS::resolve_collision(entity_a, entity_b) - Resolver colisión
             // ⚠️ Pendiente: implementar en physics.rs
-            // if name == "physics::resolve_collision" {
+            // if func_name == "physics::resolve_collision" {
             //     return physics_resolve_collision(args, executor, funcs);
             // }
 
             // INPUT_MAP::bind(key, action) - Mapear tecla a acción
-            if name == "input_map::bind" || name == "input_map::register" {
+            if func_name == "input_map::bind" || name == "input_map::register" {
                 return input_map_register(args, executor, funcs);
             }
 
             // INPUT_MAP::is_pressed(action) - Verificar si acción está presionada
-            if name == "input_map::is_pressed" {
+            if func_name == "input_map::is_pressed" {
                 return input_map_is_pressed(args, executor, funcs);
             }
 
             // ENTITY::create(id, type, x, y) - Crear entidad
-            if name == "entity::create" {
+            if func_name == "entity::create" {
                 return entity_create(args, executor, funcs);
             }
 
             // ENTITY::get_position(id) - Obtener posición de entidad
-            if name == "entity::get_position" {
+            if func_name == "entity::get_position" {
                 return entity_get_position(args, executor, funcs);
             }
 

@@ -2203,9 +2203,16 @@ pub fn evaluar_expr_gfx(
                 Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
-        Expr::Call { name, args } => {
+        Expr::Call { callee, args } => {
+            // Extraer nombre de función
+            let func_name = if let Expr::Var(name) = callee.as_ref() {
+                *name
+            } else {
+                return Valor::Error("Call requiere función válida".to_string());
+            };
+            
             // tecla_presionada("tecla") - retorna 1.0 si presionada, 0.0 si no
-            if name == "tecla_presionada" && args.len() == 1 {
+            if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
                     let presionada = input.es_presionada(tecla);
                     return Valor::Num(if presionada { 1.0 } else { 0.0 });
@@ -2217,17 +2224,17 @@ pub fn evaluar_expr_gfx(
             // ========================================================================
 
             // input::mouse_x() - Retorna posición X del mouse
-            if name == "input::mouse_x" || name == "__input_mouse_x" {
+            if func_name == "input::mouse_x" || name == "__input_mouse_x" {
                 return Valor::Num(input.mouse_x as f64);
             }
 
             // input::mouse_y() - Retorna posición Y del mouse
-            if name == "input::mouse_y" || name == "__input_mouse_y" {
+            if func_name == "input::mouse_y" || name == "__input_mouse_y" {
                 return Valor::Num(input.mouse_y as f64);
             }
 
             // input::mouse_position() - Retorna [x, y]
-            if name == "input::mouse_position" || name == "__input_mouse_position" {
+            if func_name == "input::mouse_position" || name == "__input_mouse_position" {
                 return Valor::Array(vec![
                     Valor::Num(input.mouse_x as f64),
                     Valor::Num(input.mouse_y as f64),
@@ -2252,7 +2259,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // Funciones aritméticas builtin
-            if name == "sumar" && args.len() >= 2 {
+            if func_name == "sumar" && args.len() >= 2 {
                 let mut suma = 0.0;
                 for arg in args {
                     if let Valor::Num(n) = evaluar_expr_gfx(arg, executor, input, funcs) {
@@ -2264,7 +2271,7 @@ pub fn evaluar_expr_gfx(
                 return Valor::Num(suma);
             }
 
-            if name == "restar" && args.len() == 2 {
+            if func_name == "restar" && args.len() == 2 {
                 let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Num(a), Valor::Num(b)) = (a, b) {
@@ -2274,7 +2281,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if name == "multiplicar" && args.len() >= 2 {
+            if func_name == "multiplicar" && args.len() >= 2 {
                 let mut producto = 1.0;
                 for arg in args {
                     if let Valor::Num(n) = evaluar_expr_gfx(arg, executor, input, funcs) {
@@ -2286,7 +2293,7 @@ pub fn evaluar_expr_gfx(
                 return Valor::Num(producto);
             }
 
-            if name == "dividir" && args.len() == 2 {
+            if func_name == "dividir" && args.len() == 2 {
                 let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Num(a), Valor::Num(b)) = (a, b) {
@@ -2386,7 +2393,7 @@ pub fn evaluar_expr_gfx(
             // ================================================================
 
             // sin(x) - Alias de math::sin(x)
-            if name == "sin" && args.len() == 1 {
+            if func_name == "sin" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.sin());
                 } else {
@@ -2395,7 +2402,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // cos(x) - Alias de math::cos(x)
-            if name == "cos" && args.len() == 1 {
+            if func_name == "cos" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.cos());
                 } else {
@@ -2404,7 +2411,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // tan(x) - Alias de math::tan(x)
-            if name == "tan" && args.len() == 1 {
+            if func_name == "tan" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.tan());
                 } else {
@@ -2413,7 +2420,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // sqrt(x) - Alias de math::sqrt(x)
-            if name == "sqrt" && args.len() == 1 {
+            if func_name == "sqrt" && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     if x >= 0.0 {
                         return Valor::Num(x.sqrt());
@@ -3145,7 +3152,7 @@ pub fn evaluar_expr_migui(
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
-            if name == "__INPUT__" {
+            if func_name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
@@ -3206,14 +3213,21 @@ pub fn evaluar_expr_migui(
                 Valor::Error("Solo se puede indexar arrays".to_string())
             }
         }
-        Expr::Call { name, args } => {
-            println!("[MIGUI DEBUG] Llamada a funcion: {}", name);
+        Expr::Call { callee, args } => {
+            // Extraer nombre de función
+            let func_name = if let Expr::Var(func_name) = callee.as_ref() {
+                *func_name
+            } else {
+                return Valor::Error("Call requiere función válida".to_string());
+            };
+            
+            println!("[MIGUI DEBUG] Llamada a funcion: {}", func_name);
             // ========================================================================
             // FUNCIONES MIGUI - V0.4.0 (Immediate Mode GUI)
             // ========================================================================
 
             // migui::button(id, text, x, y, w, h) -> bool
-            if (name == "migui::button" || name == "__migui_button") && args.len() == 6 {
+            if (func_name == "migui::button" || func_name == "__migui_button") && args.len() == 6 {
                 if let (
                     Valor::Texto(id),
                     Valor::Texto(text),
@@ -3297,7 +3311,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::label(id, text, x, y, w, h)
-            if (name == "migui::label" || name == "__migui_label") && args.len() == 6 {
+            if (func_name == "migui::label" || func_name == "__migui_label") && args.len() == 6 {
                 if let (
                     Valor::Texto(id),
                     Valor::Texto(text),
@@ -3381,7 +3395,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::checkbox(id, text, checked, x, y, w, h) -> bool
-            if (name == "migui::checkbox" || name == "__migui_checkbox") && args.len() == 7 {
+            if (func_name == "migui::checkbox" || func_name == "__migui_checkbox") && args.len() == 7 {
                 if let (
                     Valor::Texto(id),
                     Valor::Texto(text),
@@ -3478,7 +3492,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::slider(id, value, min, max, x, y, w, h) -> f32
-            if (name == "migui::slider" || name == "__migui_slider") && args.len() == 8 {
+            if (func_name == "migui::slider" || func_name == "__migui_slider") && args.len() == 8 {
                 if let (
                     Valor::Texto(id),
                     Valor::Num(value),
@@ -3587,7 +3601,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::panel(id, x, y, w, h, color)
-            if (name == "migui::panel" || name == "__migui_panel") && args.len() == 6 {
+            if (func_name == "migui::panel" || func_name == "__migui_panel") && args.len() == 6 {
                 if let (
                     Valor::Texto(id),
                     Valor::Num(x),
@@ -3672,7 +3686,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::textbox(id, x, y, w, h) -> String
-            if (name == "migui::textbox" || name == "__migui_textbox") && args.len() == 5 {
+            if (func_name == "migui::textbox" || func_name == "__migui_textbox") && args.len() == 5 {
                 if let (
                     Valor::Texto(id),
                     Valor::Num(x),
@@ -3748,7 +3762,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::window(id, title, open, x, y, w, h) -> bool
-            if (name == "migui::window" || name == "__migui_window") && args.len() == 7 {
+            if (func_name == "migui::window" || func_name == "__migui_window") && args.len() == 7 {
                 if let (
                     Valor::Texto(id),
                     Valor::Texto(title),
@@ -3845,7 +3859,7 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::message_box(title, message, buttons, x, y, w, h) -> i32
-            if (name == "migui::message_box" || name == "__migui_message_box") && args.len() == 7 {
+            if (func_name == "migui::message_box" || func_name == "__migui_message_box") && args.len() == 7 {
                 if let (
                     Valor::Texto(title),
                     Valor::Texto(message),
@@ -3952,36 +3966,36 @@ pub fn evaluar_expr_migui(
             }
 
             // migui::mouse_x() -> f64
-            if name == "migui::mouse_x" || name == "__migui_mouse_x" {
+            if func_name == "migui::mouse_x" || func_name == "__migui_mouse_x" {
                 return Valor::Num(gui.mouse_x() as f64);
             }
 
             // migui::mouse_y() -> f64
-            if name == "migui::mouse_y" || name == "__migui_mouse_y" {
+            if func_name == "migui::mouse_y" || func_name == "__migui_mouse_y" {
                 return Valor::Num(gui.mouse_y() as f64);
             }
 
             // migui::mouse_position() -> [x, y]
-            if name == "migui::mouse_position" || name == "__migui_mouse_position" {
+            if func_name == "migui::mouse_position" || func_name == "__migui_mouse_position" {
                 let (x, y) = gui.mouse_position();
                 return Valor::Array(vec![Valor::Num(x as f64), Valor::Num(y as f64)]);
             }
 
             // migui::is_mouse_button_pressed() -> bool
-            if name == "migui::is_mouse_button_pressed" || name == "__migui_is_mouse_button_pressed"
+            if func_name == "migui::is_mouse_button_pressed" || func_name == "__migui_is_mouse_button_pressed"
             {
                 return Valor::Bool(gui.is_mouse_pressed());
             }
 
             // Funciones definidas por el usuario
-            let func_name = if name.contains("::") {
-                if funcs.contains_key(name) {
-                    name.clone()
+            let func_name = if func_name.contains("::") {
+                if funcs.contains_key(func_name) {
+                    func_name.clone()
                 } else {
-                    name.split("::").last().unwrap_or(name).to_string()
+                    func_name.split("::").last().unwrap_or(func_name).to_string()
                 }
             } else {
-                name.clone()
+                func_name.clone()
             };
 
             let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
@@ -4043,7 +4057,7 @@ pub fn evaluar_expr_migui(
                 return return_value.unwrap_or(Valor::Vacio);
             }
 
-            Valor::Error(format!("Función '{}' no soportada en expresiones", name))
+            Valor::Error(format!("Función '{}' no soportada en expresiones", func_name))
         }
         Expr::BinOp { left, op, right } => {
             let left_val = evaluar_expr_migui(
