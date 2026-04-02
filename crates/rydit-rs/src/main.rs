@@ -243,18 +243,26 @@ pub fn ejecutar_stmt(
             println!("[FUNC] {}({:?}) definida", name, params);
             funcs.insert(name.clone(), (params.clone(), body.clone()));
         }
-        Stmt::Call { name, args } => {
+        Stmt::Call { callee, args } => {
+            // Extraer nombre de función
+            let func_name = if let Expr::Var(name) = callee.as_ref() {
+                *name
+            } else {
+                println!("[WARNING] Call requiere función válida");
+                return (false, None);
+            };
+            
             // Llamar función builtin o de usuario
             // Primero verificar funciones builtin
             if func_name == "sumar" || func_name == "restar" || func_name == "multiplicar" || func_name == "dividir" {
                 // Funciones builtin ya manejadas en evaluar_expr
                 println!(
                     "[WARNING] Función builtin '{}' debe usarse en expresiones",
-                    name
+                    func_name
                 );
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
-                let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
+                let func_data = funcs.get(func_name).map(|(p, b)| (p.clone(), b.clone()));
 
                 if let Some((params, body)) = func_data {
                     // Función de usuario
@@ -1257,17 +1265,17 @@ fn ejecutar_stmt_gfx(
         Stmt::Assign { name, value } => {
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
             // Log asignaciones importantes ANTES de guardar (para evitar move)
-            if func_name == "x"
-                || func_name == "y"
-                || func_name == "velocidad"
-                || func_name == "frame"
-                || func_name == "click"
-                || func_name == "mx"
-                || func_name == "my"
-                || func_name == "balas"
-                || func_name == "tanque_x"
-                || func_name == "tanque_y"
-                || func_name == "angulo"
+            if name == "x"
+                || name == "y"
+                || name == "velocidad"
+                || name == "frame"
+                || name == "click"
+                || name == "mx"
+                || name == "my"
+                || name == "balas"
+                || name == "tanque_x"
+                || name == "tanque_y"
+                || name == "angulo"
             {
                 rydit_gfx::debug_log::debug_log(&format!("Asignación: {} = {:?}", name, valor));
             }
