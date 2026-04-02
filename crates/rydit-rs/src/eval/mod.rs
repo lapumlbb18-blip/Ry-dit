@@ -54,7 +54,7 @@ pub fn evaluar_expr<'a>(
         Expr::Texto(s) => Valor::Texto(s.to_string()),
         Expr::Var(name) => {
             // Input especial
-            if name == "__INPUT__" {
+            if name == &"__INPUT__".to_string() {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
