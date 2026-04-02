@@ -246,7 +246,7 @@ pub fn ejecutar_stmt(
         Stmt::Call { name, args } => {
             // Llamar función builtin o de usuario
             // Primero verificar funciones builtin
-            if name == "sumar" || name == "restar" || name == "multiplicar" || name == "dividir" {
+            if func_name == "sumar" || func_name == "restar" || func_name == "multiplicar" || func_name == "dividir" {
                 // Funciones builtin ya manejadas en evaluar_expr
                 println!(
                     "[WARNING] Función builtin '{}' debe usarse en expresiones",
@@ -1257,17 +1257,17 @@ fn ejecutar_stmt_gfx(
         Stmt::Assign { name, value } => {
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
             // Log asignaciones importantes ANTES de guardar (para evitar move)
-            if name == "x"
-                || name == "y"
-                || name == "velocidad"
-                || name == "frame"
-                || name == "click"
-                || name == "mx"
-                || name == "my"
-                || name == "balas"
-                || name == "tanque_x"
-                || name == "tanque_y"
-                || name == "angulo"
+            if func_name == "x"
+                || func_name == "y"
+                || func_name == "velocidad"
+                || func_name == "frame"
+                || func_name == "click"
+                || func_name == "mx"
+                || func_name == "my"
+                || func_name == "balas"
+                || func_name == "tanque_x"
+                || func_name == "tanque_y"
+                || func_name == "angulo"
             {
                 rydit_gfx::debug_log::debug_log(&format!("Asignación: {} = {:?}", name, valor));
             }
@@ -1441,14 +1441,14 @@ fn ejecutar_stmt_gfx(
         }
         Stmt::Call { name, args } => {
             // Verificar si es tecla_presionada("tecla")
-            if name == "tecla_presionada" && args.len() == 1 {
+            if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
                     let presionada = input.es_presionada(tecla);
                     executor.guardar("__RESULT__", Valor::Num(if presionada { 1.0 } else { 0.0 }));
                 }
             }
             // assets::draw(id, x, y, color) - Usar RenderQueue
-            else if name == "assets::draw" && args.len() >= 3 {
+            else if func_name == "assets::draw" && args.len() >= 3 {
                 use crate::modules::assets;
                 use rydit_gfx::ColorRydit;
                 use std::str::FromStr;
@@ -1512,7 +1512,7 @@ fn ejecutar_stmt_gfx(
                 });
             }
             // assets::draw_scaled(id, x, y, scale, color) - Usar RenderQueue
-            else if name == "assets::draw_scaled" && args.len() >= 4 {
+            else if func_name == "assets::draw_scaled" && args.len() >= 4 {
                 use crate::modules::assets;
                 use rydit_gfx::ColorRydit;
                 use std::str::FromStr;
@@ -1588,7 +1588,7 @@ fn ejecutar_stmt_gfx(
                 });
             }
             // ✅ v0.9.2 - particles::create_emitter(nombre, x, y, rate)
-            else if name == "particles::create_emitter" && args.len() >= 4 {
+            else if func_name == "particles::create_emitter" && args.len() >= 4 {
                 use crate::modules::particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -1622,7 +1622,7 @@ fn ejecutar_stmt_gfx(
                 }
             }
             // particles::set_emitter_type(nombre, tipo)
-            else if name == "particles::set_emitter_type" && args.len() == 2 {
+            else if func_name == "particles::set_emitter_type" && args.len() == 2 {
                 use crate::modules::particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -1644,7 +1644,7 @@ fn ejecutar_stmt_gfx(
                 }
             }
             // particles::remove_emitter(nombre)
-            else if name == "particles::remove_emitter" && args.len() == 1 {
+            else if func_name == "particles::remove_emitter" && args.len() == 1 {
                 use crate::modules::particles;
 
                 let nombre_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -1662,7 +1662,7 @@ fn ejecutar_stmt_gfx(
                 }
             }
             // particles::update(dt) - DEBE llamarse en cada frame
-            else if name == "particles::update" && args.len() == 1 {
+            else if func_name == "particles::update" && args.len() == 1 {
                 use crate::modules::particles;
 
                 let dt_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -1682,13 +1682,13 @@ fn ejecutar_stmt_gfx(
                 }
             }
             // particles::draw() - Dibujar partículas (usar RenderQueue)
-            else if name == "particles::draw" && args.len() == 0 {
+            else if func_name == "particles::draw" && args.len() == 0 {
                 // particles::draw() no usa queue, dibuja directamente
                 // Se maneja especial: retorna éxito pero el draw real se hace abajo
                 eprintln!("[PARTICLES] particles::draw() llamado");
             }
             // particles::set_gravity(x, y)
-            else if name == "particles::set_gravity" && args.len() == 2 {
+            else if func_name == "particles::set_gravity" && args.len() == 2 {
                 use crate::modules::particles;
 
                 let x_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
@@ -1708,7 +1708,7 @@ fn ejecutar_stmt_gfx(
                 }
             }
             // particles::particle_count()
-            else if name == "particles::particle_count" && args.len() == 0 {
+            else if func_name == "particles::particle_count" && args.len() == 0 {
                 use crate::modules::particles;
 
                 let result = particles::ejecutar_funcion(
@@ -2171,7 +2171,7 @@ pub fn evaluar_expr_gfx(
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
-            if name == "__INPUT__" {
+            if func_name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
@@ -2224,17 +2224,17 @@ pub fn evaluar_expr_gfx(
             // ========================================================================
 
             // input::mouse_x() - Retorna posición X del mouse
-            if func_name == "input::mouse_x" || name == "__input_mouse_x" {
+            if func_name == "input::mouse_x" || func_name == "__input_mouse_x" {
                 return Valor::Num(input.mouse_x as f64);
             }
 
             // input::mouse_y() - Retorna posición Y del mouse
-            if func_name == "input::mouse_y" || name == "__input_mouse_y" {
+            if func_name == "input::mouse_y" || func_name == "__input_mouse_y" {
                 return Valor::Num(input.mouse_y as f64);
             }
 
             // input::mouse_position() - Retorna [x, y]
-            if func_name == "input::mouse_position" || name == "__input_mouse_position" {
+            if func_name == "input::mouse_position" || func_name == "__input_mouse_position" {
                 return Valor::Array(vec![
                     Valor::Num(input.mouse_x as f64),
                     Valor::Num(input.mouse_y as f64),
@@ -2242,8 +2242,8 @@ pub fn evaluar_expr_gfx(
             }
 
             // input::is_mouse_button_pressed(button) - 0=izq, 1=der, 2=medio
-            if (name == "input::is_mouse_button_pressed"
-                || name == "__input_is_mouse_button_pressed")
+            if (func_name == "input::is_mouse_button_pressed"
+                || func_name == "__input_is_mouse_button_pressed")
                 && args.len() == 1
             {
                 if let Valor::Num(button) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
@@ -2312,7 +2312,7 @@ pub fn evaluar_expr_gfx(
             // ========================================================================
 
             // math::sqrt(x) - Raíz cuadrada
-            if (name == "__math_sqrt" || name == "math::sqrt") && args.len() == 1 {
+            if (func_name == "__math_sqrt" || func_name == "math::sqrt") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     if x >= 0.0 {
                         return Valor::Num(x.sqrt());
@@ -2325,7 +2325,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::sin(x) - Seno (x en radianes)
-            if (name == "__math_sin" || name == "math::sin") && args.len() == 1 {
+            if (func_name == "__math_sin" || func_name == "math::sin") && args.len() == 1 {
                 eprintln!(
                     "[DEBUG] math::sin() llamado con args.len() = {}",
                     args.len()
@@ -2342,7 +2342,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::cos(x) - Coseno (x en radianes)
-            if (name == "__math_cos" || name == "math::cos") && args.len() == 1 {
+            if (func_name == "__math_cos" || func_name == "math::cos") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.cos());
                 } else {
@@ -2351,7 +2351,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::tan(x) - Tangente (x en radianes)
-            if (name == "__math_tan" || name == "math::tan") && args.len() == 1 {
+            if (func_name == "__math_tan" || func_name == "math::tan") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.tan());
                 } else {
@@ -2360,7 +2360,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::atan2(y, x) - Arcotangente de y/x (retorna radianes)
-            if (name == "__math_atan2" || name == "math::atan2") && args.len() == 2 {
+            if (func_name == "__math_atan2" || func_name == "math::atan2") && args.len() == 2 {
                 let y_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let x_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Num(y), Valor::Num(x)) = (y_val, x_val) {
@@ -2371,7 +2371,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::deg2rad(x) - Convertir grados a radianes
-            if (name == "__math_deg2rad" || name == "math::deg2rad") && args.len() == 1 {
+            if (func_name == "__math_deg2rad" || func_name == "math::deg2rad") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.to_radians());
                 } else {
@@ -2380,7 +2380,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // math::rad2deg(x) - Convertir radianes a grados
-            if (name == "__math_rad2deg" || name == "math::rad2deg") && args.len() == 1 {
+            if (func_name == "__math_rad2deg" || func_name == "math::rad2deg") && args.len() == 1 {
                 if let Valor::Num(x) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(x.to_degrees());
                 } else {
@@ -2438,7 +2438,7 @@ pub fn evaluar_expr_gfx(
 
             // ========== FUNCIONES STRING (v0.1.2) ==========
             // Soporte para strings::length, strings::upper, etc.
-            if (name == "__str_length" || name == "strings::length") && args.len() == 1 {
+            if (func_name == "__str_length" || func_name == "strings::length") && args.len() == 1 {
                 if let Valor::Texto(s) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Num(s.len() as f64);
                 } else {
@@ -2446,7 +2446,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_upper" || name == "strings::upper") && args.len() == 1 {
+            if (func_name == "__str_upper" || func_name == "strings::upper") && args.len() == 1 {
                 if let Valor::Texto(s) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Texto(s.to_uppercase());
                 } else {
@@ -2454,7 +2454,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_lower" || name == "strings::lower") && args.len() == 1 {
+            if (func_name == "__str_lower" || func_name == "strings::lower") && args.len() == 1 {
                 if let Valor::Texto(s) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Texto(s.to_lowercase());
                 } else {
@@ -2462,7 +2462,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_concat" || name == "strings::concat") && args.len() == 2 {
+            if (func_name == "__str_concat" || func_name == "strings::concat") && args.len() == 2 {
                 let a = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let b = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(a), Valor::Texto(b)) = (a, b) {
@@ -2472,7 +2472,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_trim" || name == "strings::trim") && args.len() == 1 {
+            if (func_name == "__str_trim" || func_name == "strings::trim") && args.len() == 1 {
                 if let Valor::Texto(s) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Texto(s.trim().to_string());
                 } else {
@@ -2480,7 +2480,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_substr" || name == "strings::substr") && args.len() == 3 {
+            if (func_name == "__str_substr" || func_name == "strings::substr") && args.len() == 3 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let start_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let len_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2503,7 +2503,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_replace" || name == "strings::replace") && args.len() == 3 {
+            if (func_name == "__str_replace" || func_name == "strings::replace") && args.len() == 3 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2517,7 +2517,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== NUEVAS FUNCIONES STRINGS (v0.1.4) ==========
-            if (name == "__str_split" || name == "strings::split") && args.len() == 2 {
+            if (func_name == "__str_split" || func_name == "strings::split") && args.len() == 2 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let sep_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(sep)) = (s_val, sep_val) {
@@ -2531,7 +2531,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_starts_with" || name == "strings::starts_with") && args.len() == 2 {
+            if (func_name == "__str_starts_with" || func_name == "strings::starts_with") && args.len() == 2 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let prefix_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(prefix)) = (s_val, prefix_val) {
@@ -2541,7 +2541,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_ends_with" || name == "strings::ends_with") && args.len() == 2 {
+            if (func_name == "__str_ends_with" || func_name == "strings::ends_with") && args.len() == 2 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let suffix_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(s), Valor::Texto(suffix)) = (s_val, suffix_val) {
@@ -2551,7 +2551,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_replace_all" || name == "strings::replace_all") && args.len() == 3 {
+            if (func_name == "__str_replace_all" || func_name == "strings::replace_all") && args.len() == 3 {
                 let s_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let buscar_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let reemplazar_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2566,7 +2566,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__str_join" || name == "strings::join") && args.len() == 2 {
+            if (func_name == "__str_join" || func_name == "strings::join") && args.len() == 2 {
                 let sep_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let arr_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(sep), Valor::Array(arr)) = (sep_val, arr_val) {
@@ -2590,7 +2590,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES IO (v0.1.2) ==========
-            if (name == "__file_read" || name == "io::read_file") && args.len() == 1 {
+            if (func_name == "__file_read" || func_name == "io::read_file") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::read_to_string(&path) {
                         Ok(content) => return Valor::Texto(content),
@@ -2601,7 +2601,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__file_write" || name == "io::write_file") && args.len() == 2 {
+            if (func_name == "__file_write" || func_name == "io::write_file") && args.len() == 2 {
                 let path_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let content_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(path), Valor::Texto(content)) = (path_val, content_val) {
@@ -2614,7 +2614,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__file_exists" || name == "io::file_exists") && args.len() == 1 {
+            if (func_name == "__file_exists" || func_name == "io::file_exists") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     return Valor::Bool(std::path::Path::new(&path).exists());
                 } else {
@@ -2623,7 +2623,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== NUEVAS FUNCIONES IO (v0.1.4) ==========
-            if (name == "__dir_mkdir" || name == "io::mkdir") && args.len() == 1 {
+            if (func_name == "__dir_mkdir" || func_name == "io::mkdir") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::create_dir_all(&path) {
                         Ok(_) => return Valor::Num(1.0),
@@ -2634,7 +2634,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__file_remove" || name == "io::remove") && args.len() == 1 {
+            if (func_name == "__file_remove" || func_name == "io::remove") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::remove_file(&path) {
                         Ok(_) => return Valor::Num(1.0),
@@ -2648,7 +2648,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__file_rename" || name == "io::rename") && args.len() == 2 {
+            if (func_name == "__file_rename" || func_name == "io::rename") && args.len() == 2 {
                 let old_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let new_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(old), Valor::Texto(new)) = (old_val, new_val) {
@@ -2661,7 +2661,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__file_copy" || name == "io::copy") && args.len() == 2 {
+            if (func_name == "__file_copy" || func_name == "io::copy") && args.len() == 2 {
                 let src_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let dst_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Texto(src), Valor::Texto(dst)) = (src_val, dst_val) {
@@ -2675,7 +2675,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== NUEVAS FUNCIONES ARRAYS (v0.1.4) ==========
-            if (name == "__array_push" || name == "arrays::push") && args.len() == 2 {
+            if (func_name == "__array_push" || func_name == "arrays::push") && args.len() == 2 {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let elem_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let Valor::Array(mut arr) = arr_val {
@@ -2686,7 +2686,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__array_pop" || name == "arrays::pop") && args.len() == 1 {
+            if (func_name == "__array_pop" || func_name == "arrays::pop") && args.len() == 1 {
                 if let Valor::Array(mut arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("arrays::pop(): array vacío".to_string());
@@ -2698,7 +2698,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__array_shift" || name == "arrays::shift") && args.len() == 1 {
+            if (func_name == "__array_shift" || func_name == "arrays::shift") && args.len() == 1 {
                 if let Valor::Array(mut arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     if arr.is_empty() {
                         return Valor::Error("arrays::shift(): array vacío".to_string());
@@ -2710,7 +2710,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__array_unshift" || name == "arrays::unshift") && args.len() == 2 {
+            if (func_name == "__array_unshift" || func_name == "arrays::unshift") && args.len() == 2 {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let elem_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let Valor::Array(mut arr) = arr_val {
@@ -2723,7 +2723,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__array_slice" || name == "arrays::slice") && args.len() == 3 {
+            if (func_name == "__array_slice" || func_name == "arrays::slice") && args.len() == 3 {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let start_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 let end_val = evaluar_expr_gfx(&args[2], executor, input, funcs);
@@ -2745,7 +2745,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__array_reverse" || name == "arrays::reverse") && args.len() == 1 {
+            if (func_name == "__array_reverse" || func_name == "arrays::reverse") && args.len() == 1 {
                 if let Valor::Array(mut arr) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     arr.reverse();
                     return Valor::Array(arr);
@@ -2755,7 +2755,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES RANDOM (v0.1.6) ==========
-            if (name == "__random_int" || name == "random::int") && args.len() == 2 {
+            if (func_name == "__random_int" || func_name == "random::int") && args.len() == 2 {
                 let min_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 let max_val = evaluar_expr_gfx(&args[1], executor, input, funcs);
                 if let (Valor::Num(min), Valor::Num(max)) = (min_val, max_val) {
@@ -2779,7 +2779,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__random_float" || name == "random::float") && args.is_empty() {
+            if (func_name == "__random_float" || func_name == "random::float") && args.is_empty() {
                 let seed = executor
                     .leer("__random_seed")
                     .unwrap_or(Valor::Num(12345.0));
@@ -2795,7 +2795,7 @@ pub fn evaluar_expr_gfx(
                 return Valor::Num(s as f64 / u32::MAX as f64);
             }
 
-            if (name == "__random_choice" || name == "random::choice") && args.len() == 1 {
+            if (func_name == "__random_choice" || func_name == "random::choice") && args.len() == 1 {
                 let arr_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Array(arr) = arr_val {
                     if arr.is_empty() {
@@ -2821,7 +2821,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES JSON (v0.1.5) ==========
-            if (name == "__json_parse" || name == "json::parse") && args.len() == 1 {
+            if (func_name == "__json_parse" || func_name == "json::parse") && args.len() == 1 {
                 if let Valor::Texto(json_str) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match serde_json::from_str::<serde_json::Value>(&json_str) {
                         Ok(val) => {
@@ -2834,7 +2834,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__json_stringify" || name == "json::stringify") && args.len() == 1 {
+            if (func_name == "__json_stringify" || func_name == "json::stringify") && args.len() == 1 {
                 let val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 match valor_rydit_a_serde(&val) {
                     Ok(serde_val) => match serde_json::to_string(&serde_val) {
@@ -2846,7 +2846,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES TIME (v0.1.6) ==========
-            if (name == "__time_now" || name == "time::now") && args.is_empty() {
+            if (func_name == "__time_now" || func_name == "time::now") && args.is_empty() {
                 use std::time::{SystemTime, UNIX_EPOCH};
                 match SystemTime::now().duration_since(UNIX_EPOCH) {
                     Ok(duration) => return Valor::Num(duration.as_secs_f64()),
@@ -2854,7 +2854,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__time_sleep" || name == "time::sleep") && args.len() == 1 {
+            if (func_name == "__time_sleep" || func_name == "time::sleep") && args.len() == 1 {
                 use std::{thread, time::Duration};
                 let ms_val = evaluar_expr_gfx(&args[0], executor, input, funcs);
                 if let Valor::Num(ms) = ms_val {
@@ -2868,7 +2868,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES REGEX (v0.6.2) ==========
-            if (name == "__regex_match" || name == "regex::match") && args.len() == 2 {
+            if (func_name == "__regex_match" || func_name == "regex::match") && args.len() == 2 {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2882,7 +2882,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__regex_replace" || name == "regex::replace") && args.len() == 3 {
+            if (func_name == "__regex_replace" || func_name == "regex::replace") && args.len() == 3 {
                 if let (Valor::Texto(pattern), Valor::Texto(replacement), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2903,7 +2903,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__regex_split" || name == "regex::split") && args.len() == 2 {
+            if (func_name == "__regex_split" || func_name == "regex::split") && args.len() == 2 {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2923,7 +2923,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__regex_find_all" || name == "regex::find_all") && args.len() == 2 {
+            if (func_name == "__regex_find_all" || func_name == "regex::find_all") && args.len() == 2 {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2943,7 +2943,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__regex_capture" || name == "regex::capture") && args.len() == 2 {
+            if (func_name == "__regex_capture" || func_name == "regex::capture") && args.len() == 2 {
                 if let (Valor::Texto(pattern), Valor::Texto(text)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2974,7 +2974,7 @@ pub fn evaluar_expr_gfx(
             }
 
             // ========== FUNCIONES FILES (v0.6.3) ==========
-            if (name == "__files_read" || name == "files::read") && args.len() == 1 {
+            if (func_name == "__files_read" || func_name == "files::read") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::read_to_string(&path) {
                         Ok(content) => return Valor::Texto(content),
@@ -2985,7 +2985,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__files_write" || name == "files::write") && args.len() == 2 {
+            if (func_name == "__files_write" || func_name == "files::write") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -2999,7 +2999,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__files_append" || name == "files::append") && args.len() == 2 {
+            if (func_name == "__files_append" || func_name == "files::append") && args.len() == 2 {
                 if let (Valor::Texto(path), Valor::Texto(content)) = (
                     &evaluar_expr_gfx(&args[0], executor, input, funcs),
                     &evaluar_expr_gfx(&args[1], executor, input, funcs),
@@ -3021,7 +3021,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__files_exists" || name == "files::exists") && args.len() == 1 {
+            if (func_name == "__files_exists" || func_name == "files::exists") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     let exists = std::path::Path::new(&path).exists();
                     return Valor::Bool(exists);
@@ -3030,7 +3030,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            if (name == "__files_delete" || name == "files::delete") && args.len() == 1 {
+            if (func_name == "__files_delete" || func_name == "files::delete") && args.len() == 1 {
                 if let Valor::Texto(path) = evaluar_expr_gfx(&args[0], executor, input, funcs) {
                     match std::fs::remove_file(&path) {
                         Ok(_) => return Valor::Bool(true),
