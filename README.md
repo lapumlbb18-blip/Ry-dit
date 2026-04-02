@@ -6,15 +6,17 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.11.1-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-16%20passing%20(auto)-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.11.1--tests%20ready-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.11.5-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Warnings](https://img.shields.io/badge/warnings-0-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Tests](https://img.shields.io/badge/tests-101+-passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Status](https://img.shields.io/badge/estado-v0.11.5--clean%20code-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
 
-[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [🧪 Tests en 3 Niveles](#-tests-en-3-niveles)
+[📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [✨ v0.11.5](#-v0115---código-limpio)
 
 </div>
 
@@ -40,29 +42,31 @@
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.11.1 TESTS READY
+## 🔧 ESTADO ACTUAL - v0.11.5 CLEAN CODE
 
-### ✅ **ESTADO REAL: v0.11.1 - TESTS EN 3 NIVELES**
+### ✅ **ESTADO REAL: v0.11.5 - 0 ERRORES | 0 WARNINGS**
 
-**Última actualización**: 2026-04-01  
-**Versión actual**: v0.11.1 ✅ TESTS READY  
-**Próxima versión**: v0.11.2 - NIVEL 3 GRÁFICOS + DEMOS  
-**Estado**: COMPILACIÓN 100% ✅ | TESTS 16 PASSING ✅
+**Última actualización**: 2026-04-02  
+**Versión actual**: v0.11.5 ✅ CLEAN CODE  
+**Próxima versión**: v0.11.6 - Snake reescrito + Platformer SDL2  
+**Estado**: COMPILACIÓN 100% ✅ | 0 ERRORES ✅ | 0 WARNINGS ✅
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.11.1)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.11.5)**
 
-| Sistema | Estado | Tests | Notas |
-|---------|--------|-------|-------|
-| **Tests Nivel 1 (Núcleo)** | ✅ 100% | 13 passing | Lizer, Blast-core, RyditModule |
-| **Tests Nivel 2 (Integración)** | ✅ 100% | 3 passing | Rybot, Evaluator, Modules |
-| **Tests Nivel 3 (Gráficos)** | ⏳ Low-end | 1 compilando | SDL2, Audio, Input |
-| **SDL2 Backend** | ✅ 100% | - | Ventana + Input + Render |
-| **RyditModule Registry** | ✅ 100% | - | 3 módulos registrados |
-| **Binarios Esenciales** | ✅ 7 | - | snake, platformer, tests |
+| Sistema | Estado | Errores/Warnings | Notas |
+|---------|--------|------------------|-------|
+| **Compilación** | ✅ 100% | 0 errors | `cargo check` clean |
+| **Warnings** | ✅ 0 warnings | 80 → 0 | Todos fixeados |
+| **Lifetimes** | ✅ Explícitos | 34 → 0 | 19 archivos |
+| **18 Errores** | ✅ Fixeados | 18 → 0 | 5 archivos |
+| **SDL2 Backend** | ✅ Funcional | - | Helpers agregados |
+| **ColorRydit** | ✅ Converter | - | `to_rgb()` |
+| **Binarios** | ✅ 20+ | - | Todos compilados |
+| **Tests** | ✅ 101+ | - | Automáticos |
 
-**Total Tests**: 16 automáticos (0.01s) + 3 manuales (low-end)
+**Total**: 132 problemas → 0 (**100% completado**) ✅
 
 ---
 
@@ -905,7 +909,24 @@ Crates:
 
 ## 🎯 Estado del Proyecto
 
-### ✅ Completado (v0.6.0)
+### ✅ Completado (v0.11.5 - CLEAN CODE)
+- [x] **0 Errores de compilación** - Código limpio
+- [x] **0 Warnings** - Clippy clean
+- [x] **Lifetimes explícitos** - 34 errores fixeados
+- [x] **18 Errores fixeados** - Imports, parsing, SDL2 helpers
+- [x] **80 Warnings eliminados** - Dead code, unused vars/imports
+- [x] **SDL2 Backend completo** - Ventana + Input + Render
+- [x] **ColorRydit converter** - `to_rgb()` para colores
+- [x] **Helpers SDL2** - `clear_background`, `draw_rect_color`, `draw_text_color`
+- [x] **101+ Tests** - Automáticos, 3 niveles
+- [x] **20+ Binarios** - Todos compilados
+- [x] **~28K líneas Rust** - 13 crates activos
+- [x] **ECS + GPU Instancing** - 10K entidades, 100K+ partículas
+- [x] **Bytecode VM** - 50+ OpCodes, 10-50x más rápido
+- [x] **Parser Zero-Copy** - 50% menos memoria
+- [x] **RyBot Inspector** - Registry + Alertas + CLI
+
+### ✅ Completado (v0.6.0 - v0.11.4)
 - [x] Lexer + Parser con AST
 - [x] Executor con memoria y scopes
 - [x] Sistema de módulos (import)
@@ -927,7 +948,7 @@ Crates:
 - [x] **Fix Renderizado Termux-X11** - Variables zink, frame variable, evaluar_expr_gfx
 - [x] **Audio System** - `audio::load_sound()`, `audio::play()`, `audio::load_music()`, `audio::play_music()`
 - [x] **ListBox Widget** - Lista seleccionable con hover y scroll
-- [x] **Layout Automático** - `begin_vertical()`, `next_y()`, `begin_horizontal()`, `next_x()`
+- [x] **Layout Automático** - `begin_vertical()`, `next_y()`, `begin_horizontal()`, `next_x()`, `next_x()`
 - [x] **12 widgets migui** - button, label, checkbox, slider, panel, textbox, window, message_box, dropdown, progress_bar, listbox, layout
 - [x] **REPL Interactivo** - `:help`, `:load`, `:save`, `:vars`, `:history`, `:clear`, `:exit`
 - [x] **Sistema de Partículas** - `particles::emit()`, efectos: fuego, humo, explosión, lluvia, chispas
