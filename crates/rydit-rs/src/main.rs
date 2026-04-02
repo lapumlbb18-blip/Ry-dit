@@ -73,7 +73,7 @@ pub fn init_global_loader() {
 /// - GLOBAL_LOADER se inicializa una sola vez al inicio
 /// - El Mutex protege contra data races
 /// - No hay mutación después de la inicialización
-#[allow(static_mut_refs)]
+/// ✅ v0.11.4: Migrado a OnceLock (sin static_mut_refs)
 pub fn get_loader() -> Option<&'static Mutex<DynamicModuleLoader>> {
     unsafe { GLOBAL_LOADER.as_ref() }
 }

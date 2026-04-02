@@ -33,9 +33,8 @@ pub struct PhysicsBody {
     pub vy: f32, // Velocidad Y
     pub width: f32,
     pub height: f32,
-    #[allow(dead_code)] // Para futuras físicas de masa
+// ✅ v0.11.4: Campos para futuras features (dead_code permitido intencionalmente)
     pub mass: f32,
-    #[allow(dead_code)] // Para futuras físicas personalizables
     pub gravity: f32,
     pub friction: f32,   // Fricción
     pub bounce: f32,     // Rebote
