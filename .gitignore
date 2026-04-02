@@ -135,6 +135,7 @@ historial/
 ruta_v0.5.0_v0.9.9/
 archive/
 context/
+docs/  # ✅ Documentación de sesiones internas
 
 # Archivos de estado de sesión (Qwen Code)
 QWEN.md
