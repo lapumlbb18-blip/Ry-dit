@@ -14,7 +14,7 @@ mod warning_tests {
         let right = Expr::Num(0.0);
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Div,
+            op: rydit_parser::BinaryOp::Div,
             right: Box::new(right),
         };
 
@@ -31,7 +31,7 @@ mod warning_tests {
         let right = Expr::Num(2.0);
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Div,
+            op: rydit_parser::BinaryOp::Div,
             right: Box::new(right),
         };
 
@@ -52,7 +52,7 @@ mod warning_tests {
         let right = Expr::Num(42.0);
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(right),
         };
 
@@ -69,7 +69,7 @@ mod warning_tests {
         let right = Expr::Texto("x".to_string());
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(right),
         };
 
@@ -86,7 +86,7 @@ mod warning_tests {
         // "a" + 1 -> "a1"
         let expr1 = Expr::BinOp {
             left: Box::new(Expr::Texto("a".to_string())),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(Expr::Num(1.0)),
         };
         let result1 = evaluar_expr(&expr1, &mut executor, &mut funcs);
@@ -95,7 +95,7 @@ mod warning_tests {
         // "a1" + "b" -> "a1b"
         let expr2 = Expr::BinOp {
             left: Box::new(Expr::Texto("a1".to_string())),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(Expr::Texto("b".to_string())),
         };
         let result2 = evaluar_expr(&expr2, &mut executor, &mut funcs);
@@ -104,7 +104,7 @@ mod warning_tests {
         // "a1b" + 2 -> "a1b2"
         let expr3 = Expr::BinOp {
             left: Box::new(Expr::Texto("a1b".to_string())),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(Expr::Num(2.0)),
         };
         let result3 = evaluar_expr(&expr3, &mut executor, &mut funcs);
@@ -120,19 +120,19 @@ mod warning_tests {
         // (2+3)*4 = 20
         let inner = Expr::BinOp {
             left: Box::new(Expr::Num(2.0)),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(Expr::Num(3.0)),
         };
         let expr_mult = Expr::BinOp {
             left: Box::new(inner),
-            op: lizer::BinOp::Mult,
+            op: rydit_parser::BinaryOp::Mult,
             right: Box::new(Expr::Num(4.0)),
         };
 
         // "total: " + 20
         let expr = Expr::BinOp {
             left: Box::new(Expr::Texto("total: ".to_string())),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(expr_mult),
         };
 
@@ -166,7 +166,7 @@ mod warning_tests {
 
         let expr = Expr::BinOp {
             left: Box::new(Expr::Num(50.0)),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(Expr::Num(25.0)),
         };
 
@@ -210,7 +210,7 @@ mod warning_tests {
         let right = Expr::Texto("world".to_string());
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(right),
         };
 
@@ -227,7 +227,7 @@ mod warning_tests {
         let right = Expr::Num(3.0);
         let expr = Expr::BinOp {
             left: Box::new(left),
-            op: lizer::BinOp::Suma,
+            op: rydit_parser::BinaryOp::Suma,
             right: Box::new(right),
         };
 
