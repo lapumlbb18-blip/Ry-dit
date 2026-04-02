@@ -408,7 +408,7 @@ pub fn ejecutar_stmt(
             let mut original_funcs: Vec<String> = Vec::new();
             for s in &program.statements {
                 if let Stmt::Function { name, .. } = s {
-                    original_funcs.push(name.clone());
+                    original_funcs.push(name.to_string());
                 }
             }
 
@@ -431,7 +431,7 @@ pub fn ejecutar_stmt(
             importing_stack.pop();
 
             // Marcar módulo como cargado
-            loaded_modules.insert(module.clone());
+            loaded_modules.insert(module.to_string());
 
             // Renombrar funciones con el prefijo del módulo
             let prefix = if let Some(alias_name) = alias {
@@ -1846,7 +1846,7 @@ fn ejecutar_stmt_gfx(
                 let mut original_funcs: Vec<String> = Vec::new();
                 for s in &program.statements {
                     if let Stmt::Function { name, .. } = s {
-                        original_funcs.push(name.clone());
+                        original_funcs.push(name.to_string());
                     }
                 }
 
@@ -1866,7 +1866,7 @@ fn ejecutar_stmt_gfx(
                 importing_stack.pop();
 
                 // Marcar módulo como cargado
-                loaded_modules.insert(module.clone());
+                loaded_modules.insert(module.to_string());
 
                 // Renombrar funciones con el prefio del módulo
                 let prefix = if let Some(alias_name) = alias {
@@ -4522,7 +4522,7 @@ pub fn ejecutar_stmt_migui(
                 let mut original_funcs: Vec<String> = Vec::new();
                 for s in &program.statements {
                     if let Stmt::Function { name, .. } = s {
-                        original_funcs.push(name.clone());
+                        original_funcs.push(name.to_string());
                     }
                 }
 
@@ -4541,7 +4541,7 @@ pub fn ejecutar_stmt_migui(
                 }
 
                 importing_stack.pop();
-                loaded_modules.insert(module.clone());
+                loaded_modules.insert(module.to_string());
 
                 let prefix = if let Some(alias_name) = alias {
                     alias_name.clone()
