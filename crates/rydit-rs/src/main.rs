@@ -3188,7 +3188,7 @@ pub fn evaluar_expr_migui(
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
-            if func_name == "__INPUT__" {
+            if name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)

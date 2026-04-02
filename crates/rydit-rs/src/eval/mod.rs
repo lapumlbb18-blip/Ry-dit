@@ -1417,9 +1417,12 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::get() url debe ser texto".to_string()),
                 };
-                return match ureq::get(&url).call().into_string() {
-                    Ok(response) => Valor::Texto(response),
-                    Err(e) => Valor::Error(e),
+                return match ureq::get(&url).call() {
+                    Ok(response) => match response.into_string() {
+                        Ok(text) => Valor::Texto(text),
+                        Err(e) => Valor::Error(format!("http::get() response: {}", e)),
+                    },
+                    Err(e) => Valor::Error(format!("http::get() error: {}", e)),
                 };
             }
 
