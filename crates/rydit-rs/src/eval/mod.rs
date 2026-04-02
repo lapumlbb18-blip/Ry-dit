@@ -4,21 +4,20 @@
 // ✅ v0.11.4: Migrado a rydit-parser
 
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Stmt, Program, BinaryOp, UnaryOp};
+use rydit_parser::{Expr, Stmt, BinaryOp, UnaryOp};
 use std::collections::{HashMap, HashSet};
 
 // Importar funciones auxiliares desde main.rs
 use crate::{ejecutar_stmt, valor_a_bool, valor_rydit_a_serde, valor_serde_a_rydit};
 
 // ✅ v0.10.4: Conectar módulos
-use crate::modules::assets::{assets_draw, assets_load, assets_sprite};
+use crate::modules::assets::{assets_draw, assets_load};
 use crate::modules::audio::{audio_play, audio_stop};
 use crate::modules::camera::{
     camera_apply_sdl2, camera_follow, camera_set_position, camera_set_zoom,
 };
 use crate::modules::entity::{entity_create, entity_get_position};
 use crate::modules::input_map::{input_map_is_pressed, input_map_register};
-use crate::modules::level::level_load;
 use crate::modules::physics::physics_apply_gravity;
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier

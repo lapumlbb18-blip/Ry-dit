@@ -10,8 +10,6 @@ use std::rc::Rc;
 use crate::eval::evaluar_expr;
 
 // Importar SDL2 para render
-use rydit_gfx::camera::Camera2D;
-use sdl2::render::{Canvas, Texture};
 
 // ============================================================================
 // ENTITY STRUCT

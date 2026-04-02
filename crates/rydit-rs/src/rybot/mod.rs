@@ -10,7 +10,6 @@ pub use registry::*;
 // RYBOT CORE
 // ============================================================================
 
-use std::collections::HashMap;
 
 /// RyBot - Inspector y Registry central
 pub struct RyBot {

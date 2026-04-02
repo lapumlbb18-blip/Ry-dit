@@ -80,7 +80,7 @@ pub fn run() {
         }
 
         // Renderer
-        let mut renderer = EcsRenderer::new();
+        let renderer = EcsRenderer::new();
 
         // Game loop nativo
         let mut frame = 0;

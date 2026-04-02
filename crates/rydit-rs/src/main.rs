@@ -47,7 +47,7 @@ pub use rydit_science::ScienceModule;
 
 // Imports necesarios para el código restante en main.rs
 use blast_core::{Executor, Valor};
-use rydit_parser::{Expr, Parser, Stmt, Program, BinaryOp, UnaryOp};
+use rydit_parser::{Expr, Parser, Stmt, BinaryOp, UnaryOp};
 use rydit_lexer::Lexer;
 use migui::{Color as MiguiColor, Migui, Rect, WidgetId};
 use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
@@ -262,7 +262,7 @@ pub fn ejecutar_stmt(
                 );
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
-                let func_data = funcs.get(func_name).map(|(p, b)| (p.clone(), b.clone()));
+                let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
 
                 if let Some((params, body)) = func_data {
                     // Función de usuario
@@ -1265,17 +1265,17 @@ fn ejecutar_stmt_gfx(
         Stmt::Assign { name, value } => {
             let valor = evaluar_expr_gfx(value, executor, input, funcs);
             // Log asignaciones importantes ANTES de guardar (para evitar move)
-            if name == "x"
-                || name == "y"
-                || name == "velocidad"
-                || name == "frame"
-                || name == "click"
-                || name == "mx"
-                || name == "my"
-                || name == "balas"
-                || name == "tanque_x"
-                || name == "tanque_y"
-                || name == "angulo"
+            if *name == "x"
+                || *name == "y"
+                || *name == "velocidad"
+                || *name == "frame"
+                || *name == "click"
+                || *name == "mx"
+                || *name == "my"
+                || *name == "balas"
+                || *name == "tanque_x"
+                || *name == "tanque_y"
+                || *name == "angulo"
             {
                 rydit_gfx::debug_log::debug_log(&format!("Asignación: {} = {:?}", name, valor));
             }
@@ -1616,7 +1616,7 @@ fn ejecutar_stmt_gfx(
                     let result = particles::ejecutar_funcion(
                         "particles::create_emitter",
                         &[
-                            Expr::Texto(nombre.clone()),
+                            Expr::Texto(&nombre.clone()),
                             Expr::Num(x),
                             Expr::Num(y),
                             Expr::Num(rate),
@@ -1644,7 +1644,7 @@ fn ejecutar_stmt_gfx(
                 if let (Valor::Texto(nombre), Valor::Texto(tipo)) = (nombre_val, tipo_val) {
                     let result = particles::ejecutar_funcion(
                         "particles::set_emitter_type",
-                        &[Expr::Texto(nombre.clone()), Expr::Texto(tipo.clone())],
+                        &[Expr::Texto(&nombre.clone()), Expr::Texto(&tipo.clone())],
                         executor,
                         input,
                         funcs,
@@ -1664,7 +1664,7 @@ fn ejecutar_stmt_gfx(
                 if let Valor::Texto(nombre) = nombre_val {
                     let result = particles::ejecutar_funcion(
                         "particles::remove_emitter",
-                        &[Expr::Texto(nombre.clone())],
+                        &[Expr::Texto(&nombre.clone())],
                         executor,
                         input,
                         funcs,
@@ -2184,7 +2184,7 @@ pub fn evaluar_expr_gfx(
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
-            if name == "__INPUT__" {
+            if *name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
@@ -4005,7 +4005,7 @@ pub fn evaluar_expr_migui(
                 if funcs.contains_key(func_name) {
                     func_name.clone()
                 } else {
-                    func_name.split("::").last().unwrap_or(func_name).to_string()
+                    &func_name.split("::").last().unwrap_or(func_name).to_string()
                 }
             } else {
                 func_name.clone()

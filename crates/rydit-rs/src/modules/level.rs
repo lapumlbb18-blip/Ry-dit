@@ -9,7 +9,6 @@ use std::fs;
 use crate::eval::evaluar_expr;
 
 // Imports para SDL2
-use rydit_gfx::camera::Camera2D;
 
 // ============================================================================
 // LEVEL MANAGER STRUCT
@@ -244,10 +243,10 @@ impl LevelManager {
     pub fn render_with_camera_sdl2(
         &self,
         canvas: &mut sdl2::render::Canvas<sdl2::video::Window>,
-        camera: &rydit_gfx::camera::Camera2D,
+        __camera: &rydit_gfx::camera::Camera2D,
         texture_manager: &mut std::collections::HashMap<String, sdl2::render::Texture>,
-        screen_width: i32,
-        screen_height: i32,
+        __screen_width: i32,
+        __screen_height: i32,
     ) -> Result<(), String> {
         // Renderizar nivel con cámara
         self.render_sdl2(canvas, texture_manager)?;

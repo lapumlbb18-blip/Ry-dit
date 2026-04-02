@@ -2,7 +2,6 @@
 // Ejecución de programas en diferentes modos (comandante, gfx, migui)
 
 use std::collections::{HashMap, HashSet};
-use std::time::Instant;
 
 use blast_core::Executor;
 use rydit_parser::{Program, Stmt};
@@ -123,7 +122,7 @@ pub fn ejecutar_programa_gfx<'a>(
 
                 // El While ES el game loop principal
                 let mut frame_count = 0;
-                let mut frame_start = Instant::now();
+                let frame_start = Instant::now();
 
                 loop {
                     // 🆕 RyBot begin frame
