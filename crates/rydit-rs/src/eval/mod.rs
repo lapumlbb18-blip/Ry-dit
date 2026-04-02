@@ -905,7 +905,7 @@ pub fn evaluar_expr<'a>(
             // Si no existe, intentar buscar solo el nombre después de ::
             let func_name_final = if func_name.contains("::") {
                 // Es nombre con namespace, intentar con nombre completo primero
-                if funcs.contains_key(&func_name) {
+                if funcs.contains_key(func_name) {
                     func_name.clone()
                 } else {
                     // Extraer nombre después de ::
