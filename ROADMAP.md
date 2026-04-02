@@ -1,8 +1,8 @@
 # 🛡️ RyDit - ROADMAP OFICIAL
 
-**Última actualización**: 2026-04-01  
-**Versión Actual**: v0.11.2 ✅ PARSER ZERO-COPY + BYTECODE VM  
-**Próxima Versión**: v0.11.3 - Snake reescrito + Platformer SDL2  
+**Última actualización**: 2026-04-02
+**Versión Actual**: v0.11.4 ✅ 93% COMPLETADO (70 → 5 errores)
+**Próxima Versión**: v0.11.5 - 0 errores + Snake reescrito
 **Meta v1.0.0**: Motor de juegos educativo completo
 
 ---
@@ -20,41 +20,160 @@
 | **GPU Instancing** | v0.10.0 | ✅ 100K+ | - | Partículas |
 | **Toolkit UI** | v0.11.0 | ✅ Widgets | 8 | Button, Label, Panel |
 
-**Total**: 101 tests automáticos | ~25K líneas Rust
+**Total**: 101 tests automáticos | ~28K líneas Rust
 
 ---
 
 ## 🎯 VERSIONES COMPLETADAS
 
-### **v0.11.2** - PARSER ZERO-COPY + BYTECODE VM ✅
+### **v0.11.4** - FIX MANUAL + DEBUG TESTS ✅
 
-**Fecha**: 2026-04-01  
-**Duración**: 1 día (¡eficiencia máxima!)  
-**Tests**: 65 passing
+**Fecha**: 2026-04-02
+**Duración**: 4 horas
+**Progreso**: 70 → 5 errores (93% completado)
 
-**Features**:
-- ✅ `rydit-lexer/` - Zero-Copy con lifetimes (20 tests)
-- ✅ `rydit-parser/` - Error Recovery + AST typed (23 tests)
-- ✅ `rydit-vm/` - Bytecode Compiler + VM (19 tests)
-- ✅ `lizer/` - Wrapper backward compat (3 tests)
-- ✅ Workspace integration (65 tests total)
+**Metodología Aplicada**:
+1. ✅ Agente inspecciona errores
+2. ✅ Debug tests (6 creados)
+3. ✅ Fix manual (SIN SED)
+4. ✅ Cargo clippy --fix warnings
+5. ✅ Commits frecuentes + tags
 
-**Métricas**:
-- 4,155 líneas Rust nuevas
-- 50% menos memoria (lexer)
-- 2-3x más rápido (parsing)
-- 10-50x más rápido (VM vs interpretación)
+**Debug Tests Creados** (6 archivos):
+- `debug_types.rs` - Tipos básicos
+- `debug_complete.rs` - Todos los tipos
+- `debug_e0308.rs` - Mismatched types
+- `debug_mayusculas.rs` - Mayúsculas en tipos
+- `debug_estrategico.rs` - 5 errores clave
+- `debug_6_errors.rs` - 6 errores finales
 
-**Tags**:
-- `v0.11.2-pre-parser` - Backup inicial
-- `v0.11.2-fase-1` - Lexer zero-copy
-- `v0.11.2-fase-2` - Parser error recovery
-- `v0.11.2-fase-3` - Bytecode VM
-- `v0.11.2-fase-4` - Integración
+**Fixes Aplicados**:
+- ✅ parser.parse() tuple destructuring (4 errores)
+- ✅ Vec<&str> → Vec<String> (2 errores)
+- ✅ Lifetimes en 3 funciones (10 errores)
+- ✅ if/else type mismatch (1 error)
+- ✅ Clippy warnings (3 warnings)
+- ✅ Pattern match callee (1 error)
+- ✅ input lifetime (1 error)
+- ✅ module_content lifetime (1 error)
+- ✅ content lifetime (1 error)
+
+**Lecciones Aprendidas**:
+- ⚠️ **SED ES PELIGROSO**: Rompió código en línea 1837
+- ✅ **Debug tests antes de fixear**: Identificar tipos exactos
+- ✅ **Cargo clippy --fix**: Identifica warnings ocultos
+- ✅ **Fix manual**: Control total, sin efectos secundarios
+- ✅ **Commits frecuentes**: Puntos de reversión claros
+
+**Tags Creados** (20+):
+- `v0.11.4-pre-decision` - Punto de decisión
+- `v0.11.4-fase1a-2fixes` - 2 críticos fixeados
+- `v0.11.4-lifetimes-fix` - 10 lifetimes fixeados
+- `v0.11.4-debug-estrategico` - Debug estratégico
+- `v0.11.4-clippy-warnings` - Clippy warnings fixeados
+- `v0.11.4-fix-manual-4errors` - 4 errores manuales
+
+**Documentación Creada**:
+- `SESION_V0.11.4_COMPLETA.md` - Sesión completa
+- `INFORME_13_ERRORES_20260402.md` - Informe técnico
+- `EVALUACION_ARC_STR_VS_MANUAL.md` - Evaluación de opciones
+
+**Pendientes**: 5 errores (lifetimes + type mismatch)
 
 ---
 
-### **v0.11.1** - TESTS EN 3 NIVELES ✅
+## ⚠️ ADVERTENCIA: PELIGRO DE SED DESPUÉS DE REFACTORIZAR PARSER
+
+### **El Problema**
+
+Después de refactorizar el parser (`lizer` → `rydit-parser` con lifetimes `'a`), **SED ES EXTREMADAMENTE PELIGROSO**.
+
+### **Caso Real: Línea 1837**
+
+```bash
+# ❌ COMANDO SED PELIGROSO
+sed -i 's/let program = match parser.parse() {/let (program, errors) = parser.parse();\n                if !errors.is_empty() {/g' main.rs
+```
+
+**Resultado**: Código CORROMPIDO
+```rust
+// Línea 1837-1848 (CÓDIGO ROTO)
+let (program, errors) = parser.parse();
+if !errors.is_empty() {
+    println!("[ERROR] Errores parseando: {} errores", errors.len());
+    for e in &errors { println!("  - {:?}", e); }
+        importing_stack.pop();
+        return None;
+    }
+    let program = parser.parse(); módulo '{}': {}", module, e);  // ← ¡CORRUPTO!
+        importing_stack.pop();
+        return None;
+    }
+};
+```
+
+**Daño Causado**:
+- Líneas duplicadas
+- Código mezclado
+- Sintaxis inválida
+- **Tuvo que revertir desde git**
+
+### **¿Por Qué Sed Falla?**
+
+1. **No entiende contexto**: Solo busca patrones de texto
+2. **No respeta scopes**: Cambia TODAS las coincidencias
+3. **No maneja multilinea**: Los `\n` en sed son problemáticos
+4. **No verifica sintaxis**: No sabe si el código resultante es válido
+
+### **Metodología CORRECTA**
+
+```bash
+# ✅ PASO 1: Debug test para identificar tipos
+cargo run --bin debug_e0308
+
+# ✅ PASO 2: Identificar líneas exactas
+cargo build 2>&1 | grep "^  -->" | head -10
+
+# ✅ PASO 3: Fix manual con editor (NO SED)
+# Editar línea por línea, verificando contexto
+
+# ✅ PASO 4: Verificar compilación
+cargo build -p rydit-rs --bin rydit-rs
+
+# ✅ PASO 5: Commit + Tag
+git add -A && git commit -m "🔧 Fix error #X"
+git tag -a v0.11.4-fix-error-X
+```
+
+### **Lecciones Aprendidas**
+
+| Herramienta | ¿Usar? | ¿Cuándo? | Riesgo |
+|-------------|--------|----------|--------|
+| **sed** | ❌ NO | Nunca en código refactorizado | 🔴 ALTO |
+| **cargo clippy --fix** | ✅ SÍ | Warnings simples | 🟢 Bajo |
+| **Fix manual** | ✅ SÍ | Siempre que sea posible | 🟢 Bajo |
+| **Debug tests** | ✅ SÍ | Antes de fixear | 🟢 Bajo |
+
+### **Regla de Oro**
+
+> **"Después de refactorizar parser con lifetimes, NUNCA uses sed. Solo fix manual + debug tests."**
+
+---
+
+### **v0.11.3** - FIX LIFETIMES + DEBUG TESTS ✅
+
+**Fecha**: 2026-04-02
+**Progreso**: 70 → 15 errores (79% completado)
+
+**Features**:
+- ✅ Lifetimes explícitos en 3 funciones
+- ✅ 6 debug tests creados
+- ✅ Informe técnico completo
+- ✅ Evaluación Arc<str> vs Manual
+
+---
+
+### **v0.11.2** - PARSER ZERO-COPY + BYTECODE VM ✅
 
 **Fecha**: 2026-04-01  
 **Tests**: 16 passing
