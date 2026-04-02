@@ -73,6 +73,9 @@ pub mod sdl2_ffi;
 // 🆕 UI Toolkit v0.11.0 - Botones, Labels, Paneles
 pub mod toolkit;
 
+// 🆕 FSR 1.0 v0.11.4 - FidelityFX Super Resolution (Upscale + Sharpen)
+pub mod fsr;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
