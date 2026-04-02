@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 /// Tipo de función registrable en un módulo
 pub type ModuleFunction =
-    fn(&[Expr], &mut Executor, &mut HashMap<String, (Vec<String>, Vec<Stmt>)>) -> Valor;
+    for<'a> fn(&[Expr<'a>], &mut Executor, &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>) -> Valor;
 
 /// Registro de funciones de un módulo
 pub struct ModuleRegistry {
@@ -133,10 +133,10 @@ macro_rules! rydit_module {
 // ============================================================================
 
 /// Función math::sqrt para registrar
-pub fn math_sqrt(
-    args: &[Expr],
+pub fn math_sqrt<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("math::sqrt() requiere 1 argumento".to_string());
@@ -158,10 +158,10 @@ pub fn math_sqrt(
 }
 
 /// Función math::sin para registrar
-pub fn math_sin(
-    args: &[Expr],
+pub fn math_sin<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("math::sin() requiere 1 argumento".to_string());
@@ -178,10 +178,10 @@ pub fn math_sin(
 }
 
 /// Función math::cos para registrar
-pub fn math_cos(
-    args: &[Expr],
+pub fn math_cos<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("math::cos() requiere 1 argumento".to_string());

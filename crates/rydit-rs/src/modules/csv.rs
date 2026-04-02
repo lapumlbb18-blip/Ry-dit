@@ -24,10 +24,10 @@ use std::fs;
 // ============================================================================
 
 /// csv::read(path) - Leer CSV desde archivo
-pub fn csv_read(
-    args: &[lizer::Expr],
+pub fn csv_read<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -82,10 +82,10 @@ pub fn csv_read(
 }
 
 /// csv::write(data, path) - Escribir CSV a archivo
-pub fn csv_write(
-    args: &[lizer::Expr],
+pub fn csv_write<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -146,10 +146,10 @@ pub fn csv_write(
 
 /// csv::to_json(csv_text) - Convertir CSV a JSON
 /// Retorna array de objetos como array de tuplas [(key, value), ...]
-pub fn csv_to_json(
-    args: &[lizer::Expr],
+pub fn csv_to_json<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -205,10 +205,10 @@ pub fn csv_to_json(
 
 /// csv::from_json(json_text) - Convertir JSON a CSV
 /// Formato esperado: array de objetos como array de tuplas [[key, value], ...]
-pub fn csv_from_json(
-    args: &[lizer::Expr],
+pub fn csv_from_json<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -285,10 +285,10 @@ pub fn csv_from_json(
 // ============================================================================
 
 /// csv::filter(data, column, value) - Filtrar filas por columna
-pub fn csv_filter(
-    args: &[lizer::Expr],
+pub fn csv_filter<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -377,10 +377,10 @@ pub fn csv_filter(
 }
 
 /// csv::columns(data) - Obtener nombres de columnas
-pub fn csv_columns(
-    args: &[lizer::Expr],
+pub fn csv_columns<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -406,10 +406,10 @@ pub fn csv_columns(
 }
 
 /// csv::row_count(data) - Contar filas (sin headers)
-pub fn csv_row_count(
-    args: &[lizer::Expr],
+pub fn csv_row_count<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -429,10 +429,10 @@ pub fn csv_row_count(
 }
 
 /// csv::col_count(data) - Contar columnas
-pub fn csv_col_count(
-    args: &[lizer::Expr],
+pub fn csv_col_count<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -461,10 +461,10 @@ pub fn csv_col_count(
 // ============================================================================
 
 /// csv::join(csv1, csv2, column) - Unir dos CSVs por columna común
-pub fn csv_join(
-    args: &[lizer::Expr],
+pub fn csv_join<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -587,10 +587,10 @@ pub fn csv_join(
 
 /// csv::group_by(data, column) - Agrupar datos por columna
 /// Retorna: [[grupo, [filas]], ...]
-pub fn csv_group_by(
-    args: &[lizer::Expr],
+pub fn csv_group_by<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -669,10 +669,10 @@ pub fn csv_group_by(
 
 /// csv::aggregate(data, column, operation) - Agregar datos de columna
 /// Operaciones: sum, avg, count, min, max
-pub fn csv_aggregate(
-    args: &[lizer::Expr],
+pub fn csv_aggregate<'a>(
+    args: &[lizer::Expr<'a>],
     executor: &mut blast_core::Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<lizer::Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 

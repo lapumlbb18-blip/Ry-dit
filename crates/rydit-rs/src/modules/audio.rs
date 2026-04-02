@@ -23,7 +23,7 @@ pub struct AudioState {
 }
 
 impl AudioState {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             sounds: HashMap::new(),
             music_path: None,
@@ -44,7 +44,7 @@ thread_local! {
 
 /// Obtener referencia al sistema de audio global
 #[allow(dead_code)]
-pub fn get_audio_system() -> Rc<RefCell<AudioSystem>> {
+pub fn get_audio_system<'a>() -> Rc<RefCell<AudioSystem>> {
     AUDIO_SYSTEM.with(|a| a.clone())
 }
 
@@ -53,10 +53,10 @@ pub fn get_audio_system() -> Rc<RefCell<AudioSystem>> {
 // ============================================================================
 
 /// audio::beep(frecuencia, duracion) - Generar beep tipo consola
-pub fn audio_beep(
-    args: &[Expr],
+pub fn audio_beep<'a>(
+    args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -81,10 +81,10 @@ pub fn audio_beep(
 }
 
 /// audio::click() - Sonido de click UI
-pub fn audio_click(
-    _args: &[Expr],
+pub fn audio_click<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     // Click UI - sonido corto de alta frecuencia
     AUDIO_SYSTEM.with(|audio_sys| {
@@ -101,10 +101,10 @@ pub fn audio_click(
 // ============================================================================
 
 /// audio::load(id, path) - Cargar sonido desde archivo
-pub fn audio_load_sound(
-    args: &[Expr],
+pub fn audio_load_sound<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("audio::load() requiere 2 argumentos: id, path".to_string());
@@ -148,10 +148,10 @@ pub fn audio_load_sound(
 }
 
 /// audio::play(id) - Reproducir sonido
-pub fn audio_play(
-    args: &[Expr],
+pub fn audio_play<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("audio::play() requiere 1 argumento: id".to_string());
@@ -182,10 +182,10 @@ pub fn audio_play(
 }
 
 /// audio::stop(id) - Detener sonido
-pub fn audio_stop(
-    args: &[Expr],
+pub fn audio_stop<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("audio::stop() requiere 1 argumento: id".to_string());
@@ -213,10 +213,10 @@ pub fn audio_stop(
 }
 
 /// audio::volume(id, level) - Configurar volumen de sonido (0.0 - 1.0)
-pub fn audio_volume(
-    args: &[Expr],
+pub fn audio_volume<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("audio::volume() requiere 2 argumentos: id, volumen".to_string());
@@ -268,10 +268,10 @@ pub fn audio_volume(
 // ============================================================================
 
 /// audio::load_music(path) - Cargar música desde archivo
-pub fn audio_load_music(
-    args: &[Expr],
+pub fn audio_load_music<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("audio::load_music() requiere 1 argumento: path".to_string());
@@ -307,10 +307,10 @@ pub fn audio_load_music(
 }
 
 /// audio::play_music() - Reproducir música
-pub fn audio_play_music(
-    _args: &[Expr],
+pub fn audio_play_music<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     AUDIO_SYSTEM.with(|audio_sys| {
         let mut sys = audio_sys.borrow_mut();
@@ -320,10 +320,10 @@ pub fn audio_play_music(
 }
 
 /// audio::stop_music() - Detener música
-pub fn audio_stop_music(
-    _args: &[Expr],
+pub fn audio_stop_music<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     AUDIO_SYSTEM.with(|audio_sys| {
         let mut sys = audio_sys.borrow_mut();
@@ -333,10 +333,10 @@ pub fn audio_stop_music(
 }
 
 /// audio::music_volume(level) - Configurar volumen de música (0.0 - 1.0)
-pub fn audio_music_volume(
-    args: &[Expr],
+pub fn audio_music_volume<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("audio::music_volume() requiere 1 argumento: volumen".to_string());
@@ -368,10 +368,10 @@ pub fn audio_music_volume(
 }
 
 /// audio::is_playing() - Verificar si hay música reproduciendo
-pub fn audio_is_playing(
-    _args: &[Expr],
+pub fn audio_is_playing<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let is_playing = AUDIO_SYSTEM.with(|audio_sys| {
         let sys = audio_sys.borrow();
@@ -385,10 +385,10 @@ pub fn audio_is_playing(
 // ============================================================================
 
 /// audio::count() - Cantidad de sonidos cargados
-pub fn audio_count(
-    _args: &[Expr],
+pub fn audio_count<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let count = AUDIO_STATE.with(|state| {
         let state_ref = state.borrow();
@@ -399,10 +399,10 @@ pub fn audio_count(
 }
 
 /// audio::list() - Listar sonidos cargados
-pub fn audio_list(
-    _args: &[Expr],
+pub fn audio_list<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let sounds = AUDIO_STATE.with(|state| {
         let state_ref = state.borrow();

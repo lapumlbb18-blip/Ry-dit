@@ -447,7 +447,7 @@ pub fn ejecutar_programa_migui<'a>(
         .statements
         .iter()
         .filter(|s| matches!(s, Stmt::Block(_)))
-        .flat_map(|s| {
+        .flat_map(|s| -> Vec<&Stmt<'a>> {
             if let Stmt::Block(stmts) = s {
                 stmts.iter().collect()
             } else {

@@ -84,10 +84,10 @@ fn main() {
 // EJECUTOR DE STATEMENTS (pública para módulos)
 
 /// Ejecutar un statement (pública para módulos)
-pub fn ejecutar_stmt<'stmt>(
-    stmt: &'stmt Stmt<'stmt>,
+pub fn ejecutar_stmt<'stmt, 'data>(
+    stmt: &'stmt Stmt<'data>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'data>>)>,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
 ) -> (Option<bool>, Option<Valor>) {
@@ -382,7 +382,9 @@ pub fn ejecutar_stmt<'stmt>(
             let module_content = match cargar_modulo(module) {
                 Ok(content) => {
                     println!("[IMPORT] Módulo '{}' cargado", module);
-                    content
+                    // Leak module content to 'static since parsed AST references it
+                    // This is acceptable as modules persist for program lifetime
+                    Box::leak(content.into_boxed_str())
                 }
                 Err(e) => {
                     println!("[ERROR] {}", e);
@@ -394,7 +396,7 @@ pub fn ejecutar_stmt<'stmt>(
             importing_stack.push(module.to_string());
 
             // Lexer + Parser (module_content vive mientras se usa)
-            let tokens = Lexer::new(&module_content).scan();
+            let tokens = Lexer::new(module_content).scan();
             let mut parser = Parser::new(tokens);
 
             let (program, errors) = parser.parse();
@@ -415,7 +417,7 @@ pub fn ejecutar_stmt<'stmt>(
                 }
             }
 
-            // Ejecutar módulo (module_content vive hasta aquí)
+            // Ejecutar módulo (module_content vive hasta aquí - es 'static)
             for s in &program.statements {
                 match ejecutar_stmt(s, executor, funcs, loaded_modules, importing_stack) {
                     (Some(true), _) => {
@@ -429,7 +431,7 @@ pub fn ejecutar_stmt<'stmt>(
                     _ => {}
                 }
             }
-            // module_content se destruye aquí
+            // module_content es 'static, no se destruye
 
             // Remover del stack de imports
             importing_stack.pop();
@@ -1246,10 +1248,10 @@ impl InputEstado {
 }
 
 /// Ejecutar statement en modo gráfico
-pub fn ejecutar_stmt_gfx<'stmt>(
-    stmt: &'stmt Stmt<'stmt>,
+pub fn ejecutar_stmt_gfx<'stmt, 'data>(
+    stmt: &'stmt Stmt<'data>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'data>>)>,
     queue: &mut RenderQueue,
     input: &mut InputEstado,
     loaded_modules: &mut HashSet<String>,
@@ -1828,7 +1830,8 @@ pub fn ejecutar_stmt_gfx<'stmt>(
                 importing_stack.push(module.to_string());
 
                 // Lexer + Parser (content vive mientras se usa)
-                let tokens = Lexer::new(&content).scan();
+                let content: &'static str = Box::leak(content.into_boxed_str());
+                let tokens = Lexer::new(content).scan();
                 let mut parser = Parser::new(tokens);
 
                 let (program, errors) = parser.parse();
@@ -4231,10 +4234,10 @@ pub fn evaluar_expr_migui(
 /// 9. `textbox_states` - Estados de textboxes
 /// 10. `window_states` - Estados de ventanas
 #[allow(clippy::too_many_arguments)]
-pub fn ejecutar_stmt_migui<'stmt>(
-    stmt: &'stmt Stmt<'stmt>,
+pub fn ejecutar_stmt_migui<'stmt, 'data>(
+    stmt: &'stmt Stmt<'data>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'stmt>>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'data>>)>,
     gui: &mut Migui,
     loaded_modules: &mut HashSet<String>,
     importing_stack: &mut Vec<String>,
@@ -4532,7 +4535,8 @@ pub fn ejecutar_stmt_migui<'stmt>(
             if let Ok(content) = std::fs::read_to_string(&module_path) {
                 importing_stack.push(module.to_string());
 
-                let tokens = Lexer::new(&content).scan();
+                let content: &'static str = Box::leak(content.into_boxed_str());
+                let tokens = Lexer::new(content).scan();
                 let mut parser = Parser::new(tokens);
 
                 let (program, errors) = parser.parse();

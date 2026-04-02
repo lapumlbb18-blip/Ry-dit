@@ -31,10 +31,10 @@ use crate::eval::evaluar_expr;
 // ============================================================================
 
 /// camera::set_position(x, y) - Establecer posición de la cámara
-pub fn camera_set_position(
-    args: &[Expr],
+pub fn camera_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("camera::set_position() requiere 2 argumentos: x, y".to_string());
@@ -61,10 +61,10 @@ pub fn camera_set_position(
 }
 
 /// camera::get_position() - Obtener posición actual
-pub fn camera_get_position(
-    _args: &[Expr],
+pub fn camera_get_position<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let cam = get_camera();
     let cam_ref = cam.borrow();
@@ -75,10 +75,10 @@ pub fn camera_get_position(
 }
 
 /// camera::set_zoom(level) - Establecer zoom
-pub fn camera_set_zoom(
-    args: &[Expr],
+pub fn camera_set_zoom<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("camera::set_zoom() requiere 1 argumento: level".to_string());
@@ -99,10 +99,10 @@ pub fn camera_set_zoom(
 }
 
 /// camera::get_zoom() - Obtener zoom actual
-pub fn camera_get_zoom(
-    _args: &[Expr],
+pub fn camera_get_zoom<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let cam = get_camera();
     let cam_ref = cam.borrow();
@@ -110,10 +110,10 @@ pub fn camera_get_zoom(
 }
 
 /// camera::set_rotation(angle) - Establecer rotación en grados
-pub fn camera_set_rotation(
-    args: &[Expr],
+pub fn camera_set_rotation<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("camera::set_rotation() requiere 1 argumento: angle".to_string());
@@ -134,10 +134,10 @@ pub fn camera_set_rotation(
 }
 
 /// camera::get_rotation() - Obtener rotación actual
-pub fn camera_get_rotation(
-    _args: &[Expr],
+pub fn camera_get_rotation<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let cam = get_camera();
     let cam_ref = cam.borrow();
@@ -149,10 +149,10 @@ pub fn camera_get_rotation(
 // ============================================================================
 
 /// camera::scroll(dx, dy) - Mover cámara relativamente
-pub fn camera_scroll(
-    args: &[Expr],
+pub fn camera_scroll<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("camera::scroll() requiere 2 argumentos: dx, dy".to_string());
@@ -179,10 +179,10 @@ pub fn camera_scroll(
 }
 
 /// camera::scroll_to(x, y) - Mover cámara a posición absoluta
-pub fn camera_scroll_to(
-    args: &[Expr],
+pub fn camera_scroll_to<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("camera::scroll_to() requiere 2 argumentos: x, y".to_string());
@@ -209,10 +209,10 @@ pub fn camera_scroll_to(
 }
 
 /// camera::set_bounds(min_x, min_y, max_x, max_y) - Establecer límites
-pub fn camera_set_bounds(
-    args: &[Expr],
+pub fn camera_set_bounds<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 4 {
         return Valor::Error(
@@ -256,10 +256,10 @@ pub fn camera_set_bounds(
 }
 
 /// camera::clear_bounds() - Limpiar límites
-pub fn camera_clear_bounds(
-    _args: &[Expr],
+pub fn camera_clear_bounds<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let cam = get_camera();
     let mut cam_ref = cam.borrow_mut();
@@ -273,10 +273,10 @@ pub fn camera_clear_bounds(
 // ============================================================================
 
 /// camera::follow(target_x, target_y) - Seguir objetivo instantáneamente
-pub fn camera_follow(
-    args: &[Expr],
+pub fn camera_follow<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -305,10 +305,10 @@ pub fn camera_follow(
 }
 
 /// camera::follow_smooth(target_x, target_y, smooth) - Seguir con suavizado
-pub fn camera_follow_smooth(
-    args: &[Expr],
+pub fn camera_follow_smooth<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error(
@@ -346,10 +346,10 @@ pub fn camera_follow_smooth(
 }
 
 /// camera::set_follow_offset(offset_x, offset_y) - Offset para seguimiento
-pub fn camera_set_follow_offset(
-    args: &[Expr],
+pub fn camera_set_follow_offset<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -389,10 +389,10 @@ pub fn camera_set_follow_offset(
 // ============================================================================
 
 /// camera::world_to_screen(wx, wy) - Convertir mundo a pantalla
-pub fn camera_world_to_screen(
-    args: &[Expr],
+pub fn camera_world_to_screen<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("camera::world_to_screen() requiere 2 argumentos: wx, wy".to_string());
@@ -424,10 +424,10 @@ pub fn camera_world_to_screen(
 }
 
 /// camera::screen_to_world(sx, sy) - Convertir pantalla a mundo
-pub fn camera_screen_to_world(
-    args: &[Expr],
+pub fn camera_screen_to_world<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("camera::screen_to_world() requiere 2 argumentos: sx, sy".to_string());
@@ -462,10 +462,10 @@ pub fn camera_screen_to_world(
 // ============================================================================
 
 /// camera::reset() - Resetear cámara a valores por defecto
-pub fn camera_reset(
-    _args: &[Expr],
+pub fn camera_reset<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let cam = get_camera();
     let mut cam_ref = cam.borrow_mut();
@@ -475,10 +475,10 @@ pub fn camera_reset(
 }
 
 /// camera::apply_sdl2(x, y, screen_width, screen_height) - Aplicar cámara para SDL2
-pub fn camera_apply_sdl2(
-    args: &[Expr],
+pub fn camera_apply_sdl2<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 4 {
         return Valor::Error(

@@ -57,7 +57,7 @@ pub struct Area2D {
 
 impl Area2D {
     /// Crear nueva área 2D
-    pub fn new(id: &str, x: f32, y: f32, width: f32, height: f32) -> Self {
+    pub fn new<'a>(id: &str, x: f32, y: f32, width: f32, height: f32) -> Self {
         Self {
             id: id.to_string(),
             x,
@@ -72,7 +72,7 @@ impl Area2D {
     }
 
     /// Verificar si colisiona con otra área
-    pub fn collides_with(&self, other: &Area2D) -> bool {
+    pub fn collides_with<'a>(&self, other: &Area2D) -> bool {
         if !self.active || !other.active {
             return false;
         }
@@ -94,7 +94,7 @@ impl Area2D {
 
     /// Obtener centro del área
     #[allow(dead_code)] // Para futuras funciones de centro de área
-    pub fn get_center(&self) -> (f32, f32) {
+    pub fn get_center<'a>(&self) -> (f32, f32) {
         (self.x + self.width / 2.0, self.y + self.height / 2.0)
     }
 }
@@ -108,7 +108,7 @@ thread_local! {
 }
 
 /// Obtener referencia a las áreas
-pub fn get_areas() -> Rc<RefCell<HashMap<String, Area2D>>> {
+pub fn get_areas<'a>() -> Rc<RefCell<HashMap<String, Area2D>>> {
     AREAS.with(|a| a.clone())
 }
 
@@ -117,10 +117,10 @@ pub fn get_areas() -> Rc<RefCell<HashMap<String, Area2D>>> {
 // ============================================================================
 
 /// collision::check_rect_rect(x1, y1, w1, h1, x2, y2, w2, h2) - Colisión rect vs rect
-pub fn collision_check_rect_rect(
-    args: &[Expr],
+pub fn collision_check_rect_rect<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 8 {
         return Valor::Error("collision::check_rect_rect() requiere 8 argumentos".to_string());
@@ -147,10 +147,10 @@ pub fn collision_check_rect_rect(
 }
 
 /// collision::check_circle_circle(x1, y1, r1, x2, y2, r2) - Colisión circle vs circle
-pub fn collision_check_circle_circle(
-    args: &[Expr],
+pub fn collision_check_circle_circle<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 6 {
         return Valor::Error("collision::check_circle_circle() requiere 6 argumentos".to_string());
@@ -180,10 +180,10 @@ pub fn collision_check_circle_circle(
 }
 
 /// collision::check_rect_circle(rx, ry, rw, rh, cx, cy, cr) - Colisión rect vs circle
-pub fn collision_check_rect_circle(
-    args: &[Expr],
+pub fn collision_check_rect_circle<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 7 {
         return Valor::Error("collision::check_rect_circle() requiere 7 argumentos".to_string());
@@ -219,10 +219,10 @@ pub fn collision_check_rect_circle(
 }
 
 /// collision::check_point_rect(px, py, rx, ry, rw, rh) - Punto vs rectángulo
-pub fn collision_check_point_rect(
-    args: &[Expr],
+pub fn collision_check_point_rect<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 6 {
         return Valor::Error("collision::check_point_rect() requiere 6 argumentos".to_string());
@@ -249,10 +249,10 @@ pub fn collision_check_point_rect(
 }
 
 /// collision::check_point_circle(px, py, cx, cy, cr) - Punto vs círculo
-pub fn collision_check_point_circle(
-    args: &[Expr],
+pub fn collision_check_point_circle<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 5 {
         return Valor::Error("collision::check_point_circle() requiere 5 argumentos".to_string());
@@ -282,10 +282,10 @@ pub fn collision_check_point_circle(
 }
 
 /// collision::resolve(x1, y1, w1, h1, x2, y2, w2, h2) - Obtener overlap de colisión
-pub fn collision_resolve(
-    args: &[Expr],
+pub fn collision_resolve<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 8 {
         return Valor::Error("collision::resolve() requiere 8 argumentos".to_string());
@@ -346,10 +346,10 @@ pub fn collision_resolve(
 // ============================================================================
 
 /// area2d::create(id, x, y, w, h) - Crear área 2D
-pub fn area2d_create(
-    args: &[Expr],
+pub fn area2d_create<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 5 {
         return Valor::Error("area2d::create() requiere 5 argumentos: id, x, y, w, h".to_string());
@@ -391,10 +391,10 @@ pub fn area2d_create(
 }
 
 /// area2d::set_position(id, x, y) - Mover área
-pub fn area2d_set_position(
-    args: &[Expr],
+pub fn area2d_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error("area2d::set_position() requiere 3 argumentos: id, x, y".to_string());
@@ -435,10 +435,10 @@ pub fn area2d_set_position(
 }
 
 /// area2d::get_position(id) - Obtener posición del área
-pub fn area2d_get_position(
-    args: &[Expr],
+pub fn area2d_get_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::get_position() requiere 1 argumento: id".to_string());
@@ -462,10 +462,10 @@ pub fn area2d_get_position(
 }
 
 /// area2d::check(id, other_id) - Verificar colisión entre áreas
-pub fn area2d_check(
-    args: &[Expr],
+pub fn area2d_check<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("area2d::check() requiere 2 argumentos: id, other_id".to_string());
@@ -501,10 +501,10 @@ pub fn area2d_check(
 }
 
 /// area2d::get_overlapping(id) - Obtener áreas superpuestas
-pub fn area2d_get_overlapping(
-    args: &[Expr],
+pub fn area2d_get_overlapping<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::get_overlapping() requiere 1 argumento: id".to_string());
@@ -558,10 +558,10 @@ pub fn area2d_get_overlapping(
 }
 
 /// area2d::set_active(id, active) - Activar/desactivar área
-pub fn area2d_set_active(
-    args: &[Expr],
+pub fn area2d_set_active<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("area2d::set_active() requiere 2 argumentos: id, active".to_string());
@@ -601,10 +601,10 @@ pub fn area2d_set_active(
 }
 
 /// area2d::destroy(id) - Eliminar área
-pub fn area2d_destroy(
-    args: &[Expr],
+pub fn area2d_destroy<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::destroy() requiere 1 argumento: id".to_string());
@@ -628,10 +628,10 @@ pub fn area2d_destroy(
 }
 
 /// area2d::count() - Contar áreas
-pub fn area2d_count(
-    _args: &[Expr],
+pub fn area2d_count<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let areas = get_areas();
     let areas_ref = areas.borrow();

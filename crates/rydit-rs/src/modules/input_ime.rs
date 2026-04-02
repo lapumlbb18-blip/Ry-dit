@@ -25,7 +25,7 @@ pub struct IMEState {
 }
 
 impl IMEState {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             visible: false,
             text: String::new(),
@@ -35,7 +35,7 @@ impl IMEState {
     }
 
     /// Mostrar teclado virtual
-    pub fn show_keyboard(&mut self) {
+    pub fn show_keyboard<'a>(&mut self) {
         self.visible = true;
         self.text.clear();
         self.cursor_pos = 0;
@@ -47,14 +47,14 @@ impl IMEState {
     }
 
     /// Ocultar teclado virtual
-    pub fn hide_keyboard(&mut self) {
+    pub fn hide_keyboard<'a>(&mut self) {
         self.visible = false;
         eprintln!("[IME] Teclado virtual ocultado");
     }
 
     /// Ingresar carácter desde el teclado virtual (para uso futuro)
     #[allow(dead_code)]
-    pub fn input_char(&mut self, c: char) {
+    pub fn input_char<'a>(&mut self, c: char) {
         if self.cursor_pos < self.text.len() {
             self.text.insert(self.cursor_pos, c);
         } else {
@@ -66,7 +66,7 @@ impl IMEState {
 
     /// Borrar último carácter (backspace) (para uso futuro)
     #[allow(dead_code)]
-    pub fn backspace(&mut self) {
+    pub fn backspace<'a>(&mut self) {
         if self.cursor_pos > 0 && !self.text.is_empty() {
             self.cursor_pos -= 1;
             self.text.remove(self.cursor_pos);
@@ -76,24 +76,24 @@ impl IMEState {
 
     /// Confirmar texto (Enter) (para uso futuro)
     #[allow(dead_code)]
-    pub fn confirm(&mut self) {
+    pub fn confirm<'a>(&mut self) {
         self.hide_keyboard();
         self.text_changed = false;
     }
 
     /// Obtener texto actual
-    pub fn get_text(&self) -> &str {
+    pub fn get_text<'a>(&self) -> &str {
         &self.text
     }
 
     /// Verificar si hay texto nuevo
-    pub fn has_new_text(&self) -> bool {
+    pub fn has_new_text<'a>(&self) -> bool {
         self.text_changed
     }
 
     /// Resetear estado de texto nuevo (para uso futuro)
     #[allow(dead_code)]
-    pub fn reset_text_flag(&mut self) {
+    pub fn reset_text_flag<'a>(&mut self) {
         self.text_changed = false;
     }
 }
@@ -113,7 +113,7 @@ thread_local! {
 }
 
 /// Obtener referencia al IME global
-pub fn get_ime() -> Rc<RefCell<IMEState>> {
+pub fn get_ime<'a>() -> Rc<RefCell<IMEState>> {
     IME.with(|m| m.clone())
 }
 
@@ -122,10 +122,10 @@ pub fn get_ime() -> Rc<RefCell<IMEState>> {
 // ============================================================================
 
 /// input::show_keyboard() - Mostrar teclado virtual
-pub fn input_show_keyboard(
-    _args: &[Expr],
+pub fn input_show_keyboard<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let mut ime_ref = ime.borrow_mut();
@@ -134,10 +134,10 @@ pub fn input_show_keyboard(
 }
 
 /// input::hide_keyboard() - Ocultar teclado virtual
-pub fn input_hide_keyboard(
-    _args: &[Expr],
+pub fn input_hide_keyboard<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let mut ime_ref = ime.borrow_mut();
@@ -146,10 +146,10 @@ pub fn input_hide_keyboard(
 }
 
 /// input::get_text() - Obtener texto ingresado
-pub fn input_get_text(
-    _args: &[Expr],
+pub fn input_get_text<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let ime_ref = ime.borrow();
@@ -157,10 +157,10 @@ pub fn input_get_text(
 }
 
 /// input::has_text() - Verificar si hay texto nuevo
-pub fn input_has_text(
-    _args: &[Expr],
+pub fn input_has_text<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let ime_ref = ime.borrow();
@@ -168,10 +168,10 @@ pub fn input_has_text(
 }
 
 /// input::clear_text() - Limpiar texto ingresado
-pub fn input_clear_text(
-    _args: &[Expr],
+pub fn input_clear_text<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let mut ime_ref = ime.borrow_mut();
@@ -183,10 +183,10 @@ pub fn input_clear_text(
 
 /// input::text(prompt) - Mostrar teclado y esperar input (bloqueante)
 /// NOTA: Esta es una versión simplificada no bloqueante
-pub fn input_text(
-    args: &[Expr],
+pub fn input_text<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let prompt = if !args.is_empty() {
         use crate::eval::evaluar_expr;
@@ -222,10 +222,10 @@ pub fn input_text(
 }
 
 /// input::is_keyboard_visible() - Verificar si el teclado está visible
-pub fn input_is_keyboard_visible(
-    _args: &[Expr],
+pub fn input_is_keyboard_visible<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let ime = get_ime();
     let ime_ref = ime.borrow();
@@ -237,10 +237,10 @@ pub fn input_is_keyboard_visible(
 // ============================================================================
 
 /// input::simulate_text(text) - Simular input de texto (para demos)
-pub fn input_simulate_text(
-    args: &[Expr],
+pub fn input_simulate_text<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 

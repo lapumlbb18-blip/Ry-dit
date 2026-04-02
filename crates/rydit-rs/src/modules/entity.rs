@@ -35,7 +35,7 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn new(id: &str, entity_type: &str, x: f32, y: f32) -> Self {
+    pub fn new<'a>(id: &str, entity_type: &str, x: f32, y: f32) -> Self {
         let mut data = HashMap::new();
 
         // Valores por defecto según tipo
@@ -99,12 +99,12 @@ impl Entity {
     }
 
     /// Obtener un dato del HashMap
-    pub fn get_data(&self, key: &str) -> Option<&Valor> {
+    pub fn get_data<'a>(&self, key: &str) -> Option<&Valor> {
         self.data.get(key)
     }
 
     /// Establecer un dato en el HashMap
-    pub fn set_data(&mut self, key: &str, value: Valor) {
+    pub fn set_data<'a>(&mut self, key: &str, value: Valor) {
         self.data.insert(key.to_string(), value);
     }
 
@@ -202,7 +202,7 @@ pub struct EntityManager {
 }
 
 impl EntityManager {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             entities: HashMap::new(),
             next_id: 0,
@@ -210,7 +210,7 @@ impl EntityManager {
     }
 
     /// Crear nueva entidad
-    pub fn create(&mut self, entity_type: &str, x: f32, y: f32) -> String {
+    pub fn create<'a>(&mut self, entity_type: &str, x: f32, y: f32) -> String {
         let id = format!("{}_{}", entity_type, self.next_id);
         self.next_id += 1;
 
@@ -221,22 +221,22 @@ impl EntityManager {
     }
 
     /// Obtener entidad por ID
-    pub fn get(&self, id: &str) -> Option<&Entity> {
+    pub fn get<'a>(&self, id: &str) -> Option<&Entity> {
         self.entities.get(id)
     }
 
     /// Obtener entidad mutable por ID
-    pub fn get_mut(&mut self, id: &str) -> Option<&mut Entity> {
+    pub fn get_mut<'a>(&mut self, id: &str) -> Option<&mut Entity> {
         self.entities.get_mut(id)
     }
 
     /// Destruir entidad
-    pub fn destroy(&mut self, id: &str) -> bool {
+    pub fn destroy<'a>(&mut self, id: &str) -> bool {
         self.entities.remove(id).is_some()
     }
 
     /// Obtener todas las entidades de un tipo
-    pub fn get_by_type(&self, entity_type: &str) -> Vec<String> {
+    pub fn get_by_type<'a>(&self, entity_type: &str) -> Vec<String> {
         self.entities
             .iter()
             .filter(|(_, e)| e.entity_type == entity_type && e.is_active)
@@ -245,7 +245,7 @@ impl EntityManager {
     }
 
     /// Contar entidades de un tipo
-    pub fn count_by_type(&self, entity_type: &str) -> usize {
+    pub fn count_by_type<'a>(&self, entity_type: &str) -> usize {
         self.entities
             .iter()
             .filter(|(_, e)| e.entity_type == entity_type && e.is_active)
@@ -253,12 +253,12 @@ impl EntityManager {
     }
 
     /// Contar todas las entidades activas
-    pub fn count(&self) -> usize {
+    pub fn count<'a>(&self) -> usize {
         self.entities.values().filter(|e| e.is_active).count()
     }
 
     /// Obtener todas las entidades activas
-    pub fn get_all(&self) -> Vec<String> {
+    pub fn get_all<'a>(&self) -> Vec<String> {
         self.entities
             .iter()
             .filter(|(_, e)| e.is_active)
@@ -274,7 +274,7 @@ impl Default for EntityManager {
 }
 
 /// Obtener referencia al Entity Manager global
-pub fn get_entity_manager() -> Rc<RefCell<EntityManager>> {
+pub fn get_entity_manager<'a>() -> Rc<RefCell<EntityManager>> {
     ENTITY_MANAGER.with(|e| e.clone())
 }
 
@@ -283,10 +283,10 @@ pub fn get_entity_manager() -> Rc<RefCell<EntityManager>> {
 // ============================================================================
 
 /// entity::create(type, x, y) - Crear nueva entidad
-pub fn entity_create(
-    args: &[Expr],
+pub fn entity_create<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error("entity::create() requiere 3 argumentos: type, x, y".to_string());
@@ -327,10 +327,10 @@ pub fn entity_create(
 }
 
 /// entity::destroy(id) - Destruir entidad
-pub fn entity_destroy(
-    args: &[Expr],
+pub fn entity_destroy<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::destroy() requiere 1 argumento: id".to_string());
@@ -353,10 +353,10 @@ pub fn entity_destroy(
 }
 
 /// entity::get_by_type(type) - Obtener IDs por tipo
-pub fn entity_get_by_type(
-    args: &[Expr],
+pub fn entity_get_by_type<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::get_by_type() requiere 1 argumento: type".to_string());
@@ -377,10 +377,10 @@ pub fn entity_get_by_type(
 }
 
 /// entity::count() - Contar todas las entidades activas
-pub fn entity_count(
-    _args: &[Expr],
+pub fn entity_count<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let em = get_entity_manager();
     let em_ref = em.borrow();
@@ -388,10 +388,10 @@ pub fn entity_count(
 }
 
 /// entity::count_by_type(type) - Contar entidades por tipo
-pub fn entity_count_by_type(
-    args: &[Expr],
+pub fn entity_count_by_type<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::count_by_type() requiere 1 argumento: type".to_string());
@@ -409,10 +409,10 @@ pub fn entity_count_by_type(
 }
 
 /// entity::get_all() - Obtener todas las entidades activas
-pub fn entity_get_all(
-    _args: &[Expr],
+pub fn entity_get_all<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let em = get_entity_manager();
     let em_ref = em.borrow();
@@ -427,10 +427,10 @@ pub fn entity_get_all(
 // ============================================================================
 
 /// entity::set_position(id, x, y) - Establecer posición
-pub fn entity_set_position(
-    args: &[Expr],
+pub fn entity_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error("entity::set_position() requiere 3 argumentos: id, x, y".to_string());
@@ -471,10 +471,10 @@ pub fn entity_set_position(
 }
 
 /// entity::get_position(id) - Obtener posición
-pub fn entity_get_position(
-    args: &[Expr],
+pub fn entity_get_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::get_position() requiere 1 argumento: id".to_string());
@@ -503,10 +503,10 @@ pub fn entity_get_position(
 }
 
 /// entity::set_sprite(id, sprite_id) - Establecer sprite
-pub fn entity_set_sprite(
-    args: &[Expr],
+pub fn entity_set_sprite<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -542,10 +542,10 @@ pub fn entity_set_sprite(
 }
 
 /// entity::set_collidable(id, collidable) - Establecer colisión
-pub fn entity_set_collidable(
-    args: &[Expr],
+pub fn entity_set_collidable<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -586,10 +586,10 @@ pub fn entity_set_collidable(
 }
 
 /// entity::is_collidable(id) - Verificar si tiene colisión
-pub fn entity_is_collidable(
-    args: &[Expr],
+pub fn entity_is_collidable<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::is_collidable() requiere 1 argumento: id".to_string());
@@ -615,10 +615,10 @@ pub fn entity_is_collidable(
 }
 
 /// entity::set_active(id, active) - Activar/desactivar entidad
-pub fn entity_set_active(
-    args: &[Expr],
+pub fn entity_set_active<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("entity::set_active() requiere 2 argumentos: id, active".to_string());
@@ -653,10 +653,10 @@ pub fn entity_set_active(
 }
 
 /// entity::is_active(id) - Verificar si está activa
-pub fn entity_is_active(
-    args: &[Expr],
+pub fn entity_is_active<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("entity::is_active() requiere 1 argumento: id".to_string());
@@ -683,10 +683,10 @@ pub fn entity_is_active(
 // ============================================================================
 
 /// player::set_speed(id, speed) - Establecer velocidad
-pub fn player_set_speed(
-    args: &[Expr],
+pub fn player_set_speed<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("player::set_speed() requiere 2 argumentos: id, speed".to_string());
@@ -720,10 +720,10 @@ pub fn player_set_speed(
 }
 
 /// player::get_speed(id) - Obtener velocidad
-pub fn player_get_speed(
-    args: &[Expr],
+pub fn player_get_speed<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::get_speed() requiere 1 argumento: id".to_string());
@@ -750,10 +750,10 @@ pub fn player_get_speed(
 }
 
 /// player::move_left(id) - Mover izquierda
-pub fn player_move_left(
-    args: &[Expr],
+pub fn player_move_left<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::move_left() requiere 1 argumento: id".to_string());
@@ -788,10 +788,10 @@ pub fn player_move_left(
 }
 
 /// player::move_right(id) - Mover derecha
-pub fn player_move_right(
-    args: &[Expr],
+pub fn player_move_right<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::move_right() requiere 1 argumento: id".to_string());
@@ -829,10 +829,10 @@ pub fn player_move_right(
 }
 
 /// player::move_up(id) - Mover arriba
-pub fn player_move_up(
-    args: &[Expr],
+pub fn player_move_up<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::move_up() requiere 1 argumento: id".to_string());
@@ -867,10 +867,10 @@ pub fn player_move_up(
 }
 
 /// player::move_down(id) - Mover abajo
-pub fn player_move_down(
-    args: &[Expr],
+pub fn player_move_down<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::move_down() requiere 1 argumento: id".to_string());
@@ -905,10 +905,10 @@ pub fn player_move_down(
 }
 
 /// player::jump(id) - Saltar
-pub fn player_jump(
-    args: &[Expr],
+pub fn player_jump<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::jump() requiere 1 argumento: id".to_string());
@@ -947,10 +947,10 @@ pub fn player_jump(
 }
 
 /// player::apply_gravity(id, gravity) - Aplicar gravedad
-pub fn player_apply_gravity(
-    args: &[Expr],
+pub fn player_apply_gravity<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::apply_gravity() requiere 1 argumento: id".to_string());
@@ -1015,10 +1015,10 @@ pub fn player_apply_gravity(
 }
 
 /// player::get_state(id) - Obtener estado
-pub fn player_get_state(
-    args: &[Expr],
+pub fn player_get_state<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::get_state() requiere 1 argumento: id".to_string());
@@ -1045,10 +1045,10 @@ pub fn player_get_state(
 }
 
 /// player::is_grounded(id) - Verificar si está en suelo
-pub fn player_is_grounded(
-    args: &[Expr],
+pub fn player_is_grounded<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::is_grounded() requiere 1 argumento: id".to_string());
@@ -1078,10 +1078,10 @@ pub fn player_is_grounded(
 }
 
 /// player::set_health(id, health) - Establecer vida
-pub fn player_set_health(
-    args: &[Expr],
+pub fn player_set_health<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("player::set_health() requiere 2 argumentos: id, health".to_string());
@@ -1118,10 +1118,10 @@ pub fn player_set_health(
 }
 
 /// player::get_health(id) - Obtener vida
-pub fn player_get_health(
-    args: &[Expr],
+pub fn player_get_health<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("player::get_health() requiere 1 argumento: id".to_string());
@@ -1151,10 +1151,10 @@ pub fn player_get_health(
 }
 
 /// player::take_damage(id, amount) - Recibir daño
-pub fn player_take_damage(
-    args: &[Expr],
+pub fn player_take_damage<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("player::take_damage() requiere 2 argumentos: id, amount".to_string());
@@ -1211,10 +1211,10 @@ pub fn player_take_damage(
 // ============================================================================
 
 /// enemy::set_ai_type(id, ai_type) - Establecer tipo de IA
-pub fn enemy_set_ai_type(
-    args: &[Expr],
+pub fn enemy_set_ai_type<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("enemy::set_ai_type() requiere 2 argumentos: id, ai_type".to_string());
@@ -1256,10 +1256,10 @@ pub fn enemy_set_ai_type(
 }
 
 /// enemy::set_patrol_points(id, [(x1,y1), (x2,y2)]) - Establecer puntos de patrulla
-pub fn enemy_set_patrol_points(
-    args: &[Expr],
+pub fn enemy_set_patrol_points<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -1294,10 +1294,10 @@ pub fn enemy_set_patrol_points(
 }
 
 /// enemy::set_detection_range(id, range) - Establecer rango de detección
-pub fn enemy_set_detection_range(
-    args: &[Expr],
+pub fn enemy_set_detection_range<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -1336,10 +1336,10 @@ pub fn enemy_set_detection_range(
 }
 
 /// enemy::update_ai(id, player_id) - Actualizar IA del enemigo
-pub fn enemy_update_ai(
-    args: &[Expr],
+pub fn enemy_update_ai<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("enemy::update_ai() requiere 2 argumentos: id, player_id".to_string());
@@ -1421,10 +1421,10 @@ pub fn enemy_update_ai(
 }
 
 /// enemy::is_alerted(id) - Verificar si está alerta
-pub fn enemy_is_alerted(
-    args: &[Expr],
+pub fn enemy_is_alerted<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("enemy::is_alerted() requiere 1 argumento: id".to_string());
@@ -1451,10 +1451,10 @@ pub fn enemy_is_alerted(
 }
 
 /// enemy::set_health(id, health) - Establecer vida
-pub fn enemy_set_health(
-    args: &[Expr],
+pub fn enemy_set_health<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("enemy::set_health() requiere 2 argumentos: id, health".to_string());
@@ -1488,10 +1488,10 @@ pub fn enemy_set_health(
 }
 
 /// enemy::set_damage(id, damage) - Establecer daño
-pub fn enemy_set_damage(
-    args: &[Expr],
+pub fn enemy_set_damage<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("enemy::set_damage() requiere 2 argumentos: id, damage".to_string());
@@ -1525,10 +1525,10 @@ pub fn enemy_set_damage(
 }
 
 /// enemy::set_reward(id, coins) - Establecer recompensa de monedas
-pub fn enemy_set_reward(
-    args: &[Expr],
+pub fn enemy_set_reward<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("enemy::set_reward() requiere 2 argumentos: id, coins".to_string());
@@ -1566,10 +1566,10 @@ pub fn enemy_set_reward(
 // ============================================================================
 
 /// boss::set_phases(id, ["phase1", "phase2"]) - Establecer fases
-pub fn boss_set_phases(
-    args: &[Expr],
+pub fn boss_set_phases<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("boss::set_phases() requiere 2 argumentos: id, phases".to_string());
@@ -1598,10 +1598,10 @@ pub fn boss_set_phases(
 }
 
 /// boss::get_current_phase(id) - Obtener fase actual
-pub fn boss_get_current_phase(
-    args: &[Expr],
+pub fn boss_get_current_phase<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("boss::get_current_phase() requiere 1 argumento: id".to_string());
@@ -1631,10 +1631,10 @@ pub fn boss_get_current_phase(
 }
 
 /// boss::transition_to_phase(id, phase) - Transición de fase
-pub fn boss_transition_to_phase(
-    args: &[Expr],
+pub fn boss_transition_to_phase<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -1679,10 +1679,10 @@ pub fn boss_transition_to_phase(
 }
 
 /// boss::set_arena_bounds(id, min_x, min_y, max_x, max_y) - Establecer límites de arena
-pub fn boss_set_arena_bounds(
-    args: &[Expr],
+pub fn boss_set_arena_bounds<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 5 {
         return Valor::Error(
@@ -1750,10 +1750,10 @@ pub fn boss_set_arena_bounds(
 // ============================================================================
 
 /// collision::check_rect_rect(x1,y1,w1,h1, x2,y2,w2,h2) - Colisión rectángulo
-pub fn collision_check_rect_rect(
-    args: &[Expr],
+pub fn collision_check_rect_rect<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 8 {
         return Valor::Error("collision::check_rect_rect() requiere 8 argumentos".to_string());
@@ -1778,10 +1778,10 @@ pub fn collision_check_rect_rect(
 }
 
 /// collision::check_circle_circle(x1,y1,r1, x2,y2,r2) - Colisión círculo
-pub fn collision_check_circle_circle(
-    args: &[Expr],
+pub fn collision_check_circle_circle<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 6 {
         return Valor::Error("collision::check_circle_circle() requiere 6 argumentos".to_string());
@@ -1806,10 +1806,10 @@ pub fn collision_check_circle_circle(
 }
 
 /// collision::check_rect_circle(rx,ry,rw,rh, cx,cy,cr) - Colisión rect-círculo
-pub fn collision_check_rect_circle(
-    args: &[Expr],
+pub fn collision_check_rect_circle<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 7 {
         return Valor::Error("collision::check_rect_circle() requiere 7 argumentos".to_string());
@@ -1839,10 +1839,10 @@ pub fn collision_check_rect_circle(
 }
 
 /// collision::check_point_rect(px,py, rx,ry,rw,rh) - Punto en rectángulo
-pub fn collision_check_point_rect(
-    args: &[Expr],
+pub fn collision_check_point_rect<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 6 {
         return Valor::Error("collision::check_point_rect() requiere 6 argumentos".to_string());
@@ -1864,10 +1864,10 @@ pub fn collision_check_point_rect(
 }
 
 /// collision::check(id1, id2) - Colisión entre entidades
-pub fn collision_check(
-    args: &[Expr],
+pub fn collision_check<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("collision::check() requiere 2 argumentos: id1, id2".to_string());
@@ -1925,7 +1925,7 @@ pub struct Area2D {
 }
 
 impl Area2D {
-    pub fn new(id: &str, x: f32, y: f32, w: f32, h: f32) -> Self {
+    pub fn new<'a>(id: &str, x: f32, y: f32, w: f32, h: f32) -> Self {
         Self {
             id: id.to_string(),
             x,
@@ -1944,14 +1944,14 @@ pub struct Area2DManager {
 }
 
 impl Area2DManager {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             areas: HashMap::new(),
             next_id: 0,
         }
     }
 
-    pub fn create(&mut self, x: f32, y: f32, w: f32, h: f32) -> String {
+    pub fn create<'a>(&mut self, x: f32, y: f32, w: f32, h: f32) -> String {
         let id = format!("area2d_{}", self.next_id);
         self.next_id += 1;
         let area = Area2D::new(&id, x, y, w, h);
@@ -1959,7 +1959,7 @@ impl Area2DManager {
         id
     }
 
-    pub fn set_position(&mut self, id: &str, x: f32, y: f32) -> bool {
+    pub fn set_position<'a>(&mut self, id: &str, x: f32, y: f32) -> bool {
         if let Some(area) = self.areas.get_mut(id) {
             area.x = x;
             area.y = y;
@@ -1969,11 +1969,11 @@ impl Area2DManager {
         }
     }
 
-    pub fn get_position(&self, id: &str) -> Option<(f32, f32)> {
+    pub fn get_position<'a>(&self, id: &str) -> Option<(f32, f32)> {
         self.areas.get(id).map(|a| (a.x, a.y))
     }
 
-    pub fn check(&self, id1: &str, id2: &str) -> Option<bool> {
+    pub fn check<'a>(&self, id1: &str, id2: &str) -> Option<bool> {
         if let (Some(a1), Some(a2)) = (self.areas.get(id1), self.areas.get(id2)) {
             if !a1.is_active || !a2.is_active {
                 return Some(false);
@@ -1988,7 +1988,7 @@ impl Area2DManager {
         }
     }
 
-    pub fn get_overlapping(&self, id: &str) -> Vec<String> {
+    pub fn get_overlapping<'a>(&self, id: &str) -> Vec<String> {
         let mut overlapping = Vec::new();
         if let Some(area1) = self.areas.get(id) {
             for (id2, area2) in &self.areas {
@@ -2006,7 +2006,7 @@ impl Area2DManager {
         overlapping
     }
 
-    pub fn destroy(&mut self, id: &str) -> bool {
+    pub fn destroy<'a>(&mut self, id: &str) -> bool {
         self.areas.remove(id).is_some()
     }
 }
@@ -2018,10 +2018,10 @@ impl Default for Area2DManager {
 }
 
 /// area2d::create(x, y, w, h) - Crear área 2D
-pub fn area2d_create(
-    args: &[Expr],
+pub fn area2d_create<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 4 {
         return Valor::Error("area2d::create() requiere 4 argumentos: x, y, w, h".to_string());
@@ -2045,10 +2045,10 @@ pub fn area2d_create(
 }
 
 /// area2d::set_position(id, x, y) - Mover área
-pub fn area2d_set_position(
-    args: &[Expr],
+pub fn area2d_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error("area2d::set_position() requiere 3 argumentos: id, x, y".to_string());
@@ -2084,10 +2084,10 @@ pub fn area2d_set_position(
 }
 
 /// area2d::get_position(id) - Obtener posición
-pub fn area2d_get_position(
-    args: &[Expr],
+pub fn area2d_get_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::get_position() requiere 1 argumento: id".to_string());
@@ -2110,10 +2110,10 @@ pub fn area2d_get_position(
 }
 
 /// area2d::check(id1, id2) - Verificar colisión entre áreas
-pub fn area2d_check(
-    args: &[Expr],
+pub fn area2d_check<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("area2d::check() requiere 2 argumentos: id1, id2".to_string());
@@ -2142,10 +2142,10 @@ pub fn area2d_check(
 }
 
 /// area2d::get_overlapping(id) - Obtener áreas que se superponen
-pub fn area2d_get_overlapping(
-    args: &[Expr],
+pub fn area2d_get_overlapping<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::get_overlapping() requiere 1 argumento: id".to_string());
@@ -2166,10 +2166,10 @@ pub fn area2d_get_overlapping(
 }
 
 /// area2d::destroy(id) - Destruir área
-pub fn area2d_destroy(
-    args: &[Expr],
+pub fn area2d_destroy<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("area2d::destroy() requiere 1 argumento: id".to_string());
@@ -2201,10 +2201,10 @@ pub fn get_area2d_manager() -> Rc<RefCell<Area2DManager>> {
 // ============================================================================
 
 /// trap::set_type(id, type) - Establecer tipo de trampa
-pub fn trap_set_type(
-    args: &[Expr],
+pub fn trap_set_type<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("trap::set_type() requiere 2 argumentos: id, type".to_string());
@@ -2243,10 +2243,10 @@ pub fn trap_set_type(
 }
 
 /// trap::set_damage(id, damage) - Establecer daño
-pub fn trap_set_damage(
-    args: &[Expr],
+pub fn trap_set_damage<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("trap::set_damage() requiere 2 argumentos: id, damage".to_string());
@@ -2280,10 +2280,10 @@ pub fn trap_set_damage(
 }
 
 /// trap::set_trigger_range(id, range) - Rango de activación
-pub fn trap_set_trigger_range(
-    args: &[Expr],
+pub fn trap_set_trigger_range<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -2322,10 +2322,10 @@ pub fn trap_set_trigger_range(
 }
 
 /// trap::set_visible(id, visible) - Hacer visible/invisible
-pub fn trap_set_visible(
-    args: &[Expr],
+pub fn trap_set_visible<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("trap::set_visible() requiere 2 argumentos: id, visible".to_string());
@@ -2360,10 +2360,10 @@ pub fn trap_set_visible(
 }
 
 /// trap::is_triggered(id) - Verificar si está activada
-pub fn trap_is_triggered(
-    args: &[Expr],
+pub fn trap_is_triggered<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("trap::is_triggered() requiere 1 argumento: id".to_string());
@@ -2393,10 +2393,10 @@ pub fn trap_is_triggered(
 }
 
 /// trap::activate(id) - Activar trampa
-pub fn trap_activate(
-    args: &[Expr],
+pub fn trap_activate<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("trap::activate() requiere 1 argumento: id".to_string());
@@ -2423,10 +2423,10 @@ pub fn trap_activate(
 }
 
 /// trap::reset(id) - Resetear trampa
-pub fn trap_reset(
-    args: &[Expr],
+pub fn trap_reset<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("trap::reset() requiere 1 argumento: id".to_string());
@@ -2457,10 +2457,10 @@ pub fn trap_reset(
 // ============================================================================
 
 /// coin::set_value(id, value) - Establecer valor de moneda
-pub fn coin_set_value(
-    args: &[Expr],
+pub fn coin_set_value<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("coin::set_value() requiere 2 argumentos: id, value".to_string());
@@ -2494,10 +2494,10 @@ pub fn coin_set_value(
 }
 
 /// coin::set_type(id, type) - Tipo de moneda
-pub fn coin_set_type(
-    args: &[Expr],
+pub fn coin_set_type<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("coin::set_type() requiere 2 argumentos: id, type".to_string());
@@ -2538,10 +2538,10 @@ pub fn coin_set_type(
 }
 
 /// coin::get_value(id) - Obtener valor
-pub fn coin_get_value(
-    args: &[Expr],
+pub fn coin_get_value<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("coin::get_value() requiere 1 argumento: id".to_string());
@@ -2568,10 +2568,10 @@ pub fn coin_get_value(
 }
 
 /// coin::collect(id, player_id) - Recolectar moneda
-pub fn coin_collect(
-    args: &[Expr],
+pub fn coin_collect<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("coin::collect() requiere 2 argumentos: id, player_id".to_string());
@@ -2612,10 +2612,10 @@ pub fn coin_collect(
 }
 
 /// coin::is_collected(id) - Verificar si fue recolectada
-pub fn coin_is_collected(
-    args: &[Expr],
+pub fn coin_is_collected<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("coin::is_collected() requiere 1 argumento: id".to_string());

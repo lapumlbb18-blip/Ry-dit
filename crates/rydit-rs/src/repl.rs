@@ -16,7 +16,7 @@ pub fn repl_mode() {
     println!();
 
     let mut executor = Executor::nuevo();
-    let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt>)> = HashMap::new();
+    let mut funcs: HashMap<String, (Vec<String>, Vec<Stmt<'static>>)> = HashMap::new();
     let mut loaded_modules = HashSet::new();
     let mut importing_stack = Vec::new();
     let stdin = io::stdin();
@@ -33,9 +33,11 @@ pub fn repl_mode() {
             break;
         }
 
-        let input = input.trim().to_string();  // ✅ Poseer String, no &str
+        // Leak input string to 'static for storing in funcs HashMap
+        // This is acceptable for a REPL that runs until exit
+        let input: &'static str = Box::leak(input.trim().to_string().into_boxed_str());
 
-        match input.as_str() {
+        match input {
             "" => continue,
             "exit" | "quit" | "q" => {
                 println!("[REPL] Saliendo...");
@@ -65,7 +67,8 @@ pub fn repl_mode() {
                 continue;
             }
             _ => {
-                let tokens = Lexer::new(input.as_str()).scan();
+                // Input must live long enough for parsing and execution
+                let tokens = Lexer::new(input).scan();
                 let mut parser = Parser::new(tokens);
 
                 let (program, errors) = parser.parse();

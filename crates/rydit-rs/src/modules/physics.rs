@@ -43,7 +43,7 @@ pub struct PhysicsBody {
 }
 
 impl PhysicsBody {
-    pub fn new(x: f32, y: f32, w: f32, h: f32) -> Self {
+    pub fn new<'a>(x: f32, y: f32, w: f32, h: f32) -> Self {
         Self {
             x,
             y,
@@ -61,14 +61,14 @@ impl PhysicsBody {
     }
 
     /// Aplicar gravedad
-    pub fn apply_gravity(&mut self, dt: f32) {
+    pub fn apply_gravity<'a>(&mut self, dt: f32) {
         if !self.is_static && self.gravity != 0.0 {
             self.vy += self.gravity * dt;
         }
     }
 
     /// Aplicar fricción
-    pub fn apply_friction(&mut self, dt: f32) {
+    pub fn apply_friction<'a>(&mut self, dt: f32) {
         if !self.is_static && self.friction != 1.0 {
             // Aplicar fricción exponencial para suavidad
             let friction_factor = self.friction.powf(dt * 60.0);
@@ -78,7 +78,7 @@ impl PhysicsBody {
     }
 
     /// Actualizar posición
-    pub fn update(&mut self, dt: f32) {
+    pub fn update<'a>(&mut self, dt: f32) {
         if !self.is_static {
             self.x += self.vx * dt;
             self.y += self.vy * dt;
@@ -86,7 +86,7 @@ impl PhysicsBody {
     }
 
     /// Verificar colisión con otro cuerpo (AABB)
-    pub fn collides_with(&self, other: &PhysicsBody) -> bool {
+    pub fn collides_with<'a>(&self, other: &PhysicsBody) -> bool {
         self.x < other.x + other.width
             && self.x + self.width > other.x
             && self.y < other.y + other.height
@@ -94,7 +94,7 @@ impl PhysicsBody {
     }
 
     /// Obtener overlap (superposición) con otro cuerpo
-    pub fn get_overlap(&self, other: &PhysicsBody) -> (f32, f32) {
+    pub fn get_overlap<'a>(&self, other: &PhysicsBody) -> (f32, f32) {
         // Calcular centros
         let self_cx = self.x + self.width / 2.0;
         let self_cy = self.y + self.height / 2.0;
@@ -128,7 +128,7 @@ impl PhysicsBody {
 
     /// Resolver colisión (slide)
     #[allow(dead_code)] // Para futura integración con entity system
-    pub fn resolve_collision(&mut self, other: &PhysicsBody) -> (f32, f32) {
+    pub fn resolve_collision<'a>(&mut self, other: &PhysicsBody) -> (f32, f32) {
         let (overlap_x, overlap_y) = self.get_overlap(other);
 
         // Aplicar resolución
@@ -152,7 +152,7 @@ impl PhysicsBody {
 
     /// Aplicar impulso
     #[allow(dead_code)] // Para futuras fuerzas e impulsos
-    pub fn apply_impulse(&mut self, ix: f32, iy: f32) {
+    pub fn apply_impulse<'a>(&mut self, ix: f32, iy: f32) {
         if !self.is_static {
             self.vx += ix / self.mass;
             self.vy += iy / self.mass;
@@ -161,7 +161,7 @@ impl PhysicsBody {
 
     /// Aplicar fuerza
     #[allow(dead_code)] // Para futuras fuerzas continuas
-    pub fn apply_force(&mut self, fx: f32, fy: f32, dt: f32) {
+    pub fn apply_force<'a>(&mut self, fx: f32, fy: f32, dt: f32) {
         if !self.is_static {
             self.vx += (fx / self.mass) * dt;
             self.vy += (fy / self.mass) * dt;
@@ -182,7 +182,7 @@ pub struct PhysicsWorld {
 }
 
 impl PhysicsWorld {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             bodies: HashMap::new(),
             gravity: DEFAULT_GRAVITY,
@@ -191,24 +191,24 @@ impl PhysicsWorld {
     }
 
     /// Crear cuerpo físico
-    pub fn create_body(&mut self, id: &str, x: f32, y: f32, w: f32, h: f32) {
+    pub fn create_body<'a>(&mut self, id: &str, x: f32, y: f32, w: f32, h: f32) {
         self.bodies
             .insert(id.to_string(), PhysicsBody::new(x, y, w, h));
     }
 
     /// Obtener cuerpo
-    pub fn get_body(&mut self, id: &str) -> Option<&mut PhysicsBody> {
+    pub fn get_body<'a>(&mut self, id: &str) -> Option<&mut PhysicsBody> {
         self.bodies.get_mut(id)
     }
 
     /// Eliminar cuerpo
     #[allow(dead_code)] // Para futura gestión dinámica de cuerpos
-    pub fn remove_body(&mut self, id: &str) -> bool {
+    pub fn remove_body<'a>(&mut self, id: &str) -> bool {
         self.bodies.remove(id).is_some()
     }
 
     /// Actualizar mundo físico
-    pub fn update(&mut self, dt: f32) {
+    pub fn update<'a>(&mut self, dt: f32) {
         // Aplicar gravedad y fricción a todos los cuerpos
         for (_, body) in &mut self.bodies {
             if body.is_active && !body.is_static {
@@ -336,7 +336,7 @@ impl PhysicsWorld {
     }
 
     /// Verificar colisión entre dos cuerpos
-    pub fn check_collision(&self, id_a: &str, id_b: &str) -> Option<bool> {
+    pub fn check_collision<'a>(&self, id_a: &str, id_b: &str) -> Option<bool> {
         if let (Some(a), Some(b)) = (self.bodies.get(id_a), self.bodies.get(id_b)) {
             Some(a.collides_with(b))
         } else {
@@ -345,12 +345,12 @@ impl PhysicsWorld {
     }
 
     /// Obtener posición de un cuerpo
-    pub fn get_position(&self, id: &str) -> Option<(f32, f32)> {
+    pub fn get_position<'a>(&self, id: &str) -> Option<(f32, f32)> {
         self.bodies.get(id).map(|b| (b.x, b.y))
     }
 
     /// Establecer posición de un cuerpo
-    pub fn set_position(&mut self, id: &str, x: f32, y: f32) -> bool {
+    pub fn set_position<'a>(&mut self, id: &str, x: f32, y: f32) -> bool {
         if let Some(body) = self.bodies.get_mut(id) {
             body.x = x;
             body.y = y;
@@ -361,13 +361,13 @@ impl PhysicsWorld {
     }
 
     /// Establecer límites del mundo
-    pub fn set_bounds(&mut self, x: f32, y: f32, w: f32, h: f32) {
+    pub fn set_bounds<'a>(&mut self, x: f32, y: f32, w: f32, h: f32) {
         self.bounds = Some((x, y, w, h));
     }
 
     /// Limpiar límites
     #[allow(dead_code)] // Para futura gestión dinámica de límites
-    pub fn clear_bounds(&mut self) {
+    pub fn clear_bounds<'a>(&mut self) {
         self.bounds = None;
     }
 }
@@ -387,7 +387,7 @@ thread_local! {
 }
 
 /// Obtener referencia al mundo físico global
-pub fn get_physics_world() -> Rc<RefCell<PhysicsWorld>> {
+pub fn get_physics_world<'a>() -> Rc<RefCell<PhysicsWorld>> {
     PHYSICS_WORLD.with(|w| w.clone())
 }
 
@@ -396,10 +396,10 @@ pub fn get_physics_world() -> Rc<RefCell<PhysicsWorld>> {
 // ============================================================================
 
 /// physics::create_body(id, x, y, w, h) - Crear cuerpo físico
-pub fn physics_create_body(
-    args: &[Expr],
+pub fn physics_create_body<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -442,10 +442,10 @@ pub fn physics_create_body(
 }
 
 /// physics::update(dt) - Actualizar mundo físico
-pub fn physics_update(
-    args: &[Expr],
+pub fn physics_update<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -466,10 +466,10 @@ pub fn physics_update(
 }
 
 /// physics::get_position(id) - Obtener posición de cuerpo
-pub fn physics_get_position(
-    args: &[Expr],
+pub fn physics_get_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -493,10 +493,10 @@ pub fn physics_get_position(
 }
 
 /// physics::set_position(id, x, y) - Establecer posición
-pub fn physics_set_position(
-    args: &[Expr],
+pub fn physics_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -530,10 +530,10 @@ pub fn physics_set_position(
 }
 
 /// physics::set_velocity(id, vx, vy) - Establecer velocidad
-pub fn physics_set_velocity(
-    args: &[Expr],
+pub fn physics_set_velocity<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -571,10 +571,10 @@ pub fn physics_set_velocity(
 }
 
 /// physics::apply_gravity(id) - Aplicar gravedad a cuerpo
-pub fn physics_apply_gravity(
-    args: &[Expr],
+pub fn physics_apply_gravity<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -601,10 +601,10 @@ pub fn physics_apply_gravity(
 }
 
 /// physics::set_bounds(x, y, w, h) - Establecer límites del mundo
-pub fn physics_set_bounds(
-    args: &[Expr],
+pub fn physics_set_bounds<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 
@@ -643,10 +643,10 @@ pub fn physics_set_bounds(
 }
 
 /// physics::check_collision(id_a, id_b) - Verificar colisión
-pub fn physics_check_collision(
-    args: &[Expr],
+pub fn physics_check_collision<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     use crate::eval::evaluar_expr;
 

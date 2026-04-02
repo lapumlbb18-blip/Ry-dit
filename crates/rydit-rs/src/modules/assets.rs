@@ -20,7 +20,7 @@ thread_local! {
 }
 
 /// Obtener referencia a los assets globales
-pub fn get_assets() -> Rc<RefCell<Assets>> {
+pub fn get_assets<'a>() -> Rc<RefCell<Assets>> {
     GLOBAL_ASSETS.with(|a| a.clone())
 }
 
@@ -29,10 +29,10 @@ pub fn get_assets() -> Rc<RefCell<Assets>> {
 // ============================================================================
 
 /// assets::load(id, path) - Cargar textura desde archivo
-pub fn assets_load(
-    args: &[Expr],
+pub fn assets_load<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("assets::load() requiere 2 argumentos: id, path".to_string());
@@ -75,20 +75,20 @@ pub fn assets_load(
 }
 
 /// assets::sprite(id, path) - Crear sprite y cargar textura (alias de load)
-pub fn assets_sprite(
-    args: &[Expr],
+pub fn assets_sprite<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     // sprite es alias de load
     assets_load(args, executor, _funcs)
 }
 
 /// assets::draw(id, x, y, color) - Dibujar sprite en posición
-pub fn assets_draw(
-    args: &[Expr],
+pub fn assets_draw<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() < 3 {
         return Valor::Error("assets::draw() requiere al menos 3 argumentos: id, x, y".to_string());
@@ -141,10 +141,10 @@ pub fn assets_draw(
 }
 
 /// assets::draw_scaled(id, x, y, scale, color) - Dibujar sprite escalado
-pub fn assets_draw_scaled(
-    args: &[Expr],
+pub fn assets_draw_scaled<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() < 4 {
         return Valor::Error(
@@ -202,10 +202,10 @@ pub fn assets_draw_scaled(
 }
 
 /// assets::exists(id) - Verificar si existe una textura
-pub fn assets_exists(
-    args: &[Expr],
+pub fn assets_exists<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("assets::exists() requiere 1 argumento: id".to_string());
@@ -229,10 +229,10 @@ pub fn assets_exists(
 }
 
 /// assets::unload(id) - Descargar textura y liberar memoria
-pub fn assets_unload(
-    args: &[Expr],
+pub fn assets_unload<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("assets::unload() requiere 1 argumento: id".to_string());
@@ -257,10 +257,10 @@ pub fn assets_unload(
 }
 
 /// assets::count() - Retornar cantidad de texturas cargadas
-pub fn assets_count(
-    _args: &[Expr],
+pub fn assets_count<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let assets = get_assets();
     let assets_ref = assets.borrow();
@@ -273,10 +273,10 @@ pub fn assets_count(
 
 /// assets::set_position(id, x, y) - Actualizar posición de sprite
 /// NOTA: Esta función guarda la posición en un estado interno para uso futuro
-pub fn assets_set_position(
-    args: &[Expr],
+pub fn assets_set_position<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error("assets::set_position() requiere 3 argumentos: id, x, y".to_string());
@@ -311,10 +311,10 @@ pub fn assets_set_position(
 }
 
 /// assets::set_rotation(id, angle) - Rotar sprite
-pub fn assets_set_rotation(
-    args: &[Expr],
+pub fn assets_set_rotation<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("assets::set_rotation() requiere 2 argumentos: id, angle".to_string());
@@ -341,10 +341,10 @@ pub fn assets_set_rotation(
 }
 
 /// assets::set_scale(id, scale_x, scale_y) - Escalar sprite
-pub fn assets_set_scale(
-    args: &[Expr],
+pub fn assets_set_scale<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error(
@@ -379,10 +379,10 @@ pub fn assets_set_scale(
 }
 
 /// assets::set_color(id, color) - Cambiar color/tinte de sprite
-pub fn assets_set_color(
-    args: &[Expr],
+pub fn assets_set_color<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("assets::set_color() requiere 2 argumentos: id, color".to_string());
@@ -409,10 +409,10 @@ pub fn assets_set_color(
 }
 
 /// assets::set_flip(id, horizontal, vertical) - Flip horizontal/vertical
-pub fn assets_set_flip(
-    args: &[Expr],
+pub fn assets_set_flip<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error(
@@ -451,10 +451,10 @@ pub fn assets_set_flip(
 }
 
 /// assets::set_origin(id, origin_x, origin_y) - Punto de origen
-pub fn assets_set_origin(
-    args: &[Expr],
+pub fn assets_set_origin<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 3 {
         return Valor::Error(

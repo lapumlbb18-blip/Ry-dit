@@ -32,7 +32,7 @@ impl FontManager {
         _text: &str,
         _size: u32,
         _color: Color,
-    ) -> Result<sdl2::surface::Surface, String> {
+    ) -> Result<sdl2::surface::Surface<'_>, String> {
         // Placeholder: retorna superficie vacía
         // En producción, usar ab_glyph o SDL2_ttf
         sdl2::surface::Surface::new(100, 20, sdl2::pixels::PixelFormatEnum::RGBA8888)

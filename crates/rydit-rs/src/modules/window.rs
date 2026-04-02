@@ -57,7 +57,7 @@ pub struct WindowManager {
 
 impl WindowManager {
     /// Crear nuevo Window Manager
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         Self {
             title: "RyDit Engine".to_string(),
             width: 800,
@@ -71,87 +71,87 @@ impl WindowManager {
     }
 
     /// Establecer referencia a RyditGfx
-    pub fn set_gfx(&mut self, gfx: Rc<RefCell<RyditGfx>>) {
+    pub fn set_gfx<'a>(&mut self, gfx: Rc<RefCell<RyditGfx>>) {
         self.gfx = Some(gfx);
     }
 
     /// Establecer título de ventana
-    pub fn set_title(&mut self, title: &str) {
+    pub fn set_title<'a>(&mut self, title: &str) {
         self.title = title.to_string();
         // En el futuro: gfx.set_window_title(title)
     }
 
     /// Obtener título actual
-    pub fn get_title(&self) -> String {
+    pub fn get_title<'a>(&self) -> String {
         self.title.clone()
     }
 
     /// Establecer tamaño de ventana
-    pub fn set_size(&mut self, width: u32, height: u32) {
+    pub fn set_size<'a>(&mut self, width: u32, height: u32) {
         self.width = width;
         self.height = height;
         // En el futuro: gfx.set_window_size(width, height)
     }
 
     /// Obtener tamaño actual
-    pub fn get_size(&self) -> (u32, u32) {
+    pub fn get_size<'a>(&self) -> (u32, u32) {
         (self.width, self.height)
     }
 
     /// Establecer fullscreen
-    pub fn set_fullscreen(&mut self, enabled: bool) {
+    pub fn set_fullscreen<'a>(&mut self, enabled: bool) {
         self.fullscreen = enabled;
         // En el futuro: gfx.set_fullscreen(enabled)
     }
 
     /// Verificar si está en fullscreen
-    pub fn is_fullscreen(&self) -> bool {
+    pub fn is_fullscreen<'a>(&self) -> bool {
         self.fullscreen
     }
 
     /// Alternar fullscreen
-    pub fn toggle_fullscreen(&mut self) {
+    pub fn toggle_fullscreen<'a>(&mut self) {
         self.set_fullscreen(!self.fullscreen);
     }
 
     /// Forzar modo ventana
-    pub fn set_windowed(&mut self) {
+    pub fn set_windowed<'a>(&mut self) {
         self.set_fullscreen(false);
     }
 
     /// Establecer VSync
-    pub fn set_vsync(&mut self, enabled: bool) {
+    pub fn set_vsync<'a>(&mut self, enabled: bool) {
         self.vsync = enabled;
         // En el futuro: gfx.set_vsync(enabled)
     }
 
     /// Verificar si VSync está activado
-    pub fn is_vsync_enabled(&self) -> bool {
+    pub fn is_vsync_enabled<'a>(&self) -> bool {
         self.vsync
     }
 
     /// Establecer si es redimensionable
-    pub fn set_resizable(&mut self, enabled: bool) {
+    pub fn set_resizable<'a>(&mut self, enabled: bool) {
         self.resizable = enabled;
     }
 
     /// Minimizar ventana
-    pub fn minimize(&self) {
+    pub fn minimize<'a>(&self) {
         // En el futuro: implementar minimize real
     }
 
     /// Maximizar ventana
-    pub fn maximize(&self) {
+    pub fn maximize<'a>(&self) {
         // En el futuro: implementar maximize real
     }
 
     /// Restaurar ventana
-    pub fn restore(&self) {
+    pub fn restore<'a>(&self) {
         // En el futuro: implementar restore real
     }
 
     /// Establecer límite de FPS
-    pub fn set_fps_limit(&mut self, fps: u32) {
+    pub fn set_fps_limit<'a>(&mut self, fps: u32) {
         self.fps_limit = fps;
         if let Some(ref gfx) = self.gfx {
             let mut gfx_ref = gfx.borrow_mut();
@@ -160,7 +160,7 @@ impl WindowManager {
     }
 
     /// Obtener FPS actuales
-    pub fn get_fps(&self) -> u32 {
+    pub fn get_fps<'a>(&self) -> u32 {
         if let Some(ref gfx) = self.gfx {
             let gfx_ref = gfx.borrow();
             gfx_ref.get_fps() as u32
@@ -171,7 +171,7 @@ impl WindowManager {
 
     /// Obtener delta time
     #[allow(dead_code)] // Para futura implementación de delta time
-    pub fn get_delta_time(&self) -> f32 {
+    pub fn get_delta_time<'a>(&self) -> f32 {
         // En el futuro: implementar delta time real
         0.016 // 60 FPS por defecto (1/60 = 0.016)
     }
@@ -192,13 +192,13 @@ thread_local! {
 }
 
 /// Obtener referencia al Window Manager
-pub fn get_window() -> Rc<RefCell<WindowManager>> {
+pub fn get_window<'a>() -> Rc<RefCell<WindowManager>> {
     WINDOW.with(|w| w.clone())
 }
 
 /// Inicializar Window Manager con referencia a RyditGfx
 #[allow(dead_code)] // Para futura integración con el game loop
-pub fn init_window_manager(gfx: Rc<RefCell<RyditGfx>>) {
+pub fn init_window_manager<'a>(gfx: Rc<RefCell<RyditGfx>>) {
     WINDOW.with(|w| {
         let mut w_ref = w.borrow_mut();
         w_ref.set_gfx(gfx);
@@ -210,10 +210,10 @@ pub fn init_window_manager(gfx: Rc<RefCell<RyditGfx>>) {
 // ============================================================================
 
 /// window::set_title(titulo) - Establecer título
-pub fn window_set_title(
-    args: &[Expr],
+pub fn window_set_title<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("window::set_title() requiere 1 argumento: titulo".to_string());
@@ -234,10 +234,10 @@ pub fn window_set_title(
 }
 
 /// window::get_title() - Obtener título
-pub fn window_get_title(
-    _args: &[Expr],
+pub fn window_get_title<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -245,10 +245,10 @@ pub fn window_get_title(
 }
 
 /// window::set_size(width, height) - Establecer tamaño
-pub fn window_set_size(
-    args: &[Expr],
+pub fn window_set_size<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error("window::set_size() requiere 2 argumentos: width, height".to_string());
@@ -275,10 +275,10 @@ pub fn window_set_size(
 }
 
 /// window::get_size() - Obtener tamaño
-pub fn window_get_size(
-    _args: &[Expr],
+pub fn window_get_size<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -287,10 +287,10 @@ pub fn window_get_size(
 }
 
 /// window::get_width() - Obtener ancho
-pub fn window_get_width(
-    _args: &[Expr],
+pub fn window_get_width<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -299,10 +299,10 @@ pub fn window_get_width(
 }
 
 /// window::get_height() - Obtener alto
-pub fn window_get_height(
-    _args: &[Expr],
+pub fn window_get_height<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -311,10 +311,10 @@ pub fn window_get_height(
 }
 
 /// window::set_fullscreen(enabled) - Establecer fullscreen
-pub fn window_set_fullscreen(
-    args: &[Expr],
+pub fn window_set_fullscreen<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("window::set_fullscreen() requiere 1 argumento: enabled".to_string());
@@ -340,10 +340,10 @@ pub fn window_set_fullscreen(
 }
 
 /// window::is_fullscreen() - Verificar fullscreen
-pub fn window_is_fullscreen(
-    _args: &[Expr],
+pub fn window_is_fullscreen<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -351,10 +351,10 @@ pub fn window_is_fullscreen(
 }
 
 /// window::toggle_fullscreen() - Alternar fullscreen
-pub fn window_toggle_fullscreen(
-    _args: &[Expr],
+pub fn window_toggle_fullscreen<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let mut win_ref = win.borrow_mut();
@@ -363,10 +363,10 @@ pub fn window_toggle_fullscreen(
 }
 
 /// window::set_windowed() - Forzar modo ventana
-pub fn window_set_windowed(
-    _args: &[Expr],
+pub fn window_set_windowed<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let mut win_ref = win.borrow_mut();
@@ -375,10 +375,10 @@ pub fn window_set_windowed(
 }
 
 /// window::set_vsync(enabled) - Establecer VSync
-pub fn window_set_vsync(
-    args: &[Expr],
+pub fn window_set_vsync<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("window::set_vsync() requiere 1 argumento: enabled".to_string());
@@ -404,10 +404,10 @@ pub fn window_set_vsync(
 }
 
 /// window::is_vsync_enabled() - Verificar VSync
-pub fn window_is_vsync_enabled(
-    _args: &[Expr],
+pub fn window_is_vsync_enabled<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -415,10 +415,10 @@ pub fn window_is_vsync_enabled(
 }
 
 /// window::set_resizable(enabled) - Establecer redimensionable
-pub fn window_set_resizable(
-    args: &[Expr],
+pub fn window_set_resizable<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("window::set_resizable() requiere 1 argumento: enabled".to_string());
@@ -444,10 +444,10 @@ pub fn window_set_resizable(
 }
 
 /// window::minimize() - Minimizar ventana
-pub fn window_minimize(
-    _args: &[Expr],
+pub fn window_minimize<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -456,10 +456,10 @@ pub fn window_minimize(
 }
 
 /// window::maximize() - Maximizar ventana
-pub fn window_maximize(
-    _args: &[Expr],
+pub fn window_maximize<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -468,10 +468,10 @@ pub fn window_maximize(
 }
 
 /// window::restore() - Restaurar ventana
-pub fn window_restore(
-    _args: &[Expr],
+pub fn window_restore<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -480,10 +480,10 @@ pub fn window_restore(
 }
 
 /// window::set_fps_limit(fps) - Establecer límite de FPS
-pub fn window_set_fps_limit(
-    args: &[Expr],
+pub fn window_set_fps_limit<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("window::set_fps_limit() requiere 1 argumento: fps".to_string());
@@ -504,10 +504,10 @@ pub fn window_set_fps_limit(
 }
 
 /// window::get_fps() - Obtener FPS actuales
-pub fn window_get_fps(
-    _args: &[Expr],
+pub fn window_get_fps<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();
@@ -515,10 +515,10 @@ pub fn window_get_fps(
 }
 
 /// window::get_delta_time() - Obtener delta time
-pub fn window_get_delta_time(
-    _args: &[Expr],
+pub fn window_get_delta_time<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let win = get_window();
     let win_ref = win.borrow();

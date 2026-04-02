@@ -19,9 +19,9 @@ thread_local! {
 }
 
 /// Ejecutar función de partículas desde .rydit
-pub fn ejecutar_funcion(
+pub fn ejecutar_funcion<'a>(
     name: &str,
-    args: &[Expr],
+    args: &[Expr<'a>],
     executor: &mut Executor,
     input: &crate::InputEstado,
     funcs: &mut std::collections::HashMap<String, (Vec<String>, Vec<lizer::Stmt>)>,
@@ -162,7 +162,7 @@ pub fn ejecutar_funcion(
 }
 
 /// Dibujar partículas - se llama desde el game loop
-pub fn draw_particles(gfx: &mut rydit_gfx::RyditGfx) {
+pub fn draw_particles<'a>(gfx: &mut rydit_gfx::RyditGfx) {
     PARTICLES.with(|p| {
         let system = p.borrow();
         let mut d = gfx.begin_draw();
@@ -172,7 +172,7 @@ pub fn draw_particles(gfx: &mut rydit_gfx::RyditGfx) {
 }
 
 /// ✅ v0.10.4: Dibujar partículas con DrawHandle existente (para integrar con RenderQueue)
-pub fn draw_particles_with_handle(d: &mut rydit_gfx::DrawHandle) {
+pub fn draw_particles_with_handle<'a>(d: &mut rydit_gfx::DrawHandle) {
     PARTICLES.with(|p| {
         let system = p.borrow();
         system.draw(&mut d.draw);
@@ -181,7 +181,7 @@ pub fn draw_particles_with_handle(d: &mut rydit_gfx::DrawHandle) {
 
 /// Limpiar partículas al iniciar un nuevo script
 #[allow(dead_code)] // Para futura limpieza manual de partículas
-pub fn clear_particles() {
+pub fn clear_particles<'a>() {
     PARTICLES.with(|p| {
         let mut system = p.borrow_mut();
         system.clear();

@@ -46,7 +46,7 @@ fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
 pub fn evaluar_expr<'a>(
     expr: &Expr<'a>,
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),

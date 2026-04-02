@@ -59,7 +59,7 @@ pub struct InputMapState {
 }
 
 impl InputMapState {
-    pub fn new() -> Self {
+    pub fn new<'a>() -> Self {
         let mut state = Self {
             combinaciones: HashMap::new(),
             teclas_presionadas: HashMap::new(),
@@ -109,13 +109,13 @@ impl InputMapState {
     }
 
     /// Registrar una combinación personalizada
-    pub fn registrar_combinacion(&mut self, combinacion: &str, accion: &str) {
+    pub fn registrar_combinacion<'a>(&mut self, combinacion: &str, accion: &str) {
         self.combinaciones
             .insert(combinacion.to_string(), accion.to_string());
     }
 
     /// Presionar una tecla (actualiza el estado interno)
-    pub fn press_key(&mut self, key: &str) {
+    pub fn press_key<'a>(&mut self, key: &str) {
         let key_lower = key.to_lowercase();
 
         // Verificar si es VolUP
@@ -139,7 +139,7 @@ impl InputMapState {
     }
 
     /// Soltar una tecla (actualiza el estado interno)
-    pub fn release_key(&mut self, key: &str) {
+    pub fn release_key<'a>(&mut self, key: &str) {
         let key_lower = key.to_lowercase();
 
         // Verificar si es VolUP
@@ -163,13 +163,13 @@ impl InputMapState {
     }
 
     /// Verificar si una tecla específica está presionada (sin mapeo)
-    pub fn is_key_pressed(&self, key: &str) -> bool {
+    pub fn is_key_pressed<'a>(&self, key: &str) -> bool {
         let key_lower = key.to_lowercase();
         *self.teclas_presionadas.get(&key_lower).unwrap_or(&false)
     }
 
     /// Verificar si una acción está presionada (con mapeo de combinaciones)
-    pub fn is_action_pressed(&self, accion: &str) -> bool {
+    pub fn is_action_pressed<'a>(&self, accion: &str) -> bool {
         let accion_lower = accion.to_lowercase();
 
         // 1. Buscar combinaciones que mapeen a esta acción
@@ -231,7 +231,7 @@ impl InputMapState {
     }
 
     /// Obtener lista de todas las acciones activas actualmente
-    pub fn get_active_actions(&self) -> Vec<String> {
+    pub fn get_active_actions<'a>(&self) -> Vec<String> {
         let mut acciones = Vec::new();
 
         for mapped_accion in self.combinaciones.values() {
@@ -270,7 +270,7 @@ thread_local! {
 }
 
 /// Obtener referencia al Input Map global
-pub fn get_input_map() -> Rc<RefCell<InputMapState>> {
+pub fn get_input_map<'a>() -> Rc<RefCell<InputMapState>> {
     INPUT_MAP.with(|m| m.clone())
 }
 
@@ -282,10 +282,10 @@ use blast_core::Executor;
 use rydit_parser::{Expr, Stmt};
 
 /// input_map::register(combo, action) - Registrar combinación personalizada
-pub fn input_map_register(
-    args: &[Expr],
+pub fn input_map_register<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 2 {
         return Valor::Error(
@@ -319,10 +319,10 @@ pub fn input_map_register(
 }
 
 /// input_map::list() - Listar todas las combinaciones
-pub fn input_map_list(
-    _args: &[Expr],
+pub fn input_map_list<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let input_map = get_input_map();
     let map_ref = input_map.borrow();
@@ -336,10 +336,10 @@ pub fn input_map_list(
 }
 
 /// input_map::clear() - Limpiar combinaciones personalizadas
-pub fn input_map_clear(
-    _args: &[Expr],
+pub fn input_map_clear<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let input_map = get_input_map();
     let mut map_ref = input_map.borrow_mut();
@@ -361,10 +361,10 @@ pub fn input_map_clear(
 }
 
 /// input_map::count() - Cantidad de combinaciones registradas
-pub fn input_map_count(
-    _args: &[Expr],
+pub fn input_map_count<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let input_map = get_input_map();
     let map_ref = input_map.borrow();
@@ -373,10 +373,10 @@ pub fn input_map_count(
 }
 
 /// input_map::press(key) - Registrar que una tecla fue presionada
-pub fn input_map_press(
-    args: &[Expr],
+pub fn input_map_press<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("input_map::press() requiere 1 argumento: key".to_string());
@@ -399,10 +399,10 @@ pub fn input_map_press(
 }
 
 /// input_map::release(key) - Registrar que una tecla fue soltada
-pub fn input_map_release(
-    args: &[Expr],
+pub fn input_map_release<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("input_map::release() requiere 1 argumento: key".to_string());
@@ -425,10 +425,10 @@ pub fn input_map_release(
 }
 
 /// input_map::is_pressed(action) - Verificar si una acción está presionada
-pub fn input_map_is_pressed(
-    args: &[Expr],
+pub fn input_map_is_pressed<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("input_map::is_pressed() requiere 1 argumento: action".to_string());
@@ -452,10 +452,10 @@ pub fn input_map_is_pressed(
 }
 
 /// input_map::get_active() - Obtener lista de acciones activas
-pub fn input_map_get_active(
-    _args: &[Expr],
+pub fn input_map_get_active<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let input_map = get_input_map();
     let map_ref = input_map.borrow();
@@ -545,10 +545,10 @@ mod tests {
 // ============================================================================
 
 /// gamepad::is_connected() - Verificar si hay gamepad conectado
-pub fn gamepad_is_connected(
-    _args: &[Expr],
+pub fn gamepad_is_connected<'a>(
+    _args: &[Expr<'a>],
     _executor: &mut Executor,
-    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     let input_map = get_input_map();
     let map_ref = input_map.borrow();
@@ -556,10 +556,10 @@ pub fn gamepad_is_connected(
 }
 
 /// gamepad::press_button(button) - Presionar botón de gamepad
-pub fn gamepad_press_button(
-    args: &[Expr],
+pub fn gamepad_press_button<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("gamepad::press_button() requiere 1 argumento: button".to_string());
@@ -583,10 +583,10 @@ pub fn gamepad_press_button(
 }
 
 /// gamepad::release_button(button) - Soltar botón de gamepad
-pub fn gamepad_release_button(
-    args: &[Expr],
+pub fn gamepad_release_button<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("gamepad::release_button() requiere 1 argumento: button".to_string());
@@ -609,10 +609,10 @@ pub fn gamepad_release_button(
 }
 
 /// gamepad::is_pressed(button) - Verificar si botón está presionado
-pub fn gamepad_is_pressed(
-    args: &[Expr],
+pub fn gamepad_is_pressed<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("gamepad::is_pressed() requiere 1 argumento: button".to_string());
@@ -637,10 +637,10 @@ pub fn gamepad_is_pressed(
 }
 
 /// gamepad::get_axis(stick) - Obtener eje de stick analógico
-pub fn gamepad_get_axis(
-    args: &[Expr],
+pub fn gamepad_get_axis<'a>(
+    args: &[Expr<'a>],
     executor: &mut Executor,
-    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt>)>,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
 ) -> Valor {
     if args.len() != 1 {
         return Valor::Error("gamepad::get_axis() requiere 1 argumento: stick".to_string());
