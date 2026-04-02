@@ -1452,7 +1452,7 @@ fn ejecutar_stmt_gfx(
         Stmt::Call { callee, args } => {
             // callee es &str directo (AST nuevo)
             let func_name = callee.to_string();
-            
+
             // Verificar si es tecla_presionada("tecla")
             if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
@@ -4492,7 +4492,7 @@ pub fn ejecutar_stmt_migui(
             } else {
                 String::new()
             };
-            
+
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
             let _ = evaluar_expr_migui(
                 &Expr::Call {

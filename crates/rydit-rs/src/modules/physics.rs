@@ -33,7 +33,7 @@ pub struct PhysicsBody {
     pub vy: f32, // Velocidad Y
     pub width: f32,
     pub height: f32,
-// ✅ v0.11.4: Campos para futuras features (dead_code permitido intencionalmente)
+    // ✅ v0.11.4: Campos para futuras features (dead_code permitido intencionalmente)
     pub mass: f32,
     pub gravity: f32,
     pub friction: f32,   // Fricción
