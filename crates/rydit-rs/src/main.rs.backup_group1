@@ -306,7 +306,7 @@ pub fn ejecutar_stmt(
                         return (None, Some(val));
                     }
                 } else {
-                    println!("[ERROR] Función '{}' no definida", func_name);
+                    println!("[ERROR] Función '{}' no definida", name);
                 }
             }
         }
@@ -1447,12 +1447,7 @@ fn ejecutar_stmt_gfx(
         Stmt::Function { name, params, body } => {
             funcs.insert(name.clone(), (params.clone(), body.clone()));
         }
-        Stmt::Call { callee, args } => {
-            let func_name = if let Expr::Var(name) = callee.as_ref() {
-                *name
-            } else {
-                return Valor::Error("Call requiere función válida".to_string());
-            };
+        Stmt::Call { name, args } => {
             // Verificar si es tecla_presionada("tecla")
             if func_name == "tecla_presionada" && args.len() == 1 {
                 if let Expr::Texto(tecla) = &args[0] {
@@ -1736,7 +1731,7 @@ fn ejecutar_stmt_gfx(
                 }
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
-                let func_data = funcs.get(func_name).map(|(p, b)| (p.clone(), b.clone()));
+                let func_data = funcs.get(name).map(|(p, b)| (p.clone(), b.clone()));
 
                 if let Some((_params, body)) = func_data {
                     // Evaluar argumentos
@@ -2184,7 +2179,7 @@ pub fn evaluar_expr_gfx(
         Expr::Num(n) => Valor::Num(*n),
         Expr::Texto(s) => Valor::Texto(s.clone()),
         Expr::Var(name) => {
-            if name == "__INPUT__" {
+            if func_name == "__INPUT__" {
                 return executor.input("> ");
             }
             executor.leer(name).unwrap_or(Valor::Vacio)
@@ -3054,7 +3049,7 @@ pub fn evaluar_expr_gfx(
                 }
             }
 
-            Valor::Error(format!("Función '{}' no soportada", func_name))
+            Valor::Error(format!("Función '{}' no soportada", name))
         }
         Expr::Binary { left, op, right } => {
             let left_val = evaluar_expr_gfx(left, executor, input, funcs);
@@ -4459,7 +4454,8 @@ pub fn ejecutar_stmt_migui(
         Stmt::Call { name, args } => {
             // Para migui, evaluar como expresión (las funciones migui generan draw commands)
             let _ = evaluar_expr_migui(
-                &Expr::Call { callee: Box::new(Expr::Var(func_name)),
+                &Expr::Call {
+                    name: name.clone(),
                     args: args.clone(),
                 },
                 executor,
