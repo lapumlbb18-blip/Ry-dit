@@ -421,7 +421,7 @@ pub fn ejecutar_programa_migui<'a>(
     for stmt in &program.statements {
         match stmt {
             Stmt::Function { name, params, body } => {
-                funcs.insert(name.clone(), (params.clone(), body.clone()));
+                funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
             }
             Stmt::Assign { name, value } => {
                 let valor = evaluar_expr_migui(

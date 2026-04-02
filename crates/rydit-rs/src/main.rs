@@ -241,7 +241,7 @@ pub fn ejecutar_stmt(
         Stmt::Function { name, params, body } => {
             // Guardar función en el registro
             println!("[FUNC] {}({:?}) definida", name, params);
-            funcs.insert(name.clone(), (params.clone(), body.clone()));
+            funcs.insert(name.to_string(), (params.iter().map(|s| s.to_string()).collect(), body.clone()));
         }
         Stmt::Call { callee, args } => {
             // Extraer nombre de función

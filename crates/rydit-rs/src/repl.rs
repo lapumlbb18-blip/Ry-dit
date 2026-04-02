@@ -68,22 +68,23 @@ pub fn repl_mode() {
                 let tokens = Lexer::new(input).scan();
                 let mut parser = Parser::new(tokens);
 
-                match parser.parse() {
-                    Ok(program) => {
-                        println!("[RYDIT] {} statements", program.statements.len());
-                        // Ejecutar statements
-                        for stmt in &program.statements {
-                            crate::ejecutar_stmt(
-                                stmt,
-                                &mut executor,
-                                &mut funcs,
-                                &mut loaded_modules,
-                                &mut importing_stack,
-                            );
-                        }
+                let (program, errors) = parser.parse();
+                if !errors.is_empty() {
+                    println!("[ERROR] {} errores de parsing", errors.len());
+                    for e in &errors {
+                        println!("  - {:?}", e);
                     }
-                    Err(e) => {
-                        println!("[ERROR] {}", e);
+                } else {
+                    println!("[RYDIT] {} statements", program.statements.len());
+                    // Ejecutar statements
+                    for stmt in &program.statements {
+                        crate::ejecutar_stmt(
+                            stmt,
+                            &mut executor,
+                            &mut funcs,
+                            &mut loaded_modules,
+                            &mut importing_stack,
+                        );
                     }
                 }
             }
