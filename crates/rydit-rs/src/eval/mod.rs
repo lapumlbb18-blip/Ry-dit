@@ -51,7 +51,7 @@ pub fn evaluar_expr<'a>(
 ) -> Valor {
     match expr {
         Expr::Num(n) => Valor::Num(*n),
-        Expr::Texto(s) => Valor::Texto(s.clone()),
+        Expr::Texto(s) => Valor::Texto(s.to_string()),
         Expr::Var(name) => {
             // Input especial
             if name == "__INPUT__" {
@@ -1420,9 +1420,12 @@ pub fn evaluar_expr<'a>(
                         )
                     }
                 };
-                return match ureq::post(&url).send_string(&data).map(|r| r.into_string()).unwrap_or(Err("POST error".to_string())) {
-                    Ok(response) => Valor::Texto(response),
-                    Err(e) => Valor::Error(e),
+                return match ureq::post(&url).send_string(&data) {
+                    Ok(response) => match response.into_string() {
+                        Ok(text) => Valor::Texto(text),
+                        Err(e) => Valor::Error(format!("http::post() response: {}", e)),
+                    },
+                    Err(e) => Valor::Error(format!("http::post() error: {}", e)),
                 };
             }
 
@@ -1442,9 +1445,12 @@ pub fn evaluar_expr<'a>(
                         return Valor::Error("http::put() data debe ser texto o número".to_string())
                     }
                 };
-                return match ureq::put(&url).send_string(&data).map(|r| r.into_string()).unwrap_or(Err("PUT error".to_string())) {
-                    Ok(response) => Valor::Texto(response),
-                    Err(e) => Valor::Error(e),
+                return match ureq::put(&url).send_string(&data) {
+                    Ok(response) => match response.into_string() {
+                        Ok(text) => Valor::Texto(text),
+                        Err(e) => Valor::Error(format!("http::put() response: {}", e)),
+                    },
+                    Err(e) => Valor::Error(format!("http::put() error: {}", e)),
                 };
             }
 
@@ -1456,9 +1462,12 @@ pub fn evaluar_expr<'a>(
                     Valor::Texto(s) => s,
                     _ => return Valor::Error("http::delete() url debe ser texto".to_string()),
                 };
-                return match ureq::delete(&url).call().into_string() {
-                    Ok(response) => Valor::Texto(response),
-                    Err(e) => Valor::Error(e),
+                return match ureq::delete(&url).call() {
+                    Ok(response) => match response.into_string() {
+                        Ok(text) => Valor::Texto(text),
+                        Err(e) => Valor::Error(format!("http::delete() response: {}", e)),
+                    },
+                    Err(e) => Valor::Error(format!("http::delete() error: {}", e)),
                 };
             }
 
