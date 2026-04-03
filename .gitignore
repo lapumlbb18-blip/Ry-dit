@@ -180,6 +180,15 @@ backup_con_binarios.sh
 rclone.conf
 
 # ============================================================================
+# GOOGLE DRIVE SYNC (NO SUBIR - PRIVADOS)
+# ============================================================================
+.sync_drive.log
+.sync_drive.log.binaries
+.sync_exclude
+sync_drive.sh
+.drive_backup/
+
+# ============================================================================
 # SCREENSHOTS OPCIONALES (DECIDIR SI SUBIR)
 # ============================================================================
 # Descomentar si NO quieres subir screenshots
