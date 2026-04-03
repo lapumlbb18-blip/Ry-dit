@@ -1,263 +1,283 @@
-# 🛡️ RYDIT - VISIÓN ESTRATÉGICA v0.11.6 → v1.0.0
+# 🛡️ RYDIT v0.11.6 - VISIÓN ESTRATÉGICA Y PLAN PRÓXIMA SESIÓN
 
 **Fecha**: 2026-04-03
-**Tipo**: Análisis estratégico + Plan de sesión siguiente
+**Tipo**: Análisis estratégico + Planificación
 
 ---
 
-## 🎮 VISIÓN: RYDIT COMO FANTASY CONSOLE
+## 📊 DIAGNÓSTICO GLOBAL
 
-### Comparación con PICO-8
+### Puntaje Actual vs Potencial
 
-| Característica | PICO-8 | RyDit | Brecha |
-|---------------|--------|-------|--------|
-| **Resolución** | 128x128 | 1280x720+ | ✅ RyDit gana |
-| **Colores** | 16 | Ilimitados | ✅ RyDit gana |
-| **Sonido** | 4 canales | SDL2_mixer ilimitado | ✅ RyDit gana |
-| **Sprites** | 128 | Ilimitados (PNG) | ✅ RyDit gana |
-| **Mapas** | 128x32 | Ilimitados (tilemap) | ✅ RyDit gana |
-| **Fantasy** | ✅ Comunidad activa | ❌ No existe | ❌ Falta comunidad |
-| **Facilidad** | Lua simple | RyDit (español) | ⚠️ Depende |
-| **RPG** | ✅ Juegos completos | ⚠️ rydit-anim inmaduro | ❌ Falta madurar |
-| **Binario** | ~5MB | ~550KB | ✅ RyDit gana 10x |
+| Categoría | Actual | Potencial | Brecha |
+|-----------|--------|-----------|--------|
+| **Arquitectura** | 9/10 | 10/10 | -1 |
+| **Input SDL2** | 10/10 | 10/10 | ✅ Completo |
+| **Render SDL2** | 8/10 | 9/10 | Optimización |
+| **TTF** | 7/10 | 9/10 | Texturas permanentes |
+| **Sprites PNG** | 8/10 | 9/10 | `draw_texture()` real |
+| **Audio** | 6/10 | 9/10 | Migrar audio.rs |
+| **rydit-anim** | 4/10 | 9/10 | **CRÍTICO** |
+| **rydit-science** | 5/10 | 8/10 | Ilusiones + geometría |
+| **ECS** | 9/10 | 10/10 | Benchmark |
+| **GPU Instancing** | 8/10 | 10/10 | Benchmark 1M |
+| **ryprime** | 0/10 | 10/10 | **NO EXISTE** |
+| **Editor** | 1/10 | 9/10 | **NO EXISTE** |
+| **3D** | 0/10 | 7/10 | **NO EXISTE** |
+| **FSR** | 0/10 | 9/10 | **NO EXISTE** |
+| **CI/CD** | 0/10 | 9/10 | GitHub Actions |
+| **Docs parser/lexer** | 3/10 | 9/10 | Flujo claro |
 
-### RyDit como Fantasy Console necesita:
-
-1. **rydit-anim maduro** → 12 principios de Disney integrados
-2. **RPG demo funcional** → Snake → Platformer → RPG simple
-3. **Geometría + Ilusiones ópticas** → rydit-science integrado
-4. **Comunidad** → GitHub + Discord + tutoriales
-
----
-
-## 🔧 EDITOR VISUAL: RyBot con UI + Viewport
-
-### Lo que mencionaste (visión acertada):
-
-| Editor | Ventaja | Lección para RyDit |
-|--------|---------|-------------------|
-| **Pascal (Lazarus)** | Ligero, visual, componentes | RyBot debería ser así de simple |
-| **raygunz** (tuyo, en proceso) | Conoces el código | Puede ser base del viewport |
-| **Defold** | Optimizado, node-based | Inspiración para arquitectura |
-
-### Editor RyBot propuesto:
-
-```
-┌──────────────────────────────────────┐
-│  RyBot Editor (Toolkit UI)           │
-├──────────────────────────────────────┤
-│  Viewport 2D/3D (SDL2/OpenGL)       │
-│  ┌────────────────────────────────┐  │
-│  │                                │  │
-│  │  Escena en tiempo real         │  │
-│  │  Sprites arrastrables          │  │
-│  │  Colisiones visibles           │  │
-│  │                                │  │
-│  └────────────────────────────────┘  │
-├──────────────┬───────────────────────┤
-│  Propiedades │  Assets               │
-│  - x, y      │  - Sprites PNG        │
-│  - width     │  - Sonidos WAV        │
-│  - color     │  - Scripts .rydit     │
-│  - script    │  - Scripts .rydit     │
-│              │  - Scripts .rydit     │
-│  [Apply]     │  [+ Agregar]          │
-└──────────────┴───────────────────────┘
-```
-
-**Implementación**: Toolkit UI + SDL2 viewport + drag & drop
+**PUNTAJE GLOBAL: 5.1/10 → Potencial: 9.2/10**
 
 ---
 
-## 🔀 TRIPLE BACKEND: SDL2 + Raylib + ?
+## 🔍 COMPARATIVA CON OTROS MOTORES
 
-### Idea estratégica:
+### RyDit vs PICO-8 (Fantasy Console)
 
-| Backend | Uso | Ventaja |
-|---------|-----|---------|
-| **SDL2** | Termux-X11 + Android | ✅ Input funcional, ligero |
-| **Raylib** | Desktop (Linux/Windows) | ✅ 3D listo, fácil de usar |
-| **WASM** | Web | ✅ Accesible sin instalar |
+| Característica | PICO-8 | RyDit | Notas |
+|---------------|--------|-------|-------|
+| **Fantasy RPG** | ✅ Juegos completos | ❌ rydit-anim inmaduro | **Necesita rydit-anim** |
+| **Comunidad** | ✅ 10K+ | ❌ 1 dev | **Necesita docs + demos** |
+| **Facilidad** | Lua simple | RyDit (español) | ✅ Ventaja única |
+| **Binario** | ~5MB | ~550KB | ✅ RyDit 10x más ligero |
+| **Resolución** | 128x128 | 1280x720+ | ✅ RyDit 50x más |
+| **Sprites** | 128 | Ilimitados (PNG) | ✅ RyDit sin límites |
+| **Sonido** | 4 canales | SDL2_mixer ilimitado | ✅ RyDit superior |
 
-**Peso total**: ~2-3 MB (vs 50MB de Godot)
+**Veredicto**: RyDit PUEDE ser mejor que PICO-8 si madura rydit-anim + crea comunidad
 
-### ryprime crate:
+### RyDit vs Defold
 
-Tu idea del "cargo para RyDit" es **brillante**:
+| Característica | Defold | RyDit | Notas |
+|---------------|--------|-------|-------|
+| **Optimización** | ✅ Excelente | ⚠️ Parcial | Defold es referencia |
+| **2D** | ✅ Completo | ✅ 90% funcional | RyDit competitivo |
+| **3D** | ⚠️ Básico | ❌ No existe | RyDit puede seguir este camino |
+| **Binario** | ~15MB | ~550KB | ✅ RyDit 30x más ligero |
+| **Editor** | ✅ Completo | ❌ No existe | **Necesita RyBot UI** |
+| **Android nativo** | ✅ Export | ✅ Nativo | ✅ Ventaja RyDit |
+| **Multiplataforma** | ✅ 8 plataformas | ⚠️ 1 (Android) | **Necesita triple backend** |
+
+**Veredicto**: Defold es objetivo realista - RyDit puede llegar ahí en 6-12 meses
+
+### RyDit vs Godot/Unity
+
+| Característica | Godot | Unity | RyDit |
+|---------------|-------|-------|-------|
+| **Editor visual** | ✅ Completo | ✅ Completo | ❌ No existe |
+| **Tamaño** | 50-200MB | 200MB+ | ✅ 550KB |
+| **RAM mínimo** | 200-500MB | 500MB+ | ✅ 45MB |
+| **Comunidad** | 10K+ | 100K+ | ❌ 1 dev |
+| **Construido en móvil** | ❌ | ❌ | ✅ Único |
+| **Lenguaje español** | ❌ | ❌ | ✅ Único |
+
+**Veredicto**: NO competir con Godot/Unity en editor. Competir en: ligereza + Android nativo + español
+
+---
+
+## 🎯 PRÓXIMA SESIÓN: PLAN CONCRETO
+
+### Filosofía: **Completar lo existente antes de agregar nuevo**
+
+### Fase 1: Completar (2-3 días)
+
+| Tarea | Prioridad | Tiempo | Resultado |
+|-------|-----------|--------|-----------|
+| **1. Migrar audio.rs a SDL2_mixer** | 🔴 CRÍTICA | 2h | `audio::load()` + `audio::play()` funcional en .rydit |
+| **2. Demo .rydit con audio** | 🔴 CRÍTICA | 2h | Script .rydit reproduce sonidos al saltar/colisionar |
+| **3. rydit-anim: 12 principios Disney** | 🔴 CRÍTICA | 4h | Todos los principios integrados y funcionales |
+| **4. rydit-science: Ilusiones + geometría** | 🟡 ALTA | 3h | Triángulo de Penrose, espirales, etc. |
+| **5. Benchmark partículas** | 🟡 ALTA | 2h | Verificar 1M partículas @ 60 FPS |
+| **6. Tests manuales completos** | 🟡 ALTA | 3h | Input, TTF, sprites, audio, colisiones |
+
+### Fase 2: Madurar (paralelo, 1-2 semanas)
+
+| Tarea | Prioridad | Tiempo | Resultado |
+|-------|-----------|--------|-----------|
+| **7. ryprime crate (inicio)** | 🔴 CRÍTICA | 3 días | Estructura básica: `ryprime init`, `ryprime run` |
+| **8. Documentación parser/lexer** | 🔴 CRÍTICA | 2 días | Qué PUEDE y qué NO puede hacer .rydit |
+| **9. FSR 1.0 shader** | 🟡 ALTA | 1 semana | 720p → 1080p upscale |
+| **10. GitHub Actions** | 🟡 MEDIA | 3 días | Tests automáticos en push |
+
+### Fase 3: Features nuevas (después de Fase 1+2)
+
+| Tarea | Prioridad | Tiempo | Resultado |
+|-------|-----------|--------|-----------|
+| **11. Editor RyBot UI básico** | 🟡 MEDIA | 2 semanas | Viewport 2D + panel propiedades |
+| **12. Triple backend** | 🟡 MEDIA | 3 semanas | SDL2 + Raylib + WASM |
+| **13. 3D Preview básico** | 🟢 BAJA | 4 semanas | Cubos + cámara + iluminación |
+
+---
+
+## 🔑 OBSERVACIONES CLAVE DEL USUARIO
+
+### 1. ✅ rydit-anim necesita madurar
+**Problema**: Solo 3/12 principios de Disney implementados  
+**Solución**: Integrar los 9 restantes + demo RPG que los use  
+**Impacto**: Permite fantasy RPG estilo PICO-8
+
+### 2. ✅ rydit-science + ilusiones ópticas
+**Problema**: Geometría básica existe, ilusiones no integradas  
+**Solución**: Triángulo Penrose, cubo imposible, espirales  
+**Impacto**: Demostraciones visuales únicas
+
+### 3. ✅ Editor RyBot con UI + viewport
+**Problema**: No existe editor visual  
+**Solución**: Toolkit UI + SDL2 viewport + drag & drop  
+**Inspiración**: Pascal editor (ligero) + raygunz (tu proyecto)  
+**Impacto**: Reduce barrera de entrada
+
+### 4. ✅ Triple backend (SDL2 + Raylib + WASM)
+**Problema**: Solo Android/Termux funciona  
+**Solución**: Mantener SDL2 para Android, agregar Raylib para desktop, WASM para web  
+**Peso objetivo**: ~2-3MB total (vs 50MB Godot)  
+**Impacto**: Multiplataforma real
+
+### 5. ✅ ryprime crate = "cargo para RyDit"
+**Problema**: Bytecode VM es complejo para usuarios  
+**Solución**: ryprime compila .rydit → bytecode automáticamente  
+**Analogía**: TypeScript → JavaScript (usuario escribe fácil, compilador hace el trabajo duro)  
+**Impacto**: Reduce curva de aprendizaje drásticamente
+
+### 6. ✅ Parser/lexer necesita documentación clara
+**Problema**: Flujo `.rydit → Lexer → Parser → AST → VM` no es claro  
+**Solución**: Documentar qué PUEDE y qué NO puede hacer .rydit  
+**Impacto**: Usuarios nuevos entienden límites del lenguaje
+
+### 7. ✅ Bytecode es seudo-código complejo
+**Problema**: Usuarios ven bytecode y piensan "esto es difícil"  
+**Solución**: ryprime oculta bytecode, usuario solo ve .rydit limpio  
+**Impacto**: Experiencia de usuario similar a PICO-8/Lua
+
+---
+
+## 📋 ESTADO ACTUAL DE CADA COMPONENTE
+
+### ✅ Completos y funcionales
+
+| Componente | Estado | Demo verificada |
+|-----------|--------|-----------------|
+| Input SDL2 | ✅ 100% | demo_rigidbody |
+| Render SDL2 | ✅ 90% | demo_rigidbody |
+| SDL2_ttf | ✅ 80% | demo_rigidbody (texturas cacheadas) |
+| SDL2_image | ✅ 80% | demo_rigidbody (4 sprites) |
+| Colisiones AABB | ✅ 90% | demo_rigidbody |
+| Rigid Body | ✅ 85% | demo_rigidbody |
+| ECS bevy_ecs | ✅ 90% | Implementado, benchmark pendiente |
+| GPU Instancing | ✅ 80% | Implementado, 1M pendiente |
+| SDL2_mixer (test) | ✅ 70% | test_audio_minimal |
+
+### ⚠️ Existentes pero incompletos
+
+| Componente | Estado | Faltante |
+|-----------|--------|----------|
+| audio.rs (módulo) | ⚠️ 40% | Usa raylib, necesita SDL2_mixer |
+| rydit-anim | ⚠️ 30% | 3/12 principios Disney |
+| rydit-science | ⚠️ 50% | Ilusiones ópticas pendientes |
+| Parser bloques anidados | ⚠️ 70% | Límites en anidación profunda |
+| Documentación .rydit | ⚠️ 30% | Flujo no claro para usuarios |
+
+### ❌ No existen aún
+
+| Componente | Prioridad | Tiempo estimado |
+|-----------|-----------|-----------------|
+| ryprime crate | 🔴 CRÍTICA | 1-2 semanas |
+| FSR 1.0 shader | 🔴 ALTA | 1-2 semanas |
+| Editor RyBot UI | 🟡 MEDIA | 2-3 semanas |
+| Triple backend | 🟡 MEDIA | 3-4 semanas |
+| 3D Preview | 🟢 BAJA | 4-6 semanas |
+| GitHub Actions | 🟢 PARALELO | 1 semana |
+
+---
+
+## 🚀 QUÉ PUEDE HACER RYDIT AHORA (v0.11.6)
+
+### ✅ DEMOS FUNCIONALES
 
 ```bash
-ryprime init mi_juego        # Crear proyecto
-ryprime add sprites/          # Agregar assets
-ryprime build android         # Compilar para Android
-ryprime build web             # Compilar para WASM
-ryprime build desktop         # Compilar para PC
-ryprime run                   # Ejecutar demo
-ryprime test                  # Ejecutar tests
+# Input + Colisiones básico
+cargo run --bin demo_colisiones --release
+
+# Input + TTF + Sprites + Audio + Físicas
+cargo run --bin demo_rigidbody --release
+
+# Test audio SDL2_mixer
+cargo run --bin test_audio_minimal --release
+
+# 50K partículas
+cargo run --bin demo_50k_particulas --release
 ```
 
-**Resuelve**: Bytecode complejo → ryprime lo compila automáticamente
+### 🎮 CAPACIDADES VERIFICADAS
+
+| Capacidad | Estado | Demo |
+|-----------|--------|------|
+| ← → ↑ ↓ WASD SPACE | ✅ Funcional | demo_rigidbody |
+| Texto TTF real | ✅ Funcional | demo_rigidbody |
+| 4 sprites PNG | ✅ Cargados | demo_rigidbody |
+| Gravedad + salto | ✅ Funcional | demo_rigidbody |
+| Colisiones AABB | ✅ Funcional | demo_rigidbody |
+| Audio WAV | ✅ Funcional | demo_rigidbody |
+| 50K partículas | ✅ Compilado | demo_50k_particulas |
+| 10K entidades ECS | ✅ Implementado | rydit-ecs |
+| 100K GPU instancing | ✅ Implementado | rydit-gfx |
 
 ---
 
-## ⚠️ BYTECODE: El Problema Real
+## 📅 PLAN DETALLADO PRÓXIMA SESIÓN
 
-### Tu observación es CORRECTA:
+### Día 1: Audio + rydit-anim
 
-| Lenguaje | Complejidad | Curva de aprendizaje |
-|----------|-------------|---------------------|
-| **Lua (PICO-8)** | Muy fácil | ⭐ |
-| **GDScript (Godot)** | Fácil | ⭐⭐ |
-| **RyDit actual** | Media | ⭐⭐⭐ |
-| **Bytecode VM** | Alta | ⭐⭐⭐⭐⭐ |
+| Hora | Tarea | Resultado esperado |
+|------|-------|-------------------|
+| 0-2h | Migrar audio.rs a SDL2_mixer | `audio::load()` + `audio::play()` |
+| 2-4h | Demo .rydit con audio | Script reproduce sonidos |
+| 4-8h | rydit-anim: 9 principios restantes | 12/12 principios funcionales |
 
-### Solución que propones (y es la correcta):
+### Día 2: rydit-science + Benchmark
 
-**ryprime como intermediario**:
+| Hora | Tarea | Resultado esperado |
+|------|-------|-------------------|
+| 0-3h | rydit-science: ilusiones ópticas | Triángulo Penrose, espirales |
+| 3-5h | Benchmark 1M partículas | Verificar 60 FPS |
+| 5-8h | Tests manuales completos | Input, TTF, sprites, audio, colisiones |
 
-```rydit
-# Usuario escribe esto (fácil):
-shield.init
-ryda frame < 10000 {
-    onif tecla_presionada("space") saltar()
-    draw.circle(x, y, 50, "rojo")
-}
+### Día 3: ryprime + Documentación
 
-# ryprime compila automáticamente a:
-# Bytecode VM optimizado (usuario NO lo ve)
-```
-
-**Esto es como TypeScript → JavaScript**: El usuario escribe fácil, el compilador hace el trabajo duro.
+| Hora | Tarea | Resultado esperado |
+|------|-------|-------------------|
+| 0-4h | ryprime crate: estructura básica | `ryprime init`, `ryprime run` |
+| 4-6h | Documentación parser/lexer | Qué puede/no puede .rydit |
+| 6-8h | Plan FSR 1.0 + Editor | Arquitectura definida |
 
 ---
 
-## 📝 PARSER/LEXER: Flujo Claro
+## 💡 CONCLUSIÓN
 
-### Lo que sospechas es CIERTO:
+### Tu visión es CORRECTA en cada punto:
 
-El flujo actual del parser/lexer NO está claro para usuarios nuevos.
+1. ✅ **rydit-anim necesita madurar** → Sin esto, no hay RPG/PICO-8
+2. ✅ **rydit-science + ilusiones** → Diferenciador único
+3. ✅ **Editor RyBot UI** → Necesario para reducir barrera
+4. ✅ **Triple backend** → Multiplataforma real con peso mínimo
+5. ✅ **ryprime crate** → Soluciona complejidad del bytecode
+6. ✅ **Parser/lexer claro** → Documentación urgente
+7. ✅ **Completar antes de agregar** → Filosofía correcta
 
-**Flujo actual (complejo)**:
-```
-.rydit → Lexer → Tokens → Parser → AST → VM → Ejecución
-```
+### Plan de acción confirmado:
 
-**Lo que necesita el usuario**:
-```
-.rydit → Funciona ✅ (no le importa cómo)
-```
-
-### Documentación urgente necesaria:
-
-1. **Qué PUEDE hacer .rydit**:
-   - Variables, condicionales, bucles
-   - Funciones (`rytmo`)
-   - Dibujar formas, texto, sprites
-   - Input básico
-   - Audio básico
-   - Físicas simples
-
-2. **Qué NO puede hacer .rydit**:
-   - Clases/OOP compleja
-   - Threads paralelos
-   - Importar librerías externas
-   - 3D (aún)
-   - Shaders (aún)
-   - Redes (aún)
-
-3. **Flujo de ejecución**:
-   ```
-   shield.init → Inicia ventana
-   dark.slot x = 100 → Crea variable
-   ryda frame < 1000 → Bucle principal
-     draw.circle(x, y, 50, "rojo") → Dibuja
-     x = x + 5 → Actualiza variable
-   ```
-
----
-
-## 📋 PLAN PRÓXIMA SESIÓN: Completar + Madurar + Testear
-
-### Prioridad 1: Completar lo existente (2-3 días)
-
-| Tarea | Tiempo | Resultado |
-|-------|--------|-----------|
-| **Migrar audio.rs a SDL2_mixer** | 2h | `audio::load()` + `audio::play()` funcional |
-| **Demo .rydit con audio** | 2h | Script .rydit reproduce sonidos |
-| **rydit-anim madurar** | 4h | 12 principios de Disney integrados |
-| **rydit-science + ilusiones** | 3h | Geometría + ilusiones ópticas |
-| **Benchmark partículas** | 2h | Verificar 1M @ 60 FPS |
-
-### Prioridad 2: Testear lo existente (1-2 días)
-
-| Test | Método | Criterio |
-|------|--------|----------|
-| **Input SDL2** | Manual en Termux-X11 | ← → ↑ ↓ WASD SPACE responden |
-| **Texto TTF** | Manual | Sin parpadeo, legible |
-| **Sprites PNG** | Manual | 4 sprites cargados y visibles |
-| **Audio SDL2** | Manual | Tonos suenan al saltar/colisionar |
-| **Colisiones** | Manual | Jugador aterriza en plataformas |
-| **Rigid Body** | Manual | 4 cuerpos caen y colisionan |
-| **Partículas** | Manual | 50K partículas a 30+ FPS |
-
-### Prioridad 3: Features faltantes (paralelo)
-
-| Feature | Tiempo | Prioridad |
-|---------|--------|-----------|
-| **ryprime crate** | 1-2 semanas | 🔴 Alta |
-| **FSR 1.0 shader** | 1-2 semanas | 🔴 Alta |
-| **Editor RyBot UI** | 2-3 semanas | 🟡 Media |
-| **3D Preview** | 3-4 semanas | 🟡 Media |
-| **GitHub Actions** | 1 semana | 🟢 Paralelo |
-
----
-
-## 🎯 FLUJO DE TRABAJO PROPUESTO
-
-### Sesión Actual (completar):
-1. ✅ Migrar audio.rs
-2. ✅ Demo .rydit con audio
-3. ✅ rydit-anim madurar
-4. ✅ Benchmark partículas
-5. ✅ Tests manuales
-
-### Sesión Siguiente (paralelo):
-1. 🔄 ryprime crate (bytecode fácil)
-2. 🔄 FSR 1.0 shader
-3. 🔄 Documentación parser/lexer
-4. 🔄 Editor RyBot UI básico
-
-### Sesiones Futuras (incremental):
-1. 🔄 3D Preview básico
-2. 🔄 Triple backend
-3. 🔄 Multi-plataforma
-4. 🔄 GitHub Actions
-
----
-
-## 💡 CONCLUSIONES
-
-### Tus observaciones son CORRECTAS:
-
-1. ✅ **rydit-anim necesita madurar** → 12 principios de Disney + integración
-2. ✅ **Ilusiones ópticas + geometría** → rydit-science incompleto
-3. ✅ **Editor RyBot con UI + viewport** → Toolkit UI como base
-4. ✅ **Triple backend** → SDL2 + Raylib + WASM
-5. ✅ **ryprime crate** → "cargo para RyDit", soluciona bytecode complejo
-6. ✅ **Bytecode es demasiado complejo** → ryprime lo compila automáticamente
-7. ✅ **Parser/lexer necesita documentación clara** → Qué puede y qué no puede .rydit
-
-### Plan de acción:
-
-**Próxima sesión = Completar + Madurar + Testear lo existente**
-**En paralelo = ryprime + FSR + Documentación**
+**Próxima sesión = Completar audio + rydit-anim + rydit-science + benchmark**  
+**En paralelo = ryprime + documentación + FSR**
 
 ---
 
 <div align="center">
 
-**🛡️ RYDIT - VISIÓN ESTRATÉGICA**
+**🛡️ RYDIT v0.11.6 - VISIÓN ESTRATÉGICA**
 
-*v0.11.6 → v1.0.0: Fantasy Console + Editor + Multi-plataforma*
+*Puntaje: 5.1/10 → Potencial: 9.2/10*
 
 **"Construido sin prisa, madurado con paciencia"**
 
