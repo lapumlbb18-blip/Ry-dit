@@ -8,6 +8,7 @@
 //! ✅ 7 plataformas con colisiones
 
 use rydit_gfx::backend_sdl2::Sdl2Backend;
+use rydit_gfx::audio_sdl2::AudioSystemSDL2;
 use rydit_gfx::ColorRydit;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -96,6 +97,32 @@ fn main() -> Result<(), String> {
 
     // Backend
     let mut backend = Sdl2Backend::new("Demo Rigid Body - RyDit", 800, 600)?;
+
+    // Audio SDL2
+    println!("\n🔊 Inicializando audio...");
+    let jump_path = "/data/data/com.termux/files/home/shield-project/jump_sound.wav";
+    let push_path = "/data/data/com.termux/files/home/shield-project/push_sound.wav";
+    
+    // Generar tonos si no existen
+    if !std::path::Path::new(jump_path).exists() {
+        let _ = generate_tone(jump_path, 600.0, 0.15);
+    }
+    if !std::path::Path::new(push_path).exists() {
+        let _ = generate_tone(push_path, 300.0, 0.1);
+    }
+    
+    let mut audio: Option<AudioSystemSDL2> = match AudioSystemSDL2::new() {
+        Ok(mut a) => {
+            let _ = a.load_sound("jump", jump_path);
+            let _ = a.load_sound("push", push_path);
+            println!("✅ Audio listo\n");
+            Some(a)
+        }
+        Err(e) => {
+            eprintln!("⚠️  Audio no disponible: {}", e);
+            None
+        }
+    };
 
     // Fuente
     for path in &["/system/fonts/DroidSans.ttf", "/data/data/com.termux/files/usr/share/fonts/noto-sans/NotoSans-Regular.ttf"] {
@@ -238,6 +265,10 @@ fn main() -> Result<(), String> {
                                 j_vy = -450.0;
                                 j_en_suelo = false;
                                 saltos += 1;
+                                // Sonido de salto
+                                if let Some(ref mut a) = audio {
+                                    let _ = a.play_sound("jump");
+                                }
                             }
                         }
                         // MOVER
@@ -299,10 +330,17 @@ fn main() -> Result<(), String> {
             b.aplicar_gravedad(dt, grav, &plataformas, j_rect);
             if b.empujado {
                 bodies_empujados += 1;
-                b.empujado = false; // Reset flag
+                b.empujado = false;
             }
         }
-        empujones += bodies_empujados;
+        
+        // Sonido + contador de empujones
+        if bodies_empujados > 0 {
+            empujones += bodies_empujados as u64;
+            if let Some(ref mut a) = audio {
+                let _ = a.play_sound("push");
+            }
+        }
 
         // ================================================================
         // RENDER
@@ -409,5 +447,37 @@ fn main() -> Result<(), String> {
     }
 
     println!("\n✅ Demo: {} frames | Saltos: {} | Empujones: {}", frame, saltos, empujones);
+    Ok(())
+}
+
+/// Generar tono WAV simple
+fn generate_tone(path: &str, frequency: f32, duration: f32) -> Result<(), String> {
+    use std::io::Write;
+    let sample_rate = 44100u32;
+    let num_samples = (sample_rate as f32 * duration) as usize;
+    let mut data = Vec::with_capacity(num_samples * 2);
+    for i in 0..num_samples {
+        let t = i as f32 / sample_rate as f32;
+        let sample = (frequency * 2.0 * std::f32::consts::PI * t).sin() * 0.5;
+        let sample_i16 = (sample * 32767.0) as i16;
+        data.extend_from_slice(&sample_i16.to_le_bytes());
+    }
+    let data_size = data.len() as u32;
+    let file_size = 36 + data_size;
+    let mut file = std::fs::File::create(path).map_err(|e| e.to_string())?;
+    file.write_all(b"RIFF").map_err(|e| e.to_string())?;
+    file.write_all(&file_size.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(b"WAVE").map_err(|e| e.to_string())?;
+    file.write_all(b"fmt ").map_err(|e| e.to_string())?;
+    file.write_all(&16u32.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&1u16.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&1u16.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&sample_rate.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&(sample_rate * 2).to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&2u16.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&16u16.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(b"data").map_err(|e| e.to_string())?;
+    file.write_all(&data_size.to_le_bytes()).map_err(|e| e.to_string())?;
+    file.write_all(&data).map_err(|e| e.to_string())?;
     Ok(())
 }
