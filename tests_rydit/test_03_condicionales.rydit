@@ -1,0 +1,26 @@
+# TEST 3: Condicionales
+# Objetivo: Verificar if/else
+
+voz "=== TEST 3: Condicionales ==="
+
+dark.slot x = 15
+
+onif x > 10 {
+    voz "x es mayor que 10"
+} blelse {
+    voz "x es menor o igual a 10"
+}
+
+dark.slot y = 5
+
+onif y < 10 {
+    voz "y es menor que 10"
+} blelse {
+    voz "y es mayor o igual a 10"
+}
+
+onif x == 15 {
+    voz "x es exactamente 15"
+}
+
+voz "Fin del test"

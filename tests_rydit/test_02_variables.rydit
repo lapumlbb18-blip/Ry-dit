@@ -1,0 +1,20 @@
+# TEST 2: Variables y Operaciones
+# Objetivo: Verificar variables, math, strings
+
+voz "=== TEST 2: Variables y Operaciones ==="
+
+dark.slot a = 10
+dark.slot b = 20
+dark.slot suma = a + b
+
+voz "a = " + a
+voz "b = " + b
+voz "a + b = " + suma
+
+dark.slot nombre = "RyDit"
+voz "Motor: " + nombre
+
+dark.slot version = "0.11.5"
+voz "Version: " + version
+
+voz "Fin del test"

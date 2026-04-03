@@ -1,0 +1,23 @@
+# TEST 10: Colisiones 2D
+# Objetivo: Verificar detección de colisiones
+
+voz "=== TEST 10: Colisiones 2D ==="
+
+import colisiones
+
+# Rectángulos
+dark.slot colision = colisiones::rect_rect(0, 0, 50, 50, 25, 25, 50, 50)
+voz "Colision rect-rect: " + colision
+
+dark.slot sin_colision = colisiones::rect_rect(0, 0, 10, 10, 100, 100, 10, 10)
+voz "Sin colision: " + sin_colision
+
+# Círculos
+dark.slot col_circ = colisiones::circ_circ(50, 50, 30, 60, 60, 20)
+voz "Colision circ-circ: " + col_circ
+
+# Punto en rectángulo
+dark.slot punto_en_rect = colisiones::point_in_rect(25, 25, 0, 0, 50, 50)
+voz "Punto en rect: " + punto_en_rect
+
+voz "Fin del test"

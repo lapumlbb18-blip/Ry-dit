@@ -1,0 +1,17 @@
+# TEST 9: Regex
+# Objetivo: Verificar expresiones regulares
+
+voz "=== TEST 9: Regex ==="
+
+import regex
+
+dark.slot texto = "El telefono es 123-456-7890"
+dark.slot patron = "[0-9]+"
+
+dark.slot match = regex::match(texto, patron)
+voz "Regex match: " + match
+
+dark.slot es_email = regex::is_match("test@email.com", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+voz "Es email: " + es_email
+
+voz "Fin del test"

@@ -1,0 +1,21 @@
+# TEST 8: Archivos y JSON
+# Objetivo: Verificar file I/O y JSON
+
+voz "=== TEST 8: Archivos y JSON ==="
+
+import files
+import json
+
+# Escribir archivo
+files::write("test_output.txt", "Hola desde RyDit")
+voz "Archivo escrito"
+
+# Leer archivo
+dark.slot contenido = files::read("test_output.txt")
+voz "Contenido: " + contenido
+
+# JSON
+dark.slot json_str = json::stringify({"nombre": "RyDit", "version": "0.11.5"})
+voz "JSON: " + json_str
+
+voz "Fin del test"

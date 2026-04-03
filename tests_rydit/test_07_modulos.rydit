@@ -1,0 +1,34 @@
+# TEST 7: Módulos (math, random, strings)
+# Objetivo: Verificar módulos stdlib
+
+voz "=== TEST 7: Módulos ==="
+
+import math
+import random
+import strings
+
+# Math
+dark.slot suma = math::sumar(15, 25)
+voz "math::sumar(15, 25) = " + suma
+
+dark.slot resta = math::restar(100, 50)
+voz "math::restar(100, 50) = " + resta
+
+dark.slot mult = math::multiplicar(6, 7)
+voz "math::multiplicar(6, 7) = " + mult
+
+# Random
+dark.slot aleatorio = random::int(1, 100)
+voz "Random 1-100: " + aleatorio
+
+# Strings
+dark.slot texto = strings::upper("hola rydit")
+voz "Upper: " + texto
+
+dark.slot texto2 = strings::lower("HOLA RYDIT")
+voz "Lower: " + texto2
+
+dark.slot len = strings::length("RyDit Engine")
+voz "Longitud string: " + len
+
+voz "Fin del test"

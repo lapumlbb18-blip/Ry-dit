@@ -1,0 +1,22 @@
+# TEST 6: Funciones
+# Objetivo: Verificar definición y llamada de funciones
+
+voz "=== TEST 6: Funciones ==="
+
+rytmo saludar(nombre) {
+    voz "Hola, " + nombre
+    return 1
+}
+
+saludar("Mundo")
+saludar("RyDit")
+saludar("Termux")
+
+rytmo sumar(a, b) {
+    return a + b
+}
+
+dark.slot resultado = sumar(10, 20)
+voz "10 + 20 = " + resultado
+
+voz "Fin del test"

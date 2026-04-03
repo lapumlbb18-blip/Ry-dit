@@ -1,0 +1,22 @@
+# TEST 5: Arrays
+# Objetivo: Verificar arrays básicos
+
+voz "=== TEST 5: Arrays ==="
+
+dark.slot lista = [1, 2, 3, 4, 5]
+voz "Lista creada con 5 elementos"
+
+dark.slot len = arrays::length(lista)
+voz "Longitud: " + len
+
+dark.slot primero = lista[0]
+voz "Primero: " + primero
+
+dark.slot ultimo = lista[4]
+voz "Ultimo: " + ultimo
+
+# Modificar elemento
+dark.slot lista[0] = 100
+voz "Despues de modificar [0]: " + lista[0]
+
+voz "Fin del test"

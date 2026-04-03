@@ -1,0 +1,25 @@
+# TEST 4: Bucles
+# Objetivo: Verificar ryda (while) y romper
+
+voz "=== TEST 4: Bucles ==="
+
+dark.slot i = 0
+ryda i < 5 {
+    voz "Iteracion: " + i
+    dark.slot i = i + 1
+}
+
+voz "Bucle completado"
+
+# Test con romper
+dark.slot j = 0
+ryda j < 100 {
+    onif j == 3 {
+        voz "Rompiendo en 3"
+        romper
+    }
+    voz "j = " + j
+    dark.slot j = j + 1
+}
+
+voz "Fin del test"

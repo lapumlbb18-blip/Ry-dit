@@ -1,0 +1,6 @@
+# TEST 1: Hola Mundo - Verificar que el evaluator funciona
+# Objetivo: Solo imprimir texto
+
+voz "=== TEST 1: Hola Mundo ==="
+voz "Si ves esto, el evaluator funciona"
+voz "Fin del test"
