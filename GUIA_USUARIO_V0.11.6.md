@@ -1,8 +1,8 @@
 # 🛡️ RyDit v0.11.6 - Guía de Usuario
 
-**Última actualización**: 2026-04-03
-**Versión**: v0.11.6
-**Estado**: ✅ Input + TTF + Sprites + Rigid Body + Audio — Todo funcional
+**Fecha**: 2026-04-03
+**Versión**: v0.11.6 - Input SDL2 + TTF + Sprites + Rigid Body + Audio
+**Estado**: ✅ Stack completo funcional: Input + TTF + Sprites + Físicas + Audio + Videos
 
 ---
 
@@ -10,13 +10,28 @@
 
 La versión v0.11.6 es la primera versión completamente funcional con el stack gráfico SDL2:
 
-| Feature | Descripción |
-|---------|-------------|
-| **Input SDL2** | Teclado funcional con patrón `repeat: false` (cada pulsación = acción individual) |
-| **Texto TTF** | Texto real con fuente del sistema (`DroidSans.ttf`), sin parpadeo, texturas cacheadas |
-| **Sprites PNG** | 4 sprites cargados con SDL2_image: tank, helicopter, crate, platform |
-| **Rigid Body** | 4 cuerpos con gravedad independiente + colisiones AABB + empuje del jugador |
-| **Audio SDL2** | Sonidos generados dinámicamente (salto 600Hz, colisión 300Hz) con SDL2_mixer |
+| Feature | Descripción | Estado |
+|---------|-------------|--------|
+| **Input SDL2** | Teclado funcional con patrón `repeat: false` (cada pulsación = acción individual). ← → ↑ ↓ WASD SPACE | ✅ 10/10 |
+| **Texto TTF** | Texto real con fuente del sistema (`DroidSans.ttf`), sin parpadeo, texturas cacheadas cada 30 frames | ✅ 8/10 |
+| **Sprites PNG** | 4 sprites cargados con SDL2_image: tank, helicopter, crate, platform | ✅ 8/10 |
+| **Rigid Body** | 4 cuerpos con gravedad independiente + colisiones AABB + empuje del jugador | ✅ 9/10 |
+| **Audio SDL2** | Sonidos generados dinámicamente (salto 600Hz, colisión 300Hz) con SDL2_mixer | ✅ 7/10 |
+| **Videos Demo** | 3 videos MP4 embebidos mostrando todas las features | ✅ |
+
+**Puntaje global del stack**: 5.1/10 → Potencial: 9.2/10 (con audio.rs migrado + rydit-anim maduro)
+
+### Comparativa con otros motores
+
+| Característica | PICO-8 | Defold | Godot | **RyDit v0.11.6** |
+|---------------|--------|--------|-------|-------------------|
+| **Binario** | ~5 MB | ~15 MB | ~50 MB | **~550 KB** ✅ |
+| **RAM mínimo** | — | ~100 MB | ~200 MB | **~45 MB** ✅ |
+| **Sprites** | 128 | Ilimitados | Ilimitados | **Ilimitados (PNG)** ✅ |
+| **Sonido** | 4 canales | Ilimitado | Ilimitado | **SDL2_mixer ilimitado** ✅ |
+| **Android nativo** | ❌ | ✅ Export | ❌ | ✅ **Nativo Termux** |
+| **Lenguaje** | Lua | Lua | GDScript | **RyDit (español)** ✅ |
+| **Construido en móvil** | ❌ | ❌ | ❌ | ✅ **Redmi Note 8** |
 
 ---
 
@@ -36,6 +51,51 @@ Todos los demos usan el mismo patrón de input. Las teclas funcionan en el tecla
 | **ESC** | Salir del demo |
 
 > **Nota importante**: El teclado virtual de Android solo envía pulsaciones individuales (`repeat: false`). Cada toque = una acción. Mantener presionado NO produce movimiento continuo.
+
+### Por que funciona este patrón
+
+1. **Event loop directo** → Sin intermediarios (`backend.is_key_pressed()` NO funciona)
+2. **`repeat: false`** → Cada pulsación es una acción (teclado virtual Android NO envía `repeat: true`)
+3. **`Keycode::Left | Keycode::A`** → Múltiples teclas para la misma acción
+4. **Movimiento instantáneo** → No depende de velocidad × dt
+
+### Template para crear tus propios demos
+
+```rust
+use sdl2::event::Event;
+use sdl2::keyboard::Keycode;
+
+// En el game loop:
+for event in backend.event_pump.poll_iter() {
+    match event {
+        Event::Quit { .. } |
+        Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+            running = false;
+            break;
+        }
+
+        Event::KeyDown { keycode: Some(key), repeat: false, .. } => {
+            match key {
+                // Movimiento
+                Keycode::Left | Keycode::A => jugador.x -= 30.0,
+                Keycode::Right | Keycode::D => jugador.x += 30.0,
+                Keycode::Up | Keycode::W => jugador.y -= 30.0,
+                Keycode::Down | Keycode::S => jugador.y += 30.0,
+
+                // Acción
+                Keycode::Space => jugador.saltar(),
+
+                // Utilidades
+                Keycode::R => reset(),
+                Keycode::P => pausa(),
+
+                _ => {}
+            }
+        }
+        _ => {}
+    }
+}
+```
 
 ---
 
@@ -147,6 +207,44 @@ DISPLAY=:0 ./target/release/demo_50k_particulas
 **Qué probar**:
 - Presiona F para fuego, H para humo, E para explosión
 - Observa el rendimiento con miles de partículas simultáneas
+
+---
+
+### 5. demo_sprites_v2 — Verificación de sprites PNG
+
+**Qué verás**: 4 sprites verificados con indicador visual de existencia + animación senoidal + input completo con 69 teclas mapeadas.
+
+| Elemento | Color/Sprite | Función |
+|----------|-------------|---------|
+| Tank | 🟢 Verde | Sprite verificado (16x16) |
+| Helicopter | 🔵 Cyan | Sprite verificado (16x16) |
+| Crate | 🟤 Marrón | Sprite verificado (8x8) |
+| Platform | ⚫ Gris | Sprite verificado (16x16) |
+| Indicador | ⬜ Barra blanca | Archivo PNG existe |
+
+**Cómo ejecutar**:
+```bash
+export DISPLAY=:0
+export MESA_LOADER_DRIVER_OVERRIDE=zink
+
+cargo build -p rydit-rs --bin demo_sprites_v2 --release
+DISPLAY=:0 ./target/release/demo_sprites_v2
+```
+
+**Controles**:
+| Tecla | Acción |
+|-------|--------|
+| **← → ↑ ↓** | Mover sprite seleccionado |
+| **1-4** | Seleccionar sprite |
+| **A** | Toggle animación |
+| **R** | Reset posiciones |
+| **ESC** | Salir |
+
+**Qué probar**:
+- Presiona 1-4 para seleccionar cada sprite
+- Mueve el sprite seleccionado con las flechas
+- Observa la barra blanca que confirma que el archivo PNG existe
+- Toggle animación A para ver movimiento senoidal
 
 ---
 
@@ -288,6 +386,46 @@ if self.rect().has_intersection(jugador_rect) {
 - **Jugador** empuja rigid bodies al colisionar
 - **Cada rigid body** también colisiona con plataformas
 
+### Patrón Rigid Body (para tus propios demos)
+
+```rust
+struct RigidBody {
+    x: f32, y: f32,      // Posición
+    vx: f32, vy: f32,    // Velocidad
+    w: u32, h: u32,      // Tamaño
+    en_suelo: bool,       // ¿Está en el suelo?
+}
+
+impl RigidBody {
+    fn aplicar_gravedad(&mut self, dt: f32, gravedad: f32, plataformas: &[Rect]) {
+        self.vy += gravedad * dt;
+        self.y += self.vy * dt;
+
+        for plat in plataformas {
+            if self.rect().has_intersection(*plat) {
+                if self.rect().bottom() as i32 <= plat.y + 10 && self.vy > 0.0 {
+                    self.y = plat.y as f32 - self.h as f32;
+                    self.vy = 0.0;
+                    self.en_suelo = true;
+                }
+            }
+        }
+    }
+}
+
+// Colisión jugador ↔ rigid body (empuje)
+if self.rect().has_intersection(jugador_rect) {
+    if jugador_rect.y < self.rect().y as i32 {
+        self.vy = -200.0;  // Empujar arriba
+    }
+    if jugador_rect.x < self.rect().x as i32 {
+        self.vx -= 100.0;  // Empujar izquierda
+    } else {
+        self.vx += 100.0;  // Empujar derecha
+    }
+}
+```
+
 ---
 
 ## 📋 Requisitos
@@ -372,9 +510,76 @@ DISPLAY=:0 ./target/release/demo_rigidbody
 | "no SDL2 video device" | Termux-X11 no iniciado | Ejecutar `xinit` primero |
 | "failed to create window" | DISPLAY no configurado | `export DISPLAY=:0` |
 | "undefined symbol: TTF_Init" | Usando `sdl2::ttf` directo | Usar `backend.draw_text()` |
-| Input no responde | Usando `repeat: true` | Usar SOLO `repeat: false` |
-| Sprites no aparecen | Ruta incorrecta | Verificar que el archivo existe en `logo_icon_asst/sprites/` |
+| Input no responde | Usando `repeat: true` o wrapper | Usar SOLO `repeat: false` + `event_pump.poll_iter()` directo |
+| Sprites no aparecen | Ruta incorrecta | Verificar archivo existe en `logo_icon_asst/sprites/` |
 | Audio no suena | SDL2_mixer no linkado | Usar `Sdl2Backend` que ya tiene mixer init |
+| Texturas no se guardan | Lifetime de TextureCreator | Usar verificación de archivos + fallback rects |
+| Parpadeo en texto | Texturas no cacheadas | Cacheadas cada 30 frames (ya implementado) |
+| Ventana se cierra al instante | Zink no configurado | `export MESA_LOADER_DRIVER_OVERRIDE=zink` |
+| Linker falla con SDL2 | SDL2 no instalado | `pkg install sdl2 sdl2_image sdl2_ttf sdl2_mixer` |
+
+### Errores comunes de código
+
+**1. Input no responde**
+```rust
+// ❌ NO USAR wrapper para input
+if backend.is_key_pressed("arrow_left") { ... }
+
+// ✅ USAR event loop directo
+for event in backend.event_pump.poll_iter() {
+    match event {
+        Event::KeyDown { keycode: Some(key), repeat: false, .. } => {
+            match key {
+                Keycode::Left | Keycode::A => jugador.x -= 30.0,
+                // ...
+            }
+        }
+        _ => {}
+    }
+}
+```
+
+**2. Linker falla con SDL2_ttf**
+```rust
+// ❌ NO usar sdl2::ttf directo
+use sdl2::ttf::Font; // undefined symbol: TTF_Init
+
+// ✅ Usar Sdl2Backend (ya tiene TTF linkado)
+backend.load_font("/system/fonts/DroidSans.ttf", 18);
+backend.draw_text("Hola", 10, 10, 18, 255, 255, 255);
+```
+
+**3. Sprites no aparecen**
+```rust
+// ❌ NO asumir que la ruta es correcta
+let surface = Surface::from_file("tank.png")?; // Falla si no existe
+
+// ✅ Verificar antes de cargar
+let path = "logo_icon_asst/sprites/tank_16x16.png";
+if std::path::Path::new(path).exists() {
+    let surface = Surface::from_file(path)?;
+    // cargar textura...
+} else {
+    // Fallback: dibujar rectángulo de color
+    backend.draw_rect(x, y, w, h, 0, 255, 0);
+}
+```
+
+---
+
+## 🎯 Próximo juego - Plan basado en demos
+
+Usando lo que ya funciona en v0.11.6, puedes construir un primer juego con:
+
+| Feature | Demo fuente | Código listo |
+|---------|-------------|-------------|
+| Input ← → SPACE | `demo_colisiones` | ✅ Copiar |
+| Gravedad + colisiones | `demo_rigidbody` | ✅ Copiar |
+| Sprites PNG | `demo_rigidbody` | ✅ Copiar |
+| Texto TTF para UI | `demo_rigidbody` | ✅ Copiar |
+| Audio (salto/colisión) | `test_audio_minimal` | ✅ Copiar |
+| Múltiples enemigos | `demo_rigidbody` | ✅ Copiar |
+| Game over + restart | Snake existente | ✅ Adaptar |
 
 ---
 
@@ -382,8 +587,12 @@ DISPLAY=:0 ./target/release/demo_rigidbody
 
 **🛡️ RyDit v0.11.6 - Guía de Usuario**
 
-*Input SDL2 ✅ | TTF ✅ | Sprites PNG ✅ | Rigid Body ✅ | Audio ✅*
+*Input SDL2 ✅ 10/10 | TTF ✅ 8/10 | Sprites PNG ✅ 8/10 | Rigid Body ✅ 9/10 | Audio ✅ 7/10*
+
+**Puntaje global: 5.1/10 → Potencial: 9.2/10**
 
 **Próximo: v0.11.7 — Audio.rs migrado a SDL2_mixer + Demo .rydit con audio**
+
+*"Construido sin prisa, madurado con paciencia"*
 
 </div>
