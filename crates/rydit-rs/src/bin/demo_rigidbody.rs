@@ -181,6 +181,36 @@ fn main() -> Result<(), String> {
     println!("   ESC = Salir");
     println!("💡 Empuja los rigid bodies con tu cuerpo!\n");
 
+    // Texturas de texto precargadas (FIX parpadeo)
+    let tc = &backend.canvas.texture_creator();
+    
+    fn crear_textura<'a>(
+        font: &Option<rydit_gfx::sdl2_ffi::FontFFI>,
+        texto: &str,
+        r: u8, g: u8, b: u8,
+        tc: &'a sdl2::render::TextureCreator<sdl2::video::WindowContext>,
+    ) -> Option<sdl2::render::Texture<'a>> {
+        if let Some(f) = font {
+            if let Ok(surface_ptr) = f.render_text_blended(texto, r, g, b) {
+                unsafe {
+                    let sdl_surface = sdl2::surface::Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
+                    if let Ok(tex) = tc.create_texture_from_surface(&sdl_surface) {
+                        return Some(unsafe { std::mem::transmute(tex) });
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    let txt_titulo = crear_textura(&backend.font, "🛡️ RyDit - Rigid Body Demo", 255, 255, 255, tc);
+    let txt_controles = crear_textura(&backend.font, "← → ó A/D = Mover | SPACE = Saltar | ESC = Salir", 150, 150, 150, tc);
+
+    // Caches para textos dinámicos (se recrean cada 30 frames)
+    let mut txt_info: Option<sdl2::render::Texture<'static>> = None;
+    let mut txt_bodies: Vec<Option<sdl2::render::Texture<'static>>> = (0..4).map(|_| None).collect();
+    let mut last_cache_frame = 0u64;
+
     let mut frame = 0u64;
     let mut running = true;
     let mut gravedad_on = true;
@@ -335,23 +365,45 @@ fn main() -> Result<(), String> {
             let _ = backend.canvas.draw_rect(Rect::new(j_x as i32 - 4, j_y as i32 - 4, j_w as u32 + 8, j_h as u32 + 8));
         }
 
-        // TEXTO TTF
-        backend.draw_text("🛡️ RyDit - Rigid Body Demo", 15, 15, 18, 255, 255, 255);
-        backend.draw_text(&format!("Jugador: ({:.0},{:.0}) | Saltos: {} | Empujones: {}", j_x, j_y, saltos, empujones), 15, 45, 14, 0, 255, 0);
+        // TEXTO TTF - Texturas cacheadas (SIN parpadeo)
+        // Recrear textos dinámicos cada 30 frames
+        if frame - last_cache_frame > 30 {
+            txt_info = crear_textura(&backend.font, 
+                &format!("Jugador: ({:.0},{:.0}) | Saltos: {}", j_x, j_y, saltos), 
+                0, 255, 0, tc).map(|t| unsafe { std::mem::transmute(t) });
+            
+            let colores = [(0u8, 255, 0), (0, 255, 255), (139, 69, 19), (128, 128, 128)];
+            for (i, b) in bodies.iter().enumerate() {
+                let (r, g, b_color) = colores[i];
+                let st = if b.en_suelo { "suelo" } else { "aire" };
+                txt_bodies[i] = crear_textura(&backend.font,
+                    &format!("{}: ({:.0},{:.0}) {}", b.nombre, b.x, b.y, st),
+                    r, g, b_color, tc).map(|t| unsafe { std::mem::transmute(t) });
+            }
+            last_cache_frame = frame;
+        }
         
+        // Dibujar texturas de texto
+        if let Some(ref tex) = txt_titulo {
+            let q = tex.query();
+            let _ = backend.canvas.copy(tex, None, Rect::new(15, 15, q.width, q.height));
+        }
+        if let Some(ref tex) = txt_info {
+            let q = tex.query();
+            let _ = backend.canvas.copy(tex, None, Rect::new(15, 45, q.width, q.height));
+        }
         let mut y_off = 75i32;
-        let colores = [(0u8, 255, 0), (0, 255, 255), (139, 69, 19), (128, 128, 128)];
-        for (i, b) in bodies.iter().enumerate() {
-            let (r, g, b_color) = colores[i];
-            let st = if b.en_suelo { "✅suelo" } else { "❌caer" };
-            backend.draw_text(
-                &format!("{}: ({:.0},{:.0}) vy:{:.0} {}", b.nombre, b.x, b.y, b.vy, st),
-                15, y_off, 12, r, g, b_color
-            );
+        for tex_opt in &txt_bodies {
+            if let Some(ref tex) = tex_opt {
+                let q = tex.query();
+                let _ = backend.canvas.copy(tex, None, Rect::new(15, y_off, q.width, q.height));
+            }
             y_off += 16;
         }
-
-        backend.draw_text("← → ó A/D = Mover | SPACE = Saltar | G = Gravedad | R = Reset | ESC = Salir", 15, 575, 12, 150, 150, 150);
+        if let Some(ref tex) = txt_controles {
+            let q = tex.query();
+            let _ = backend.canvas.copy(tex, None, Rect::new(15, 575, q.width, q.height));
+        }
 
         backend.end_draw();
     }
