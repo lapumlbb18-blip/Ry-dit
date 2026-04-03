@@ -137,8 +137,13 @@ archive/
 context/
 docs/  # ✅ Documentación de sesiones internas
 
-# Archivos de estado de sesión (Qwen Code)
-QWEN.md
+# QWEN.md duplicados (solo raíz se mantiene)
+**/QWEN.md
+**/qwen.md
+**/.qwen/
+
+# Archivos de estado de sesión (Qwen Code) - solo raíz
+# QWEN.md en raíz SÍ se sube (bitácora pública)
 .qwen/
 output-language.md
 

@@ -121,31 +121,28 @@ cargo build --bin nivel3_test_lowend
 
 ---
 
-### 📋 DOCUMENTACIÓN HONESTA
+### 📋 PENDIENTES POR TESTEAR
 
-- [**ESTADO_REAL_V0.10.4.md**](ESTADO_REAL_V0.10.4.md) - ⭐ **ESTADO SIN FILTROS**
+**Nota**: Los siguientes sistemas requieren verificación manual en Termux-X11.
+Esto no es una limitación de RyDit, sino del entorno de pruebas (Termux-X11 no permite automatización gráfica).
+
+- [**ESTADO_V0.11.5.md**](ESTADO_V0.11.5.md) - ⭐ **ESTADO ACTUAL SIN FILTROS**
+- [**analisis_qwen.md**](analisis_qwen.md) - 🔍 Análisis crítico honesto
 - [**QWEN.md**](QWEN.md) - Bitácora técnica (actualizada)
-- [docs/ANALISIS_HONESTO_Y_PLAN_MAESTRO_V0.9.x.md](docs/ANALISIS_HONESTO_Y_PLAN_MAESTRO_V0.9.x.md) - Limitaciones + plan
 
 ---
 
 ## 🛡️ ARQUITECTURA v0.10.0: INVERSIÓN DE CONTROL
 
-### 🔍 Problema Detectado
+### 🔍 Pendientes por Verificar
 
-**Arquitectura actual (INCORRECTA)**:
-```
-Usuario → demo.rydit → Parser (secretaria) → Intenta cargar todo
-                    ↓
-            "No tengo fuerza para cosas pesadas"
-```
+**Nota**: Estos puntos requieren verificación después de la refactorización y fix de errores completada en v0.11.5.
 
-**Síntomas**:
-- ⚠️ Parser `lizer` sobrecargado (3K líneas haciendo trabajo de core)
-- ⚠️ `main.rs` solo 4K líneas (muy poco para ser core)
-- ⚠️ Scripts `.rydit` intentan dibujar directo (FFI desde script)
-- ⚠️ Inestabilidad con lógica compleja
-- ⚠️ 2000 partículas colapsan el evaluator
+- ⏳ Parser `lizer` → `rydit-parser` con lifetimes (refactorizado, verificar integración)
+- ⏳ `main.rs` ~25K líneas (core expandido desde v0.10.0)
+- ⏳ Scripts `.rydit` como configuración (arquitectura inversión de control)
+- ⏳ Estabilidad con lógica compleja (tests pendientes en Termux-X11)
+- ⏳ 2000 partículas estables (GPU instancing requiere verificación)
 
 **Comparativa con motores profesionales**:
 
@@ -235,69 +232,48 @@ mundo {
 
 ---
 
-## 🔧 PRÓXIMAS FASES DE MADURACIÓN
+## 🔧 TAREAS FINALES ANTES DE LANZAMIENTO
 
-### Fase 1: GPU Instancing + Shaders (v0.10.0) # en proceso
-- [ ] # en proceso: FFI OpenGL (`gl-rs` crate) en rydit-gfx
-- [ ] # en proceso: Shaders GLSL vertex + fragment en `rydit-gfx/shaders/`
-- [ ] # en proceso: `glDrawArraysInstanced()` básico
-- [ ] # en proceso: Demo: 100,000+ partículas @ 60 FPS
-- [ ] # en proceso: Ubicación: `crates/rydit-gfx/src/gpu_instancing.rs`
+### Fase 1: Tests y Verificación (v0.11.6) 🔴 Prioridad
+- [ ] Probar rydit-rs binario completo en Termux-X11
+- [ ] Tests manuales: input SDL2 (teclado, mouse)
+- [ ] Tests manuales: render SDL2 (formas, sprites, texto)
+- [ ] Tests manuales: audio SDL2 (sonidos, música)
+- [ ] Snake reescrito con VM bytecode
+- [ ] Platformer demo SDL2 funcional
 
-### Fase 2: ECS - Entity Component System (v0.10.1) # en proceso
-- [ ] # en proceso: Crate nuevo: `crates/rydit-ecs/`
-- [ ] # en proceso: ENTT o bevy_ecs
-- [ ] # en proceso: Components: Position, Velocity, Sprite
-- [ ] # en proceso: Systems: Movement, Render, Physics
-- [ ] # en proceso: Integración en executor.rs
+### Fase 2: Features Esenciales (v0.12.0) 🔴 Prioridad
+- [ ] FSR 1.0 (FidelityFX Super Resolution) - Shader embebido
+- [ ] Parser 100% bloques anidados sin límites
+- [ ] AST caching en rybot
+- [ ] rybot debug CLI
+- [ ] Bytecode optimization
 
-### Fase 3: Integración GPU + ECS (v0.10.2) # en proceso
-- [ ] # en proceso: executor.rs usa ECS + GPU Instancing
-- [ ] # en proceso: Crear exodo_gpu.rs (100K+ partículas)
-- [ ] # en proceso: .rydit llama a binarios .rs
+### Fase 3: GitHub Actions + CI/CD (v0.12.0) 🟡 Paralelo
+- [ ] `.github/workflows/test.yml` - Tests automáticos
+- [ ] `.github/workflows/build.yml` - Build multi-plataforma
+- [ ] Coverage reports
+- [ ] Clippy check en CI
+- [ ] Release automation
 
-### Fase 4: Optimización Render Queue (v0.9.2) ⚠️ Pendiente
-- [ ] Separar por tipo (círculos, rects, líneas)
-- [ ] Mejor batching interno
-- [ ] Posible: 2000 partículas @ 60 FPS
+### Fase 4: 3D Preview + Físicas Avanzadas (v0.13.0) 🔮 Implementación Paralela
+- [ ] **Geometría 3D básica** - Matrices de transformación
+- [ ] **Ángulos y rotación 3D** - Euler angles, quaternions
+- [ ] **Físicas 3D** - Colisiones AABB, OBB
+- [ ] **Esqueletos (skeletons)** - Bone hierarchy, skinning
+- [ ] **Raylib 3D** - Ya soportado (`DrawCube`, `DrawSphere`, etc.)
+- [ ] **Cámara 3D** - Perspective projection
 
-### Fase 5: N-Body Gravity (v0.10.3) ⚠️ Pendiente
-- [ ] N-body gravity simulation
-- [ ] 100,000+ entities estables
-- [ ] Integración con ECS + GPU
+**Nota sobre 3D**: Raylib ya pinta en 3D. RyDit puede acceder a estas funciones vía FFI.
+La implementación será gradual: primero geometría básica, luego físicas, luego esqueletos.
 
-### Fase 6: Fluid Dynamics (v0.10.4) ⚠️ Pendiente
-- [ ] SPH (Smoothed Particle Hydrodynamics)
-- [ ] Fluid surface simulation
-- [ ] Wave dynamics
-
-### Fase 7: Parser Maduro (v1.0.0) ⚠️ Pendiente
-- [ ] Refactorizar `lizer/src/lib.rs` completo
-- [ ] Paréntesis que funcionen SIEMPRE
-- [ ] Expresiones complejas sin dolor
-- [ ] Arrays multidimensionales reales
-
-### Fase 4: CSV + Data Science ✅ COMPLETADO
-- [x] `crates/rydit-rs/src/modules/csv.rs` - 13 funciones
-- [x] `csv::read()`, `csv::write()` - File I/O
-- [x] `csv::to_json()`, `csv::from_json()` - Conversión
-- [x] `csv::filter()`, `csv::columns()`, `csv::row_count()`, `csv::col_count()`
-- [x] `csv::join()`, `csv::group_by()`, `csv::aggregate()` - Operaciones avanzadas
-
-### Fase 5: Audio + HTTP + Entity System ✅ COMPLETADO
-- [x] Módulos (NO crates nuevos)
-- [x] `audio::beep()`, `audio::play()` - 12 funciones
-- [x] `http::get()`, `http::post()`, `http::put()`, `http::delete()` - 4 funciones
-- [x] `ws::connect()`, `ws::send()`, `ws::recv()`, `ws::disconnect()` - 6 funciones
-- [x] Crate `rydit-http` compilado exitosamente
-- [x] **Entity System** - 63 funciones (player, enemy, boss, trap, coin)
-- [x] **Cámara 2D** - 15 funciones
-- [x] **Collision System** - 5 funciones
-- [x] **Area2D System** - 6 funciones (propio de RyDit)
-
-### Fase 6: LAZOS Maduro (1 semana)
-- [ ] Unificar `evaluar_expr()`
-- [ ] Protocolo universal funcionando
+### Fase 5: Maduración Final (v1.0.0) 🔮
+- [ ] Editor visual completo
+- [ ] Debugger step-by-step
+- [ ] Hot reload de scripts
+- [ ] Asset pipeline completo
+- [ ] Documentación completa
+- [ ] 500+ tests
 
 ---
 
@@ -305,32 +281,44 @@ mundo {
 
 | Estado | Score |
 |--------|-------|
-| Actual | 9.5/10 ✅ |
-| Fase 1 (Parser) | 7/10 |
-| Fase 2 (Assets) | 8/10 |
-| Fase 3 (Particles) | 8.5/10 |
-| Fase 4 (CSV) | 9/10 ✅ COMPLETADO |
-| Fase 5 (Audio+HTTP) | 9.5/10 ✅ COMPLETADO |
-| Fase 6 (LAZOS) | **9.5/10** ✅ |
+| Actual (v0.11.5) | 9.5/10 ✅ Código limpio |
+| v0.11.6 (Tests) | 9.7/10 |
+| v0.12.0 (FSR + Parser) | 9.8/10 |
+| v0.13.0 (3D Preview) | 9.9/10 |
+| v1.0.0 (Motor completo) | 10/10 |
 
 ---
 
 ## 🚫 LO QUE NO HAREMOS
 
-- ❌ NO git push hasta que esté maduro
-- ❌ NO publicar en crates.io
-- ❌ NO release público
+- ❌ NO publicar sin tests completos
+- ❌ NO release sin CI/CD
+- ❌ NO features sin verificación
 - ❌ NO prisa por terminar
 
 ---
 
 ## ✅ LO QUE SÍ HAREMOS
 
+### Ruta Final de Tareas
+- ✅ **v0.11.6**: Tests manuales Termux-X11 + Snake reescrito
+- ✅ **v0.12.0**: FSR 1.0 + Parser fuerte + GitHub Actions
+- ✅ **v0.13.0**: 3D preview (geometría, matrices, ángulos, esqueletos)
+- ✅ **v1.0.0**: Motor completo con editor visual
+
+### Filosofía de Trabajo
 - ✅ Trabajar sin presión
 - ✅ Cada feature bien hecha
 - ✅ Tests reales (no solo que pasen)
 - ✅ Demos complejos (no simplificados)
 - ✅ Código del que estemos orgullosos
+
+### Features en Paralelo (3D/Físicas)
+- ✅ Geometría 3D básica (matrices de transformación)
+- ✅ Ángulos y rotación (Euler, quaternions)
+- ✅ Físicas 3D (colisiones AABB/OBB)
+- ✅ Esqueletos (bone hierarchy, skinning)
+- ✅ Raylib 3D FFI (ya disponible)
 
 ---
 
@@ -351,22 +339,16 @@ mundo {
 
 | Versión | Estado | Features | Fecha |
 |---------|--------|----------|-------|
-| **v0.9.0** | ✅ | 3 Capas Críticas (Command Queue, Double Buffer, Platform Sync X11) | 2026-03-28 |
-| **v0.9.1** | ✅ | Render Queue Integrada con Evaluator | 2026-03-29 |
-| **v0.9.2** | ✅ | Assets Queue + Teclado + Input Map + IME | 2026-03-29 |
-| **v0.9.3** | ✅ | Físicas Respuesta + Camera Apply | 2026-03-29 |
-| **v0.9.4** | 🔥 | Bloques sin límite + Text Input real | 1 semana |
-| **v0.9.5** | 🔮 | Platform Sync Multi-Plataforma | 2-3 semanas |
-| **v0.10.0** | # en proceso | GPU Instancing + Shaders GLSL (100K+ partículas) | **Después de v0.9.5** |
-| **v0.10.1** | # en proceso | ECS (Entity Component System - ENTT) | **Después de v0.10.0** |
-| **v0.10.2** | 🔮 | Integración GPU + ECS | Futuro |
-| **v0.10.3** | 🔮 | N-Body Gravity | Futuro |
-| **v0.10.4** | 🔮 | Fluid Dynamics (Éxodo 14) | Futuro |
-| **v1.0.0** | 🔮 | Simulador de Escenas Completo (Multi-plataforma) | Futuro |
+| **v0.11.5** | ✅ | 0 Errores + 0 Warnings (Código Limpio) | 2026-04-02 |
+| **v0.11.6** | 🔮 | Snake reescrito + Platformer SDL2 | 2026-04-14 |
+| **v0.12.0** | 🔮 | FSR 1.0 + Parser Fuerte | 2026-04-21 |
+| **v0.13.0** | 🔮 | N-Body Gravity + ECS Maduro | 2026-05-05 |
+| **v0.14.0** | 🔮 | Multi-plataforma (Win, macOS, WASM) | 2026-05-20 |
+| **v1.0.0** | 🔮 | Motor Completo + Editor Visual | 2026-06-01 |
 
 </div>
 
-**NOTA**: GPU Instancing (v0.10.0) solo después de completar v0.9.2-v0.9.5 (bases sólidas).
+**NOTA**: rydit-rs corregido parcialmente, pendiente tests completos. Ver [ESTADO_V0.11.5.md](ESTADO_V0.11.5.md)
 
 ---
 
@@ -918,13 +900,32 @@ Crates:
 - [x] **SDL2 Backend completo** - Ventana + Input + Render
 - [x] **ColorRydit converter** - `to_rgb()` para colores
 - [x] **Helpers SDL2** - `clear_background`, `draw_rect_color`, `draw_text_color`
-- [x] **101+ Tests** - Automáticos, 3 niveles
+- [x] **101+ Tests automáticos** - Núcleo e integración (sin gráficos)
 - [x] **20+ Binarios** - Todos compilados
 - [x] **~28K líneas Rust** - 13 crates activos
 - [x] **ECS + GPU Instancing** - 10K entidades, 100K+ partículas
 - [x] **Bytecode VM** - 50+ OpCodes, 10-50x más rápido
 - [x] **Parser Zero-Copy** - 50% menos memoria
 - [x] **RyBot Inspector** - Registry + Alertas + CLI
+
+### ⏳ Pendiente por Testear (v0.11.6)
+- [ ] **Tests gráficos en Termux-X11** - Manuales (limitación del entorno)
+- [ ] **Input SDL2** - Teclado (69 teclas), mouse, gamepad
+- [ ] **Render SDL2** - Formas, sprites, texto con colores
+- [ ] **Audio SDL2** - Sonidos y música
+- [ ] **rydit-rs binario completo** - Ejecutar demos reales
+
+### 📊 Estimación de Tests
+
+| Tipo | Cantidad | Método | Estado |
+|------|----------|--------|--------|
+| **Tests automáticos (sin gráficos)** | 101+ | `cargo test` | ✅ Completado |
+| **Tests manuales Termux-X11** | 3 suites | Ejecución manual | ⏳ Pendiente |
+| **Tests gráficos automatizados** | 0 | No posible en Termux-X11 | ❌ Limitación entorno |
+
+**Nota sobre tests gráficos**: Termux-X11 no permite automatización de tests gráficos
+(X11 sin headless). Los tests de input, render y audio deben ejecutarse manualmente
+y verificarse visualmente. Esto no es una limitación de RyDit, sino del entorno.
 
 ### ✅ Completado (v0.6.0 - v0.11.4)
 - [x] Lexer + Parser con AST
