@@ -4,7 +4,6 @@
 //! Reporta qué funciona, qué falla, y por qué.
 //! Sin frameworks avanzados, sin abstracciones innecesarias.
 
-use std::fs;
 
 /// Resultado de una prueba individual
 #[derive(Debug, Clone)]

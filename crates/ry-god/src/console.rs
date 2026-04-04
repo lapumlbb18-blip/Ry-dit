@@ -2,7 +2,6 @@
 //!
 //! Lo que a cargo se le escapa, ry-god lo reporta todo.
 
-use std::time::Instant;
 
 #[derive(Debug, Clone)]
 pub enum LogLevel {
