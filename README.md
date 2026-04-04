@@ -1,4 +1,4 @@
-# 🛡️ RyDit - Motor Simulador de Escenas 2D + Lenguaje de Scripting en Rust para Android/Termux
+# 🛡️ Ry-Dit - Motor Simulador de Escenas 2D + Lenguaje de Scripting en Rust para Android/Termux
 
 <div align="center">
 
@@ -23,9 +23,9 @@
 
 ---
 
-## 🎯 ¿Qué es RyDit?
+## 🎯 ¿Qué es Ry-Dit?
 
-**RyDit** es un **motor simulador de escenas 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
+**Ry-Dit** es un **motor simulador de escenas 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
 
 **Casos de Uso:**
 - 🎮 Desarrollo de juegos 2D
@@ -73,7 +73,7 @@
 
 #### **Nivel 1: Núcleo** ✅
 ```bash
-cargo test --package rydit-test --test nivel1_core_test
+cargo test --package ry-test --test nivel1_core_test
 # 13 tests passing en 0.01s
 ```
 
@@ -84,7 +84,7 @@ cargo test --package rydit-test --test nivel1_core_test
 
 #### **Nivel 2: Integración** ✅
 ```bash
-cargo test --package rydit-test --test nivel2_integration_test
+cargo test --package ry-test --test nivel2_integration_test
 # 3 tests passing en 0.00s
 ```
 
@@ -133,7 +133,7 @@ cargo run --bin demo_rigidbody --release
 ### 📋 PENDIENTES POR TESTEAR
 
 **Nota**: Los siguientes sistemas requieren verificación manual en Termux-X11.
-Esto no es una limitación de RyDit, sino del entorno de pruebas (Termux-X11 no permite automatización gráfica).
+Esto no es una limitación de Ry-Dit, sino del entorno de pruebas (Termux-X11 no permite automatización gráfica).
 
 - [**ESTADO_V0.11.5.md**](ESTADO_V0.11.5.md) - ⭐ **ESTADO ACTUAL SIN FILTROS**
 - [**analisis_qwen.md**](analisis_qwen.md) - 🔍 Análisis crítico honesto
@@ -147,7 +147,7 @@ Esto no es una limitación de RyDit, sino del entorno de pruebas (Termux-X11 no 
 
 **Nota**: Estos puntos requieren verificación después de la refactorización y fix de errores completada en v0.11.5.
 
-- ⏳ Parser `lizer` → `rydit-parser` con lifetimes (refactorizado, verificar integración)
+- ⏳ Parser `lizer` → `ry-parser` con lifetimes (refactorizado, verificar integración)
 - ⏳ `main.rs` ~25K líneas (core expandido desde v0.10.0)
 - ⏳ Scripts `.rydit` como configuración (arquitectura inversión de control)
 - ⏳ Estabilidad con lógica compleja (tests pendientes en Termux-X11)
@@ -160,14 +160,14 @@ Esto no es una limitación de RyDit, sino del entorno de pruebas (Termux-X11 no 
 | **Godot** | ~500K | GDScript | ~50K | 10:1 |
 | **Unity** | ~1M+ | C# | ~200K | 5:1 |
 | **Unreal** | ~5M+ | C++/BP | ~100K | 50:1 |
-| **RyDit** | ~4K | .rydit | ~3K | **1.3:1** ⚠️ |
+| **Ry-Dit** | ~4K | .rydit | ~3K | **1.3:1** ⚠️ |
 
 ### ✅ Solución: Inversión de Control
 
 **Nueva arquitectura (CORRECTA)**:
 ```
 ┌──────────────────────────────────────┐
-│  rydit-rs (CORE en Rust)             │ ← MANDA EL CORE
+│  ry-rs (CORE en Rust)             │ ← MANDA EL CORE
 │    → Game loop nativo                │
 │    → Render Queue nativa             │
 │    → ECS nativo (Entt)               │
@@ -185,13 +185,13 @@ Esto no es una limitación de RyDit, sino del entorno de pruebas (Termux-X11 no 
 
 **Comando actual (roto)**:
 ```bash
-./rydit-rs --gfx demos/test.rydit
+./ry-rs --gfx demos/test.rydit
 # ↑ El .rydit tiene que hacer TODO
 ```
 
 **Comando correcto (nativo/Python)**:
 ```bash
-./rydit-rs --run tank_demo
+./ry-rs --run tank_demo
 # ↑ El core carga la demo, .rydit es solo config
 ```
 
@@ -221,10 +221,10 @@ mundo {
 |-------|-------------|---------|
 | **1. Mover game loop a Rust** | `executor.rs` hace loop nativo | Core estable 60 FPS |
 | **2. .rydit como configuración** | Solo datos, no lógica pesada | Parser no se satura |
-| **3. GPU Instancing en rydit-gfx** | FFI OpenGL nativo | 100K partículas |
+| **3. GPU Instancing en ry-gfx** | FFI OpenGL nativo | 100K partículas |
 | **4. ECS Entt en Rust** | Componentes nativos | 100K entidades |
 | **5. Shaders GLSL nativos** | Vertex + Fragment en Rust | Render masivo |
-| **6. Comando nativo de RyDit** | `./rydit-rs --scene <nombre>` | Arquitectura correcta |
+| **6. Comando nativo de Ry-Dit** | `./ry-rs --scene <nombre>` | Arquitectura correcta |
 
 ### 🎯 Comparativa: Antes vs Después
 
@@ -244,7 +244,7 @@ mundo {
 ## 🔧 TAREAS FINALES ANTES DE LANZAMIENTO
 
 ### Fase 1: Tests y Verificación (v0.11.6) 🔴 Prioridad
-- [ ] Probar rydit-rs binario completo en Termux-X11
+- [ ] Probar ry-rs binario completo en Termux-X11
 - [ ] Tests manuales: input SDL2 (teclado, mouse)
 - [ ] Tests manuales: render SDL2 (formas, sprites, texto)
 - [ ] Tests manuales: audio SDL2 (sonidos, música)
@@ -273,7 +273,7 @@ mundo {
 - [ ] **Raylib 3D** - Ya soportado (`DrawCube`, `DrawSphere`, etc.)
 - [ ] **Cámara 3D** - Perspective projection
 
-**Nota sobre 3D**: Raylib ya pinta en 3D. RyDit puede acceder a estas funciones vía FFI.
+**Nota sobre 3D**: Raylib ya pinta en 3D. Ry-Dit puede acceder a estas funciones vía FFI.
 La implementación será gradual: primero geometría básica, luego físicas, luego esqueletos.
 
 ### Fase 5: Maduración Final (v1.0.0) 🔮
@@ -357,7 +357,7 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 </div>
 
-**NOTA**: rydit-rs corregido parcialmente, pendiente tests completos. Ver [ESTADO_V0.11.5.md](ESTADO_V0.11.5.md)
+**NOTA**: ry-rs corregido parcialmente, pendiente tests completos. Ver [ESTADO_V0.11.5.md](ESTADO_V0.11.5.md)
 
 ---
 
@@ -380,7 +380,7 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 <div align="center">
 
-## 🛡️ RyDit v0.5.0 - En Maduración
+## 🛡️ Ry-Dit v0.5.0 - En Maduración
 
 *Sin prisa | Sin releases | Solo código bien hecho*
 
@@ -408,17 +408,17 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 - 🐍 Snake Game completo como demo
 
 ```rydit
-# Tu primer juego en RyDit (3 líneas)
+# Tu primer juego en Ry-Dit (3 líneas)
 shield.init
 ryda frame < 1000 {
     draw.circle(400, 300, 50, "rojo")
 }
 ```
 
-| Característica | RyDit | Godot | Love2D | PICO-8 |
+| Característica | Ry-Dit | Godot | Love2D | PICO-8 |
 |---------------|-------|-------|--------|--------|
 | **Android Native** | ✅ Sí (Termux) | ❌ No | ❌ No | ❌ No |
-| **Lenguaje** | RyDit (Español) | GDScript | Lua | Lua |
+| **Lenguaje** | Ry-Dit (Español) | GDScript | Lua | Lua |
 | **Backend** | Rust | C++ | C | C |
 | **Binario** | ~550 KB | ~50 MB | ~10 MB | ~5 MB |
 | **Sin IDE** | ✅ Sí | ❌ Requiere editor | ⚠️ VS Code | ⚠️ Editor propio |
@@ -433,16 +433,16 @@ ryda frame < 1000 {
 
 > **"David vs Goliat - Un motor de videojuegos en Rust, construido 100% en un Redmi Note 8"**
 
-### Filosofía RyDit
+### Filosofía Ry-Dit
 
 1. **Mobile-First Real** - No "también funciona en Android". **Nació en Android**.
-2. **Ligero y Portable** - Binario de ~550 KB (no 50 MB propio de RyDit)
+2. **Ligero y Portable** - Binario de ~550 KB (no 50 MB propio de Ry-Dit)
 3. **Educativo** - Código 100% abierto, lenguaje en español, sin magia
 4. **David vs Goliat** - 12,000 líneas de Rust bien escritas > 500,000 líneas de C++
 5. **Rendimiento Estable** - Sin calentamiento, RAM <100 MB, 60 FPS estables
 6. **Portabilidad** - Próximamente Linux + Windows + WebAssembly
 
-### ¿Por qué existe RyDit?
+### ¿Por qué existe Ry-Dit?
 
 **El Problema:**
 - Barrera de entrada alta: Godot/Unity requieren PC potente
@@ -450,7 +450,7 @@ ryda frame < 1000 {
 - Herramientas sobredimensionadas: 90% de features que no usas
 - Inglés como requisito: Documentación y sintaxis solo en inglés
 
-**La Solución RyDit:**
+**La Solución Ry-Dit:**
 ✅ **Termux como plataforma primera** - No emulación, nativo
 ✅ **Binario <1 MB** - Cabe en cualquier lado
 ✅ **12 widgets, 8 módulos stdlib** - Lo justo y necesario
@@ -460,7 +460,7 @@ ryda frame < 1000 {
 ### Valores
 
 - **Código > Burocracia** - Preferimos código funcionando a documentación perfecta
-- **Mobile-First** - Si no funciona en Android, no es RyDit
+- **Mobile-First** - Si no funciona en Android, no es Ry-Dit
 - **Ligero** - Cada KB cuenta. Sin dependencias innecesarias
 - **Abierto** - MIT license. 100% transparente
 - **Educativo** - Enseñamos, no solo damos herramientas
@@ -483,7 +483,7 @@ ryda frame < 1000 {
 │                                                         │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  CAPA 1: NÚCLEO ESTABLE (NO TOCAR)               │   │
-│  │  - main.rs (game loop, rydit-gfx FFI)            │   │
+│  │  - main.rs (game loop, ry-gfx FFI)            │   │
 │  │  - eval/mod.rs (evaluar_expr)                    │   │
 │  │  - repl.rs (REPL interactivo)                    │   │
 │  │  - lazos.rs (protocolo LAZOS)                    │   │
@@ -493,29 +493,29 @@ ryda frame < 1000 {
 │  ┌──────────────────────▼──────────────────────────┐   │
 │  │  CAPA 2: CRATES INDEPENDIENTES (PUBLICABLES)     │   │
 │  │                                                   │   │
-│  │  v0.7.3.0 🔷 crates/rydit-core/                  │   │
+│  │  v0.7.3.0 🔷 crates/ry-core/                  │   │
 │  │     ├── RyditModule (trait)                      │   │
 │  │     ├── ModuleRegistry                           │   │
 │  │     └── ModuleError/Result                       │   │
 │  │     Tests: 4 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.3.1 🔬 crates/rydit-science/               │   │
+│  │  v0.7.3.1 🔬 crates/ry-science/               │   │
 │  │     ├── Bezier (linear, quadratic, cubic)        │   │
 │  │     └── Stats (mean, median, min, max)           │   │
 │  │     Tests: 9 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.3.2 ⚛️  crates/rydit-physics/               │   │
+│  │  v0.7.3.2 ⚛️  crates/ry-physics/               │   │
 │  │     ├── Projectile (trayectoria, altura)         │   │
 │  │     └── NBody (gravedad 2 cuerpos)               │   │
 │  │     Tests: 6 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.3.3 🎨 crates/rydit-anim/                  │   │
+│  │  v0.7.3.3 🎨 crates/ry-anim/                  │   │
 │  │     ├── Easing (ease_in, ease_out, ease_in_out)  │   │
 │  │     ├── Squash & Stretch                         │   │
 │  │     └── Anticipation                             │   │
 │  │     Tests: 9 passing ✅                          │   │
 │  │                                                   │   │
-│  │  v0.7.3.x 👁️  crates/rydit-geometry/ (PENDIENTE)   │   │
+│  │  v0.7.3.x 👁️  crates/ry-geometry/ (PENDIENTE)   │   │
 │  │     ├── Penrose Triangle                         │   │
 │  │     ├── Impossible Cube                          │   │
 │  │     └── Optical Spirals                          │   │
@@ -526,7 +526,7 @@ ryda frame < 1000 {
 │                                                         │
 │  ┌─────────────────────────────────────────────────┐   │
 │  │  CAPA 3: APLICACIÓN PRINCIPAL                    │   │
-│  │  - crates/rydit-rs/ (binario)                    │   │
+│  │  - crates/ry-rs/ (binario)                    │   │
 │  │  - Protocolo LAZOS (stdin/stdout JSON-RPC)       │   │
 │  │  - Tests: 53 passing ✅                          │   │
 │  └─────────────────────────────────────────────────┘   │
@@ -544,11 +544,11 @@ ryda frame < 1000 {
 **Versionamiento Granular:**
 ```
 v0.MAJOR.MINOR.PATCH
-v0.7.3.0 → rydit-core (trait + registry)
-v0.7.3.1 → rydit-science (Bezier + Stats)
-v0.7.3.2 → rydit-physics (Projectile + NBody)
-v0.7.3.3 → rydit-anim (Easing + Squash/Stretch)
-v0.7.3.x → rydit-geometry (pendiente)
+v0.7.3.0 → ry-core (trait + registry)
+v0.7.3.1 → ry-science (Bezier + Stats)
+v0.7.3.2 → ry-physics (Projectile + NBody)
+v0.7.3.3 → ry-anim (Easing + Squash/Stretch)
+v0.7.3.x → ry-geometry (pendiente)
 v0.8.0.0 → Publicación crates.io + Linux/Windows
 ```
 
@@ -577,10 +577,10 @@ v0.8.0.0 → Publicación crates.io + Linux/Windows
 ### Ejecutar Snake
 ```bash
 # En Termux (Android)
-cargo run --bin rydit-rs -- --gfx snake.rydit
+cargo run --bin ry-rs -- --gfx snake.rydit
 
 # O con binario directo
-./target/release/rydit-rs --gfx snake.rydit
+./target/release/ry-rs --gfx snake.rydit
 ```
 
 ### Controles
@@ -637,7 +637,7 @@ cargo run --bin rydit-rs -- --gfx snake.rydit
 | Rybot Interface |
 |--------------|
 | ![Rybot](screenshots/rybot.jpg) |
-| **Asistente de código RyDit** - Menú de comandos y ayuda interactiva |
+| **Asistente de código Ry-Dit** - Menú de comandos y ayuda interactiva |
 
 ---
 
@@ -727,7 +727,7 @@ ryda frame < 500 {
     draw.circle(400, 200, 80, "rojo")
     draw.rect(200, 350, 60, 60, "naranja")
     draw.line(100, 500, 300, 500, "blanco")
-    draw.text("Demo RyDit", 250, 50, "amarillo")
+    draw.text("Demo Ry-Dit", 250, 50, "amarillo")
 }
 ```
 
@@ -802,7 +802,7 @@ shield.init
 draw.circle(400, 300, 50, "rojo")
 draw.rect(100, 100, 100, 100, "verde")
 draw.line(0, 0, 800, 600, "azul")
-draw.text("RyDit v0.1.9", 300, 50, "blanco")
+draw.text("Ry-Dit v0.1.9", 300, 50, "blanco")
 ```
 
 ---
@@ -811,17 +811,17 @@ draw.text("RyDit v0.1.9", 300, 50, "blanco")
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  RyDit Core (Rust)                                      │
+│  Ry-Dit Core (Rust)                                      │
 │  ├── lizer       → Lexer + Parser + AST (~2,452 líneas) │
 │  ├── blast-core  → Executor + Memoria (~465 líneas)     │
-│  ├── rydit-gfx   → Gráficos raylib (~481 líneas)        │
-│  ├── rydit-rs    → Binario + stdlib (~2,491 líneas)     │
+│  ├── ry-gfx   → Gráficos raylib (~481 líneas)        │
+│  ├── ry-rs    → Binario + stdlib (~2,491 líneas)     │
 │  └── v-shield    → Wrapper raylib (~120 líneas)         │
 └─────────────────────────────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────────────────────┐
-│  Scripts RyDit (.rydit)                                 │
+│  Scripts Ry-Dit (.rydit)                                 │
 │  ├── Snake Game                                         │
 │  ├── Demos visuales                                     │
 │  ├── Módulos stdlib (math, arrays, strings, io, etc.)   │
@@ -833,22 +833,22 @@ draw.text("RyDit v0.1.9", 300, 50, "blanco")
 ```
 Líneas totales:     ~12,000 líneas
 ├── Rust:           ~9,500 líneas
-└── RyDit:          ~2,500 líneas (demos + módulos + tests)
+└── Ry-Dit:          ~2,500 líneas (demos + módulos + tests)
 
 Tests automáticos:  126 pasando ✅
 Demos funcionales:  19 principales ✅
 Warnings activos:   0 ✅
 
 Binarios:
-├── rydit-rs:       ~550 KB (release, strip = true)
-├── rydit-rs:       ~920 KB (debug)
+├── ry-rs:       ~550 KB (release, strip = true)
+├── ry-rs:       ~920 KB (debug)
 └── demo_particles: ~560 KB
 
 Crates:
 ├── lizer:          Lexer + Parser + AST (~2,452 líneas)
 ├── blast-core:     Executor + Memoria (~465 líneas)
-├── rydit-gfx:      Gráficos + Partículas + Audio (~680 líneas)
-├── rydit-rs:       Binario + stdlib + REPL (~3,662 líneas)
+├── ry-gfx:      Gráficos + Partículas + Audio (~680 líneas)
+├── ry-rs:       Binario + stdlib + REPL (~3,662 líneas)
 ├── v-shield:       Wrapper raylib (~120 líneas)
 ├── migui:          Immediate Mode GUI (~600 líneas)
 └── modules:        Stdlib embebido (8 módulos ~800 líneas)
@@ -900,7 +900,7 @@ Crates:
 | **v0.4.0** | ✅ | **migui** (Immediate Mode GUI ~600 líneas) | 2026-03-22 |
 | **v0.4.1** | ✅ | **migui backend raylib** (renderizado real) | 2026-03-22 |
 | **v0.5.0** | ✅ | **Ecosistema Maduro** (dropdown, progress bar, assets manager) | 2026-03-23 |
-| **v0.5.1** | ✅ | **Funciones Assets + Renderizado X11** (sprites en RyDit, fix zink) | 2026-03-23 |
+| **v0.5.1** | ✅ | **Funciones Assets + Renderizado X11** (sprites en Ry-Dit, fix zink) | 2026-03-23 |
 | **v0.5.2** | ✅ | **Audio + ListBox + Layout** (sonidos, música, UI mejorada) | 2026-03-23 |
 | **v0.5.3** | ✅ | **REPL Interactivo + Partículas** (historial, sistema partículas) | 2026-03-23 |
 | **v0.6.0** | ✅ | **Fix Termux-X11 + Stdlib Embebido** (auto-config, 8 módulos) | 2026-03-23 |
@@ -915,16 +915,16 @@ Crates:
 | **v0.7.1.3** | 🔮 | **Módulo DATOS** (CSV, HDF5, plots, statistics) | 2-3 semanas |
 | **v0.7.2.0** | ✅ | **Protocolo LAZOS** (stdin/stdout JSON-RPC, Python bridge) | 2026-03-25 |
 | **v0.7.3.0** | ✅ | **SPLIT PROGRESIVO** (RyditModule trait + registry) | 2026-03-26 |
-| **v0.7.3.1** | ✅ | **rydit-science** (Bezier + Stats extraídos) | 2026-03-26 |
-| **v0.7.3.2** | ✅ | **rydit-physics** (Projectile + NBody extraídos) | 2026-03-26 |
-| **v0.7.3.3** | ✅ | **rydit-anim** (Easing + Squash/Stretch extraídos) | 2026-03-26 |
+| **v0.7.3.1** | ✅ | **ry-science** (Bezier + Stats extraídos) | 2026-03-26 |
+| **v0.7.3.2** | ✅ | **ry-physics** (Projectile + NBody extraídos) | 2026-03-26 |
+| **v0.7.3.3** | ✅ | **ry-anim** (Easing + Squash/Stretch extraídos) | 2026-03-26 |
 | **v0.8.0** | ✅ | **Sistema Universal Ry** (módulos dinámicos, hot reload) | 2026-03-26 |
 | **v0.8.2** | ✅ | **Sistema Universal Ry** (Fases 1-4 completadas) | 2026-03-26 |
 | **v0.8.3** | ✅ | **Fix Warnings** (50→~15 warnings, -70%) | 2026-03-26 |
 | **v0.8.4** | ✅ | **FIX GRÁFICOS** (draw.text con expresiones, game loop estable) | 2026-03-26 |
 | **v0.5.0** | ✅ | **RELEASE ESTABLE** (7 demos funcionales, 157 tests) | 2026-03-26 |
 | **v0.5.1** | 🔜 | **Audio + HTTP + CSV + Assets + Partículas** | Próxima sesión |
-| **v0.7.3.x** | ⏳ | **rydit-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
+| **v0.7.3.x** | ⏳ | **ry-geometry** (Ilusiones ópticas, pendiente) | Próxima sesión |
 | **v0.11.5** | ✅ | **CLEAN CODE** (0 errores, 0 warnings, lifetimes, 132 problemas → 0) | 2026-04-02 |
 | **v0.11.6** | ✅ | **Input SDL2 + TTF + Sprites + Rigid Body + Audio + 3 Videos** | 2026-04-03 |
 | **v0.11.7** | 🔮 | Migrar audio.rs a SDL2_mixer + Demo .rydit con audio | Próxima sesión |
@@ -983,7 +983,7 @@ Crates:
 
 **Nota sobre tests gráficos**: Termux-X11 no permite automatización de tests gráficos
 (X11 sin headless). Los tests de input, render y audio deben ejecutarse manualmente
-y verificarse visualmente. Esto no es una limitación de RyDit, sino del entorno.
+y verificarse visualmente. Esto no es una limitación de Ry-Dit, sino del entorno.
 
 ### ✅ Completado (v0.6.0 - v0.11.4)
 - [x] Lexer + Parser con AST
@@ -1041,28 +1041,28 @@ Este proyecto está siendo revisado por la comunidad de desarrolladores. Las eva
 
 ### Crates en crates.io (NUEVO ✅)
 
-**RyDit ahora está disponible en crates.io**. Puedes usar los módulos individuales en tus proyectos Rust:
+**Ry-Dit ahora está disponible en crates.io**. Puedes usar los módulos individuales en tus proyectos Rust:
 
 ```toml
 [dependencies]
-rydit-core = "0.7.34"      # Trait RyditModule + Registry
-rydit-science = "0.7.34"   # Bezier, Stats, Geometry, Optical illusions
-rydit-physics = "0.7.34"   # Projectile, Gravity, N-body
-rydit-anim = "0.7.34"      # Easing, Squash & Stretch
+ry-core = "0.7.34"      # Trait RyditModule + Registry
+ry-science = "0.7.34"   # Bezier, Stats, Geometry, Optical illusions
+ry-physics = "0.7.34"   # Projectile, Gravity, N-body
+ry-anim = "0.7.34"      # Easing, Squash & Stretch
 ```
 
 ```bash
 # Instalar crates individuales
-cargo add rydit-core
-cargo add rydit-science
-cargo add rydit-physics
-cargo add rydit-anim
+cargo add ry-core
+cargo add ry-science
+cargo add ry-physics
+cargo add ry-anim
 
 # Ver en crates.io
-# https://crates.io/crates/rydit-core
-# https://crates.io/crates/rydit-science
-# https://crates.io/crates/rydit-physics
-# https://crates.io/crates/rydit-anim
+# https://crates.io/crates/ry-core
+# https://crates.io/crates/ry-science
+# https://crates.io/crates/ry-physics
+# https://crates.io/crates/ry-anim
 ```
 
 ### Ejemplo de Uso
@@ -1113,10 +1113,10 @@ cd Ry-Dit
 cargo build --release
 
 # 7. Ejecutar REPL
-./target/release/rydit-rs --repl
+./target/release/ry-rs --repl
 
 # 8. Ejecutar demo Snake
-./target/release/rydit-rs --gfx snake.rydit
+./target/release/ry-rs --gfx snake.rydit
 ```
 
 ### Linux (Ubuntu/Debian)
@@ -1135,7 +1135,7 @@ cd Ry-Dit
 cargo build --release
 
 # 4. Ejecutar
-./target/release/rydit-rs --repl
+./target/release/ry-rs --repl
 ```
 
 ### Windows
@@ -1152,7 +1152,7 @@ cd Ry-Dit
 cargo build --release
 
 # 4. Ejecutar
-.\target\release\rydit-rs.exe --repl
+.\target\release\ry-rs.exe --repl
 ```
 
 ### Dependencias Principales
@@ -1188,7 +1188,7 @@ pkg install xorg-xrandr libx11
 | **Reddit r/rust** | https://reddit.com/r/rust |
 | **Reddit r/gamedev** | https://reddit.com/r/gamedev |
 | **Reddit r/AndroidGaming** | https://reddit.com/r/AndroidGaming |
-| **X (Twitter)** | #RyDit #RustLang #AndroidDev |
+| **X (Twitter)** | #Ry-Dit #RustLang #AndroidDev |
 
 ### 💌 Tu Opinión Importa
 
@@ -1202,7 +1202,7 @@ pkg install xorg-xrandr libx11
 
 ### 🔜 Próximamente
 
-- **Servidor Discord propio** - Espacio dedicado para RyDit
+- **Servidor Discord propio** - Espacio dedicado para Ry-Dit
 - **Evaluaciones públicas de IA** - Análisis detallado del código
 - **Asset store comunitario** - Frameworks, escenas, herramientas
 
@@ -1222,7 +1222,7 @@ cargo build
 cargo test
 
 # Ejecutar demo
-cargo run --bin rydit-rs -- --gfx demo_shapes.rydit
+cargo run --bin ry-rs -- --gfx demo_shapes.rydit
 ```
 
 ---
@@ -1351,13 +1351,13 @@ MIT License - Ver [LICENSE](LICENSE) para más detalles.
 
 ## 🔗 Protocolo LAZOS (v0.7.2.0)
 
-**Sistema universal de comunicación entre RyDit y otros lenguajes.**
+**Sistema universal de comunicación entre Ry-Dit y otros lenguajes.**
 
 ### **Características:**
 
 - ✅ **Universal** - Funciona con Python, Node.js, C, Bash, cualquier lenguaje
 - ✅ **Simple** - JSON-RPC sobre stdin/stdout
-- ✅ **Nativo** - Parte del binario de rydit-rs
+- ✅ **Nativo** - Parte del binario de ry-rs
 - ✅ **Seguro** - Sin red, solo local
 - ✅ **Rápido** - ~200 líneas de código Rust
 
@@ -1385,18 +1385,18 @@ with RyLazo() as ry:
 
 ```bash
 # Ping
-echo '{"method":"system::ping"}' | rydit-rs --lazos
+echo '{"method":"system::ping"}' | ry-rs --lazos
 # {"result":"pong"}
 
 # Bezier
-echo '{"method":"science::bezier::cubic","params":[0,0,30,100,70,100,100,0,0.5]}' | rydit-rs --lazos
+echo '{"method":"science::bezier::cubic","params":[0,0,30,100,70,100,100,0,0.5]}' | ry-rs --lazos
 # {"result":[50.0,75.0]}
 ```
 
 ### **Comandos Disponibles:**
 
 **System:**
-- `system::version` - Versión de RyDit
+- `system::version` - Versión de Ry-Dit
 - `system::ping` - Verificar conexión
 - `system::info` - Información completa
 
