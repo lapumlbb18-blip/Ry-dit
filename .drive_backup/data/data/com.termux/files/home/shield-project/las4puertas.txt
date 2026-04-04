@@ -463,7 +463,7 @@ Tilemap::from_file(...)
 
 <div align="center">
 
-**🛡️ RyDit Engine - LAS 4 PUERTAS**
+**🛡️ Ry-Dit - LAS 4 PUERTAS**
 
 *v0.8.3 ✅ | v0.8.4 🔄 | v0.9.0 ⏳ | v1.0.0 ⭐*
 

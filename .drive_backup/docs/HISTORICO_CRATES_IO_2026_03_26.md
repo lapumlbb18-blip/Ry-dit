@@ -8,7 +8,7 @@
 
 ## 🏆 HITO ALCANZADO
 
-**RyDit Engine** ahora está disponible oficialmente en **crates.io**, el registro oficial de paquetes de Rust.
+**Ry-Dit** ahora está disponible oficialmente en **crates.io**, el registro oficial de paquetes de Rust.
 
 ---
 
@@ -188,7 +188,7 @@ let eased = anim.execute("ease_in_out", json!([0.5]));
 
 <div align="center">
 
-**🛡️ RyDit Engine - v0.7.34**
+**🛡️ Ry-Dit - v0.7.34**
 
 *4 crates publicados | 40 tests | 100% Android/Termux*
 

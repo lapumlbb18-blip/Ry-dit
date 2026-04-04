@@ -4,7 +4,7 @@ version = "0.8.2"
 edition = "2021"
 description = "RyDit Script Modules - Load .rydit scripts as dynamic modules"
 license = "MIT"
-repository = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+repository = "https://github.com/lapumlbb18-blip/Ry-Dit"
 keywords = ["game-engine", "android", "rust", "scripting", "modules"]
 categories = ["game-development"]
 

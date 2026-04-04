@@ -906,7 +906,7 @@ ryda frame < 100000 {
 
 <div align="center">
 
-**🛡️ RyDit Engine - Gráficos Bezier + Sistema Universal**
+**🛡️ Ry-Dit - Gráficos Bezier + Sistema Universal**
 
 *Documentación técnica para implementación v0.8.0 - v0.9.0*
 

@@ -1,9 +1,8 @@
-// crates/rydit-rs/src/bin/demo_toolkit_ry.rs
-// Demo de Toolkit RyDit - UI en rydit-gfx
-// v0.11.0 - Toolkit integrado en rydit-gfx
+// Demo de Toolkit Ry - UI en ry-gfx
+// v0.11.0 - Toolkit integrado en ry-gfx
 
-use rydit_gfx::backend_sdl2::Sdl2Backend;
-use rydit_gfx::toolkit::{Button, Label, Panel, Theme};
+use ry_gfx::backend_sdl2::Sdl2Backend;
+use ry_gfx::toolkit::{Button, Label, Panel, Theme};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;

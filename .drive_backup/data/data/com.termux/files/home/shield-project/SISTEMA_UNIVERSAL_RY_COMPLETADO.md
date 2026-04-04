@@ -182,7 +182,7 @@ let result = registry.get("mi_modulo")
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  RyDit Engine v0.8.2 - SISTEMA UNIVERSAL RY            │
+│  Ry-Dit v0.8.2 - SISTEMA UNIVERSAL RY            │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  CAPA 1: RUST MODULES (crates.io)                      │

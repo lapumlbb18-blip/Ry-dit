@@ -1,4 +1,4 @@
-Backup Seguro - RyDit Engine
+Backup Seguro - Ry-Dit
 =============================
 Fecha: Wed Mar 25 05:43:12 -04 2026
 Versión: antes_lazos

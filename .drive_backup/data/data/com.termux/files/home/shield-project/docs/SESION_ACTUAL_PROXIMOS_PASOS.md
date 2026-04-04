@@ -287,7 +287,7 @@ cp -r crates/ scripts/ docs/*.md docs/backup_seguro_v0.8.1_pre_bezier/
 
 <div align="center">
 
-**🛡️ RyDit Engine - Sesión v0.8.0 Completada**
+**🛡️ Ry-Dit - Sesión v0.8.0 Completada**
 
 *Próximo: Gráficos Bezier → Sistema Universal RY → Lanzamiento v1.0.0*
 

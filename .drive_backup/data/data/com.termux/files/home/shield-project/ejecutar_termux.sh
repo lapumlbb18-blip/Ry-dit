@@ -5,7 +5,7 @@
 # Configuración automática de entorno
 # ========================================
 
-echo "🛡️ RyDit Engine v0.5.1 - Termux-X11"
+echo "🛡️ Ry-Dit v0.5.1 - Termux-X11"
 echo "======================================"
 
 # Detectar Termux
@@ -80,7 +80,7 @@ elif [ -n "$1" ]; then
     echo "🚀 Ejecutando: $1"
     ./target/release/rydit-rs "$1"
 else
-    echo "🎮 RyDit Engine v0.5.1"
+    echo "🎮 Ry-Dit v0.5.1"
     echo ""
     echo "Comandos rápidos:"
     echo "  ./ejecutar_termux.sh --gfx demo_audio_player.rydit"

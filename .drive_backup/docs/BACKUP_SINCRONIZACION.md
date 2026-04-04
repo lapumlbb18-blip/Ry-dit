@@ -220,7 +220,7 @@ rclone ls drive:backup_seguro/
 
 <div align="center">
 
-**🛡️ RyDit Engine - Backup v0.8.0**
+**🛡️ Ry-Dit - Backup v0.8.0**
 
 *Backup local creado | Sincronización manual pendiente*
 

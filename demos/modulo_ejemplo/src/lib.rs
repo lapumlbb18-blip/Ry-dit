@@ -16,7 +16,7 @@
 //! echo '{"method":"module::list"}' | rydit-rs --lazos
 //! ```
 
-use rydit_core::{ModuleError, ModuleMetadata, ModuleResult, RyditModule};
+use ry_core::{ModuleError, ModuleMetadata, ModuleResult, RyditModule};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 

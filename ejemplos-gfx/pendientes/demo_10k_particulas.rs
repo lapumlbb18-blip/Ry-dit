@@ -3,7 +3,7 @@
 // Tamaño: 1280x720 (HD)
 // Partículas: 10,000 (estrés de CPU render)
 
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - 10K Partículas EXTREME");

@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine - ROADMAP v0.10.0
+# 🛡️ Ry-Dit - ROADMAP v0.10.0
 
 **Última actualización**: 2026-03-30
 **Versión actual**: v0.9.4 ✅ ENTITY SYSTEM COMPLETADO
@@ -340,7 +340,7 @@
 
 <div align="center">
 
-**🛡️ RyDit Engine - ROADMAP v0.9.0**
+**🛡️ Ry-Dit - ROADMAP v0.9.0**
 
 *v0.9.0 ✅ | v0.9.1 🔜 | v1.0.0 🔮*
 

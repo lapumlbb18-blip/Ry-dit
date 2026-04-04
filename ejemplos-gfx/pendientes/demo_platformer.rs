@@ -4,7 +4,7 @@
 //
 // Ejecutar: cargo run --bin demo_platformer --release
 
-use rydit_gfx::camera::Camera2D;
+use ry_gfx::camera::Camera2D;
 
 fn main() {
     println!("🛡️ RyDit v0.11.0 - Demo Platformer Simplificado");

@@ -1,9 +1,9 @@
-// Demo Partículas SDL2 - RyDit v0.10.6
+// Demo Partículas SDL2 - Ry-Dit v0.10.6
 // Usa backend SDL2 + GPU Instancing + ECS
 // Ejecutar: cargo run --bin demo_particulas_sdl2 --release
 
-use rydit_gfx::backend_sdl2::Sdl2Backend;
-// use rydit_gfx::backend_sdl2::TextureManager;  // ← Pendiente: fixear load_texture
+use ry_gfx::backend_sdl2::Sdl2Backend;
+// use ry_gfx::backend_sdl2::TextureManager;  // ← Pendiente: fixear load_texture
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use std::time::{Duration, Instant};

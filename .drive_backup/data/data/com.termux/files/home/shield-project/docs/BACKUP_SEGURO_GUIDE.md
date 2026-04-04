@@ -1,4 +1,4 @@
-# 🛡️ SISTEMA DE BACKUP SEGURO - RyDit Engine
+# 🛡️ SISTEMA DE BACKUP SEGURO - Ry-Dit
 
 **Filosofía**: Experimentar sin miedo. Siempre tener un plan B.
 

@@ -15,8 +15,8 @@
 pkg install rust raylib
 
 # Clonar repositorio
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine.git
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit.git
+cd Ry-Dit
 
 # Compilar
 cargo build --release
@@ -542,7 +542,7 @@ mi_juego/
 
 ### Comunidad
 - Discord Mouredev: https://discord.gg/mouredev
-- GitHub: https://github.com/lapumlbb18-blip/Rydit_Engine
+- GitHub: https://github.com/lapumlbb18-blip/Ry-Dit
 
 ---
 

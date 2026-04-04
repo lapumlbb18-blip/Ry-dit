@@ -17,8 +17,8 @@
 ### **Instalación**
 ```bash
 # Clonar repositorio
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine.git
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit.git
+cd Ry-Dit
 
 # Build de release
 cargo build --release
@@ -406,7 +406,7 @@ git checkout v0.11.2-pre-parser
 - `docs/` - Documentación técnica detallada
 
 ### **Comunidad**
-- GitHub Issues: https://github.com/lapumlbb18-blip/Rydit_Engine/issues
+- GitHub Issues: https://github.com/lapumlbb18-blip/Ry-Dit/issues
 - Discord: (pendiente)
 - Telegram: (pendiente)
 

@@ -2,9 +2,9 @@
 // Demo: 10,000 entidades con ECS + rlgl
 // v0.10.0: ECS + rlgl integration test
 
-use rydit_ecs::EcsWorld;
-use rydit_gfx::ecs_render::{create_demo_world, create_nbody_demo, EcsRenderer};
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_ecs::EcsWorld;
+use ry_gfx::ecs_render::{create_demo_world, create_nbody_demo, EcsRenderer};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.0 - ECS Demo 10K Entidades");

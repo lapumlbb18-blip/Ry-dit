@@ -3,8 +3,8 @@
 // Tamaño: 1280x720 (HD)
 // Partículas: 100+ en movimiento
 
-use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
-use rydit_gfx::{Assets, ColorRydit, Key, RyditGfx};
+use ry_gfx::render_queue::{DrawCommand, RenderQueue};
+use ry_gfx::{Assets, ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - Demo Complejo 100 Partículas");

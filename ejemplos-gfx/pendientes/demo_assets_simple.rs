@@ -2,7 +2,7 @@
 // Ejecutar: cargo run --bin demo_assets_simple
 // Tamaño: 1280x720
 
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.3 - Demo Assets Simples");

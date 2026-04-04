@@ -1,4 +1,4 @@
-# 🛡️ CHANGELOG v0.5.1 - RyDit Engine
+# 🛡️ CHANGELOG v0.5.1 - Ry-Dit
 
 **Fecha:** 2026-03-23
 **Versión:** v0.5.1
@@ -359,6 +359,6 @@ shield-project-rydit/
 *Sprites:* 3 cargados ✅
 *Backup:* Automatizado ✅
 
-[⬆️ Volver arriba](#-changelog-v051---rydit-engine)
+[⬆️ Volver arriba](#-changelog-v051---ry-dit)
 
 </div>

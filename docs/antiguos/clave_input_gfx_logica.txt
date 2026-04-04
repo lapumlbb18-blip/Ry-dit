@@ -22,7 +22,7 @@ Documento de Referencia - Fase Crítica v0.10.x
 
 1.1 Diagnóstico Inicial
 
-Tu motor Rydit Engine tiene un problema de arquitectura que afecta todo el flujo de input y gráficos:
+Tu motor Ry-Dit tiene un problema de arquitectura que afecta todo el flujo de input y gráficos:
 
 Síntomas detectados:
 
@@ -682,7 +682,7 @@ El usuario preguntó sobre:
 · Cómo funcionan las aplicaciones gráficas en Termux-X11
 · El renderizado, audio, input de mouse, teclado en X11
 · Por qué crear aplicaciones desde cero (Raylib, Sokol, Python) es complicado
-· Cómo aplicar este conocimiento a su Rydit Engine
+· Cómo aplicar este conocimiento a su Ry-Dit
 
 9.2 Respuesta Clave que se Dio
 
@@ -696,7 +696,7 @@ Termux-X11 traduce eventos táctiles de Android a eventos X11 estándar. Las app
 La solución identificada:
 Crear una capa de abstracción (rydit-input) que unifique eventos de todas las plataformas, y un sistema de acciones (rydit-actions) que mapee teclas/ejes a acciones lógicas (ej: "disparar").
 
-9.3 El Aporte del Usuario (Rydit Engine)
+9.3 El Aporte del Usuario (Ry-Dit)
 
 El usuario ya había implementado en su motor:
 

@@ -2,9 +2,9 @@
 name = "rydit-loader"
 version = "0.8.2"
 edition = "2021"
-description = "Dynamic module loader for RyDit Engine - Hot reload and plugin system"
+description = "Dynamic module loader for Ry-Dit - Hot reload and plugin system"
 license = "MIT"
-repository = "https://github.com/lapumlbb18-blip/Rydit_Engine"
+repository = "https://github.com/lapumlbb18-blip/Ry-Dit"
 keywords = ["game-engine", "android", "rust", "plugins", "hot-reload"]
 categories = ["game-development"]
 

@@ -4,7 +4,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/rydit-science.svg)](https://crates.io/crates/rydit-science)
 [![Documentation](https://docs.rs/rydit-science/badge.svg)](https://docs.rs/rydit-science)
-[![License](https://img.shields.io/crates/l/rydit-science.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![License](https://img.shields.io/crates/l/rydit-science.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 
 ## Overview
 
@@ -76,9 +76,9 @@ echo '{"method":"science::geometry::penrose","params":[400,300,100]}' | rydit-rs
 
 ## License
 
-MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE) for details.
+MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE) for details.
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a PR at:
-https://github.com/lapumlbb18-blip/Rydit_Engine
+https://github.com/lapumlbb18-blip/Ry-Dit

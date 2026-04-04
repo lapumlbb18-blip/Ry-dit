@@ -3,8 +3,8 @@
 // Tamaño: 800x600 (como demo_particles)
 // Render nativo Rust (sin parser .rydit)
 
-use rydit_gfx::render_queue::{DrawCommand, RenderQueue};
-use rydit_gfx::{Assets, ColorRydit, Key, RyditGfx};
+use ry_gfx::render_queue::{DrawCommand, RenderQueue};
+use ry_gfx::{Assets, ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.2 - Demo Simple desde Cero");

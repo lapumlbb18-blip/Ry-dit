@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine - ROADMAP ACTUALIZADO 2026
+# 🛡️ Ry-Dit - ROADMAP ACTUALIZADO 2026
 
 **Última actualización**: 2026-03-26  
 **Versión actual**: v0.8.2 - SISTEMA UNIVERSAL RY ✅ COMPLETADO  
@@ -322,19 +322,19 @@ ARCH=$(uname -m)
 
 # Descargar binario precompilado
 VERSION="v0.9.0"
-URL="https://github.com/lapumlbb18-blip/Rydit_Engine/releases/download/${VERSION}/rydit-${VERSION}-${ARCH}-${OS}.tar.gz"
+URL="https://github.com/lapumlbb18-blip/Ry-Dit/releases/download/${VERSION}/rydit-${VERSION}-${ARCH}-${OS}.tar.gz"
 
 # Instalar
 curl -L "$URL" | tar xz
 sudo mv rydit-rs /usr/local/bin/
 
-echo "✅ RyDit Engine ${VERSION} instalado"
+echo "✅ Ry-Dit ${VERSION} instalado"
 ```
 
 **Método 3: Git Clone + Build**
 ```bash
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit
+cd Ry-Dit
 cargo build --release
 sudo cp target/release/rydit-rs /usr/local/bin/
 ```
@@ -404,7 +404,7 @@ sudo cp target/release/rydit-rs /usr/local/bin/
 
 <div align="center">
 
-**🛡️ RyDit Engine - ROADMAP 2026**
+**🛡️ Ry-Dit - ROADMAP 2026**
 
 *v0.8.2 ✅ | v0.8.3-v0.8.6 🔄 | v0.9.0 ⏳*
 

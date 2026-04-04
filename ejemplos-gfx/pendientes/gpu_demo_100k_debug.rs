@@ -3,8 +3,8 @@
 // Tamaño: 1280x720 + logs detallados
 
 use gl;
-use rydit_gfx::gpu_instancing::{GPUInstancer, ParticleData};
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::gpu_instancing::{GPUInstancer, ParticleData};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 use std::env;
 use std::path::PathBuf;
 

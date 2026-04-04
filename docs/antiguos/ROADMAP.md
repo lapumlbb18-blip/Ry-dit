@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine - ROADMAP COMPLETO v0.10.2 - v0.11.0
+# 🛡️ Ry-Dit - ROADMAP COMPLETO v0.10.2 - v0.11.0
 
 **Última actualización**: 2026-03-30
 **Versión actual**: v0.10.2 ✅ INVERSIÓN DE CONTROL + AST CACHING
@@ -180,7 +180,7 @@ impl RyditModule for PhysicsModule {
 
 **Nueva estructura propuesta**:
 ```
-rydit-engine/
+ry-dit/
 ├── .github/              # GitHub Actions, templates
 ├── crates/               # Todos los crates Rust
 │   ├── lizer/           # Parser + AST caching

@@ -128,7 +128,7 @@ Ver documentación completa: `CLAVE_MOVIMIENTO_SDL2.md`
 ## 📁 **ESTRUCTURA DEL PROYECTO**
 
 ```
-rydit-engine/
+ry-dit/
 ├── crates/
 │   ├── lizer/              # Parser RyDit
 │   ├── rydit-core/         # Core del engine
@@ -215,7 +215,7 @@ cargo build --release
 
 ## 💬 **COMUNIDAD**
 
-- **GitHub**: https://github.com/lapumlbb18-blip/Rydit_Engine
+- **GitHub**: https://github.com/lapumlbb18-blip/Ry-Dit
 - **Discord**: https://discord.gg/mouredev (#mostrar-proyecto)
 - **Issues**: Reportar bugs en GitHub Issues
 

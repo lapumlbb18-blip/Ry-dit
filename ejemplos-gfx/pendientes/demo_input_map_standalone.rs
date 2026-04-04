@@ -2,7 +2,7 @@
 // Ejecutar: cargo run --bin demo_input_map_standalone
 // Tamaño: 1280x720
 
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 use std::collections::HashMap;
 
 /// Input Map simple - Mapeo de teclas a acciones

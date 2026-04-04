@@ -2,7 +2,7 @@
 name = "rydit-ecs"
 version = "0.10.0"
 edition = "2021"
-description = "ECS (Entity Component System) para RyDit Engine"
+description = "ECS (Entity Component System) para Ry-Dit"
 license = "MIT"
 
 [dependencies]

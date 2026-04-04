@@ -2,7 +2,7 @@
 // Usa el backend SDL2 para input en Termux-X11
 // Ejecutar: cargo run --bin demo_input_sdl2 --release
 
-use rydit_gfx::{ColorRydit, RyditGfx};
+use ry_gfx::{ColorRydit, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.4 - Demo Input SDL2");

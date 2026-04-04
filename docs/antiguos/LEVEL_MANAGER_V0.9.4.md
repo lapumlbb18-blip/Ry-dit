@@ -8,7 +8,7 @@
 
 ## 📋 RESUMEN
 
-El **Level Manager** es el sistema de gestión de niveles para RyDit Engine. Permite cargar, descargar y hacer transiciones entre niveles, además de gestionar checkpoints.
+El **Level Manager** es el sistema de gestión de niveles para Ry-Dit. Permite cargar, descargar y hacer transiciones entre niveles, además de gestionar checkpoints.
 
 ---
 

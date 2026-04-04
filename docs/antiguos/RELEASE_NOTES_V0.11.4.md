@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine v0.11.4 - Release Notes
+# 🛡️ Ry-Dit v0.11.4 - Release Notes
 
 **Fecha**: 2026-04-02  
 **Versión**: v0.11.4  
@@ -336,7 +336,7 @@ git log --oneline --grep="v0.11.4" | head -20
 
 <div align="center">
 
-**🛡️ RyDit Engine v0.11.4 - Release Notes**
+**🛡️ Ry-Dit v0.11.4 - Release Notes**
 
 *93% completado ✅ | 65 errores fixeados ✅ | 5 restantes ⏳*
 

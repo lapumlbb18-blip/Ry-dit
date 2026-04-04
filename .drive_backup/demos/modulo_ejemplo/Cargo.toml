@@ -2,7 +2,7 @@
 name = "modulo_ejemplo"
 version = "1.0.0"
 edition = "2021"
-description = "Demo: Módulo dinámico de ejemplo para RyDit Engine"
+description = "Demo: Módulo dinámico de ejemplo para Ry-Dit"
 license = "MIT"
 
 [workspace]

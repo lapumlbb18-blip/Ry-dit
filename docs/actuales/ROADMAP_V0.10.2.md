@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine - ROADMAP v0.10.2
+# 🛡️ Ry-Dit - ROADMAP v0.10.2
 
 **Última actualización**: 2026-03-30
 **Versión actual**: v0.10.1 ✅ GPU INSTANCING + ECS

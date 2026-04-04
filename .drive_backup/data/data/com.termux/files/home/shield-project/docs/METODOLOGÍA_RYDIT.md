@@ -2,7 +2,7 @@
 
 **Fecha**: 2026-03-25
 **Versión**: v0.7.2.0 - Protocolo LAZOS
-**Autor**: RyDit Engine Team
+**Autor**: Ry-Dit Team
 
 ---
 

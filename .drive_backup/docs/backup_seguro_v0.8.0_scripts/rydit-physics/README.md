@@ -4,7 +4,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/rydit-physics.svg)](https://crates.io/crates/rydit-physics)
 [![Documentation](https://docs.rs/rydit-physics/badge.svg)](https://docs.rs/rydit-physics)
-[![License](https://img.shields.io/crates/l/rydit-physics.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![License](https://img.shields.io/crates/l/rydit-physics.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 
 ## Overview
 
@@ -75,9 +75,9 @@ let result = module.execute("nbody_2", json!([100.0, 10.0, 0.0, 0.0, 50.0, 0.0, 
 
 ## License
 
-MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE) for details.
+MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE) for details.
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a PR at:
-https://github.com/lapumlbb18-blip/Rydit_Engine
+https://github.com/lapumlbb18-blip/Ry-Dit

@@ -1,4 +1,4 @@
-# 🛣️ RyDit Engine - Roadmap
+# 🛣️ Ry-Dit - Roadmap
 
 **Versión Actual:** v0.7.34 (4 CRATES PUBLICADOS EN CRATES.IO ✅)
 **Próxima Versión:** v0.8.0 (Linux/Windows builds + más features)
@@ -209,7 +209,7 @@ echo '{"method":"geometry::spiral","params":[400,300,10,150,5]}' | rydit-rs --la
 
 <div align="center">
 
-**🛡️ RyDit Engine Roadmap**
+**🛡️ Ry-Dit Roadmap**
 
 *v0.7.3.3 ✅ | 81 tests | 4 crates | GitHub actualizado*
 

@@ -4,7 +4,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/rydit-anim.svg)](https://crates.io/crates/rydit-anim)
 [![Documentation](https://docs.rs/rydit-anim/badge.svg)](https://docs.rs/rydit-anim)
-[![License](https://img.shields.io/crates/l/rydit-anim.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![License](https://img.shields.io/crates/l/rydit-anim.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 
 ## Overview
 
@@ -97,9 +97,9 @@ let result = module.execute("squash", json!([squash_factor]));
 
 ## License
 
-MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE) for details.
+MIT License - See [LICENSE](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE) for details.
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a PR at:
-https://github.com/lapumlbb18-blip/Rydit_Engine
+https://github.com/lapumlbb18-blip/Ry-Dit

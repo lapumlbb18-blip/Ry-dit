@@ -2,17 +2,17 @@
 
 <div align="center">
 
-![RyDit Engine Logo](screenshots/logo.png)
+![Ry-Dit Logo](screenshots/logo.png)
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Tests](https://img.shields.io/badge/tests-260%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![Status](https://img.shields.io/badge/estado-v0.9.0--ready-orange.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
+[![Version](https://img.shields.io/badge/version-v0.9.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Tests](https://img.shields.io/badge/tests-260%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Status](https://img.shields.io/badge/estado-v0.9.0--ready-orange.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Rydit_Engine/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 
 [📖 Documentación](#-documentación) • [🔧 Estado Actual](#-estado-actual) • [🎯 Roadmap](#-roadmap) • [📱 Construido en Android](#-construido-en-androidtermux)
 
@@ -1025,8 +1025,8 @@ pkg install rust
 pkg install xorg-xrandr libx11
 
 # 5. Clonar repositorio
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit
+cd Ry-Dit
 
 # 6. Compilar
 cargo build --release
@@ -1049,8 +1049,8 @@ sudo apt-get update
 sudo apt-get install libasound2-dev libx11-dev libxi-dev libxrandr-dev
 
 # 3. Clonar y compilar
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit
+cd Ry-Dit
 cargo build --release
 
 # 4. Ejecutar
@@ -1066,8 +1066,8 @@ cargo build --release
 winget install raylib.raylib
 
 # 3. Clonar y compilar
-git clone https://github.com/lapumlbb18-blip/Rydit_Engine
-cd Rydit_Engine
+git clone https://github.com/lapumlbb18-blip/Ry-Dit
+cd Ry-Dit
 cargo build --release
 
 # 4. Ejecutar
@@ -1240,7 +1240,7 @@ ryda frame < 500 {
 - ✅ **6 crates funcionales**
 - ✅ **~11,700 líneas de código**
 - ✅ **Documentación completa** (20+ archivos .md)
-- ✅ **GitHub público** (Rydit_Engine)
+- ✅ **GitHub público** (Ry-Dit)
 - ✅ **README en inglés** (README_EN.md)
 
 ---

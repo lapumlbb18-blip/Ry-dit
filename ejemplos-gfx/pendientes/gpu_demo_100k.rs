@@ -3,8 +3,8 @@
 // v0.10.1: GPU Instancing + Shaders GLSL
 
 use gl;
-use rydit_gfx::gpu_instancing::{GPUInstancer, ParticleData};
-use rydit_gfx::{ColorRydit, Key, RyditGfx};
+use ry_gfx::gpu_instancing::{GPUInstancer, ParticleData};
+use ry_gfx::{ColorRydit, Key, RyditGfx};
 
 fn main() {
     println!("🛡️ RyDit v0.10.1 - GPU Instancing Demo 100K");

@@ -1,4 +1,4 @@
-# 🛡️ RyDit Engine - ESTADO REAL (SIN FILTROS)
+# 🛡️ Ry-Dit - ESTADO REAL (SIN FILTROS)
 
 **Última actualización**: 2026-03-31  
 **Versión**: v0.10.4  
