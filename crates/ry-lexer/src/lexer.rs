@@ -164,6 +164,7 @@ impl<'a> Lexer<'a> {
                     "blelse" => TokenKind::Blelse,
                     "ryprime" => TokenKind::RyPrime,
                     "dark.slot" => TokenKind::DarkSlot,
+                    "texto" => TokenKind::TextoKw,
                     "ryda" => TokenKind::Ryda,
                     "cada" => TokenKind::Cada,
                     "en" => TokenKind::En,

@@ -54,6 +54,7 @@ pub enum TokenKind {
     Return,             // return valor
     Voz,                // print/voz
     DarkSlot,           // dark.slot
+    TextoKw,            // texto (keyword)
     DrawCircle,         // draw.circle
     DrawRect,           // draw.rect
     DrawLine,           // draw.line
@@ -129,6 +130,7 @@ impl fmt::Display for TokenKind {
             TokenKind::Return => "return",
             TokenKind::Voz => "voz",
             TokenKind::DarkSlot => "dark.slot",
+            TokenKind::TextoKw => "texto",
             TokenKind::DrawCircle => "draw.circle",
             TokenKind::DrawRect => "draw.rect",
             TokenKind::DrawLine => "draw.line",

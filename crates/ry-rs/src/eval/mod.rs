@@ -106,6 +106,12 @@ pub fn evaluar_expr<'a>(
             }
 
             // Funciones aritméticas builtin
+
+            // fps() - Retorna FPS estimados (60 por defecto)
+            if func_name == "fps" && args.is_empty() {
+                return Valor::Num(60.0);
+            }
+
             if func_name == "sumar" && args.len() >= 2 {
                 let mut suma = 0.0;
                 for arg in args {
@@ -268,6 +274,77 @@ pub fn evaluar_expr<'a>(
                     }
                 } else {
                     return Valor::Error("sqrt() requiere número".to_string());
+                }
+            }
+
+            // ================================================================
+            // ALIAS matematica:: (español)
+            // ================================================================
+
+            // matematica::sin(x)
+            if func_name == "matematica::sin" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.sin());
+                } else {
+                    return Valor::Error("matematica::sin() requiere número".to_string());
+                }
+            }
+
+            // matematica::cos(x)
+            if func_name == "matematica::cos" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.cos());
+                } else {
+                    return Valor::Error("matematica::cos() requiere número".to_string());
+                }
+            }
+
+            // matematica::tan(x)
+            if func_name == "matematica::tan" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.tan());
+                } else {
+                    return Valor::Error("matematica::tan() requiere número".to_string());
+                }
+            }
+
+            // matematica::sqrt(x)
+            if func_name == "matematica::sqrt" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    if x >= 0.0 {
+                        return Valor::Num(x.sqrt());
+                    } else {
+                        return Valor::Error("matematica::sqrt() requiere número >= 0".to_string());
+                    }
+                } else {
+                    return Valor::Error("matematica::sqrt() requiere número".to_string());
+                }
+            }
+
+            // matematica::floor(x)
+            if func_name == "matematica::floor" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.floor());
+                } else {
+                    return Valor::Error("matematica::floor() requiere número".to_string());
+                }
+            }
+
+            // matematica::ceil(x)
+            if func_name == "matematica::ceil" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.ceil());
+                } else {
+                    return Valor::Error("matematica::ceil() requiere número".to_string());
+                }
+            }
+
+            // matematica::abs(x)
+            if func_name == "matematica::abs" && args.len() == 1 {
+                if let Valor::Num(x) = evaluar_expr(&args[0], executor, funcs) {
+                    return Valor::Num(x.abs());
+                } else {
+                    return Valor::Error("matematica::abs() requiere número".to_string());
                 }
             }
 

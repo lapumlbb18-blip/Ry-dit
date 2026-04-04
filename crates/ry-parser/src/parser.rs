@@ -106,6 +106,7 @@ impl<'a> Parser<'a> {
             TokenKind::DrawRect => self.parse_draw_rect(),
             TokenKind::DrawLine => self.parse_draw_line(),
             TokenKind::DrawText => self.parse_draw_text(),
+            TokenKind::TextoKw => self.parse_texto_en(),
             TokenKind::DrawTriangle => self.parse_draw_triangle(),
             TokenKind::DrawRing => self.parse_draw_ring(),
             TokenKind::DrawRectangleLines => self.parse_draw_rectangle_lines(),
@@ -391,16 +392,38 @@ impl<'a> Parser<'a> {
         None
     }
 
-    /// Parsear asignación: dark.slot name = value
+    /// Parsear asignación: dark.slot name = value o dark.slot[] name = [array]
     fn parse_assignment(&mut self) -> Option<Stmt<'a>> {
         self.advance(); // consumir dark.slot
+
+        // Verificar si es array: dark.slot[]
+        let is_array = if self.check(TokenKind::CorcheteIzq) {
+            self.advance(); // consumir [
+            if self.check(TokenKind::CorcheteDer) {
+                self.advance(); // consumir ]
+                true
+            } else {
+                self.state.add_error(RyDitError::syntax_error(
+                    "Se esperaba ']' después de '[' en 'dark.slot[]'".to_string(),
+                    self.current().span.line,
+                    self.current().span.column,
+                ));
+                return None;
+            }
+        } else {
+            false
+        };
 
         // Obtener nombre
         let name = if let Some(n) = self.current().as_ident() {
             n
         } else {
             self.state.add_error(RyDitError::syntax_error(
-                "Se esperaba nombre de variable después de 'dark.slot'".to_string(),
+                if is_array {
+                    "Se esperaba nombre de variable después de 'dark.slot[]'".to_string()
+                } else {
+                    "Se esperaba nombre de variable después de 'dark.slot'".to_string()
+                },
                 self.current().span.line,
                 self.current().span.column,
             ));
@@ -646,6 +669,57 @@ impl<'a> Parser<'a> {
             y,
             tamano,
             color,
+        })
+    }
+
+    /// Parsear: texto "X" en A, B, tamano N, color "C"
+    fn parse_texto_en(&mut self) -> Option<Stmt<'a>> {
+        self.advance(); // consumir 'texto'
+
+        // Parsear texto literal
+        let texto = if self.check(TokenKind::Texto) {
+            let lexeme = self.current().lexeme.trim_matches('"').trim_matches('\'');
+            self.advance();
+            Expr::Texto(lexeme)
+        } else {
+            self.parse_expression()?
+        };
+
+        // Consumir 'en'
+        if !self.consume(TokenKind::En, "en")? {
+            return None;
+        }
+
+        // Parsear x, y
+        let x = self.parse_expression()?;
+        self.skip_comma();
+        let y = self.parse_expression()?;
+
+        // Opcional: tamano N
+        let tamano = if self.check(TokenKind::Ident) && self.current().lexeme == "tamano" {
+            self.advance();
+            self.parse_expression()?
+        } else {
+            Expr::Num(16.0)
+        };
+
+        // Opcional: color "C"
+        let color_str = if self.check(TokenKind::Coma) {
+            self.advance();
+            if self.check(TokenKind::Ident) && self.current().lexeme == "color" {
+                self.advance();
+            }
+            self.parse_color()
+        } else {
+            Some("blanco")
+        };
+
+        Some(Stmt::DrawText {
+            texto,
+            x,
+            y,
+            tamano,
+            color: color_str.unwrap_or("blanco"),
         })
     }
 
