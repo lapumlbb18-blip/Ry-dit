@@ -33,6 +33,7 @@ pub mod limits;
 pub mod ryprime;
 pub mod report;
 pub mod bench;
+pub mod tests;
 
 pub use console::ConsoleReporter;
 pub use sandbox::Sandbox;
