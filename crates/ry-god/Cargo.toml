@@ -1,0 +1,27 @@
+[package]
+name = "ry-god"
+version = "0.1.0"
+edition = "2021"
+description = "Industrial-grade security & efficiency framework for Ry-Dit. Sandboxed execution, audit logging, memory limits, and zero-crash guarantees."
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+keywords = ["security", "sandbox", "low-end", "industrial", "audit"]
+categories = ["development-tools", "security"]
+
+[dependencies]
+# Crates internos Ry-Dit
+ry-core = { path = "../ry-core", version = "0.8.2" }
+ry-lexer = { path = "../ry-lexer", version = "0.1.0" }
+ry-parser = { path = "../ry-parser", version = "0.1.0" }
+ry-vm = { path = "../ry-vm", version = "0.1.0" }
+
+# Zero dependencias externas innecesarias (filosofía low-end)
+
+[dev-dependencies]
+# Benchmarks sin dependencias pesadas
+
+[features]
+default = ["sandbox", "audit", "limits"]
+sandbox = []       # Aislamiento de scripts
+audit = []         # Logging de actividades
+limits = []        # Límites de memoria/CPU

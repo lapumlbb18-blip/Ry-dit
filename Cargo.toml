@@ -16,6 +16,7 @@ members = [
     "crates/ry-stream",  # 🆕 v0.11.2: LAN streaming (WebSocket + mDNS + Portal)
     "crates/ry-ecs",   # ✅ v0.10.0: ECS (bevy_ecs + N-Body)
     "crates/ry-test", "crates/ry-lexer", "crates/ry-parser", "crates/ry-vm",  # 🆕 v0.11.1: Tests simplificados (Nivel 1, 2, 3)
+    "crates/ry-god",   # 🆕 v0.12.0: Industrial Security & Efficiency Framework
 ]
 
 # =============================================================================
