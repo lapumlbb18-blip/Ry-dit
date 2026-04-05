@@ -831,6 +831,11 @@ pub struct RyditGfx {
     #[allow(dead_code)]
     sdl_context: Option<sdl2::Sdl>,
     sdl_event_pump: Option<sdl2::EventPump>,
+    // ✅ v0.13.1: FSR Upscaler
+    #[allow(dead_code)]
+    fsr: Option<fsr::FsrUpscaler>,
+    #[allow(dead_code)]
+    fsr_enabled: bool,
 }
 
 impl RyditGfx {
@@ -877,6 +882,8 @@ impl RyditGfx {
             input_sdl2: input_sdl2::InputState::new(),
             sdl_context,
             sdl_event_pump,
+            fsr: None,        // FSR se inicializa manualmente si se desea
+            fsr_enabled: false,
         }
     }
 
@@ -964,6 +971,60 @@ impl RyditGfx {
     /// Finalizar dibujo (automático con Drop de DrawHandle)
     pub fn end_draw(&mut self) {
         // Automático cuando DrawHandle se va de scope
+    }
+
+    // ========================================================================
+    // FSR 1.0 — v0.13.1
+    // ========================================================================
+
+    /// Inicializar FSR upscaler
+    pub fn init_fsr(&mut self, quality: fsr::FsrQuality) -> Result<(), String> {
+        match fsr::FsrUpscaler::new() {
+            Ok(fsr) => {
+                eprintln!("[FSR] Inicializado: {:?}", quality);
+                self.fsr = Some(fsr);
+                self.fsr_enabled = true;
+                Ok(())
+            }
+            Err(e) => {
+                eprintln!("[FSR] Error al inicializar: {} (FSR desactivado)", e);
+                self.fsr = None;
+                self.fsr_enabled = false;
+                Err(e)
+            }
+        }
+    }
+
+    /// Activar/desactivar FSR
+    pub fn set_fsr_enabled(&mut self, enabled: bool) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.set_enabled(enabled);
+            self.fsr_enabled = enabled;
+        }
+    }
+
+    /// Cambiar calidad FSR
+    pub fn set_fsr_quality(&mut self, quality: fsr::FsrQuality) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.set_quality(quality);
+        }
+    }
+
+    /// Cycle FSR quality modes
+    pub fn cycle_fsr_quality(&mut self) {
+        if let Some(ref mut fsr) = self.fsr {
+            fsr.cycle_quality();
+        }
+    }
+
+    /// Verificar si FSR está activo
+    pub fn is_fsr_enabled(&self) -> bool {
+        self.fsr_enabled && self.fsr.is_some()
+    }
+
+    /// Obtener calidad FSR actual
+    pub fn fsr_quality(&self) -> Option<fsr::FsrQuality> {
+        self.fsr.as_ref().map(|f| f.quality())
     }
 
     /// Limpiar pantalla

@@ -1,11 +1,14 @@
-// crates/rydit-gfx/src/fsr.rs
-// 🆕 FSR 1.0 - FidelityFX Super Resolution (2D Simplificado)
-// v0.11.4 - Upscale + Sharpening para mejor performance
+// crates/ry-gfx/src/fsr.rs
+// FSR 1.0 - FidelityFX Super Resolution (2D Simplificado)
+// v0.13.1 - Shaders embebidos + integración en RyditGfx
 
 use gl;
 use gl::types::GLuint;
 use std::ffi::CString;
-use std::fs;
+
+// Shaders embebidos en el binario
+const FSR_UPSCALE_SRC: &str = include_str!("../shaders/fsr_upscale.glsl");
+const FSR_SHARPEN_SRC: &str = include_str!("../shaders/fsr_sharpen.glsl");
 
 /// Calidad FSR
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -54,8 +57,8 @@ impl FsrUpscaler {
         // Crear fullscreen quad
         let (vao, vbo) = Self::create_quad();
 
-        // Cargar shaders
-        let program = Self::load_shaders("shaders/fsr_upscale.glsl", "shaders/fsr_sharpen.glsl")?;
+        // Cargar shaders embebidos
+        let program = Self::load_shaders_from_src(FSR_UPSCALE_SRC, FSR_SHARPEN_SRC)?;
 
         // Obtener uniform locations
         unsafe {
@@ -115,18 +118,13 @@ impl FsrUpscaler {
         }
     }
 
-    /// Cargar shaders desde archivos
-    fn load_shaders(vertex_path: &str, fragment_path: &str) -> Result<GLuint, String> {
+    /// Cargar shaders desde strings embebidas
+    fn load_shaders_from_src(vertex_source: &str, fragment_source: &str) -> Result<GLuint, String> {
         unsafe {
-            let vertex_source = fs::read_to_string(vertex_path)
-                .map_err(|e| format!("Error leyendo vertex shader: {}", e))?;
-            let fragment_source = fs::read_to_string(fragment_path)
-                .map_err(|e| format!("Error leyendo fragment shader: {}", e))?;
-
             let vertex_shader =
-                Self::compile_shader(gl::VERTEX_SHADER, &vertex_source, "Vertex shader")?;
+                Self::compile_shader(gl::VERTEX_SHADER, vertex_source, "Vertex shader")?;
             let fragment_shader =
-                Self::compile_shader(gl::FRAGMENT_SHADER, &fragment_source, "Fragment shader")?;
+                Self::compile_shader(gl::FRAGMENT_SHADER, fragment_source, "Fragment shader")?;
 
             let program = gl::CreateProgram();
             gl::AttachShader(program, vertex_shader);
