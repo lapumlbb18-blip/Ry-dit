@@ -16,10 +16,16 @@
 
 pub mod particles;
 pub mod disney;
+pub mod illusions;
 
 pub use disney::{
     appeal, arc_path, exaggerate, follow_through, overlapping_action, pose_to_pose,
     secondary_action, solid_rotation, timing,
+};
+
+pub use illusions::{
+    cafe_wall, motion_induced_blindness, pulsing_star, rotating_snakes,
+    troxler_fading, zollner_effect,
 };
 
 use ry_core::{ModuleError, ModuleResult, RyditModule};
@@ -31,7 +37,7 @@ pub struct AnimModule;
 
 impl RyditModule for AnimModule {
     fn name(&self) -> &'static str { "anim" }
-    fn version(&self) -> &'static str { "0.8.0" }
+    fn version(&self) -> &'static str { "0.9.0" }
 
     fn register(&self) -> HashMap<&'static str, &'static str> {
         let mut cmds = HashMap::new();
@@ -50,6 +56,13 @@ impl RyditModule for AnimModule {
         cmds.insert("solid_rotation", "Solid Drawing - rotación 3D con perspectiva");
         cmds.insert("appeal", "Appeal - hacer forma más atractiva");
         cmds.insert("pose_to_pose", "Pose-to-Pose - interpolación entre poses clave");
+        // ✅ v0.9.0: Ilusiones ópticas animadas
+        cmds.insert("rotating_snakes", "Rotating Snakes - ilusión de movimiento circular");
+        cmds.insert("cafe_wall", "Cafe Wall - líneas paralelas que parecen inclinadas");
+        cmds.insert("troxler_fading", "Troxler Fading - desvanecimiento por fijación");
+        cmds.insert("pulsing_star", "Pulsing Star - estrella que pulsa");
+        cmds.insert("zollner_effect", "Zöllner Effect - líneas que parecen no ser paralelas");
+        cmds.insert("motion_blindness", "Motion-Induced Blindness - puntos que desaparecen");
         cmds
     }
 
@@ -71,6 +84,13 @@ impl RyditModule for AnimModule {
             "solid_rotation" => self.solid_rotation(params),
             "appeal" => self.appeal(params),
             "pose_to_pose" => self.pose_to_pose(params),
+            // ✅ v0.9.0: Ilusiones ópticas
+            "rotating_snakes" => self.rotating_snakes(params),
+            "cafe_wall" => self.cafe_wall(params),
+            "troxler_fading" => self.troxler_fading(params),
+            "pulsing_star" => self.pulsing_star(params),
+            "zollner_effect" => self.zollner_effect(params),
+            "motion_blindness" => self.motion_blindness(params),
             _ => Err(ModuleError { code: "UNKNOWN_COMMAND".to_string(), message: format!("Comando desconocido: {}", command) }),
         }
     }
@@ -188,6 +208,45 @@ impl AnimModule {
         let (x, y, s, r) = disney::pose_to_pose(&kfs, a[1].as_f64().unwrap_or(0.0));
         Ok(json!([x, y, s, r]))
     }
+
+    // ===== v0.9.0: ILUSIONES ÓPTICAS =====
+
+    fn rotating_snakes(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "rotating_snakes requiere [cx, cy, radius, segments, t]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "rotating_snakes requiere 5+ params".to_string() }); }
+        let colors: Vec<String> = a.get(5).and_then(|v| v.as_array()).map(|arr| arr.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()).unwrap_or_default();
+        Ok(json!(illusions::rotating_snakes(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(100.0), a[3].as_f64().unwrap_or(16.0) as usize, a[4].as_f64().unwrap_or(0.0), &colors)))
+    }
+
+    fn cafe_wall(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "cafe_wall requiere [sx, sy, rows, cols, bw, bh, mortar, t]".to_string() })?;
+        if a.len() < 8 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "cafe_wall requiere 8 params".to_string() }); }
+        Ok(json!(illusions::cafe_wall(a[0].as_f64().unwrap_or(0.0), a[1].as_f64().unwrap_or(0.0), a[2].as_f64().unwrap_or(8.0) as usize, a[3].as_f64().unwrap_or(12.0) as usize, a[4].as_f64().unwrap_or(30.0), a[5].as_f64().unwrap_or(15.0), a[6].as_f64().unwrap_or(2.0), a[7].as_f64().unwrap_or(0.0))))
+    }
+
+    fn troxler_fading(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "troxler_fading requiere [cx, cy, num, radius, size, t]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "troxler_fading requiere 6 params".to_string() }); }
+        Ok(json!(illusions::troxler_fading(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(12.0) as usize, a[3].as_f64().unwrap_or(100.0), a[4].as_f64().unwrap_or(10.0), a[5].as_f64().unwrap_or(0.0))))
+    }
+
+    fn pulsing_star(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "pulsing_star requiere [cx, cy, outer, inner, points, t]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "pulsing_star requiere 6 params".to_string() }); }
+        Ok(json!(illusions::pulsing_star(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(50.0), a[3].as_f64().unwrap_or(25.0), a[4].as_f64().unwrap_or(5.0) as usize, a[5].as_f64().unwrap_or(0.0))))
+    }
+
+    fn zollner_effect(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "zollner_effect requiere [sx, sy, len, spacing, lines, tick_len, angle, t]".to_string() })?;
+        if a.len() < 8 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "zollner_effect requiere 8 params".to_string() }); }
+        Ok(json!(illusions::zollner_effect(a[0].as_f64().unwrap_or(50.0), a[1].as_f64().unwrap_or(50.0), a[2].as_f64().unwrap_or(700.0), a[3].as_f64().unwrap_or(40.0), a[4].as_f64().unwrap_or(10.0) as usize, a[5].as_f64().unwrap_or(15.0), a[6].as_f64().unwrap_or(0.5), a[7].as_f64().unwrap_or(0.0))))
+    }
+
+    fn motion_blindness(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "motion_blindness requiere [cx, cy, grid, spacing, size, t]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "motion_blindness requiere 6 params".to_string() }); }
+        Ok(json!(illusions::motion_induced_blindness(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(10.0) as usize, a[3].as_f64().unwrap_or(30.0), a[4].as_f64().unwrap_or(5.0), a[5].as_f64().unwrap_or(0.0))))
+    }
 }
 
 #[cfg(test)]
@@ -198,7 +257,7 @@ mod tests {
     fn test_anim_module_name() {
         let m = AnimModule;
         assert_eq!(m.name(), "anim");
-        assert_eq!(m.version(), "0.8.0");
+        assert_eq!(m.version(), "0.9.0");
     }
 
     #[test]
