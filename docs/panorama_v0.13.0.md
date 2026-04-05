@@ -411,11 +411,12 @@ v0.12.1 ✅ ACTUAL — Parser infalible + ry-god crates.io
    │     ✅ math::min, max, clamp, lerp, sign, mod
    │     ✅ math::round, trunc, fract, hypot, cbrt
    │     ✅ calc::derivada, derivada2 (diferencias centradas)
-   │     ✅ calc::integral (Simpson + Trapecio)
-   │     ⏳ Array push/pop/len/slice/insert/remove
-   │     ⏳ Vec2 tipo nativo + ops
+   │     ✅ calc::integral (Simpson), integral_trapezio (Trapecio)
+   │     ✅ arrays::push, pop, len, slice, insert, remove, contains, find, join, clear, first, last, shift, unshift, reverse
+   │     ✅ Vec2 tipo nativo: constructor, add, sub, scale, magnitude, normalize, dot, cross, angle, rotate, lerp, dist, negate, midpoint, from_angle, zero, one, up, down, left, right
    │     ⏳ 12 crates listos para crates.io
    │     ⏳ CLI básico (init, run, build, format)
+   │     ⏳ Evaluar módulos .rs duplicados (particulas, etc.)
    │
    ├── v0.14.0 🔮 3D Básico
    │     ├── ry-geometry crate (Vec3, Mat4, Quaternions)
