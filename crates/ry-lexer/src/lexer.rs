@@ -485,7 +485,8 @@ mod tests {
         assert!(tokens
             .iter()
             .any(|t| t.kind == TokenKind::Ident && t.lexeme == "x"));
-        assert!(tokens.iter().any(|t| t.kind == TokenKind::Igual));
+        // ✅ v0.13.1: = es Asignar (separado de == que es Igual)
+        assert!(tokens.iter().any(|t| t.kind == TokenKind::Asignar));
         assert!(tokens
             .iter()
             .any(|t| t.kind == TokenKind::Num && t.lexeme == "100"));
