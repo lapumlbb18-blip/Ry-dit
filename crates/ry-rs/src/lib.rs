@@ -5,5 +5,5 @@
 pub mod config_parser;
 
 pub use config_parser::ConfigParser;
-pub use ry_ecs;
+// 🗑️ ry_ecs eliminado v0.13.1 — duplicado de modules/entity.rs
 pub use ry_gfx;

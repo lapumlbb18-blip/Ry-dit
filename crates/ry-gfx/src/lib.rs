@@ -50,7 +50,7 @@ pub mod debug_log;
 pub mod render_queue;
 
 // Módulo de ECS render v0.10.0 - ECS + rlgl integration
-pub mod ecs_render;
+// 🗑️ ecs_render eliminado v0.13.1 — usaba ry-ecs (eliminado)
 
 // Módulo de GPU Instancing v0.10.1 - FFI OpenGL + Shaders GLSL
 pub mod gpu_instancing;

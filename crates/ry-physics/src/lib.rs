@@ -24,6 +24,7 @@ impl RyditModule for PhysicsModule {
         let mut cmds = HashMap::new();
         cmds.insert("projectile", "Simulación de proyectil");
         cmds.insert("nbody_2", "Simulación N-cuerpos (2 cuerpos)");
+        cmds.insert("nbody_simulate", "Simulación N-cuerpos (múltiples cuerpos)");
         cmds
     }
 
@@ -31,6 +32,7 @@ impl RyditModule for PhysicsModule {
         match command {
             "projectile" => self.projectile(params),
             "nbody_2" => self.nbody_2(params),
+            "nbody_simulate" => self.nbody_simulate(params),
             _ => Err(ModuleError {
                 code: "UNKNOWN_COMMAND".to_string(),
                 message: format!("Comando desconocido: {}", command),
@@ -130,6 +132,95 @@ impl PhysicsModule {
         } else {
             Ok(json!([0.0, 0.0, 0.0, 0.0, dist]))
         }
+    }
+
+    // ========================================================================
+    // N-BODY SIMULATION (N cuerpos, O(n²)) — v0.13.1
+    // ========================================================================
+
+    /// Simulación N-cuerpos con gravedad mutua
+    ///
+    /// # Params
+    /// - bodies: array de [mass, x, y, vx, vy, is_static] por cuerpo
+    /// - dt: delta tiempo
+    /// - G: constante gravitacional (default: 6.674e-11)
+    ///
+    /// # Returns
+    /// Array de [x, y, vx, vy] actualizado por cuerpo
+    pub fn nbody_simulate(&self, params: Value) -> ModuleResult {
+        let arr = params.as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "nbody_simulate requiere array de bodies + dt + G".to_string(),
+        })?;
+
+        if arr.len() < 3 {
+            return Err(ModuleError {
+                code: "INVALID_PARAMS".to_string(),
+                message: "nbody_simulate requiere [bodies, dt, G]".to_string(),
+            });
+        }
+
+        let bodies_arr = arr[0].as_array().ok_or_else(|| ModuleError {
+            code: "INVALID_PARAMS".to_string(),
+            message: "bodies debe ser array de [mass, x, y, vx, vy, is_static]".to_string(),
+        })?;
+
+        let dt = arr[1].as_f64().unwrap_or(0.016);
+        let g = arr[2].as_f64().unwrap_or(6.674e-11);
+
+        let n = bodies_arr.len();
+        if n == 0 {
+            return Ok(json!([]));
+        }
+
+        // Parse bodies: [mass, x, y, vx, vy, is_static]
+        struct Body {
+            mass: f64, x: f64, y: f64, vx: f64, vy: f64, is_static: bool,
+            ax: f64, ay: f64,
+        }
+
+        let mut bodies: Vec<Body> = bodies_arr.iter().filter_map(|b| {
+            let a = b.as_array()?;
+            if a.len() < 6 { return None; }
+            Some(Body {
+                mass: a[0].as_f64()?,
+                x: a[1].as_f64()?,
+                y: a[2].as_f64()?,
+                vx: a[3].as_f64()?,
+                vy: a[4].as_f64()?,
+                is_static: a[5].as_f64().map(|v| v != 0.0).unwrap_or(false),
+                ax: 0.0, ay: 0.0,
+            })
+        }).collect();
+
+        // Calculate gravitational accelerations: O(n²)
+        for i in 0..n {
+            for j in (i + 1)..n {
+                let dx = bodies[j].x - bodies[i].x;
+                let dy = bodies[j].y - bodies[i].y;
+                let dist_sq = dx * dx + dy * dy;
+                let dist = dist_sq.sqrt();
+                if dist < 0.001 { continue; }
+                let force = g * bodies[i].mass * bodies[j].mass / dist_sq;
+                let ax = force * dx / (dist * bodies[i].mass);
+                let ay = force * dy / (dist * bodies[i].mass);
+                let ax_j = -force * dx / (dist * bodies[j].mass);
+                let ay_j = -force * dy / (dist * bodies[j].mass);
+                if !bodies[i].is_static { bodies[i].ax += ax; bodies[i].ay += ay; }
+                if !bodies[j].is_static { bodies[j].ax += ax_j; bodies[j].ay += ay_j; }
+            }
+        }
+
+        // Update positions and velocities
+        let result: Vec<Value> = bodies.iter().map(|b| {
+            let vx = if b.is_static { b.vx } else { b.vx + b.ax * dt };
+            let vy = if b.is_static { b.vy } else { b.vy + b.ay * dt };
+            let x = if b.is_static { b.x } else { b.x + vx * dt };
+            let y = if b.is_static { b.y } else { b.y + vy * dt };
+            json!([x, y, vx, vy])
+        }).collect();
+
+        Ok(json!(result))
     }
 }
 

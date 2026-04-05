@@ -44,87 +44,10 @@ pub fn run() {
         return;
     }
 
-    // ✅ v0.10.2: SCENE RUN interno (llamado desde --scene)
+    // ✅ v0.10.2: SCENE RUN interno — 🗑️ Eliminado v0.13.1 (usaba ry-ecs eliminado)
+    // Usar --gfx o --migui en su lugar
     if args.len() > 1 && args[1] == "--scene-run" {
-        let escena = if args.len() > 2 {
-            &args[2]
-        } else {
-            "demos/nivel_config.rydit"
-        };
-
-        // Importar y ejecutar scene_runner
-        use ry_ecs::EcsWorld;
-        use ry_gfx::ecs_render::EcsRenderer;
-        use ry_gfx::{ColorRydit, Key};
-
-        // Parsear configuración
-        let config = match ConfigParser::parse(escena) {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("❌ Error: {}", e);
-                std::process::exit(1);
-            }
-        };
-
-        // Crear ventana
-        let mut gfx = RyditGfx::new(&config.nombre, 800, 600);
-        gfx.set_target_fps(60);
-
-        // Crear ECS World
-        let mut ecs_world = EcsWorld::new();
-        ecs_world.set_gravity(0.0, config.gravedad);
-
-        // Spawnear entidades
-        for ent in &config.entidades {
-            ecs_world.create_sprite_entity(ent.x, ent.y, &ent.sprite, ent.ancho, ent.alto);
-        }
-
-        // Renderer
-        let renderer = EcsRenderer::new();
-
-        // Game loop nativo
-        let mut frame = 0;
-        while !gfx.should_close() {
-            gfx.begin_draw();
-            gfx.clear_background(ColorRydit::Negro);
-
-            // Input
-            if gfx.is_key_pressed(Key::Escape) {
-                break;
-            }
-
-            // Update
-            ecs_world.update(0.016);
-
-            // Render
-            renderer.render_colored(&ecs_world);
-
-            // UI
-            gfx.draw_text(
-                &format!("🛡️ {}", config.nombre),
-                10,
-                20,
-                18,
-                ColorRydit::Blanco,
-            );
-            gfx.draw_text(
-                &format!(
-                    "Entidades: {} | FPS: {}",
-                    ecs_world.entity_count(),
-                    gfx.get_fps()
-                ),
-                10,
-                45,
-                16,
-                ColorRydit::Verde,
-            );
-            gfx.draw_text("ESC = Salir", 10, 580, 12, ColorRydit::Gris);
-
-            gfx.end_draw();
-            frame += 1;
-        }
-
-        println!("✅ Scene completada: {} frames", frame);
+        eprintln!("⚠️ --scene-run eliminado v0.13.1 (ry-ecs eliminado). Usa --gfx o --migui.");
         return;
     }
 

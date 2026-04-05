@@ -8,7 +8,7 @@ links = "raylib"
 [dependencies]
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 migui = { path = "../migui" }
-ry-ecs = { path = "../ry-ecs" }  # ✅ v0.10.0: ECS integration
+# 🗑️ ry-ecs eliminado v0.13.1
 gl = "0.14.0"  # ✅ v0.10.1: FFI OpenGL para GPU Instancing
 sdl2 = { version = "0.37", features = ["image", "ttf", "mixer"] }  # ✅ v0.10.7: Backend SDL2 completo
 # sdl2_image separado causa conflicto de linking - usar solo features de sdl2
