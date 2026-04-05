@@ -641,3 +641,105 @@ pub fn area2d_count<'a>(
     let areas_ref = areas.borrow();
     Valor::Num(areas_ref.len() as f64)
 }
+
+// ============================================================================
+// ONE-WAY PLATFORMS (v0.13.1) 🟩
+// ============================================================================
+
+/// collision::check_one_way(px, py, pw, ph, prev_py, pvy, ox, oy, ow, oh)
+/// Verifica colisión one-way (solo al caer sobre la plataforma)
+///
+/// Lógica:
+/// - Colisiona solo si el jugador está cayendo (vy >= 0)
+/// - Los pies del jugador estaban ARRIBA de la plataforma en el frame anterior
+/// - Los pies del jugador están AHORA dentro o debajo de la plataforma
+pub fn collision_check_one_way<'a>(
+    args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    if args.len() != 10 {
+        return Valor::Error("collision::check_one_way() requiere 10 args: px, py, pw, ph, prev_py, vy, ox, oy, ow, oh".to_string());
+    }
+
+    let vals: Result<Vec<f32>, _> = args.iter().map(|a| {
+        match evaluar_expr(a, executor, funcs) {
+            Valor::Num(n) => Ok(n as f32),
+            _ => Err("collision::check_one_way() todos los args deben ser números".to_string()),
+        }
+    }).collect();
+
+    let vals = match vals {
+        Ok(v) => v,
+        Err(e) => return Valor::Error(e),
+    };
+
+    let [px, py, pw, ph, prev_py, vy, ox, oy, ow, oh] = vals[..] else {
+        return Valor::Error("collision::check_one_way() error interno".to_string());
+    };
+
+    // 1. Verificar que el jugador está cayendo (vy >= 0)
+    if vy < 0.0 {
+        return Valor::Bool(false);
+    }
+
+    // 2. Verificar overlap horizontal
+    if px + pw <= ox || px >= ox + ow {
+        return Valor::Bool(false);
+    }
+
+    // 3. Verificar que los pies del jugador estaban ARRIBA de la plataforma antes
+    let prev_feet = prev_py + ph;
+    if prev_feet > oy + 2.0 {
+        // Tolerancia de 2px para evitar flickering
+        return Valor::Bool(false);
+    }
+
+    // 4. Verificar que los pies del jugador están AHORA dentro o debajo de la plataforma
+    let feet = py + ph;
+    if feet < oy {
+        return Valor::Bool(false);
+    }
+
+    Valor::Bool(true)
+}
+
+/// collision::resolve_one_way(px, py, ph, oy)
+/// Resuelve colisión one-way: coloca al jugador SOBRE la plataforma
+/// Retorna [new_px, new_py, grounded]
+pub fn collision_resolve_one_way<'a>(
+    args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    if args.len() != 4 {
+        return Valor::Error("collision::resolve_one_way() requiere 4 args: px, py, ph, oy".to_string());
+    }
+
+    let vals: Result<Vec<f32>, _> = args.iter().map(|a| {
+        match evaluar_expr(a, executor, funcs) {
+            Valor::Num(n) => Ok(n as f32),
+            _ => Err("collision::resolve_one_way() todos los args deben ser números".to_string()),
+        }
+    }).collect();
+
+    let vals = match vals {
+        Ok(v) => v,
+        Err(e) => return Valor::Error(e),
+    };
+
+    let [px, py, ph, oy] = vals[..] else {
+        return Valor::Error("collision::resolve_one_way() error interno".to_string());
+    };
+
+    // Colocar al jugador SOBRE la plataforma
+    let new_py = oy - ph;
+    let grounded = 1.0; // grounded = true
+
+    let result = vec![
+        Valor::Num(px as f64),
+        Valor::Num(new_py as f64),
+        Valor::Num(grounded as f64),
+    ];
+    Valor::Array(result)
+}

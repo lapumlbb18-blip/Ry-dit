@@ -3058,6 +3058,18 @@ pub fn evaluar_expr<'a>(
                 return collision::collision_resolve(args, executor, funcs);
             }
 
+            // collision::check_one_way(...) - One-way platform collision
+            if func_name == "collision::check_one_way" && args.len() == 10 {
+                use crate::modules::collision;
+                return collision::collision_check_one_way(args, executor, funcs);
+            }
+
+            // collision::resolve_one_way(...) - Resolver colisión one-way
+            if func_name == "collision::resolve_one_way" && args.len() == 4 {
+                use crate::modules::collision;
+                return collision::collision_resolve_one_way(args, executor, funcs);
+            }
+
             // area2d::create(id, x, y, w, h) - Crear área 2D
             if func_name == "area2d::create" && args.len() == 5 {
                 use crate::modules::collision;
