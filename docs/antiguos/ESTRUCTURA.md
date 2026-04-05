@@ -1,330 +1,227 @@
-# 🛡️ RyDit - ESTRUCTURA DEL PROYECTO
+# 🛡️ Ry-Dit - ESTRUCTURA DEL PROYECTO v0.13.0
 
-**Última actualización**: 2026-04-01  
-**Versión**: v0.11.2 ✅ PARSER ZERO-COPY + BYTECODE VM  
-**Commit**: Ver `git log -n 1`  
-**Estado**: ✅ 65 tests passing | ✅ Workspace compila | ✅ Producción
+**Última actualización**: 2026-04-04
+**Versión**: v0.13.0 ✅ Math avanzado + Arrays completos + Cálculo numérico
+**Commit**: Ver `git log -n 1`
+**Estado**: ✅ cargo check --workspace: 0 errores | 22 crates compilando
 
 ---
 
-## 🎯 ARQUITECTURA v0.11.2
+## 🎯 ARQUITECTURA ACTUAL
 
 ```
-ry-dit/
+shield-project/
+├── Cargo.toml                  # Workspace (22 crates)
+├── README.md                   # Documentación principal
+├── ROADMAP.md                  # Planificación v0.13→v1.0
+├── CONTRIBUTING.md             # Guía contribuidores
+├── MANIFIESTO.md               # Filosofía del proyecto
+├── LICENSE                     # MIT
+├── .gitignore
+│
 ├── crates/
-│   ├── rydit-lexer/            # 🆕 v0.11.2 Zero-Copy Lexer
-│   │   ├── src/
-│   │   │   ├── lib.rs          # API pública + re-exports
-│   │   │   ├── token.rs        # Token<'a> zero-copy (289 líneas)
-│   │   │   └── lexer.rs        # Lexer<'a> scan (439 líneas)
-│   │   ├── Cargo.toml
-│   │   └── README.md
-│   │
-│   ├── rydit-parser/           # 🆕 v0.11.2 Parser + Error Recovery
-│   │   ├── src/
-│   │   │   ├── lib.rs          # API pública
-│   │   │   ├── ast.rs          # AST typed (Expr<'a>, Stmt<'a>)
-│   │   │   ├── error.rs        # Error handling + recovery
-│   │   │   └── parser.rs       # Parser con recovery (1,119 líneas)
-│   │   ├── Cargo.toml
-│   │   └── README.md
-│   │
-│   ├── rydit-vm/               # 🆕 v0.11.2 Bytecode VM
-│   │   ├── src/
-│   │   │   ├── lib.rs          # API pública
-│   │   │   ├── opcodes.rs      # OpCode enum (50+ instrucciones)
-│   │   │   ├── compiler.rs     # AST → Bytecode (552 líneas)
-│   │   │   └── vm.rs           # Stack-based VM (1,000+ líneas)
-│   │   ├── Cargo.toml
-│   │   └── README.md
-│   │
-│   ├── lizer/                  # ⚠️ v0.11.2 Wrapper (deprecated)
-│   │   ├── src/lib.rs          # Re-exports de rydit-lexer + parser
-│   │   └── Cargo.toml          # Dependencias: rydit-lexer, rydit-parser
-│   │
-│   ├── rydit-core/             # ✅ RyditModule trait
-│   │   └── src/lib.rs          # Trait + ModuleRegistry
-│   │
-│   ├── rydit-ecs/              # ✅ ECS (bevy_ecs)
-│   │   ├── src/
-│   │   │   ├── lib.rs          # EcsWorld
-│   │   │   ├── components.rs   # Position, Velocity, Sprite
-│   │   │   └── systems.rs      # Movement, Render
-│   │   └── Cargo.toml          # bevy_ecs = "0.15"
-│   │
-│   ├── rydit-gfx/              # ✅ Backend + Toolkit UI
-│   │   ├── src/
-│   │   │   ├── lib.rs          # RyditGfx + exports
-│   │   │   ├── backend_sdl2.rs # ✅ SDL2 ventana + input + render
-│   │   │   ├── input_sdl2.rs   # ✅ Event Loop (69 teclas)
-│   │   │   ├── sdl2_ffi.rs     # ✅ FFI nativo (TTF, Image, Mixer)
-│   │   │   ├── toolkit/        # 🆕 UI Toolkit v0.11.0
-│   │   │   │   ├── mod.rs
-│   │   │   │   ├── theme.rs    # Dark/Light themes
-│   │   │   │   └── widgets/
-│   │   │   │       ├── button.rs   # Botones clickeables
-│   │   │   │       ├── label.rs    # Texto SDL2_ttf
-│   │   │   │       └── panel.rs    # Contenedores
-│   │   │   ├── gpu_instancing.rs   # ✅ 100K partículas
-│   │   │   ├── ecs_render.rs       # ✅ ECS + rlgl
-│   │   │   ├── render_queue.rs     # ✅ 8192 draw calls
-│   │   │   └── shaders/            # vertex.glsl, fragment.glsl
-│   │   └── Cargo.toml              # sdl2 = "0.37" + raylib
-│   │
-│   ├── rydit-rs/                   # ✅ Core + RyBot + VM
-│   │   ├── src/
-│   │   │   ├── bin/                # 🆕 Binarios de prueba
-│   │   │   │   ├── demo_toolkit_ry.rs      # 🆕 UI Toolkit demo
-│   │   │   │   ├── rybot_cli.rs            # 🆕 RyBot CLI
-│   │   │   │   ├── test_sdl2_basico.rs     # 🆕 SDL2 test simple
-│   │   │   │   ├── test_sdl2_sprite_debug.rs # 🆕 Sprite debug
-│   │   │   │   ├── demo_particles.rs       # Partículas
-│   │   │   │   ├── demo_big_bang.rs        # Explosión cósmica
-│   │   │   │   └── snake.rs                # Juego Snake
-│   │   │   ├── rybot/            # 🆕 RyBot Inspector v0.11.0
-│   │   │   │   ├── mod.rs        # RyBot struct
-│   │   │   │   └── registry.rs   # Registry + Alertas (530 líneas)
-│   │   │   ├── modules/          # Sistema Ry (180K líneas)
-│   │   │   │   ├── camera.rs     # ✅ 16.9K líneas
-│   │   │   │   ├── entity.rs     # ✅ 88.8K líneas
-│   │   │   │   ├── level.rs      # ✅ 17.2K líneas
-│   │   │   │   ├── assets.rs     # ✅ 15.6K líneas
-│   │   │   │   ├── physics.rs    # ✅ 22.8K líneas
-│   │   │   │   ├── input_map.rs  # ✅ 21.1K líneas
-│   │   │   │   └── particles.rs  # ✅ 7K líneas
-│   │   │   ├── executor.rs       # ✅ Game loop con RyBot + VM
-│   │   │   ├── main.rs           # Entry point
-│   │   │   └── lib.rs            # Config parser
-│   │   └── Cargo.toml            # + rydit-vm, rydit-parser, rydit-lexer
-│   │
-│   ├── rydit-physics/            # ✅ Físicas 2D
-│   │   └── src/lib.rs            # 20 funciones
-│   │
-│   ├── rydit-anim/               # ✅ Animaciones
-│   │   └── src/lib.rs            # 8.8K líneas
-│   │
-│   ├── rydit-science/            # ✅ Funciones científicas
-│   │   └── src/lib.rs            # 18.1K líneas
-│   │
-│   ├── rydit-loader/             # ✅ Dynamic module loader
-│   │   └── src/lib.rs
-│   │
-│   ├── rydit-script/             # ✅ Integración scripts
-│   │   └── src/lib.rs
-│   │
-│   ├── rydit-http/               # ✅ HTTP + WebSocket
-│   │   └── src/lib.rs
-│   │
-│   ├── rydit-test/               # ✅ Tests en 3 niveles
-│   │   └── src/
-│   │       ├── nivel1_core_test.rs    # 13 tests
-│   │       └── nivel2_integration_test.rs  # 3 tests
-│   │
-│   ├── blast-core/               # ✅ Executor (legacy)
-│   │   └── src/lib.rs            # 476 líneas
-│   │
-│   ├── migui/                    # ✅ Separado (sin usar en RyDit)
-│   │   └── src/
-│   │       ├── lib.rs
-│   │       └── backend_sdl2.rs
-│   │
-│   └── v-shield/                 # ✅ Utilidades
-│       └── src/lib.rs
+│   ├── ry-core/                # ✅ 0.8.2  Core traits, module system, Valor
+│   ├── ry-lexer/               # ✅ 0.1.0  Zero-copy lexer
+│   ├── ry-parser/              # ✅ 0.1.0  Parser AST + error recovery
+│   ├── ry-vm/                  # ⚠️       VM opcodes + compiler
+│   ├── ry-gfx/                 # ⚠️ 0.10.7 Graphics (raylib + SDL2 + OpenGL FFI)
+│   ├── ry-physics/             # ✅ 0.7.34 2D projectile + N-body (2 cuerpos)
+│   ├── ry-anim/                # ✅ 0.7.34 Easing + Disney principles
+│   ├── ry-ecs/                 # ✅ 0.10.0 ECS (bevy_ecs)
+│   ├── ry-science/             # ⚠️       Geometry 2D + stats + Bezier
+│   ├── ry-script/              # ✅ 0.8.2  Script loading
+│   ├── ry-stream/              # ✅ 0.1.0  LAN streaming (WebSocket)
+│   ├── ry-god/                 # ✅ 0.1.0  Security & efficiency (crates.io)
+│   ├── ry-loader/              # ⚠️       Module loader
+│   ├── ry-rs/                  # —        Main binary + demos + eval + modules
+│   ├── ry-system-ry/           # ⚠️ 0.11.0 Universal system (SDL2)
+│   ├── ry-test/                # ⚠️       Test utilities
+│   ├── toolkit-ry/             # ⚠️ 0.1.0  UI toolkit (SDL2)
+│   ├── migui/                  # ⚠️       Immediate mode GUI (12 widgets)
+│   ├── blast-core/             # ⚠️ 0.1.0  Minimal value executor
+│   ├── lizer/                  # ✅ 0.11.2 Legacy lexer wrapper
+│   └── v-shield/               # ⚠️       (por definir)
 │
-├── demos/                        # Scripts .rydit
-│   ├── demo_particles.rydit
-│   ├── demo_big_bang.rydit
-│   └── snake.rydit
+├── crates/ry-rs/src/
+│   ├── main.rs                 # Entry point + eval modo gráfico + modules
+│   ├── eval/
+│   │   └── mod.rs              # Evaluar expresiones (~4100 líneas)
+│   │                           #   - Math: sin, cos, tan, sqrt, pow, log...
+│   │                           #   - Arrays: push, pop, len, slice, insert...
+│   │                           #   - Cálculo: derivada, integral (Simpson)
+│   │                           #   - Strings, regex, CSV, JSON, random...
+│   ├── module.rs               # Registro de módulos (math, arrays, strings...)
+│   ├── json_helpers.rs         # Conversión Serde ↔ Valor
+│   ├── rybot/                  # Asistente de código
+│   └── modules/                # Módulos del lenguaje
+│       ├── assets.rs           # Carga/dibujo de sprites PNG
+│       ├── audio.rs            # SDL2_mixer (tonos, WAV)
+│       ├── camera.rs           # Camera2D (posición, zoom, rotación)
+│       ├── collision.rs        # Colisiones 2D (AABB, raycast)
+│       ├── csv.rs              # CSV parser + queries
+│       ├── entity.rs           # Sistema de entidades
+│       ├── input_map.rs        # Input SDL2 mapeado
+│       ├── level.rs            # Gestión de niveles/checkpoints
+│       ├── physics.rs          # Física 2D (gravedad, proyectiles)
+│       ├── tilemap.rs          # Tilemap system
+│       └── window.rs           # Creación de ventana SDL2
 │
-├── logo_icon_asst/               # Assets de prueba
-│   └── sprites/
+├── crates/ry-parser/src/
+│   ├── lib.rs                  # API pública
+│   ├── ast.rs                  # Expr<'a>, Stmt<'a>, BinaryOp, UnaryOp
+│   ├── parser.rs               # Parser completo (~1500 líneas)
+│   │   ├── parse_primary()     # Literales, arrays [], vars, calls
+│   │   ├── parse_term()        # *, /, +, - (precedencia)
+│   │   ├── parse_expression()  # Comparaciones, lógicos
+│   │   ├── parse_statement()   // Assign, if, ryda, funciones
+│   │   └── parse_texto_en()    // Texto en A, B con expresiones
+│   └── token.rs                # TokenKind (60+ tipos)
 │
-├── docs/                         # 🆕 Documentación
-│   ├── ANALISIS_ARQUITECTURA_V0.11.2.md  # 🆕 Análisis completo
-│   ├── FASE_0_VERIFICACION_V0.11.2.md    # 🆕 Checklist pre-implementación
-│   └── sessions/                 # 🆕 Sesiones de desarrollo
+├── crates/ry-lexer/src/
+│   ├── lib.rs                  # API pública
+│   ├── lexer.rs                # Zero-copy Lexer
+│   └── token.rs                # Token<'a> zero-copy
 │
-├── scripts/                      # 🆕 Scripts de automatización
-│   └── implementar_parser_v0.11.2.sh
+├── crates/ry-gfx/src/
+│   ├── lib.rs                  # Graphics layer (~1700 líneas)
+│   ├── camera.rs               # Camera2D
+│   ├── gpu_instancing.rs       # OpenGL FFI + instancing
+│   ├── render_queue.rs         # Cola de renderizado
+│   ├── ecs_render.rs           # ECS renderer
+│   ├── fsr.rs                  # FSR 1.0 upscaling
+│   └── shaders/                # GLSL shaders
+│       ├── vertex.glsl
+│       └── fragment.glsl
 │
-└── target/                       # Build artifacts (git-ignored)
+├── demos/                      # Scripts .rydit
+├── docs/
+│   ├── actuales/
+│   ├── antiguos/               # Docs de versiones previas
+│   │   ├── sdl2/               # Guías SDL2
+│   │   ├── demos/              # Documentación de demos
+│   │   └── guias/              # Guías varias
+│   ├── sessions/               # Logs de sesiones
+│   ├── tests/
+│   ├── tests_referencia/
+│   └── panorama_v0.13.0.md     # 🗺️ Panorama completo v0.13→v1.0
+│
+├── screenshots/                # Capturas y videos MP4
+├── scripts/                    # Utilidades bash/python
+├── tests/                      # Tests automáticos
+├── tests_rydit/                # Tests del lenguaje
+└── ejemplos-gfx/               # Demos gráficos pendientes
+    ├── pendientes/
+    └── pendientes-revision/
 ```
 
 ---
 
-## 📊 MÉTRICAS v0.11.2
+## 📊 FUNCIONES POR MÓDULO
 
-### **Nuevos Crates**
+### math:: / matematica::
+| Función | Args | Retorna |
+|---------|------|---------|
+| `sin, cos, tan` | 1 | f64 |
+| `sqrt` | 1 | f64 |
+| `pow` | 2 | f64 |
+| `log, log10` | 1 | f64 |
+| `exp` | 1 | f64 |
+| `abs` | 1 | f64 |
+| `floor, ceil, round, trunc, fract` | 1 | f64 |
+| `min, max` | 2 | f64 |
+| `clamp` | 3 | f64 |
+| `lerp` | 3 | f64 |
+| `sign` | 1 | f64 |
+| `mod` | 2 | f64 |
+| `hypot` | 2 | f64 |
+| `cbrt` | 1 | f64 |
+| `atan2` | 2 | f64 |
+| `deg2rad, rad2deg` | 1 | f64 |
+| **Constantes**: `PI`, `E`, `TAU`, `INF` | 0 | f64 |
 
-| Crate | Líneas | Tests | Estado |
-|-------|--------|-------|--------|
-| **rydit-lexer** | 728 | 20 | ✅ Zero-Copy |
-| **rydit-parser** | 1,826 | 23 | ✅ Error Recovery |
-| **rydit-vm** | 1,551 | 19 | ✅ Bytecode VM |
-| **lizer** (wrapper) | 50 | 3 | ✅ Backward Compat |
+### calc::
+| Función | Args | Retorna |
+|---------|------|---------|
+| `derivada(f, x, h)` | 2-3 | f64 |
+| `derivada2(f, x, h)` | 2-3 | f64 |
+| `integral(f, a, b, n)` | 4 | f64 |
+| `integral_trapezio(f, a, b, n)` | 4 | f64 |
 
-**Total**: 4,155 líneas Rust nuevas | 65 tests passing
-
-### **Crates Existentes**
-
-| Crate | Líneas | Tests | Estado |
-|-------|--------|-------|--------|
-| **rydit-rs** | ~4K | - | ✅ Core + RyBot |
-| **rydit-gfx** | ~2K | 6 | ✅ SDL2 Backend |
-| **rydit-ecs** | ~1K | - | ✅ ECS |
-| **rydit-physics** | ~500 | 6 | ✅ Físicas 2D |
-| **rydit-anim** | ~500 | 9 | ✅ Animaciones |
-| **rydit-science** | ~1K | 21 | ✅ Ciencia |
-| **blast-core** | 476 | 20 | ✅ Executor |
-| **migui** | ~2K | 8 | ✅ UI Toolkit |
-
-**Total General**: ~25K líneas Rust | 150+ tests
+### arrays::
+| Función | Args | Retorna |
+|---------|------|---------|
+| `push(arr, elem)` | 2 | array |
+| `pop(arr)` | 1 | elem |
+| `shift(arr)` | 1 | elem |
+| `unshift(arr, elem)` | 2 | array |
+| `slice(arr, start, end)` | 3 | array |
+| `reverse(arr)` | 1 | array |
+| `len(arr)` | 1 | num |
+| `insert(arr, idx, elem)` | 3 | array |
+| `remove(arr, idx)` | 2 | elem |
+| `contains(arr, elem)` | 2 | bool |
+| `find(arr, elem)` | 2 | num |
+| `join(arr, sep)` | 2 | texto |
+| `clear(arr)` | 1 | array |
+| `first(arr)` | 1 | elem |
+| `last(arr)` | 1 | elem |
 
 ---
 
-## 🏗️ FLUJO DE COMPILACIÓN v0.11.2
+## 🏗️ PIPELINE DE EJECUCIÓN
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Usuario: rydit-rs --run demo.rydit                         │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  rydit-rs (main.rs)                                         │
-│    → rydit-parser::parse(source)                            │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  rydit-parser                                               │
-│    → rydit-lexer::Lexer::scan() → Tokens<'a>                │
-│    → Parser::parse() → AST + Errors (error recovery)        │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  rydit-vm::Compiler                                         │
-│    → compile(AST) → BytecodeProgram                         │
-│      - OpCode::LoadConst, LoadGlobal, Add, etc.             │
-│      - constants_num, constants_str, global_names           │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  rydit-vm::VM                                               │
-│    → load(BytecodeProgram)                                  │
-│    → run() → VMValue                                        │
-│      - Stack-based execution                                │
-│      - Call frames para funciones                           │
-│      - Draw commands con callback                           │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  rydit-gfx (SDL2 Backend)                                   │
-│    → draw_callback("circle", [x, y, radio])                 │
-│    → RenderQueue → GPU → Pantalla                          │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🔑 CARACTERÍSTICAS v0.11.2
-
-### **1. Zero-Copy Lexer** ✅
-- Tokens con `&'a str` en vez de `String`
-- 50% menos uso de memoria
-- 2-3x más rápido en lexing
-
-### **2. Error Recovery Parser** ✅
-- No falla en el primer error
-- Reporta múltiples errores
-- Continúa parseando después de errores
-
-### **3. AST Typed** ✅
-- `Expr<'a>` con tipos específicos
-- `BinaryOp`, `UnaryOp` enums
-- Validación semántica temprana
-
-### **4. Bytecode VM** ✅
-- 50+ OpCode instructions
-- Stack-based execution
-- Call frames para funciones
-- Draw commands integrados
-
-### **5. Backward Compatibility** ✅
-- `lizer` wrapper para código existente
-- Re-exports de rydit-lexer + rydit-parser
-- Migración gradual posible
-
----
-
-## 📈 ROADMAP ACTUALIZADO
-
-| Versión | Estado | Features | Fecha |
-|---------|--------|----------|-------|
-| **v0.11.0** | ✅ COMPLETADO | RyBot + SDL2 + Toolkit | 2026-03-28 |
-| **v0.11.1** | ✅ COMPLETADO | Tests 3 niveles | 2026-04-01 |
-| **v0.11.2** | ✅ COMPLETADO | Parser Zero-Copy + Bytecode VM | 2026-04-01 |
-| **v0.11.3** | 🔮 Pendiente | Snake reescrito + Platformer SDL2 | 2026-04-14 |
-| **v0.12.0** | 🔮 Meta | FSR 1.0 + Parser fuerte completo | 2026-04-21 |
-
----
-
-## 🧪 TESTS v0.11.2
-
-### **Nivel 1: Núcleo** ✅
-- `rydit-lexer`: 20 tests
-- `rydit-parser`: 23 tests
-- `rydit-vm`: 19 tests
-- `lizer`: 3 tests
-- `blast-core`: 20 tests
-
-### **Nivel 2: Integración** ✅
-- `rydit-test`: 16 tests (Nivel 1 + 2)
-
-### **Nivel 3: Gráficos** ⏳
-- SDL2 low-end tests (manuales)
-
-**Total**: 101 tests automáticos
-
----
-
-## 🚀 COMANDOS ÚTILES
-
-```bash
-# Build workspace
-cargo build --workspace
-
-# Tests todos los crates nuevos
-cargo test -p rydit-lexer -p rydit-parser -p rydit-vm -p lizer
-
-# Build release optimizado
-cargo build --release -p rydit-rs
-
-# Ver estructura de crates
-tree crates -L 2
-
-# Ver tags de versión
-git tag -l | grep v0.11.2
+Código .rydit
+    │
+    ▼
+┌─────────────┐
+│  ry-lexer   │  Zero-copy scan → tokens
+└──────┬──────┘
+       │ Token<'a>
+       ▼
+┌─────────────┐
+│ ry-parser   │  Error recovery → AST
+└──────┬──────┘
+       │ Expr<'a>, Stmt<'a>
+       ▼
+┌─────────────┐
+│ evaluar_expr│  Evaluar expresiones (eval/mod.rs)
+│ ejecutar_stmt│ Ejecutar statements (main.rs)
+└──────┬──────┘
+       │ Valor (Num, Texto, Bool, Array)
+       ▼
+┌─────────────┐
+│   ry-gfx    │  SDL2/raylib render
+└─────────────┘
 ```
 
 ---
 
-## 🔒 PUNTOS DE REVERSIÓN v0.11.2
+## 📦 CRATES PUBLICABLES
 
-| Tag | Descripción | Comando |
-|-----|-------------|---------|
-| `v0.11.2-pre-parser` | Backup antes de empezar | `git checkout v0.11.2-pre-parser` |
-| `v0.11.2-fase-1` | rydit-lexer zero-copy | `git checkout v0.11.2-fase-1` |
-| `v0.11.2-fase-2` | rydit-parser error recovery | `git checkout v0.11.2-fase-2` |
-| `v0.11.2-fase-3` | rydit-vm bytecode | `git checkout v0.11.2-fase-3` |
-| `v0.11.2-fase-4` | Integración workspace | `git checkout v0.11.2-fase-4` |
+| Crate | Versión | Estado | Notas |
+|-------|---------|--------|-------|
+| ry-god | 0.1.0 | ✅ crates.io | Security & efficiency |
+| ry-core | 0.8.2 | ✅ Listo | Core traits |
+| ry-lexer | 0.1.0 | ✅ Listo | Zero-copy |
+| ry-parser | 0.1.0 | ✅ Listo | Error recovery |
+| ry-physics | 0.7.34 | ✅ Listo | 2D projectile |
+| ry-anim | 0.7.34 | ✅ Listo | Easing |
+| ry-ecs | 0.10.0 | ✅ Listo | bevy_ecs |
+| ry-script | 0.8.2 | ✅ Listo | Script loading |
+| ry-stream | 0.1.0 | ✅ Listo | WebSocket |
+| lizer | 0.11.2 | ✅ Listo | Legacy |
+| toolkit-ry | 0.1.0 | ⚠️ | Falta license |
+| ry-system-ry | 0.11.0 | ⚠️ | Falta license |
 
 ---
 
 <div align="center">
 
-**🛡️ RyDit v0.11.2 - PARSER ZERO-COPY + BYTECODE VM**
+**🛡️ Ry-Dit v0.13.0 — ESTRUCTURA ACTUALIZADA**
 
-*65 tests passing ✅ | 4,155 líneas nuevas ✅ | Workspace compila ✅*
+*22 crates | 25K+ líneas Rust | Math + Arrays + Cálculo numérico*
 
-**Próximo: v0.11.3 - Snake reescrito + Platformer SDL2**
+*Última actualización: 2026-04-04*
 
 </div>
