@@ -8,3 +8,4 @@ authors = ["Shield Project"]
 [dependencies]
 sdl2 = "0.37"
 ry-gfx = { path = "../ry-gfx" }
+migui = { path = "../migui" }
