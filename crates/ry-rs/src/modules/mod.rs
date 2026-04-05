@@ -15,3 +15,4 @@ pub mod particles; // ✅ v0.10.4: Movido de disabled/
 pub mod physics;
 pub mod tilemap;
 pub mod window;
+pub mod quest;     // 🆕 v0.13.1: Quest System (objetivos, progreso, recompensas)

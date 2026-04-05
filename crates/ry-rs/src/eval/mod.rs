@@ -19,6 +19,10 @@ use crate::modules::camera::{
 use crate::modules::entity::{entity_create, entity_get_position};
 use crate::modules::input_map::{input_map_is_pressed, input_map_register};
 use crate::modules::physics::physics_apply_gravity;
+use crate::modules::quest::{
+    quest_add_objective, quest_complete, quest_count, quest_create, quest_get_progress,
+    quest_list_active, quest_list_completed, quest_set_reward, quest_start, quest_update_progress,
+};
 
 /// Algoritmo de De Casteljau para evaluar curvas de Bezier
 fn de_casteljau(points: &[(f64, f64)], t: f64) -> (f64, f64) {
@@ -2701,6 +2705,60 @@ pub fn evaluar_expr<'a>(
             if func_name == "audio::list" {
                 use crate::modules::audio;
                 return audio::audio_list(args, executor, funcs);
+            }
+
+            // ========================================================================
+            // QUEST SYSTEM (v0.13.1) 🎯
+            // ========================================================================
+
+            // quest::create(id, titulo, descripcion)
+            if func_name == "quest::create" && args.len() >= 3 {
+                return quest_create(args, executor, funcs);
+            }
+
+            // quest::add_objective(quest_id, descripcion, target)
+            if func_name == "quest::add_objective" && args.len() >= 3 {
+                return quest_add_objective(args, executor, funcs);
+            }
+
+            // quest::set_reward(quest_id, tipo, cantidad)
+            if func_name == "quest::set_reward" && args.len() >= 3 {
+                return quest_set_reward(args, executor, funcs);
+            }
+
+            // quest::start(quest_id)
+            if func_name == "quest::start" && args.len() == 1 {
+                return quest_start(args, executor, funcs);
+            }
+
+            // quest::complete(quest_id)
+            if func_name == "quest::complete" && args.len() == 1 {
+                return quest_complete(args, executor, funcs);
+            }
+
+            // quest::update_progress(quest_id, objective_index, amount)
+            if func_name == "quest::update_progress" && args.len() >= 3 {
+                return quest_update_progress(args, executor, funcs);
+            }
+
+            // quest::get_progress(quest_id)
+            if func_name == "quest::get_progress" && args.len() == 1 {
+                return quest_get_progress(args, executor, funcs);
+            }
+
+            // quest::list_active()
+            if func_name == "quest::list_active" {
+                return quest_list_active(args, executor, funcs);
+            }
+
+            // quest::list_completed()
+            if func_name == "quest::list_completed" {
+                return quest_list_completed(args, executor, funcs);
+            }
+
+            // quest::count([state])
+            if func_name == "quest::count" {
+                return quest_count(args, executor, funcs);
             }
 
             // ========================================================================
