@@ -6,68 +6,92 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.12.1-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Version](https://img.shields.io/badge/version-v0.13.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Warnings](https://img.shields.io/badge/warnings-~30-yellow.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Status](https://img.shields.io/badge/estado-v0.12.1--parser--ry--god--crates.io-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Warnings](https://img.shields.io/badge/warnings-~43-yellow.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Status](https://img.shields.io/badge/estado-v0.13.0--math--arrays--vec2--toolkit--ry3d-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 [![Videos](https://img.shields.io/badge/videos-3%20demos-purple.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/tree/main/screenshots)
 
-[📖 Documentación](#-documentación) • [🎬 Videos Demo](#-videos-demostrativos-v0116) • [🔧 Estado Actual](#-estado-actual) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🎬 Videos Demo](#-videos-demostrativos-v0121) • [🔧 Estado Actual](#-estado-actual) • [🆕 Qué hay de nuevo en v0.13.0](#-qué-hay-de-nuevo-en-v0130) • [🏆 Logros](#-logros) • [🎯 Roadmap](#-roadmap)
 
 </div>
 
 ---
 
-## 🎯 ¿Qué es Ry-Dit?
+## 🆕 ¿Qué hay de nuevo en v0.13.0?
 
-**Ry-Dit** es un **motor simulador de escenas 2D con lenguaje de scripting** escrito en **Rust** con **raylib**, diseñado para ejecutarse nativamente en **Android/Termux**.
+**Última actualización**: 2026-04-05
+**Versión actual**: v0.13.0 ✅ FUNCIONAL
+**Commit**: `7b010d1`
+**Estado**: 23 crates compilando | 0 errores | ~43 warnings
 
-**Casos de Uso:**
-- 🎮 Desarrollo de juegos 2D
-- 🔬 Visualización científica
-- 📚 Educación STEM
-- 🎨 Animaciones interactivas
-- 🧪 Simulaciones físicas
-- 📊 Prototipado rápido
+### Matemáticas Avanzadas ✅
+- **23 funciones nuevas**: `pow`, `log`, `log10`, `exp`, `PI`, `E`, `TAU`, `INF`, `min`, `max`, `clamp`, `lerp`, `sign`, `mod`, `round`, `trunc`, `fract`, `hypot`, `cbrt`, `atan2`, `deg2rad`, `rad2deg`, `abs`
+- **Cálculo numérico**: `derivada`, `derivada2`, `integral` (método Simpson), `integral_trapezio`
+- Namespace `matematica::` como alias de `math::`
 
-**Filosofía Actual:**
-- 🐌 **Sin prisa** - Madurar cada feature antes de lanzar
-- 🔧 **Bien hecho** - Calidad sobre cantidad
-- 🏠 **Para nosotros** - No para la comunidad ni releases
-- 📦 **Modular** - 19 crates, 1 workspace
+### Arrays Completos ✅
+- **16 funciones**: `push`, `pop`, `len`, `slice`, `insert`, `remove`, `contains`, `find`, `join`, `clear`, `first`, `last`, `shift`, `unshift`, `reverse`
+- Declaración `dark.slot[] name = [...]`
+- Literales `[1, 2, 3]` en parser
+
+### Vec2 Tipo Nativo ✅
+- **22 operaciones**: constructor, `add`, `sub`, `scale`, `magnitude`, `normalize`, `dot`, `cross`, `angle`, `rotate`, `lerp`, `dist`, `negate`, `midpoint`, `from_angle`
+- Constantes: `zero`, `one`, `up`, `down`, `left`, `right`
+
+### toolkit-ry v0.1.0 ✅
+- **5 temas**: Dark, Light, Retro, Neon, Minimal
+- **20+ widgets de juego**: `health_bar`, `mana_bar`, `xp_bar`, `score`, menús, inventario, diálogos, minimap, loading, notificaciones
+
+### ry3d-gfx v0.1.0 ✅
+- **15 funciones 3D**: `cube`, `sphere`, `cylinder`, `plane`, `grid`, `point3D`, `line3D`, `triangle3D`, `bounding_box`, `axes_gizmo`
+
+### Fix Input Android ✅
+- SDL_TEXTINPUT manejado correctamente
+- 7 hints SDL2 configurados
+- Launcher actualizado
+
+### Limpieza ✅
+- **-17,604 líneas basura eliminadas**
+- Organización de docs en `docs/actuales/`, `docs/antiguos/`, `docs/sessions/`
 
 ---
 
-## 🔧 ESTADO ACTUAL - v0.12.1 PARSER INFALIBLE + RY-GOD PUBLICADO
+## 🔧 ESTADO ACTUAL - v0.13.0 MATH + ARRAYS + VEC2 + TOOLKIT + 3D
 
-### ✅ **ESTADO REAL: v0.12.1 - REBRAND + PARSER + ry-god crates.io**
+### ✅ **ESTADO REAL: v0.13.0 - 23 CRATES COMPILANDO | 0 ERRORES**
 
-**Última actualización**: 2026-04-04
-**Versión actual**: v0.12.1 ✅ FUNCIONAL
-**Próxima versión**: v0.13.0 - Demos completos + crates maduros
-**Estado**: Parser ✅ | ry-god ✅ crates.io | 22 crates en workspace | 0 errores | ~30 warnings
-**Commit**: `22252bc` (HEAD)
+**Última actualización**: 2026-04-05
+**Versión actual**: v0.13.0 ✅ FUNCIONAL
+**Próxima versión**: v0.14.0 - Quest system + Save/Load + One-way platforms
+**Estado**: Math ✅ | Arrays ✅ | Vec2 ✅ | toolkit-ry ✅ | ry3d-gfx ✅ | SDL_INPUT fix ✅ | Limpieza ✅
+**Commit**: `7b010d1` (HEAD)
+**Crates**: 23 en workspace | 0 errores | ~43 warnings
 
 ---
 
-### ✅ **LO QUE SÍ FUNCIONA (v0.12.1)**
+### ✅ **LO QUE SÍ FUNCIONA (v0.13.0)**
 
 | Sistema | Estado | Notas |
 |---------|--------|-------|
+| **Math avanzado** | ✅ 23 funciones + cálculo | pow, log, exp, PI, derivada, integral |
+| **Arrays** | ✅ 16 funciones | push, pop, slice, contains, join... |
+| **Vec2** | ✅ 22 operaciones | add, sub, normalize, dot, rotate... |
+| **toolkit-ry** | ✅ v0.1.0 | 5 temas + 20+ widgets juego |
+| **ry3d-gfx** | ✅ v0.1.0 | 15 funciones 3D |
 | **Parser** | ✅ Infalible | 6 bugs raíz resueltos |
-| **Lexer** | ✅ Zero-copy | `rydit_` → `ry_` imports |
 | **ry-god** | ✅ crates.io | Security & Efficiency Framework |
-| **Input SDL2** | ✅ Funcional | `repeat: false` patrón |
+| **Input SDL2** | ✅ Fix Android | SDL_TEXTINPUT + 7 hints |
 | **SDL2_ttf** | ✅ Texto real | Texturas cacheadas |
 | **Sprites PNG** | ✅ 4 cargados | SDL2_image |
 | **Rigid Body** | ✅ Gravedad + colisiones | 4 cuerpos |
 | **Audio SDL2** | ✅ Tonos WAV | SDL2_mixer |
 | **Tests revelación** | ✅ 15/15 pasan | 100% pass rate |
-| **Verificación crates** | ✅ 13/13 compilan | 0 errores workspace |
+| **Verificación crates** | ✅ 23/23 compilan | 0 errores workspace |
 
 **Total**: Stack completo funcional + ry-god publicado ✅
 
@@ -354,7 +378,8 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 | **v0.11.5** | ✅ | 0 Errores + lifetimes fixeados | 2026-04-02 |
 | **v0.12.0** | ✅ | Rebrand + Parser Infalible | 2026-04-04 |
 | **v0.12.1** | ✅ | ry-god publicado en crates.io + CI/CD | 2026-04-04 |
-| **v0.13.0** | ⏳ | Demos completos + crates maduros | Próxima versión |
+| **v0.13.0** | ✅ | Math + Arrays + Vec2 + toolkit-ry + ry3d-gfx + Fix Android | 2026-04-05 |
+| **v0.14.0** | ⏳ | Quest system + Save/Load + One-way platforms | Próxima versión |
 | **v1.0.0** | ⏳ | Motor Completo + Editor Visual | Futuro |
 
 </div>
@@ -382,11 +407,11 @@ La implementación será gradual: primero geometría básica, luego físicas, lu
 
 <div align="center">
 
-## Ry-Dit v0.12.1 - Parser Infalible + ry-god en crates.io
+## Ry-Dit v0.13.0 - Math + Arrays + Vec2 + toolkit-ry + ry3d-gfx
 
-*0 errores | ~30 warnings en demos | ry-god v0.1.0 publicado*
+*0 errores | ~43 warnings en demos | 23 crates compilando*
 
-**Proxima version: v0.13.0 - Demos completos + crates maduros**
+**Proxima version: v0.14.0 - Quest system + Save/Load + One-way platforms**
 
 </div>
 - 🎮 Game loop integrado
