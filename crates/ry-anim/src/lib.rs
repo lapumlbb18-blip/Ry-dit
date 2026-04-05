@@ -17,6 +17,7 @@
 pub mod particles;
 pub mod disney;
 pub mod illusions;
+pub mod effects;
 
 pub use disney::{
     appeal, arc_path, exaggerate, follow_through, overlapping_action, pose_to_pose,
@@ -28,6 +29,11 @@ pub use illusions::{
     troxler_fading, zollner_effect,
 };
 
+pub use effects::{
+    bloom_effect, chromatic_aberration, morph_shapes, motion_blur,
+    neon_glow, particle_trails,
+};
+
 use ry_core::{ModuleError, ModuleResult, RyditModule};
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -37,7 +43,7 @@ pub struct AnimModule;
 
 impl RyditModule for AnimModule {
     fn name(&self) -> &'static str { "anim" }
-    fn version(&self) -> &'static str { "0.9.0" }
+    fn version(&self) -> &'static str { "0.10.0" }
 
     fn register(&self) -> HashMap<&'static str, &'static str> {
         let mut cmds = HashMap::new();
@@ -63,6 +69,13 @@ impl RyditModule for AnimModule {
         cmds.insert("pulsing_star", "Pulsing Star - estrella que pulsa");
         cmds.insert("zollner_effect", "Zöllner Effect - líneas que parecen no ser paralelas");
         cmds.insert("motion_blindness", "Motion-Induced Blindness - puntos que desaparecen");
+        // ✅ v0.10.0: Efectos especiales
+        cmds.insert("neon_glow", "Neon Glow - resplandor neón configurable");
+        cmds.insert("motion_blur", "Motion Blur - desenfoque de movimiento");
+        cmds.insert("chromatic_aberration", "Chromatic Aberration - separación RGB");
+        cmds.insert("bloom_effect", "Bloom - brillo difuso en zonas claras");
+        cmds.insert("particle_trails", "Particle Trails - estelas de partículas");
+        cmds.insert("morph_shapes", "Morphing - transición entre formas");
         cmds
     }
 
@@ -91,6 +104,13 @@ impl RyditModule for AnimModule {
             "pulsing_star" => self.pulsing_star(params),
             "zollner_effect" => self.zollner_effect(params),
             "motion_blindness" => self.motion_blindness(params),
+            // ✅ v0.10.0: Efectos especiales
+            "neon_glow" => self.neon_glow(params),
+            "motion_blur" => self.motion_blur(params),
+            "chromatic_aberration" => self.chromatic_aberration(params),
+            "bloom_effect" => self.bloom_effect(params),
+            "particle_trails" => self.particle_trails(params),
+            "morph_shapes" => self.morph_shapes(params),
             _ => Err(ModuleError { code: "UNKNOWN_COMMAND".to_string(), message: format!("Comando desconocido: {}", command) }),
         }
     }
@@ -247,6 +267,53 @@ impl AnimModule {
         if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "motion_blindness requiere 6 params".to_string() }); }
         Ok(json!(illusions::motion_induced_blindness(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(10.0) as usize, a[3].as_f64().unwrap_or(30.0), a[4].as_f64().unwrap_or(5.0), a[5].as_f64().unwrap_or(0.0))))
     }
+
+    // ===== v0.10.0: EFECTOS ESPECIALES =====
+
+    fn neon_glow(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "neon_glow requiere [cx, cy, radius, layers, spread, intensity, color, t]".to_string() })?;
+        if a.len() < 8 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "neon_glow requiere 8 params".to_string() }); }
+        let color = a.get(6).and_then(|v| v.as_str()).unwrap_or("#FF00FF");
+        Ok(json!(effects::neon_glow(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(20.0), a[3].as_f64().unwrap_or(5.0) as usize, a[4].as_f64().unwrap_or(2.0), a[5].as_f64().unwrap_or(0.8), color, a[7].as_f64().unwrap_or(0.0))))
+    }
+
+    fn motion_blur(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "motion_blur requiere [prev_positions, cx, cy, intensity, fade]".to_string() })?;
+        if a.len() < 5 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "motion_blur requiere 5 params".to_string() }); }
+        let prev: Vec<(f64, f64)> = a[0].as_array().map(|arr| arr.iter().filter_map(|v| v.as_array().map(|p| (p[0].as_f64().unwrap_or(0.0), p[1].as_f64().unwrap_or(0.0)))).collect()).unwrap_or_default();
+        Ok(json!(effects::motion_blur(&prev, (a[1].as_f64().unwrap_or(0.0), a[2].as_f64().unwrap_or(0.0)), a[3].as_f64().unwrap_or(0.8), a[4].as_f64().unwrap_or(0.8))))
+    }
+
+    fn chromatic_aberration(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "chromatic_aberration requiere [cx, cy, radius, sep, t, shape]".to_string() })?;
+        if a.len() < 6 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "chromatic_aberration requiere 6 params".to_string() }); }
+        let shape = a.get(5).and_then(|v| v.as_str()).unwrap_or("circle");
+        Ok(json!(effects::chromatic_aberration(a[0].as_f64().unwrap_or(400.0), a[1].as_f64().unwrap_or(300.0), a[2].as_f64().unwrap_or(30.0), a[3].as_f64().unwrap_or(10.0), a[4].as_f64().unwrap_or(0.0), shape)))
+    }
+
+    fn bloom_effect(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "bloom_effect requiere [sources, radius, intensity, t]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "bloom_effect requiere 4 params".to_string() }); }
+        let sources: Vec<(f64, f64, f64, f64)> = a[0].as_array().map(|arr| arr.iter().filter_map(|v| v.as_array().map(|p| (p[0].as_f64().unwrap_or(0.0), p[1].as_f64().unwrap_or(0.0), p[2].as_f64().unwrap_or(1.0), p[3].as_f64().unwrap_or(10.0)))).collect()).unwrap_or_default();
+        Ok(json!(effects::bloom_effect(&sources, a[1].as_f64().unwrap_or(50.0), a[2].as_f64().unwrap_or(0.8), a[3].as_f64().unwrap_or(0.0))))
+    }
+
+    fn particle_trails(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "particle_trails requiere [positions, length, fade, color]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "particle_trails requiere 4 params".to_string() }); }
+        let positions: Vec<(f64, f64, f64, f64)> = a[0].as_array().map(|arr| arr.iter().filter_map(|v| v.as_array().map(|p| (p[0].as_f64().unwrap_or(0.0), p[1].as_f64().unwrap_or(0.0), p[2].as_f64().unwrap_or(0.0), p[3].as_f64().unwrap_or(0.0)))).collect()).unwrap_or_default();
+        let color = a.get(3).and_then(|v| v.as_str()).unwrap_or("#FFAA00");
+        Ok(json!(effects::particle_trails(&positions, a[1].as_f64().unwrap_or(10.0) as usize, a[2].as_f64().unwrap_or(0.85), color)))
+    }
+
+    fn morph_shapes(&self, p: Value) -> ModuleResult {
+        let a = p.as_array().ok_or_else(|| ModuleError { code: "INVALID_PARAMS".to_string(), message: "morph_shapes requiere [shape_a, shape_b, t, easing]".to_string() })?;
+        if a.len() < 4 { return Err(ModuleError { code: "INVALID_PARAMS".to_string(), message: "morph_shapes requiere 4 params".to_string() }); }
+        let sa: Vec<(f64, f64)> = a[0].as_array().map(|arr| arr.iter().filter_map(|v| v.as_array().map(|p| (p[0].as_f64().unwrap_or(0.0), p[1].as_f64().unwrap_or(0.0)))).collect()).unwrap_or_default();
+        let sb: Vec<(f64, f64)> = a[1].as_array().map(|arr| arr.iter().filter_map(|v| v.as_array().map(|p| (p[0].as_f64().unwrap_or(0.0), p[1].as_f64().unwrap_or(0.0)))).collect()).unwrap_or_default();
+        let easing = a.get(3).and_then(|v| v.as_str()).unwrap_or("linear");
+        Ok(json!(effects::morph_shapes(&sa, &sb, a[2].as_f64().unwrap_or(0.0), easing)))
+    }
 }
 
 #[cfg(test)]
@@ -257,7 +324,7 @@ mod tests {
     fn test_anim_module_name() {
         let m = AnimModule;
         assert_eq!(m.name(), "anim");
-        assert_eq!(m.version(), "0.9.0");
+        assert_eq!(m.version(), "0.10.0");
     }
 
     #[test]
