@@ -76,7 +76,23 @@
 | Organización docs en actuales/, antiguos/, sessions/ | |
 | 23 crates compilando | 0 errores |
 
-### v0.14.0 - Quest System + Save/Load (EN PROGRESO)
+### v0.14.0 - Quest + Save/Load + One-way + ry-stream (COMPLETADA)
+
+**Fecha**: 2026-04-05
+**Commits**: `54b19d6` -> `163229e` (5 commits)
+
+| Feature | Estado |
+|---------|--------|
+| Quest System: 10 funciones (create, objectives, rewards...) | ✅ |
+| Save/Load: 10 funciones (create, set_var, load, list...) | ✅ |
+| One-way platforms: 2 funciones (check_one_way, resolve_one_way) | ✅ |
+| ry-stream v0.1.0 publicado en crates.io | ✅ |
+| ry-ecs eliminado: -1,143 líneas (bevy_ecs no se usaba) | ✅ |
+| nbody_simulate movido a ry-physics | ✅ |
+| Fix test lexer: TokenKind::Igual → Asignar | ✅ |
+| 103 tests pasando en 7 crates | ✅ |
+
+### v0.14.1 - ry-anim: Disney + Ilusiones + Ciencia (EN PROGRESO)
 
 **Prioridad**: ALTA
 
@@ -133,7 +149,8 @@
 v0.12.0 100%
 v0.12.1 100%
 v0.13.0 100%
-v0.14.0 0%
+v0.14.0 100%
+v0.14.1 0%
 v0.15.0 0%
 v0.16.0 0%
 v1.0.0  10%
@@ -150,7 +167,8 @@ v1.0.0  10%
 | v0.12.0 | 2026-04-04 | 7 | 22 | 0 | ~30 | Rebrand + Parser |
 | v0.12.1 | 2026-04-04 | 6 | 22 | 0 | ~30 | ry-god crates.io |
 | **v0.13.0** | **2026-04-05** | **8** | **23** | **0** | **~43** | **Math+Arrays+Vec2+toolkit+3D** |
-| v0.14.0 | 2026-04-xx | - | 23 | - | - | Quest+SaveLoad |
+| **v0.14.0** | **2026-04-05** | **5** | **22** | **0** | **~43** | **Quest+SaveLoad+One-way+ry-stream** |
+| v0.14.1 | 2026-04-xx | - | 22 | - | - | ry-anim: Disney+Ilusiones+Ciencia |
 | v1.0.0 | Futuro | - | 25+ | - | - | Motor completo |
 
 ---
