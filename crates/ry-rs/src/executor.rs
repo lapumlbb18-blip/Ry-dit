@@ -236,6 +236,14 @@ pub fn ejecutar_programa_gfx<'a>(
                     rybot.set_entity_count(frame_count); // Placeholder
                     rybot.end_frame(frame_time);
 
+                    // 🆕 Guardar status para CLI IPC cada 30 frames
+                    if frame_count % 30 == 0 {
+                        let home = std::env::var("HOME")
+                            .unwrap_or_else(|_| "/data/data/com.termux/files/home".to_string());
+                        let status_path = format!("{}/.rybot_status.json", home);
+                        rybot.save_status(&status_path);
+                    }
+
                     // Verificar módulos no usados cada 100 frames
                     if frame_count % 100 == 0 {
                         rybot.check_unused_modules();

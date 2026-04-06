@@ -550,6 +550,21 @@ impl Registry {
 
         output
     }
+
+    // ==================== IPC: File-based status ====================
+
+    /// Guardar estado a archivo (para CLI IPC)
+    pub fn save_status_to_file(&self, path: &str) {
+        let content = self.export_status();
+        if let Err(e) = std::fs::write(path, content) {
+            eprintln!("[RyBot] Error guardando status: {}", e);
+        }
+    }
+
+    /// Cargar estado desde archivo
+    pub fn load_status_from_file(path: &str) -> Option<String> {
+        std::fs::read_to_string(path).ok()
+    }
 }
 
 impl Default for Registry {

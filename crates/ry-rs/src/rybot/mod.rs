@@ -165,6 +165,11 @@ impl RyBot {
     pub fn alert_count(&self) -> usize {
         self.registry.alert_count()
     }
+
+    /// Guardar estado a archivo (para CLI IPC)
+    pub fn save_status(&self, path: &str) {
+        self.registry.save_status_to_file(path);
+    }
 }
 
 impl Default for RyBot {
