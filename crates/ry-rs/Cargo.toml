@@ -9,6 +9,7 @@ ry-loader = { path = "../ry-loader" }
 ry-science = { path = "../ry-science" }
 ry-physics = { path = "../ry-physics" }
 ry-anim = { path = "../ry-anim" }
+events-ry = { path = "../events-ry" }  # 🆕 v0.13.0: Input unificado + TextInput + Shell
 # 🗑️ ry-ecs eliminado v0.13.1
 ry-vm = { path = "../ry-vm" }  # 🆕 v0.11.2: Bytecode VM
 lizer = { path = "../lizer" }  # Wrapper backward compat

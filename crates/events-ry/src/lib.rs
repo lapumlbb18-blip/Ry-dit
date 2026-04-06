@@ -71,6 +71,6 @@ mod manager;
 pub use input_event::InputEvent;
 pub use key_code::Key;
 pub use backend::InputBackend;
-pub use text_input::TextInput;
+pub use text_input::{TextInput, TextInputAction};
 pub use shell::{Shell, ShellCommand, ShellResult, CommandHandler};
 pub use manager::InputManager;
