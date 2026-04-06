@@ -3,6 +3,10 @@ name = "ry-rs"
 version = "0.11.2"
 edition = "2021"
 
+[lib]
+name = "ry_rs"
+path = "src/lib.rs"
+
 [dependencies]
 ry-core = { path = "../ry-core" }
 ry-config = { path = "../ry-config" }  # 🆕 v0.14.0: Config parser

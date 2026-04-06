@@ -9,7 +9,6 @@ mod eval;
 mod executor;
 mod json_helpers;
 mod lazos; // ← PROTOCOLO LAZOS
-mod module;
 // mod physics;  ← AHORA ES CRATE EXTERNO: use ry_physics::PhysicsModule;
 mod repl;
 // mod science;  ← AHORA ES CRATE EXTERNO: use ry_science::ScienceModule;
@@ -30,12 +29,6 @@ pub use json_helpers::{valor_ry_a_serde, valor_serde_a_rydit};
 
 // Re-exportar ejecutores
 pub use executor::{ejecutar_programa, ejecutar_programa_gfx, ejecutar_programa_migui};
-
-// Re-exportar módulo system (blast-core integration)
-pub use module::{
-    MathModule, ModuleContext, ModuleRegistry as BlastModuleRegistry,
-    RyditModule as BlastRyditModule,
-};
 
 // Re-exportar módulos con trait rydit-core (crates externos)
 pub use ry_anim::AnimModule;
