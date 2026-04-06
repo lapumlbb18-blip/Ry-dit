@@ -7,7 +7,7 @@ authors = ["Shield Project"]
 
 [dependencies]
 # Sin dependencias por defecto - migui es puro Rust!
-sdl2 = { version = "0.37", optional = true }  # Backend SDL2 opcional
+ry-backend = { path = "../ry-backend", features = ["sdl2-only"], optional = true }  # Backend SDL2 opcional
 ab_glyph = "0.2"  # ✅ v0.10.10: Fuentes nativas Rust (sin FFI)
 image = "0.25"  # ✅ v0.10.10: Render de texto a imagen
 
@@ -15,4 +15,4 @@ image = "0.25"  # ✅ v0.10.10: Render de texto a imagen
 
 [features]
 default = []
-sdl2 = ["dep:sdl2"]  # Activar con: cargo build --features sdl2
+sdl2 = ["dep:ry-backend"]  # Activar con: cargo build --features sdl2

@@ -25,5 +25,10 @@ pub use raylib_draw::*;
 #[cfg(any(feature = "dual-backend", feature = "sdl2-only", feature = "mobile-hybrid"))]
 pub use sdl2_core::*;
 
+// Re-exportar sdl2 para que los crates que dependen de ry-backend
+// puedan acceder a tipos sdl2 sin depender de sdl2 directamente
+#[cfg(any(feature = "dual-backend", feature = "sdl2-only", feature = "mobile-hybrid"))]
+pub use sdl2;
+
 // Versión del crate
 pub const VERSION: &str = "0.1.0";
