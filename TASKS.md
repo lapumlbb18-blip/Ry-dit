@@ -1,8 +1,8 @@
-# 🛡️ Ry-Dit - Tareas Principales y Paralelas v0.14.0+
+# 🛡️ Ry-Dit - Tareas v0.15.0 → v1.0.0
 
 **Última actualización**: 2026-04-06
-**Versión actual**: v0.14.0 ✅ ry-backend dual + migui conectado + ry-system-ry
-**Próxima versión**: v0.15.0 - Demos Termux-X11 + v-shield platform layer
+**Versión actual**: v0.15.0 ✅ GPU Instancing + FSR 1.0 + Manifiesto Low-End First
+**Próxima versión**: v0.16.0 — Bordes suaves + Opacidad + Shaders avanzados
 
 ---
 
@@ -10,329 +10,370 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Crates** | 24 |
+| **Crates** | 25 |
 | **Errores** | 0 |
 | **Tests** | 95/95 pasando |
 | **Crates publicados** | 2 (ry-god + ry-stream) |
-| **Commit** | `2c97cbb` |
-| **Disco proyecto** | 5.5 GB (target 5.3 GB + cargo 1.3 GB) |
+| **Demos funcionales** | 10+ (Termux-X11) |
+| **GPU Instancing** | 50K partículas, 48 FPS, Adreno 610 |
+| **FSR 1.0** | 960x540 → 1280x720, 48 FPS |
+| **Commit** | `c409f98` |
+| **Tag** | `v0.15.0` |
 
 ---
 
-## 🔴 TAREAS PRINCIPALES (Prioridad Alta)
+## ✅ v0.15.0 COMPLETADA
 
-### 1. Demos funcionales Termux-X11 con RySystem
+| # | Feature | Estado | Notas |
+|---|---------|--------|-------|
+| 1 | GPU Instancing funcional | ✅ | 50K partículas, 48 FPS, Adreno 610/Zink |
+| 2 | FSR 1.0 con FBO | ✅ | Render-to-texture, EASU upscale |
+| 3 | Shaders VAO fixeados | ✅ | instance_vbo, stride 16B, TRIANGLES |
+| 4 | Shaders fragment fixeados | ✅ | vLocalPos, quad sólido |
+| 5 | demo_gpu_instancing | ✅ | SDL2+OpenGL puro, estrellas animadas |
+| 6 | demo_fsr | ✅ | Pipeline FBO → upscale → screen |
+| 7 | patron_gpu_instancing.md | ✅ | Documento completo del patrón |
+| 8 | Launchers Zink | ✅ | Detección automática DISPLAY |
+| 9 | Manifiesto Low-End First | ✅ | Filosofía, propósito, visión |
+| 10 | Docs redes sociales | ✅ | YouTube, X, Reddit, Discord |
+| 11 | gpu_debug, gpu_solid, gpu_triangle, gpu_circle_test | ✅ | Diagnósticos |
+
+### Bugs fixeados en v0.15.0
+
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | `instance_vbo` no bindeado | `glBindBuffer` antes de atributos |
+| 2 | Stride location 0 = 8 bytes | Stride = 16 (4 floats × 4 bytes) |
+| 3 | `QUADS` en Core Profile | 6 vértices (2 triángulos) + `TRIANGLES` |
+| 4 | `vLocalPos` sin escala en FS | `length(vLocalPos * 2.0)` |
+| 5 | `uResolution` no seteado | `inst.set_resolution()` + uniform |
+| 6 | `glViewport` no configurado | `gl::Viewport(0, 0, 1280, 720)` cada frame |
+| 7 | `glScissorTest` cortando | `gl::Disable(gl::SCISSOR_TEST)` |
+| 8 | Shaders desde path relativo | `include_str!()` → `/usr/tmp/` |
+
+---
+
+## 🔴 TAREAS PRINCIPALES (v0.16.0)
+
+### 1. v-shield Platform Layer + Sync
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 6-8h |
+| **Esfuerzo** | 15-20h |
+| **Versión** | v0.16.0-v0.17.0 |
 | **Estado** | ⏳ Pendiente |
 
 **Detalle**:
-- Crear demo usando `RySystem` (ry-system-ry)
-- Integrar menu_bar de migui con TTF real
-- Conectar events-ry input unificado
-- Mini viewport 3D en el panel (ry3d-gfx)
+- Platform detection: `#[cfg(target_os = "...")]` para Linux, Windows, macOS, Android, iOS, WASM
+- Config defaults por plataforma
+- `PlatformSync` real (reemplazar stubs en render_queue.rs)
+- Platform report visual
+- Input abstraction unificada
+- Window management multiplataforma
+
+**Archivos clave**:
+- `crates/v-shield/src/lib.rs` (expandir)
+- `crates/ry-gfx/src/render_queue.rs` (PlatformSync)
 
 ---
 
-### 2. Optimizar ry-rs: desacoplar y completar
+### 2. GitHub Actions CI/CD
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 8-12h |
-| **Estado** | ⏳ Pendiente |
-
-**Problemas identificados**:
-- **Dos RyditModule traits incompatibles**: `ry-core` (JSON-plugin) vs `ry-rs/module.rs` (game-loop hooks)
-- **main.rs**: 5004 líneas, 13 submodulos, 20 deps
-- **No es lib**: sin sección `[lib]`, solo binario
-- **Acoplamiento alto**: ry-rs depende de casi todo
-
-**Plan de optimización**:
-1. Unificar los dos RyditModule traits en uno solo
-2. Agregar `[lib]` a ry-rs/Cargo.toml
-3. Extraer eval/ a crate separado si es posible
-4. Completar module.rs: MathModule → más módulos integrados
-
----
-
-### 3. Completar HUD + Menús de sistema ry
-| Campo | Valor |
-|-------|-------|
-| **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 4-6h |
+| **Esfuerzo** | 4-6h |
+| **Versión** | v0.16.0 |
 | **Estado** | ⏳ Pendiente |
 
 **Detalle**:
-- toolkit-ry: 18 widgets HUD listos, integrar en RySystem
-- Menús de sistema: Save/Load, Settings, Debug overlay
-- rybot CLI: conectar con RySystem para debug en vivo
+- Runner `ubuntu-latest`: build + tests de todo el workspace
+- Runner `windows-latest`: build de crates compatibles
+- Runner `macos-latest`: build de crates compatibles
+- Android cross-compile: `cargo build --target aarch64-linux-android`
+- Artifact: ELF release + crates publish automático
+- Previene regressions
+
+**Archivos a crear**:
+- `.github/workflows/ci.yml`
+- `.github/workflows/release.yml`
 
 ---
 
-### 4. Avanzar demos: niveles 1→2 y 3→4
+### 3. Bordes Suaves + Opacidad
 | Campo | Valor |
 |-------|-------|
 | **Prioridad** | 🔴 ALTA |
-| **EsFuerzo** | 10-15h |
+| **Esfuerzo** | 6-8h |
+| **Versión** | v0.16.0 |
 | **Estado** | ⏳ Pendiente |
 
-**Demos a completar**:
-- **Snake completa**: lógica de juego + input + score
-- **Efectos de partículas**: balas, explosiones, trail (GPU instancing)
-- **Trampas**: plataformas móviles, pinchos, puertas
-- **Nivel 3→4**: Integrar physics + anim + collision + tilemap
+**Detalle**:
+- Anti-aliasing en GPU Instancing: fragment shader con `smoothstep` + `discard`
+- Alpha blending por partícula (ya soportado por `ParticleData.color.a`)
+- Opacidad global de entidades (HUD, menús, transiciones)
+- Fade in/out para transiciones de escenas
+- Texturas con canal alpha (PNG con transparencia)
+
+**Archivos a modificar**:
+- `crates/ry-gfx/shaders/fragment.glsl` (smoothstep + discard)
+- `crates/ry-gfx/src/gpu_instancing.rs` (soporte alpha)
+- `crates/ry-gfx/src/render_queue.rs` (DrawCommand con opacidad)
+
+---
+
+### 4. Shaders Avanzados
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | 🟡 MEDIA |
+| **Esfuerzo** | 8-12h |
+| **Versión** | v0.16.0-v0.17.0 |
+| **Estado** | ⏳ Pendiente |
+
+**Detalle**:
+- **Bloom**: post-proceso con blur + aditivo
+- **Glow**: outline luminoso alrededor de entidades
+- **Outline**: borde de color alrededor de sprites
+- **Blur**: desenfoque gaussiano para fondos/UI
+- **Color grading**: LUT de colores para atmósfera
+- **Chromatic aberration**: efecto retro/distorsión
+- **Pixel art shader**: downscale + nearest neighbor
+
+**Referencia shaders actuales**:
+- `crates/ry-gfx/shaders/fsr_upscale.glsl` (EASU bilinear + edge-adaptive)
+- `crates/ry-gfx/shaders/fsr_sharpen.glsl` (RCAS contrast-adaptive)
+- `crates/ry-gfx/shaders/vertex.glsl` (GPU instancing NDC)
+- `crates/ry-gfx/shaders/fragment.glsl` (quad sólido)
+
+---
+
+### 5. Health Bars + Identificadores de Entidades
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | 🟡 MEDIA |
+| **Esfuerzo** | 4-6h |
+| **Versión** | v0.16.0 |
+| **Estado** | ⏳ Pendiente |
+
+**Detalle**:
+- Barras de vida que **siguen a las entidades** en pantalla
+- Posición: `entity.x, entity.y - entity.height - 10`
+- Color dinámico: verde (100%) → amarillo (50%) → rojo (25%)
+- Fondo oscuro + barra de color (estilo RPG)
+- Nombre/ID encima de la barra
+- Opcional: nivel, estado (vivo/muerto)
+
+**Referencia**: demo_torreta_vs_sprites tiene barras de vida de enemigos
+(`crates/ry-rs/src/bin/demo_torreta_vs_sprites.rs` líneas ~644)
+
+**Archivos a crear**:
+- `crates/ry-gfx/src/health_bar.rs` (nuevo módulo)
+- Integrar en `ry-gfx/src/lib.rs`
+
+---
+
+### 6. HUD de Información + Debug Overlay
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | 🟡 MEDIA |
+| **Esfuerzo** | 4-6h |
+| **Versión** | v0.16.0 |
+| **Estado** | ⏳ Pendiente |
+
+**Detalle**:
+- **FPS counter** en esquina superior
+- **Partículas activas** (count)
+- **Posición de cámara** / entidad seleccionada
+- **Memoria usada** (heap, GPU)
+- **Estado del motor** (playing, paused, menu)
+- **Debug toggle** (F1): hitboxes, colliders, velocidades, raycasts
+- **Mini-map** opcional
+
+**Referencia**: toolkit-ry tiene 18+ widgets HUD
+(`crates/toolkit-ry/src/`)
+
+---
+
+### 7. 3D Viewport + Objetos Genéricos
+| Campo | Valor |
+|-------|-------|
+| **Prioridad** | 🟡 MEDIA |
+| **Esfuerzo** | 10-15h |
+| **Versión** | v0.17.0 |
+| **Estado** | ⏳ Pendiente |
+
+**Detalle**:
+- Viewport 3D embebible en panel visual
+- **Primitivas**: cube, sphere, cylinder, cone, torus, plane
+- **Cámara 3D**: orbit (mouse drag), zoom (scroll), pan (middle-click)
+- **Iluminación**: directional + ambient
+- **Grid de referencia** en el suelo
+- **Transform gizmo** (ejes XYZ)
+- **Material básico**: color sólido, wireframe, texturado
+
+**Estado actual de 3D**:
+- `crates/ry3d-gfx/` existe con 15 funciones
+- `raylib::DrawHandle` ya tiene funciones 3D básicas
+- ry-backend tiene raylib_draw para 3D
+
+**Archivos a crear**:
+- `crates/ry-rs/src/bin/demo_3d_viewport.rs` (demo viewport)
+- `crates/ry3d-gfx/src/viewport.rs` (viewport module)
 
 ---
 
 ## 🟡 TAREAS PARALELAS
 
-### 5. Publicar 5+ crates en crates.io
+### 8. Publicar 5+ crates en crates.io
 | Campo | Valor |
 |-------|-------|
-| **EsFuerzo** | 4-6h |
+| **Esfuerzo** | 4-6h |
+| **Versión** | v0.16.0 |
 | **Estado** | ⏳ Pendiente |
 
-**Crates listos**:
-- ry-backend v0.1.0 (nuevo, dual backend)
-- events-ry v0.1.0 (input unificado)
-- ry-anim v0.12.0 (41 funciones)
-- ry-physics v0.7.34 (2D + N-body)
-- toolkit-ry v0.1.0 (5 temas + 20+ widgets)
-- lizer v0.11.2 (wrapper + AST cache)
+**Crates listos para publicar**:
+- ry-backend v0.1.0
+- events-ry v0.1.0
+- ry-anim v0.12.0
+- ry-gfx v0.10.7
+- toolkit-ry v0.1.0
+- lizer v0.11.2
 
-**4 crates publicados antes**: actualizar y republicar
-
----
-
-### 6. v-shield → Platform layer real
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 15-20h |
-| **Estado** | ⏳ Pendiente |
-
-**Análisis**: v-shield actualmente es solo wrapper de colores raylib. Necesita:
-- Platform detection (Android/Linux/Windows/macOS)
-- Config defaults por OS
-- Dependency verification
-- Platform report visual
-- Reemplazar PlatformSync stubs en ry-gfx/render_queue.rs
+**Publicados ya**: ry-god v0.1.0, ry-stream v0.1.0
 
 ---
 
-### 7. blast-core → Completar executor
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 4-6h |
-| **Estado** | ⏳ Pendiente |
+### 9. Tareas en Paralelo (pueden ir simultáneas)
 
-**Análisis**: blast-core es variable store con scopes. Faltan:
-- `ejecutar()`: ejecutar AST/bytecode
-- `shock_wave()`: propagar cambios a módulos
-- Integrar con eval/mod.rs de ry-rs
+| Tarea | Puede ir con | Dependencia |
+|-------|-------------|-------------|
+| GitHub Actions CI | v-shield platform | Ninguna |
+| Bordes suaves + opacidad | Shaders avanzados | GPU instancing ✅ |
+| Health bars | HUD info | Demo torreta ✅ |
+| 3D viewport | ry3d-gfx primitives | ry3d-gfx ✅ |
+| Publicar crates | CI/CD | Crates estables ✅ |
 
----
-
-### 8. ry-gfx: completar PlatformSync + GPU instancing
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 6-8h |
-| **Estado** | ⏳ Pendiente |
-
-**Análisis**:
-- `PlatformSync` en render_queue.rs: X11 FFI stubs (retorna null)
-- `DoubleBuffer` implementado pero no usado activamente
-- `GPUInstancer` funcional, solo usado por partículas
-- Integrar con RySystem para demos
-
----
-
-### 9. Avanzar un poco más al 3D
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 8-12h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**:
-- Mini viewport 3D en panel visual
-- ry3d-gfx: más primitives (torus, cone, cylinder)
-- Camera3D: orbit, first-person
-- ry-backend raylib_draw: conectar con ry3d-gfx
-
----
-
-### 10. CI/CD GitHub Actions
-| Campo | Valor |
-|-------|-------|
-| **EsFuerzo** | 4-6h |
-| **Estado** | ⏳ Pendiente |
-
-**Detalle**:
-- Build automático en Linux runner
-- Tests automáticos
-- Previene regressions
-- Artifact: ELF release
-
----
-
-## 🔮 TAREAS FUTURO (v0.16.0+)
-
-| # | Tarea | EsFuerzo | Descripción |
-|---|-------|----------|-------------|
-| 11 | Editor visual | 24-32h | RySystem + migui + events-ry + menus |
-| 12 | LAZOS Python bridge async | 20-30h | API completa + async |
-| 13 | ry-stream: DNS + WASM | 12-16h | Async + wasm32 dependencia |
-| 14 | ry-dit triple backend | 15-20h | raylib + SDL2 + WASM |
-| 15 | bgfx_libs referencias | 10-15h | imgui, sokol, SDL3 inspiración |
-| 16 | ry-geometry (Vec3/Mat4) | 12-16h | Base para 3D completo |
-
----
-
-## ✅ TAREAS COMPLETADAS v0.14.0
-
-| # | Tarea | Commit |
-|---|-------|--------|
-| 1 | ry-backend v0.1.0 creado | `9a0c4e7` |
-| 2 | raylib_draw: 2D/3D drawing | `9a0c4e7` |
-| 3 | sdl2_core: TTF profesional + mouse + input | `9a0c4e7` |
-| 4 | migui conectado a ry-backend | `ebe7c81` |
-| 5 | ry-system-ry creado (RySystem) | `ebe7c81` |
-| 6 | Texto TTF anti-alias blended | `9a0c4e7` |
-| 7 | Mouse: click, doble click, derecho, scroll | `9a0c4e7` |
-| 8 | Touch Android: FingerDown/Motion/Up | `9a0c4e7` |
-| 9 | Features backend: raylib/sdl2/dual/mobile | `9a0c4e7` |
-| 10 | 24 crates compilando sin errores | `ebe7c81` |
-| 11 | Documentación actualizada v0.14.0 | `2c97cbb` |
-
----
-
-## 💾 ALMACENAMIENTO: Análisis y Limpieza
-
-### **Estado actual**
-| Ubicación | Tamaño |
-|-----------|--------|
-| `target/` (build artifacts) | 5.3 GB |
-| `~/.cargo/registry/` (crates descargados) | ~1.0 GB |
-| `~/.cargo/git/` (deps git) | ~100 MB |
-| **Total proyecto** | **5.5 GB** |
-| **Total home/cargo** | **~1.3 GB** |
-
-### **¿Es normal?**
-✅ **SÍ, es completamente normal.** Cargo:
-- Descarga todas las dependencias en `~/.cargo/registry/` (no se borran)
-- Compila todo en `target/` (incluye deps, debug info, múltiples perfiles)
-- Cada `cargo build` recompila lo cambiado y sus dependientes
-- `cargo clean` borra `target/` pero el próximo build tarda más
-
-### **Qué se puede hacer**
-
-| Acción | Libera | Costo |
-|--------|--------|-------|
-| `cargo clean` | ~5.3 GB | Siguiente build lento |
-| `cargo clean -p ry-rs` | ~2 GB | Solo limpia ry-rs |
-| Eliminar `~/.cargo/registry/src/` | ~500 MB | Re-descarga si se necesita |
-| `[profile.dev] debug = false` | ~1 GB | Menos debug info |
-| `CARGO_TARGET_DIR=/path/externo` | Mueve target | USB/SD externa |
-
-### **Recomendación**
-```bash
-# Limpieza segura (no rompe nada)
-cargo clean
-
-# Config para menos debug info
-# En Cargo.toml workspace:
-[profile.dev]
-debug = false      # Ya está
-opt-level = 1      # Ya está
-
-# Si el espacio es crítico:
-# Mover target a SD externa
-export CARGO_TARGET_DIR=/sdcard/rust-target
+**Combinación recomendada v0.16.0**:
+```
+Semana 1: CI/CD + Bordes suaves (paralelo)
+Semana 2: Health bars + HUD info (paralelo)
+Semana 3: Shaders avanzados (bloom, glow)
+Semana 4: Testing + documentación
 ```
 
 ---
 
-## 📋 DEPENDENCIAS ENTRE TAREAS
+### 10. ry-rs: Desacoplar y Completar
+| Campo | Valor |
+|-------|-------|
+| **Esfuerzo** | 8-12h |
+| **Estado** | ⏳ Pendiente |
+
+**Problemas**:
+- main.rs: ~5000 líneas, acoplamiento alto
+- Dos RyditModule traits incompatibles
+- Solo binario, falta `[lib]`
+
+**Plan**:
+1. Unificar traits
+2. Agregar `[lib]`
+3. Extraer eval/ si es posible
+
+---
+
+## 🔮 ROADMAP v0.16.0 → v1.0.0
+
+| Versión | Feature | Esfuerzo | Target |
+|---------|---------|----------|--------|
+| **v0.16.0** | Bordes suaves + Opacidad + Shaders + Health bars + HUD | 20-30h | 2-3 meses |
+| **v0.17.0** | 3D Viewport + Objetos genéricos + Cámara orbit | 15-20h | 3-4 meses |
+| **v0.18.0** | v-shield completo + GitHub Actions + CI multi-plataforma | 15-20h | 4-5 meses |
+| **v0.19.0** | Texturas + Sprite animation system + Tilemap editor | 20-25h | 5-6 meses |
+| **v0.20.0** | Motor multiplataforma completo (Linux/Win/Mac/Android/WASM) | 25-30h | 6-8 meses |
+| **v1.0.0** | Motor estable: editor visual, scripting, docs, comunidad | 50-80h | 12-18 meses |
+
+---
+
+## 📊 DEPENDENCIAS ENTRE TAREAS
 
 ```
-ry-backend ✅
+v0.15.0 ✅ (GPU Instancing + FSR)
     │
-    ├──→ migui conectado ✅
+    ├──→ v0.16.0: Bordes suaves + Opacidad (usa GPU instancer ✅)
     │       │
-    │       └──→ ry-system-ry ✅
-    │               │
-    │               └──→ Demos Termux-X11 (Tarea 1)
-    │                       │
-    │                       └──→ Editor visual (Tarea 11)
+    │       └──→ Shaders avanzados (bloom, glow, outline)
     │
-    └──→ v-shield platform layer (Tarea 6)
+    ├──→ v0.16.0: Health bars + HUD (usa demo_torreta ✅)
+    │       │
+    │       └──→ Debug overlay
+    │
+    ├──→ v0.16.0: GitHub Actions CI (independiente)
+    │
+    ├──→ v0.17.0: 3D Viewport (usa ry3d-gfx ✅)
+    │       │
+    │       └──→ Iluminación + materiales
+    │
+    └──→ v0.18.0: v-shield platform (base para todo)
             │
-            └──→ CI/CD (Tarea 10)
-
-ry-rs optimización (Tarea 2)
-    │
-    ├──→ Unificar RyditModule traits
-    │       └──→ blast-core ejecutar() (Tarea 7)
-    │
-    └──→ HUD + menús sistema ry (Tarea 3)
-            │
-            └──→ Demos niveles 1→2, 3→4 (Tarea 4)
-
-LAZOS funcional ✅
-    │
-    └──→ LAZOS Python async (Tarea 12)
-    └──→ ry-stream DNS + WASM (Tarea 13)
-    └──→ ry-dit triple backend (Tarea 14)
+            └──→ Multiplataforma real
+                    │
+                    └──→ v1.0.0: Motor completo
 ```
 
 ---
 
-## 📊 ANÁLISIS DE CRATES TEMPRANOS
+## 📋 ARCHIVOS CLAVE PARA PRÓXIMAS VERSIONES
 
-### v-shield
-| Campo | Valor |
-|-------|-------|
-| **Estado** | ⚠️ Mínimo (colores + init_window) |
-| **Propósito original** | Platform layer multiplataforma |
-| **Realidad actual** | Wrapper delgado de raylib |
-| **Superado por** | ry-gfx (ya hace todo el rendering) |
-| **Acción** | Expandir a platform layer real (detect OS, config, report) |
+### Shaders existentes (base para avanzados)
+```
+crates/ry-gfx/shaders/
+├── vertex.glsl          # GPU instancing NDC
+├── fragment.glsl        # Quad sólido
+├── fsr_upscale.glsl     # EASU bilinear + edge-adaptive
+├── fsr_sharpen.glsl     # RCAS contrast-adaptive
+├── fragment_test.glsl   # Test sólido
+└── [nuevos: bloom.glsl, glow.glsl, outline.glsl, blur.glsl]
+```
 
-### blast-core
-| Campo | Valor |
-|-------|-------|
-| **Estado** | ✅ Variable store completo |
-| **Propósito** | Executor de valores del lenguaje |
-| **Features** | Memoria con scopes, input/voz, arrays |
-| **Faltante** | `ejecutar()` (AST/bytecode), `shock_wave()` (propagación) |
-| **Acción** | Completar ejecutar() integrando con eval/mod.rs |
+### Demos diagnósticos (no borrar, útiles para debug)
+```
+crates/ry-rs/src/bin/
+├── gpu_debug.rs         # 9 partículas grandes para debug
+├── gpu_solid.rs         # Quads sólidos sin círculo
+├── gpu_triangle.rs      # Triángulo NDC mínimo
+├── gpu_circle_test.rs   # 9 círculos con raylib (confirmado funciona)
+├── demo_gpu_instancing.rs  # Demo principal 50K estrellas
+└── demo_fsr.rs          # FSR con pipeline FBO
+```
 
-### PlatformSync (ry-gfx)
-| Campo | Valor |
-|-------|-------|
-| **Estado** | ⚠️ Stubs X11 FFI |
-| **Double buffering** | ✅ Implementado en DoubleBuffer |
-| **Render queue** | ✅ Funcional (8192 commands, FIFO) |
-| **GPU instancing** | ✅ OpenGL funcional |
-| **Acción** | Completar PlatformSync con X11 real o remover stubs |
+### Documentos de referencia
+```
+patron_gpu_instancing.md  # Pipeline funcional SDL2+OpenGL
+MANIFIESTO.md             # Filosofía Low-End First
+DESCRIPCION_YOUTUBE.md    # Texto para canal YouTube
+DESCRIPCION_TWITTER.md    # Bio + 6 tweets listos
+POST_REDDIT.md            # Post para Reddit
+DISCORD_SERVER.md         # Config servidor Discord
+```
 
-### RyditModule Trait (doble definición)
-| Ubicación | Firma | Propósito |
-|-----------|-------|-----------|
-| `ry-core/src/lib.rs` | `execute(command, params) → ModuleResult` | JSON-plugin system |
-| `ry-rs/src/module.rs` | `update(ctx), render(ctx)` | Game-loop hooks |
-| **Problema** | ❌ Incompatibles | Dos traits con mismo nombre |
-| **Acción** | Unificar en un solo trait con ambos usos |
+---
+
+## 🌐 PUBLICACIÓN EN REDES
+
+- **GitHub**: ✅ Publicado (`c409f98`, tag `v0.15.0`)
+- **YouTube**: Bio + descripción lista (`DESCRIPCION_YOUTUBE.md`)
+- **X/Twitter**: Bio + 6 tweets listos (`DESCRIPCION_TWITTER.md`)
+- **Reddit**: Post listo para r/rust, r/gamedev (`POST_REDDIT.md`)
+- **Discord**: Estructura de servidor lista (`DISCORD_SERVER.md`)
+- **Manifiesto**: `MANIFIESTO.md` — filosofía completa
 
 ---
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.14.0 - Tareas Documentadas**
+**🛡️ Ry-Dit v0.15.0 — GPU Instancing + FSR 1.0 + Manifiesto**
 
-*0 errores | 24 crates | 95 tests | 10 tareas v0.14.0 completadas*
+*25 crates · 0 errores · 48 FPS Adreno 610 · Low-End First*
 
-**Próxima: v0.15.0 - Demos Termux-X11 + optimización ry-rs**
+**Próximo: v0.16.0 — Bordes suaves + Opacidad + Shaders + Health bars + CI/CD**
 
 </div>
