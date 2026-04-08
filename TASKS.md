@@ -1,7 +1,7 @@
 # 🛡️ Ry-Dit - Tareas v0.15.0 → v1.0.0
 
-**Última actualización**: 2026-04-07
-**Versión actual**: v0.16.0-alpha ✅ v-shield v0.2.0 Platform Layer + Sync Primitives
+**Última actualización**: 2026-04-08
+**Versión actual**: v0.16.0-alpha ✅ CI 3 plataformas + 6 crates publicados
 **Próxima versión**: v0.16.0 — Bordes suaves + Opacidad + Shaders avanzados
 
 ---
@@ -12,13 +12,13 @@
 |---------|-------|
 | **Crates** | 25 |
 | **Errores** | 0 |
-| **Tests** | 70/70+ pasando (workspace completo) |
-| **Crates publicados** | 4 (ry-god + ry-stream v0.2.0 + v-shield v0.2.0) |
+| **Tests** | 70+ pasando |
+| **Crates publicados** | 6 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx) |
+| **CI/CD** | ✅ Linux + Windows + macOS |
 | **Demos funcionales** | 10+ (Termux-X11) |
 | **GPU Instancing** | 50K partículas, 48 FPS, Adreno 610 |
 | **FSR 1.0** | 960x540 → 1280x720, 48 FPS |
-| **Commit** | ver `git log` |
-| **Tag** | `v0.16.0-alpha` (pendiente) |
+| **Commits** | `b82b048` |
 
 ---
 
