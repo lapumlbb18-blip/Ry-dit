@@ -1,8 +1,8 @@
 # Ry-Dit - ESTRUCTURA DEL PROYECTO v0.15.0
 
-**Última actualización**: 2026-04-07
-**Versión**: v0.15.0 GPU Instancing + FSR + 8 demos Termux-X11 + 25 crates
-**Estado**: `cargo check --workspace`: 0 errores | 25 crates compilando | 95+ tests pasando
+**Última actualización**: 2026-04-08
+**Versión**: v0.16.0-alpha CI 3 plataformas + 6 crates publicados
+**Estado**: `cargo check --workspace`: 0 errores | 25 crates compilando | 70+ tests pasando
 
 ---
 
@@ -32,7 +32,7 @@ shield-project/
 │   ├── ry-anim/                # 0.12.0  Easing + Disney + ilusiones + ciencia + action
 │   ├── ry-science/             #        Geometry 2D + stats + Bezier
 │   ├── ry-script/              # 0.8.2  Script loading
-│   ├── ry-stream/              # 0.1.0  LAN streaming (WebSocket) ✅ crates.io
+│   ├── ry-stream/              # 0.2.0  LAN streaming (WebSocket) ✅ crates.io (updated)
 │   ├── ry-god/                 # 0.1.0  Security & efficiency ✅ crates.io
 │   ├── ry-loader/              #        Module loader
 │   ├── ry-rs/                  #        Main binary + lib + demos + eval
@@ -46,7 +46,7 @@ shield-project/
 │   ├── events-ry/              # 0.1.0  Input unificado 3 capas + Sdl2InputBackend
 │   ├── ry-backend/             # 0.1.0  Dual backend: raylib drawing + SDL2 TTF/input/audio
 │   ├── ry-config/              # 0.1.0  Config parser (entities, levels, checkpoints) - zero deps
-│   └── v-shield/               #        Platform layer (pendiente)
+│   └── v-shield/               # 0.2.0  Platform layer + sync ✅ crates.io
 │   └── ~~ry-ecs~~/             #        🗑️ Eliminado (-1,143 líneas)
 │
 ├── crates/ry-rs/src/
@@ -213,7 +213,12 @@ shield-project/
 │   ├── lib.rs                  # API pública
 │   └── cache.rs                # AST cache real (FNV-1a, 256 entradas, LRU)
 │
+├── .github/workflows/
+│   └── main.yaml               # CI/CD: Linux + Windows + macOS
 ├── docs/
+│   ├── informe_sesion_v0.16.0_alpha.md
+│   ├── sesion_v0.16.0_alpha_publicacion.md
+│   ├── informe_1ra_build.md
 │   ├── panorama_v0.13.0.md
 │   ├── plan_limpieza_v0.13.0.md
 │   ├── vision_estrategica.md
@@ -387,13 +392,16 @@ Código .rydit
 | Crate | Versión | Estado | Notas |
 |-------|---------|--------|-------|
 | ry-god | 0.1.0 | ✅ crates.io | Security & efficiency |
-| ry-stream | 0.1.0 | ✅ crates.io | LAN streaming |
+| ry-stream | 0.2.0 | ✅ crates.io | LAN streaming (updated) |
+| v-shield | 0.2.0 | ✅ crates.io | Platform layer + sync (NEW) |
+| ry-backend | 0.1.0 | ✅ crates.io | Dual backend (NEW) |
+| migui | 0.4.1 | ✅ crates.io | Immediate Mode GUI (NEW) |
 | ry-core | 0.8.2 | Listo | Core traits |
 | ry-lexer | 0.1.0 | Listo | Zero-copy |
 | ry-parser | 0.1.0 | Listo | Error recovery |
 | ry-anim | 0.12.0 | Listo | 41 funciones, 58 tests |
 | ry-physics | 0.7.34 | Listo | 2D projectile + N-body |
-| ry-gfx | 0.10.7 | Listo | Graphics FFI |
+| ry-gfx | 0.10.8 | ✅ crates.io | Graphics FFI (migui optional) |
 | ry3d-gfx | 0.1.0 | Listo | 3D primitives |
 | toolkit-ry | 0.1.0 | Listo | UI toolkit (5 temas) |
 | lizer | 0.11.2 | Listo | AST cache real (FNV-1a) |
@@ -431,10 +439,10 @@ Código .rydit
 
 <div align="center">
 
-**Ry-Dit v0.15.0 -- ESTRUCTURA ACTUALIZADA**
+**Ry-Dit v0.16.0-alpha -- ESTRUCTURA ACTUALIZADA**
 
-*25 crates | ~30K+ líneas Rust | GPU Instancing 50K@48FPS | FSR 1.0 | 8 demos Termux-X11 | 95+ tests | 2 crates publicados*
+*25 crates | CI 3 plataformas ✅ | 6 crates publicados | 70+ tests | 0 errores*
 
-*Última actualización: 2026-04-07*
+*Última actualización: 2026-04-08*
 
 </div>

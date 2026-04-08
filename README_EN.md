@@ -6,12 +6,11 @@
 
 **"David vs Goliath - A game engine in Rust, built 100% on a Redmi Note 8"**
 
-[![Version](https://img.shields.io/badge/version-v0.11.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
-[![Tests](https://img.shields.io/badge/tests-260%20passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Version](https://img.shields.io/badge/version-v0.16.0--alpha-blue.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
+[![Tests](https://img.shields.io/badge/tests-70%2B%20passing-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
-[![raylib](https://img.shields.io/badge/raylib-5.5-purple.svg)](https://www.raylib.com/)
-[![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
-[![ab_glyph](https://img.shields.io/badge/ab_glyph-0.2-yellow.svg)](https://crates.io/crates/ab_glyph)
+[![CI](https://img.shields.io/badge/CI-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/actions)
+[![Crates](https://img.shields.io/badge/crates-6%20published-orange.svg)](https://crates.io)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Linux%20%7C%20Windows-lightgrey.svg)](https://github.com/lapumlbb18-blip/Ry-Dit)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-Dit/blob/main/LICENSE)
 

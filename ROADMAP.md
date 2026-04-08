@@ -1,7 +1,7 @@
 # Ry-Dit - ROADMAP v0.15.0 -> v1.0.0
 
-**Última actualización**: 2026-04-07
-**Versión actual**: v0.15.0 ✅ GPU Instancing + FSR + 8 demos Termux-X11 + 25 crates
+**Última actualización**: 2026-04-08
+**Versión actual**: v0.16.0-alpha ✅ CI 3 plataformas + 6 crates publicados
 
 ---
 
@@ -12,8 +12,9 @@
 | **Crates** | 25 |
 | **Líneas Rust** | ~30K+ |
 | **Compilación** | 0 errores |
-| **Tests** | 95+ pasando |
-| **Crates publicados** | 2 (ry-god + ry-stream) |
+| **Tests** | 70+ pasando |
+| **Crates publicados** | 6 (ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx) |
+| **CI/CD** | ✅ Linux + Windows + macOS |
 | **GPU Instancing** | 50K partículas a 48 FPS (Adreno 610 vía Zink) |
 | **FSR 1.0** | 960x540 → 1280x720 a 48 FPS (FBO render-to-texture) |
 | **Demos Termux-X11** | 8 funcionales |
@@ -76,7 +77,31 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.16.0 - Bordes Suaves, Opacidad, Shaders Avanzados (PLANIFICADA)
+### v0.16.0-alpha — CI 3 plataformas + 6 crates publicados (COMPLETADA ✅)
+
+**Fecha**: 2026-04-08
+**Commits**: `ebf95fd` → `8276241`
+
+| Feature | Estado |
+|---------|--------|
+| v-shield v0.2.0: Platform layer + sync primitives | ✅ |
+| ry-gfx v0.10.8: GPU Instancing + FSR + migui optional | ✅ crates.io |
+| ry-stream v0.2.0: v-shield sync integrado | ✅ crates.io |
+| ry-backend v0.1.0: Dual backend publicado | ✅ crates.io |
+| migui v0.4.1: Immediate Mode GUI publicado | ✅ crates.io |
+| ry-god v0.1.0: Security (previo) | ✅ crates.io |
+| GitHub Actions CI: Linux + Windows + macOS | ✅ |
+| 65 errores de tests fixeados en ry-rs | ✅ |
+| ry-loader fixes: cfg(unix), unsafe, Result<String> | ✅ |
+| Box<dyn RyditModule> implementa RyditModule | ✅ |
+| ry-rs bin test: 31/31 pasando | ✅ |
+| docs/informe_1ra_build.md: Detalles CI | ✅ |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.16.0 - Bordes Suaves, Opacidad, Shaders Avanzados (EN PROGRESO)
 
 **Prioridad**: ALTA
 
@@ -182,8 +207,9 @@ v0.12.0 ████████████████████ 100%
 v0.13.0 ████████████████████ 100%
 v0.14.0 ████████████████████ 100%
 v0.15.0 ████████████████████ 100%
-v0.16.0 ░░░░░░░░░░░░░░░░░░░░   0%
-v1.0.0  ██████░░░░░░░░░░░░░░  30%
+v0.16.0-alpha ████████████████████ 100%
+v0.16.0   ██████████░░░░░░░░░░░░ 50%
+v1.0.0  ████████░░░░░░░░░░░░░░  40%
 ```
 
 ---
@@ -198,6 +224,7 @@ v1.0.0  ██████░░░░░░░░░░░░░░  30%
 | **v0.13.0** | **2026-04-05** | **10+** | **23** | **0** | **95+** | **events-ry + Panel Visual + RyBot IPC + LAZOS** |
 | **v0.14.0** | **2026-04-06** | **df4ec17** | **25** | **0** | **95+** | **ry-backend dual + juego completo + 25 crates** |
 | **v0.15.0** | **2026-04-07** | **—** | **25** | **0** | **95+** | **GPU Instancing 50K@48FPS + FSR 1.0 + 8 demos Termux-X11** |
+| **v0.16.0-alpha** | **2026-04-08** | **8276241** | **25** | **0** | **70+** | **CI 3 plataformas + 6 crates publicados + 65 tests fixeados** |
 | v0.16.0 | 2026-04-xx | — | 25+ | — | — | Bordes suaves, opacidad, shaders avanzados |
 | v0.17.0 | 2026-04-xx | — | 25+ | — | — | 3D en PC |
 | v0.18.0 | 2026-04-xx | — | 25+ | — | — | v-shield platform layer + GitHub Actions |
@@ -221,9 +248,9 @@ v1.0.0  ██████░░░░░░░░░░░░░░  30%
 
 <div align="center">
 
-**Ry-Dit v0.15.0 - ROADMAP**
+**Ry-Dit v0.16.0-alpha - ROADMAP**
 
-*GPU Instancing 50K@48FPS | FSR 1.0 | 8 demos Termux-X11 | 25 crates | 95+ tests | 2 crates publicados*
+*CI 3 plataformas ✅ | 6 crates publicados | 65 tests fixeados | 0 errores*
 
 *Próxima versión: v0.16.0 - Bordes suaves, opacidad, shaders avanzados*
 
