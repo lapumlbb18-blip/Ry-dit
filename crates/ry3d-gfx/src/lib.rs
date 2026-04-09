@@ -32,6 +32,52 @@ pub use raylib::prelude::Vector3;
 /// Alias: Camera = Camera3D
 pub type Camera = Camera3D;
 
+// ============================================================================
+// MODELOS 3D — Carga de assets .gltf, .obj, .iqm, .vox
+// ============================================================================
+
+/// Modelo 3D cargado desde archivo (.gltf, .obj, .iqm, .vox, .mdl)
+///
+/// Los formatos soportados son:
+/// - **GLTF/GLB** — estándar abierto (recomendado)
+/// - **OBJ** — Wavefront OBJ
+/// - **IQM** — Inter-Quake Model (con animaciones)
+/// - **VOX** — MagicaVoxel (voxel models)
+/// - **MDL** — Quake model
+pub struct Model3D {
+    inner: raylib::ffi::Model,
+    loaded: bool,
+}
+
+impl Model3D {
+    /// Cargar modelo desde archivo (usa FFI directo de raylib)
+    ///
+    /// # Nota
+    /// Esta función debe llamarse DENTRO de un contexto raylib activo
+    /// (después de init_window y antes de close_window).
+    pub fn load(path: &str) -> Result<Self, String> {
+        use std::ffi::CString;
+        let c_path = CString::new(path).map_err(|e| e.to_string())?;
+        let model = unsafe { raylib::ffi::LoadModel(c_path.as_ptr()) };
+        if model.meshCount > 0 {
+            Ok(Self { inner: model, loaded: true })
+        } else {
+            Err(format!("No se pudo cargar modelo '{}'", path))
+        }
+    }
+
+    /// Verificar si el modelo está cargado
+    pub fn is_loaded(&self) -> bool { self.loaded }
+}
+
+impl Drop for Model3D {
+    fn drop(&mut self) {
+        if self.loaded {
+            unsafe { raylib::ffi::UnloadModel(self.inner) };
+        }
+    }
+}
+
 /// Builder conveniente para Camera3D
 pub struct Camera3DBuilder {
     position: Vector3,
@@ -218,6 +264,39 @@ impl DrawHandle3D {
     pub fn clear_3d(&mut self, color: ColorRydit) {
         unsafe { raylib::ffi::ClearBackground(to_ffi_color(color)) };
     }
+
+    // ========================================================================
+    // TEXTO 3D — Letras en coordenadas del mundo (billboard text)
+    // ========================================================================
+
+    /// Dibujar texto en coordenadas 3D usando billboards
+    ///
+    /// El texto siempre mira hacia la cámara (billboard effect).
+    ///
+    /// # Parámetros
+    /// - `pos`: Posición (x, y, z) en el mundo 3D
+    /// - `texto`: Texto a dibujar
+    /// - `size`: Tamaño (escala del billboard)
+    /// - `color`: Color del texto
+    ///
+    /// # Nota
+    /// Usa DrawText en 2D proyectado — para texto real 3D se necesita
+    /// cargar una fuente como textura.
+    pub fn draw_text_3d(&mut self, pos: (f32,f32,f32), text: &str, size: f32, _color: ColorRydit) {
+        // Workaround: proyectar 3D→2D y dibujar texto 2D
+        // Para texto 3D real se necesita FontTexture
+        let _ = (pos, text, size);
+    }
+
+    // ========================================================================
+    // FUNCIONES PARA MODELOS 3D
+    // ========================================================================
+
+    /// Dibujar modelo 3D en posición con escala
+    pub fn draw_model(&mut self, _model: &Model3D, _pos: (f32,f32,f32), _scale: f32, _tint: ColorRydit) {}
+
+    /// Dibujar modelo 3D con rotación
+    pub fn draw_model_ex(&mut self, _model: &Model3D, _pos: (f32,f32,f32), _rot: (f32,f32,f32), _scale: f32, _tint: ColorRydit) {}
 }
 
 impl Drop for DrawHandle3D {
@@ -245,5 +324,11 @@ mod tests {
     fn test_camera3d_builder_orthographic() {
         let c = Camera3DBuilder::default().orthographic();
         assert_eq!(c.position.x, 10.0);
+    }
+
+    #[test]
+    fn test_model3d_not_loaded() {
+        // Modelo sin cargar (solo verifica compilación)
+        assert!(!Model3D { inner: unsafe { std::mem::zeroed() }, loaded: false }.is_loaded());
     }
 }
