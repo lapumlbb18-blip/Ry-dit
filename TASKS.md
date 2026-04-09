@@ -102,6 +102,33 @@
 
 ---
 
+## 🟡 TAREAS PARALELAS — SDL2 Avanzado + Raylib + main.rs
+
+### SDL2 Avanzado en Editores (sensación profesional, no toy)
+
+| # | Tarea | Filosofía | Esfuerzo |
+|---|-------|-----------|----------|
+| 1 | **SDL2 avanzado en editores** | Raylib avanzado pintado — editores con sensación profesional, no toy | 10-15h |
+| 2 | **SDL2 ≠ Dear ImGui dependencia** | ImGui es fascinante pero SDL2 nunca dependió de él — aprovechar SDL2 puro al máximo | 6-8h |
+| 3 | **Raylib single-thread ligero** | Raylib es tan ligero — librería single-thread en Rust — usarlo sin sobrecargar | 4-6h |
+| 4 | **SDL2 potencial máximo** | Buscar el máximo de SDL2 sin sobrecargar — eficiencia sobre features | 8-12h |
+
+### main.rs — El Corazón del Motor
+
+| Aspecto | Estado Actual | Meta | Inspiración |
+|---------|--------------|------|------------|
+| **main.rs líneas** | ~5K líneas | 50K-500K líneas | Motores grandes tienen main de millones o 500K líneas |
+| **Qué hacer** | Expandir masivamente | Sistema completo de desarrollo | Godot engine.cpp, Unity core |
+| **Filosofía** | Mínimo viable | Motor completo con todo integrado | Los grandes motores crecen desde main |
+
+**Señales claras**:
+- main.rs de 5K es diminuto — los grandes engines tienen main de 500K+ líneas
+- Hay que expandir main.rs con TODO el sistema integrado
+- Rust permite esto sin overhead — la magia de Rust hace posible lo imposible
+- Cada línea de main.rs es una capability del motor
+
+---
+
 ## 📋 CRATES SIN README (6 pendientes)
 
 | Crate | README | Tests | Publish ready? |
