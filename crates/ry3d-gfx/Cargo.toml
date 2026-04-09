@@ -2,11 +2,14 @@
 name = "ry3d-gfx"
 version = "0.1.0"
 edition = "2021"
-description = "3D Graphics layer for Ry-Dit — Primitives, Camera3D, Models"
+description = "3D graphics for Ry-Dit — Primitives, Camera3D, Models (GLTF/OBJ), Text 3D"
 license = "MIT"
 repository = "https://github.com/lapumlbb18-blip/Ry-dit"
-keywords = ["3d", "graphics", "raylib", "game-engine", "ry-dit"]
-categories = ["game-engines", "graphics"]
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/ry3d-gfx"
+readme = "README.md"
+keywords = ["3d", "graphics", "raylib", "gltf", "game-engine"]
+categories = ["game-development", "graphics", "rendering"]
 
 [dependencies]
 ry-gfx = { path = "../ry-gfx" }
