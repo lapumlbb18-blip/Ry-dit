@@ -2,10 +2,14 @@
 name = "ry-config"
 version = "0.1.0"
 edition = "2021"
-description = "Config parser for Ry-Dit (.rydit config files, entities, levels)"
+description = "Zero-dependency config parser for .rydit files — entities, levels, checkpoints"
 license = "MIT"
-keywords = ["config", "parser", "game-engine", "ry-dit"]
-categories = ["config", "game-development"]
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/ry-config"
+readme = "README.md"
+keywords = ["config", "parser", "game-engine", "ry-dit", "pure-rust"]
+categories = ["config", "game-development", "parsing"]
 
 [dependencies]
 # Zero external dependencies - pure Rust
