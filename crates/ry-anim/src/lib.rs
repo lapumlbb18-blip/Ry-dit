@@ -20,6 +20,7 @@ pub mod illusions;
 pub mod effects;
 pub mod science_anim;
 pub mod action_assets;
+pub mod action_sprite; // 🆕 v0.16.1: Conecta action_assets + ry-gfx rendering
 
 pub use disney::{
     appeal, arc_path, exaggerate, follow_through, overlapping_action, pose_to_pose,
@@ -44,6 +45,11 @@ pub use science_anim::{
 pub use action_assets::{
     animation_blend, animation_state_machine, frame_animation,
     sprite_events, sprite_flip, sprite_sheet_parse,
+};
+
+pub use action_sprite::{
+    blend_clips, AnimatedSprite, AnimationClip, BlendResult, FlipInfo,
+    FrameRect, LoopMode, RenderCommand, SpriteColor, SpriteSheet, StateInfo,
 };
 
 use ry_core::{ModuleError, ModuleResult, RyditModule};
