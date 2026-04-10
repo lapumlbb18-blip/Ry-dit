@@ -115,20 +115,26 @@
 
 ### 🎬 Videos
 
-#### Varios Demos — Recorrido General
-> Múltiples demos funcionando en Termux-X11 (Adreno 610)
+#### Varios Demos — Recorrido General (4 partes)
+> Múltiples demos funcionando en Termux-X11 (Adreno 610) — 4:29 min total
 
-![Varios Demos](ry-galery_contenido/varios_demos.mp4)
+**Parte 1** — 1:07 | ![Varios Demos Parte 1](ry-galery_contenido/varios_demos_parte_1.gif)
+
+**Parte 2** — 1:07 | ![Varios Demos Parte 2](ry-galery_contenido/varios_demos_parte_2.gif)
+
+**Parte 3** — 1:07 | ![Varios Demos Parte 3](ry-galery_contenido/varios_demos_parte_3.gif)
+
+**Parte 4** — 1:08 | ![Varios Demos Parte 4](ry-galery_contenido/varios_demos_parte_4.gif)
 
 #### Demo Torreta vs Sprites — Juego Completo
-> 3 niveles, cámara 2D, AI, audio, game states
+> 3 niveles, cámara 2D, AI, audio, game states — 1:48 min
 
 ![Torreta Demo](ry-galery_contenido/demo_torreta_vs_sprites.mp4)
 
 #### Demo GPU Instancing — 50K Partículas
-> GPU instancing con smoothstep AA a 48 FPS
+> GPU instancing con smoothstep AA a 48 FPS — 5 seg
 
-![Partículas GPU](ry-galery_contenido/demo_particles.mp4)
+![Partículas GPU](ry-galery_contenido/demo_particles.gif)
 
 ### 📸 Capturas de Pantalla
 
