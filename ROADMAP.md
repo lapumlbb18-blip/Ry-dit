@@ -1,7 +1,8 @@
 # Ry-Dit - ROADMAP v0.16.1 → v1.0.0
 
-**Última actualización**: 2026-04-09
+**Última actualización**: 2026-04-10
 **Versión actual**: v0.16.1 ✅ Snake + Buscaminas + Action Sprite + Tilemap 2.0 + 12 crates publicados
+**Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
 
@@ -17,6 +18,31 @@
 | **Demos funcionales** | 15+ |
 | **Launchers** | 8 con auto-detección DISPLAY + Zink |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
+
+---
+
+## 🧭 VISIÓN ESTRATÉGICA — 3 Pilares de Ry-Dit
+
+Ry-Dit no es solo un motor de juegos. Son **3 capacidades simultáneas**:
+
+### 🎮 Pilar 1: Gaming 2D/3D
+- Juegos 2D completos (Snake, Buscaminas, Torreta)
+- GPU Instancing (50K partículas a 48 FPS)
+- FSR 1.0 nativo, sprite animation, tilemap con texturas
+- Camino: sprites reales → iluminación 2D → escenas → editor visual
+
+### 🎬 Pilar 2: Animaciones + Ciencia
+- 12 principios Disney (ry-anim)
+- 8 simulaciones científicas (ry-science: Bezier, ondas, L-System)
+- 6 ilusiones ópticas animadas
+- Efectos post-proceso (bloom, glow, blur, morph)
+- Camino: GIF → más efectos → simulaciones interactivas
+
+### 📡 Pilar 3: Streaming + Comunidad en Tiempo Real
+- ry-stream: LAN streaming con WebSocket
+- v-shield: Platform layer + sync primitives
+- Servidor WebSocket + portal web
+- Camino: multiplayer LAN → streaming en vivo → comunidad
 
 ---
 
@@ -76,83 +102,99 @@ Progreso: ████████████████████ 100%
 
 ## Versiones Planificadas
 
-### v0.17.0 — Sprite Sheets + Texturas + Emojis + GIF
+### v0.17.0 — Sprite Sheets + Texturas + Emojis + GIF + Audio
 
-**Prioridad**: ALTA
+**Prioridad**: ALTA | **Pilar**: Gaming + Animaciones
 
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Sprite sheets reales | ⏳ | 6-8h |
-| Texturas en demos | ⏳ | 4-6h |
-| Soporte emojis TTF | ⏳ | 4-6h |
-| Carga/edición GIF | ⏳ | 8-12h |
-| Audio/Mix más completo | ⏳ | 6-8h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad
-
-**Prioridad**: ALTA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| NIS (NVIDIA Image Scaling) | ⏳ | 6-8h |
-| FSR 2.0 (temporal) | ⏳ | 20-30h |
-| Opacidad/transparencia | ⏳ | 4-6h |
-| Fade in/out transiciones | ⏳ | 2-4h |
-| Texturas con canal alpha | ⏳ | 4-6h |
+| Feature | Estado | Tiempo est. | Inspiración | Detalle |
+|---------|--------|-------------|-------------|---------|
+| Sprite sheets reales | ⏳ | 6-8h | Todos los engines | Texturas con grid de frames |
+| Texturas en demos | ⏳ | 4-6h | — | Reemplazar rectángulos |
+| Soporte emojis TTF | ⏳ | 4-6h | Todos | UI más expresiva |
+| Carga/edición GIF | ⏳ | 8-12h | LÖVE2D | Animaciones desde archivo |
+| Audio OGG/MP3 + mixer | ⏳ | 8-12h | Godot Audio buses | Música + mixing + spatial |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
 ```
 
-### v0.19.0 — Letras 3D + Panel Visual + Rybot CLI+GUI
+### v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D
 
-**Prioridad**: MEDIA
+**Prioridad**: ALTA | **Pilar**: Gaming + Render
 
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Letras 3D en demos | ⏳ | 6-8h |
-| Panel visual mejorado | ⏳ | 8-12h |
-| migui mejoras | ⏳ | 4-6h |
-| Rybot CLI completo | ⏳ | 10-15h |
-| Rybot GUI | ⏳ | 12-16h |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.20.0 — Editor + LAZOS Multi-lenguaje
-
-**Prioridad**: MEDIA
-
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| Editor separado (o 2-in-1) | ⏳ | 20-30h |
-| LAZOS Python bridge | ⏳ | 20-30h |
-| LAZOS C++ bridge | ⏳ | 15-20h |
-| LAZOS C bridge | ⏳ | 10-15h |
-| Tilemap editor visual | ⏳ | 12-16h |
+| Feature | Estado | Tiempo est. | Inspiración | Detalle |
+|---------|--------|-------------|-------------|---------|
+| NIS (NVIDIA Image Scaling) | ⏳ | 6-8h | NVIDIA | Alternativa a FSR |
+| FSR 2.0 (temporal) | ⏳ | 20-30h | AMD FSR 2.0 | Upscaling con temporal |
+| Opacidad/transparencia | ⏳ | 4-6h | — | Alpha en texturas |
+| Fade in/out transiciones | ⏳ | 2-4h | Unity loading | Transiciones entre escenas |
+| Texturas con canal alpha | ⏳ | 4-6h | — | PNG con transparencia |
+| Iluminación 2D dinámica | ⏳ | 10-15h | Godot Light2D | Luces puntuales 2D |
+| Sombras 2D | ⏳ | 8-12h | Godot Light2D shadows | Raycasting shadows |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
 ```
 
-### v1.0.0 — Motor Completo + GitHub Actions + SAZ
+### v0.19.0 — Letras 3D + Panel Visual + Rybot CLI+GUI + Escenas
 
-**Prioridad**: META
+**Prioridad**: MEDIA | **Pilar**: Gaming + Ciencia
 
-| Feature | Estado | Tiempo est. |
-|---------|--------|-------------|
-| GitHub Actions CI completo | ⏳ | 6-8h |
-| SAZ (Shield Archive Format) | ⏳ | 10-15h |
-| Motor estable | ⏳ | 20-30h |
-| Documentación completa | ⏳ | 15-20h |
-| Videos tutoriales | ⏳ | 10-15h |
-| 15+ crates publicados | ⏳ | 5-10h |
-| Comunidad | ⏳ | — |
+| Feature | Estado | Tiempo est. | Inspiración | Detalle |
+|---------|--------|-------------|-------------|---------|
+| Letras 3D en demos | ⏳ | 6-8h | ry3d-gfx | Texto 3D real en demos |
+| Panel visual mejorado | ⏳ | 8-12h | — | migui + toolkit-ry |
+| migui mejoras | ⏳ | 4-6h | Dear ImGui | Más widgets + temas |
+| Rybot CLI completo | ⏳ | 10-15h | — | CLI para crear proyectos |
+| Rybot GUI | ⏳ | 12-16h | — | GUI de Rybot CLI |
+| **Sistema de escenas** | ⏳ | 8-12h | Godot PackedScene | .ryscene archivos |
+| **Scene transitions** | ⏳ | 4-6h | Unity loading | Fade entre niveles |
+| **Scene tree visual** | ⏳ | 12-16h | Godot | Editor de escenas |
+| **Input map configurable** | ⏳ | 6-8h | Godot Input Map | .rydit-input rebind |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v0.20.0 — Editor + LAZOS Multi-lenguaje + Asset Pipeline
+
+**Prioridad**: MEDIA | **Pilar**: Gaming + Streaming
+
+| Feature | Estado | Tiempo est. | Inspiración | Detalle |
+|---------|--------|-------------|-------------|---------|
+| Editor separado (o 2-in-1) | ⏳ | 20-30h | Godot/Unity | Editor visual de juegos |
+| LAZOS Python bridge | ⏳ | 20-30h | Unity Python | Scripting Python en Ry-Dit |
+| LAZOS C++ bridge | ⏳ | 15-20h | Godot GDExtension | Native extensions C++ |
+| LAZOS C bridge | ⏳ | 10-15h | — | Native extensions C |
+| Tilemap editor visual | ⏳ | 12-16h | Godot TileMap | Editor GUI de tilemap |
+| **Asset pipeline** | ⏳ | 8-12h | Bevy asset server | Carga automática + hot reload |
+| **Layout Flexbox UI** | ⏳ | 15-20h | Bevy UI / Godot | migui con layout system |
+| **Hot reload de assets** | ⏳ | 6-8h | Unity reimport | Recarga sin reiniciar |
+| **Stream multiplayer LAN** | ⏳ | 10-15h | — | ry-stream multiplayer |
+
+```
+Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+```
+
+### v1.0.0 — Motor Completo + GitHub Actions + SAZ + Comunidad
+
+**Prioridad**: META | **Pilar**: Todos
+
+| Feature | Estado | Tiempo est. | Detalle |
+|---------|--------|-------------|---------|
+| GitHub Actions CI completo | ⏳ | 6-8h | Linux + Windows + macOS + Android |
+| SAZ (Shield Archive Format) | ⏳ | 10-15h | Paquete de proyecto |
+| Motor estable | ⏳ | 20-30h | API estable + sin breaking changes |
+| Documentación completa | ⏳ | 15-20h | Docs para todos los crates |
+| Videos tutoriales | ⏳ | 10-15h | YouTube + Discord |
+| 15+ crates publicados | ⏳ | 5-10h | Todos los crates con README |
+| Comunidad | ⏳ | — | Discord + docs + ejemplos |
+| **Debugger .rydit** | ⏳ | 10-15h | Breakpoints + step-through |
+| **Profiler CPU/GPU** | ⏳ | 8-12h | Profiling integrado |
+| **Post-processing** | ⏳ | 6-8h | Bloom, glow, blur, color grade |
+| **Export desktop nativo** | ⏳ | 6-8h | Linux + Windows + macOS builds |
+| **Plugin registry** | ⏳ | 8-12h | crates.io integration |
+| **Render pipelines** | ⏳ | 10-15h | Forward + Deferred como features |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
@@ -178,16 +220,51 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 ## Objetivos a Largo Plazo
 
+### 🎮 Gaming
 1. **Motor 2D/3D completo** para Termux-X11 y escritorio
-2. **Lenguaje de scripting** .rydit en español
-3. **Comunidad** de desarrolladores hispanohablantes
-4. **Multiplataforma**: Android, Linux, Windows
-5. **Editor visual** integrado (separado o 2-in-1)
-6. **GPU instancing** para rendimiento masivo
-7. **LAZOS** bridge: Python, C++, C
-8. **DLSS/NIS/FSR 2.0** para upscaling de calidad
-9. **GIF animation** soporte completo
-10. **GitHub Actions** CI/CD automático
+2. **GPU instancing** para rendimiento masivo (250K+ partículas)
+3. **Iluminación 2D + sombras** dinámicas
+4. **Editor visual** integrado (separado o 2-in-1)
+5. **DLSS/NIS/FSR 2.0** para upscaling de calidad
+6. **GIF animation** soporte completo
+7. **Sprite sheets reales** con texturas
+8. **Sistema de escenas** con transiciones
+
+### 🎬 Animaciones + Ciencia
+9. **12 principios Disney** mejorados con más efectos
+10. **Simulaciones científicas** interactivas (ondas, cristalización, L-System)
+11. **Ilusiones ópticas** animadas en tiempo real
+12. **Post-processing** (bloom, glow, blur, morph, color grading)
+13. **Emojis TTF** para UI expresiva
+14. **Efectos de partículas** configurables (emisores, 50K-250K GPU)
+
+### 📡 Streaming + Comunidad
+15. **Streaming LAN** en vivo con ry-stream
+16. **Multiplayer LAN** para juegos en red local
+17. **Comunidad** de desarrolladores hispanohablantes
+18. **Multiplataforma**: Android, Linux, Windows, macOS
+19. **LAZOS** bridge: Python, C++, C
+20. **GitHub Actions** CI/CD automático
+21. **SAZ formato** de archivo (paquete de proyecto)
+22. **Lenguaje de scripting** .rydit en español
+23. **Debugger + Profiler** integrados
+
+---
+
+## 📐 Filosofía de Adaptación — No copiar, adaptar al estilo Ry-Dit
+
+### Reglas (detalle en `TASKS_2.md`):
+
+| Si el motor X hace... | Ry-Dit adapta así... |
+|----------------------|---------------------|
+| Godot Input Map simple | → `.rydit-input` archivo simple |
+| Godot PackedScene | → `.ryscene` texto legible |
+| Bevy asset server | → `AssetServer::load()` idiomático |
+| Unity SRP configurable | → `ry-gfx` features en Cargo.toml |
+| Unreal Lumen AAA | → Iluminación 2D simple low-end |
+| Unity Asset Store | → Plugin registry con crates.io |
+
+**Regla de oro**: Si funciona en Adreno 610, funciona en todo. Binario <1MB (o <5MB con features). RAM <128MB. GPU mínima: OpenGL ES 2.0.
 
 ---
 
@@ -197,6 +274,10 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 *12 crates publicados ✅ | 144 tests ✅ | 15+ demos ✅ | 0 errores*
 
-*Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF*
+*3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
+
+*Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF + Audio*
+
+*Ver `TASKS_2.md` para análisis estratégico completo*
 
 </div>

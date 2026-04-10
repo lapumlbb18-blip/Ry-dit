@@ -17,7 +17,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit/blob/main/LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-12%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
-[📖 Documentación](#-documentación) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo en v0.16.1](#-qué-hay-de-nuevo-en-v0161) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates Publicados](#-crates-publicados) • [🎯 Roadmap](#-roadmap)
+[📖 Documentación](#-documentación) • [🖼️ Galería](#-galería) • [🆕 Qué hay de nuevo en v0.16.1](#-qué-hay-de-nuevo-en-v0161) • [🏆 Logros](#-logros) • [🎮 Demos](#-demos-funcionales) • [📦 Crates Publicados](#-crates-publicados) • [🎯 Roadmap](#-roadmap) • [📚 Archivos del Proyecto](#-archivos-del-proyecto)
 
 </div>
 
@@ -111,6 +111,37 @@
 
 ---
 
+## 🖼️ Galería
+
+### 🎬 Videos
+
+#### Varios Demos — Recorrido General
+> Múltiples demos funcionando en Termux-X11 (Adreno 610)
+
+![Varios Demos](ry-galery_contenido/varios_demos.mp4)
+
+#### Demo Torreta vs Sprites — Juego Completo
+> 3 niveles, cámara 2D, AI, audio, game states
+
+![Torreta Demo](ry-galery_contenido/demo_torreta_vs_sprites.mp4)
+
+#### Demo GPU Instancing — 50K Partículas
+> GPU instancing con smoothstep AA a 48 FPS
+
+![Partículas GPU](ry-galery_contenido/demo_particles.mp4)
+
+### 📸 Capturas de Pantalla
+
+| Captura | Descripción |
+|---------|-------------|
+| ![Torreta](ry-galery_contenido/1er_demo_torreta.jpg) | 🎮 Demo Torreta — Nivel 1 |
+| ![Torreta 2](ry-galery_contenido/1er_demo_torreta2.jpg) | 🎮 Demo Torreta — Combate |
+| ![Sprites](ry-galery_contenido/carga_sprite.jpg) | 🎬 Carga de sprites + tilemap |
+| ![Crates](ry-galery_contenido/directorio_crates.jpg) | 📦 Directorio de crates del workspace |
+| ![TTF](ry-galery_contenido/ttf.jpg) | 🔤 Texto TTF + sprites PNG |
+
+---
+
 ## 🎮 Demos Funcionales
 
 | Demo | Descripción | Launcher | Tamaño |
@@ -154,13 +185,34 @@
 
 ## 🎯 Roadmap
 
-| Versión | Features | Target |
-|---------|----------|--------|
-| **v0.17.0** | Sprite sheets reales + Texturas + Emojis TTF + GIF | 2-3 meses |
-| **v0.18.0** | Audio/Mix completo + DLSS/NIS + Bordes suaves | 3-4 meses |
-| **v0.19.0** | Letras 3D en demos + Panel visual + Rybot CLI+GUI | 4-5 meses |
-| **v0.20.0** | Editor separado (o 2-in-1) + LAZOS (Python+C+++C) | 6-8 meses |
-| **v1.0.0** | GitHub Actions + SAZ + Motor completo | 12-18 meses |
+**3 Pilares**: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad
+
+| Versión | Features | Pilar | Target |
+|---------|----------|-------|--------|
+| **v0.17.0** | Sprite sheets reales + Texturas + Emojis TTF + GIF + Audio OGG | Gaming + Animaciones | 2-3 meses |
+| **v0.18.0** | Audio/Mix completo + DLSS/NIS + Iluminación 2D + Sombras | Gaming + Render | 3-4 meses |
+| **v0.19.0** | Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI | Gaming + Ciencia | 4-5 meses |
+| **v0.20.0** | Editor visual + Asset pipeline + LAZOS (Python+C+++C) + Multiplayer LAN | Gaming + Streaming | 6-8 meses |
+| **v1.0.0** | GitHub Actions + SAZ + Motor completo + Debugger + Comunidad | Todos | 12-18 meses |
+
+> 📋 Ver `ROADMAP.md` y `TASKS_2.md` para plan detallado con análisis comparativo de motores.
+
+---
+
+## 📚 Archivos del Proyecto
+
+| Archivo | Descripción |
+|---------|-------------|
+| `ROADMAP.md` | Plan de versiones v0.16.1 → v1.0.0 con 3 pilares |
+| `TASKS.md` | Tareas completadas y pendientes (43 tareas) |
+| `TASKS_2.md` | 🆕 Análisis estratégico — Comparativa con Unreal, Unity, Godot, Bevy |
+| `QWEN.md` | Bitácora técnica — Lecciones, bugs fixeados, comandos |
+| `ESTRUCTURA.md` | Estructura del workspace y crates |
+| `docs/ANALISIS.md` | Análisis y seguimiento sesión a sesión |
+| `docs/GUIA_USUARIO.md` | Guía de instalación y uso |
+| `MANIFIESTO.md` | Filosofía Low-End First |
+| `CONTRIBUTING.md` | Guía de contribución |
+| `ry-galery_contenido/` | 🆕 Videos + screenshots + assets para demos |
 
 ---
 
@@ -170,6 +222,10 @@
 
 *23 crates · 144 tests · 12 crates.io · 15+ demos · 0 errores · Low-End First*
 
-**Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF**
+*3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
+
+**Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF + Audio**
+
+> 📋 `ROADMAP.md` · `TASKS.md` · `TASKS_2.md` (análisis estratégico) · `QWEN.md` (bitácora)
 
 </div>

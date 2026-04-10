@@ -1,8 +1,9 @@
 # 🛡️ Ry-Dit - Tareas Completadas y Pendientes
 
-**Última actualización**: 2026-04-09
+**Última actualización**: 2026-04-10
 **Versión actual**: v0.16.1 ✅ Snake + Buscaminas + Action Sprite + Tilemap 2.0
-**Próxima versión**: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF
+**Próxima versión**: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF + Audio
+**Análisis estratégico**: Ver `TASKS_2.md` — Comparativa con Unreal, Unity, Godot, Bevy
 
 ---
 
@@ -17,6 +18,19 @@
 | **Demos funcionales** | 15+ |
 | **Launchers** | 8 con auto-detección DISPLAY |
 | **Commits esta sesión** | 15+ |
+
+---
+
+## 🧭 3 PILARES DE RY-DIT — Visión general
+
+### 🎮 Pilar 1: Gaming 2D/3D
+Juegos completos, GPU instancing, FSR, sprite animation, tilemap → escenas → editor visual
+
+### 🎬 Pilar 2: Animaciones + Ciencia
+12 Disney principles + simulaciones científicas + ilusiones ópticas → GIF → post-processing
+
+### 📡 Pilar 3: Streaming + Comunidad en Tiempo Real
+ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 ---
 
@@ -60,45 +74,81 @@
 
 ## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.17.0)
 
-| # | Tarea | Esfuerzo | Dependencia |
-|---|-------|----------|-------------|
-| 1 | **Sprite sheets reales** | 6-8h | Cuando traigas los assets |
-| 2 | **Texturas en demos** | 4-6h | #1 Sprite sheets |
-| 3 | **Soporte emojis TTF** | 4-6h | Independiente |
-| 4 | **Carga/edición GIF** | 8-12h | Independiente |
-| 5 | **Audio/Mix más completo** | 6-8h | Independiente |
+### Gaming + Animaciones
+
+| # | Tarea | Esfuerzo | Dependencia | Inspiración | Detalle |
+|---|-------|----------|-------------|-------------|---------|
+| 1 | **Sprite sheets reales** | 6-8h | Cuando traigas assets | Todos | Texturas con grid de frames |
+| 2 | **Texturas en demos** | 4-6h | #1 Sprite sheets | — | Reemplazar rectángulos por PNG |
+| 3 | **Soporte emojis TTF** | 4-6h | Independiente | Todos | UI más expresiva |
+| 4 | **Carga/edición GIF** | 8-12h | Independiente | LÖVE2D | Animaciones desde archivo |
+| 5 | **Audio OGG/MP3 + mixer** | 8-12h | Independiente | Godot Audio | Música + mixing + spatial 2D |
 
 ---
 
 ## 🟡 TAREAS PENDIENTES — PRIORIDAD MEDIA (v0.18.0-v0.19.0)
 
-| # | Tarea | Esfuerzo | Versión |
-|---|-------|----------|---------|
-| 6 | NIS (NVIDIA Image Scaling) | 6-8h | v0.18.0 |
-| 7 | FSR 2.0 (temporal upscaling) | 20-30h | v0.18.0 |
-| 8 | Opacidad/transparencia | 4-6h | v0.18.0 |
-| 9 | Letras 3D en demos | 6-8h | v0.19.0 |
-| 10 | Panel visual mejorado | 8-12h | v0.19.0 |
-| 11 | migui mejoras | 4-6h | v0.19.0 |
-| 12 | Rybot CLI completo | 10-15h | v0.19.0 |
-| 13 | Rybot GUI | 12-16h | v0.19.0 |
+### Render + Iluminación (v0.18.0)
+
+| # | Tarea | Esfuerzo | Inspiración | Detalle |
+|---|-------|----------|-------------|---------|
+| 6 | NIS (NVIDIA Image Scaling) | 6-8h | NVIDIA | Alternativa a FSR |
+| 7 | FSR 2.0 (temporal upscaling) | 20-30h | AMD FSR 2.0 | Upscaling con temporal |
+| 8 | Opacidad/transparencia | 4-6h | — | Alpha en texturas |
+| 9 | Fade in/out transiciones | 2-4h | Unity | Transiciones entre escenas |
+| 10 | Texturas con canal alpha | 4-6h | — | PNG con transparencia |
+| 11 | **Iluminación 2D dinámica** | 10-15h | Godot Light2D | Luces puntuales 2D |
+| 12 | **Sombras 2D** | 8-12h | Godot | Raycasting shadows |
+
+### UI + Escenas + Ciencia (v0.19.0)
+
+| # | Tarea | Esfuerzo | Inspiración | Detalle |
+|---|-------|----------|-------------|---------|
+| 13 | Letras 3D en demos | 6-8h | ry3d-gfx | Texto 3D real |
+| 14 | Panel visual mejorado | 8-12h | — | migui + toolkit-ry |
+| 15 | migui mejoras | 4-6h | Dear ImGui | Más widgets + temas |
+| 16 | Rybot CLI completo | 10-15h | — | CLI para crear proyectos |
+| 17 | Rybot GUI | 12-16h | — | GUI de Rybot CLI |
+| 18 | **Sistema de escenas** | 8-12h | Godot PackedScene | `.ryscene` archivos |
+| 19 | **Scene transitions** | 4-6h | Unity loading | Fade entre niveles |
+| 20 | **Scene tree visual** | 12-16h | Godot | Editor de escenas |
+| 21 | **Input map configurable** | 6-8h | Godot Input Map | `.rydit-input` rebind |
 
 ---
 
 ## 🔮 TAREAS FUTURO (v0.20.0-v1.0.0)
 
-| # | Tarea | Esfuerzo | Versión |
+### Editor + LAZOS + Streaming (v0.20.0)
+
+| # | Tarea | Esfuerzo | Inspiración | Detalle |
+|---|-------|----------|-------------|---------|
+| 22 | Editor separado (o 2-in-1) | 20-30h | Godot/Unity | Editor visual de juegos |
+| 23 | LAZOS Python bridge | 20-30h | Unity Python | Scripting Python en Ry-Dit |
+| 24 | LAZOS C++ bridge | 15-20h | Godot GDExtension | Native extensions C++ |
+| 25 | LAZOS C bridge | 10-15h | — | Native extensions C |
+| 26 | Tilemap editor visual | 12-16h | Godot TileMap | Editor GUI de tilemap |
+| 27 | **Asset pipeline** | 8-12h | Bevy asset server | Carga automática + hot reload |
+| 28 | **Layout Flexbox UI** | 15-20h | Bevy UI / Godot | migui con layout system |
+| 29 | **Hot reload de assets** | 6-8h | Unity reimport | Recarga sin reiniciar |
+| 30 | **Stream multiplayer LAN** | 10-15h | — | ry-stream multiplayer |
+
+### Motor Completo + Comunidad (v1.0.0)
+
+| # | Tarea | Esfuerzo | Detalle |
 |---|-------|----------|---------|
-| 14 | Editor separado (o 2-in-1) | 20-30h | v0.20.0 |
-| 15 | LAZOS Python bridge | 20-30h | v0.20.0 |
-| 16 | LAZOS C++ bridge | 15-20h | v0.20.0 |
-| 17 | LAZOS C bridge | 10-15h | v0.20.0 |
-| 18 | Tilemap editor visual | 12-16h | v0.20.0 |
-| 19 | GitHub Actions CI completo | 6-8h | v1.0.0 |
-| 20 | SAZ (Shield Archive Format) | 10-15h | v1.0.0 |
-| 21 | Motor estable v1.0 | 20-30h | v1.0.0 |
-| 22 | Videos tutoriales | 10-15h | v1.0.0 |
-| 23 | 15+ crates publicados | 5-10h | v1.0.0 |
+| 31 | GitHub Actions CI completo | 6-8h | Linux + Windows + macOS + Android |
+| 32 | SAZ (Shield Archive Format) | 10-15h | Paquete de proyecto |
+| 33 | Motor estable | 20-30h | API estable + sin breaking changes |
+| 34 | Documentación completa | 15-20h | Docs para todos los crates |
+| 35 | Videos tutoriales | 10-15h | YouTube + Discord |
+| 36 | 15+ crates publicados | 5-10h | Todos con README |
+| 37 | Comunidad | — | Discord + docs + ejemplos |
+| 38 | **Debugger .rydit** | 10-15h | Breakpoints + step-through |
+| 39 | **Profiler CPU/GPU** | 8-12h | Profiling integrado |
+| 40 | **Post-processing** | 6-8h | Bloom, glow, blur, color grade |
+| 41 | **Export desktop nativo** | 6-8h | Linux + Windows + macOS builds |
+| 42 | **Plugin registry** | 8-12h | crates.io integration |
+| 43 | **Render pipelines** | 10-15h | Forward + Deferred como features |
 
 ---
 
@@ -162,12 +212,47 @@
 
 ---
 
+## 📐 ANÁLISIS COMPARATIVO — Inspiración de motores grandes
+
+> Ver `TASKS_2.md` para el análisis completo comparando Unreal, Unity, Godot 4 y Bevy.
+
+### Lo que adaptaremos (resumen):
+
+| Feature | Inspiración | Versión Ry-Dit |
+|---------|-------------|----------------|
+| Input Map | Godot | `.rydit-input` archivo simple |
+| Escenas | Godot PackedScene | `.ryscene` texto legible |
+| Asset Server | Bevy | `AssetServer::load()` idiomático |
+| Render Pipeline | Unity SRP | `ry-gfx` features en Cargo.toml |
+| Iluminación | Godot Light2D | Luces 2D low-end, no AAA |
+| UI Layout | Bevy UI / Godot | migui con Flexbox |
+| Audio Mixer | Godot Audio buses | Mixer ligero con spatial 2D |
+| Scene Tree | Godot | Editor visual de escenas |
+| Hot Reload | Unity | Recarga sin reiniciar |
+| Plugin System | crates.io | Registry de crates Ry-Dit |
+
+### Lo que NO adaptaremos:
+
+| Feature | Por qué NO | Alternativa Ry-Dit |
+|---------|-----------|-------------------|
+| ECS puro | ry-ecs eliminado, no volver | Entity system actual + mejoras |
+| Nanite/Lumen | Requiere hardware AAA | GPU instancing + iluminación 2D simple |
+| Ray Tracing | Hardware imposible en low-end | Sombras 2D con raycasting |
+| Vulkan ahora | 30-50h, OpenGL ES 2.0 basta | Fallback mantenido |
+| Asset Store | No hay comunidad aún | crates.io es suficiente |
+
+---
+
 <div align="center">
 
 **🛡️ Ry-Dit v0.16.1 — Tareas Completadas y Pendientes**
 
 *23 crates · 144 tests · 12 crates.io · 15+ demos · 0 errores*
 
-**Próximo: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF**
+*3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
+
+**Próximo: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF + Audio**
+
+*Ver `TASKS_2.md` para análisis estratégico completo*
 
 </div>
