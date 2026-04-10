@@ -127,9 +127,9 @@
 **Parte 4** — 1:08 | ![Varios Demos Parte 4](ry-galery_contenido/varios_demos_parte_4.gif)
 
 #### Demo Torreta vs Sprites — Juego Completo
-> 3 niveles, cámara 2D, AI, audio, game states — 1:48 min
+> 3 niveles, cámara 2D, AI, audio (disparos), game states — 1:48 min
 
-![Torreta Demo](ry-galery_contenido/demo_torreta_vs_sprites.mp4)
+![Torreta Demo](ry-galery_contenido/demo_torreta_vs_sprites.gif)
 
 #### Demo GPU Instancing — 50K Partículas
 > GPU instancing con smoothstep AA a 48 FPS — 5 seg
