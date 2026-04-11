@@ -14,7 +14,7 @@
 // Controles táctiles en pantalla (como RayGunz)
 pub mod touch_controls;
 
-// Necesario para tipos raylib internos usados en re-exports
+// Necesario para tipos raylib internos
 #[allow(unused_imports)]
 use raylib::prelude::*;
 use ry_gfx::ColorRydit;

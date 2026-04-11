@@ -68,3 +68,7 @@ path = "src/bin/demo_3d_primitives.rs"
 [[bin]]
 name = "demo_sdl2_raylib_fusion"
 path = "src/bin/demo_sdl2_raylib_fusion.rs"
+
+[[bin]]
+name = "demo_3d_touch"
+path = "src/bin/demo_3d_touch.rs"
