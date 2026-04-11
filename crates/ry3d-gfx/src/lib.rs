@@ -136,13 +136,15 @@ impl Default for Camera3DBuilder {
 ///
 /// d.draw_text("HUD", 10, 10, 20, ColorRydit::Blanco);
 /// ```
-pub struct DrawHandle3D;
+pub struct DrawHandle3D<'a> {
+    _camera: &'a Camera3D,
+}
 
-impl DrawHandle3D {
+impl<'a> DrawHandle3D<'a> {
     /// Entrar modo 3D
-    pub fn new(_camera: &Camera3D) -> Self {
-        unsafe { raylib::ffi::BeginMode3D((*_camera).into()) };
-        Self
+    pub fn new(camera: &'a Camera3D) -> Self {
+        unsafe { raylib::ffi::BeginMode3D((*camera).into()) };
+        Self { _camera: camera }
     }
 
     /// Dibujar cubo 3D (sólido)
@@ -269,23 +271,14 @@ impl DrawHandle3D {
     // TEXTO 3D — Letras en coordenadas del mundo (billboard text)
     // ========================================================================
 
-    /// Dibujar texto en coordenadas 3D usando billboards
+    /// Dibujar texto en coordenadas 3D (proyectando 3D→2D)
     ///
-    /// El texto siempre mira hacia la cámara (billboard effect).
-    ///
-    /// # Parámetros
-    /// - `pos`: Posición (x, y, z) en el mundo 3D
-    /// - `texto`: Texto a dibujar
-    /// - `size`: Tamaño (escala del billboard)
-    /// - `color`: Color del texto
-    ///
-    /// # Nota
-    /// Usa DrawText en 2D proyectado — para texto real 3D se necesita
-    /// cargar una fuente como textura.
-    pub fn draw_text_3d(&mut self, pos: (f32,f32,f32), text: &str, size: f32, _color: ColorRydit) {
-        // Workaround: proyectar 3D→2D y dibujar texto 2D
-        // Para texto 3D real se necesita FontTexture
-        let _ = (pos, text, size);
+    /// ⚠️ PENDIENTE: GetWorldToScreen no está expuesto en raylib FFI Rust.
+    /// Se necesita usar raylib prelude directamente o implementar la proyección manual.
+    /// Por ahora usa DrawText 2D en el HUD para texto.
+    pub fn draw_text_3d(&mut self, _pos: (f32,f32,f32), _text: &str, _size: f32, _color: ColorRydit) {
+        // TODO: Implementar con GetWorldToScreen cuando esté disponible en FFI
+        // Alternativa: usar raylib prelude Camera3D.get_world_to_screen()
     }
 
     // ========================================================================
@@ -293,13 +286,33 @@ impl DrawHandle3D {
     // ========================================================================
 
     /// Dibujar modelo 3D en posición con escala
-    pub fn draw_model(&mut self, _model: &Model3D, _pos: (f32,f32,f32), _scale: f32, _tint: ColorRydit) {}
+    pub fn draw_model(&mut self, model: &Model3D, pos: (f32,f32,f32), scale: f32, tint: ColorRydit) {
+        let pos3 = raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 };
+        let scale3 = raylib::ffi::Vector3 { x: scale, y: scale, z: scale };
+        let tint_color = to_ffi_color(tint);
+        unsafe {
+            raylib::ffi::DrawModel(model.inner, pos3, scale, tint_color);
+        }
+    }
 
-    /// Dibujar modelo 3D con rotación
-    pub fn draw_model_ex(&mut self, _model: &Model3D, _pos: (f32,f32,f32), _rot: (f32,f32,f32), _scale: f32, _tint: ColorRydit) {}
+    /// Dibujar modelo 3D con rotación y escala por eje
+    pub fn draw_model_ex(&mut self, model: &Model3D, pos: (f32,f32,f32), rot_axis: (f32,f32,f32), rot_angle: f32, scale: (f32,f32,f32), tint: ColorRydit) {
+        let pos3 = raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 };
+        let rot_axis3 = raylib::ffi::Vector3 { x: rot_axis.0, y: rot_axis.1, z: rot_axis.2 };
+        let scale3 = raylib::ffi::Vector3 { x: scale.0, y: scale.1, z: scale.2 };
+        let tint_color = to_ffi_color(tint);
+        unsafe {
+            raylib::ffi::DrawModelEx(model.inner, pos3, rot_axis3, rot_angle, scale3, tint_color);
+        }
+    }
+
+    /// Dibujar modelo 3D con rotación (escala uniforme)
+    pub fn draw_model_ex_uniform(&mut self, model: &Model3D, pos: (f32,f32,f32), rot_axis: (f32,f32,f32), rot_angle: f32, scale: f32, tint: ColorRydit) {
+        self.draw_model_ex(model, pos, rot_axis, rot_angle, (scale, scale, scale), tint);
+    }
 }
 
-impl Drop for DrawHandle3D {
+impl<'a> Drop for DrawHandle3D<'a> {
     fn drop(&mut self) {
         unsafe { raylib::ffi::EndMode3D() };
     }

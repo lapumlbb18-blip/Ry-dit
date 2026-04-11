@@ -7,8 +7,8 @@
 #   ./sync_drive_bg.sh --watch  # Continuo cada 5 minutos
 #   ./sync_drive_bg.sh --stop   # Detener sync en segundo plano
 
-REMOTE="gdrive:"  # Configurar con: rclone config
-DEST="gdrive:Ry-dit-backup"
+REMOTE="alucard18:"  # Configurar con: rclone config
+DEST="alucard18:Ry-dit-backup"
 PROJECT_DIR="/data/data/com.termux/files/home/shield-project"
 PID_FILE="$PROJECT_DIR/.sync_drive.pid"
 LOG_FILE="$PROJECT_DIR/.sync_drive.log"

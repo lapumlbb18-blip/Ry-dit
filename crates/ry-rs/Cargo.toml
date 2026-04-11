@@ -23,6 +23,7 @@ ry-parser = { path = "../ry-parser" }  # 🆕 v0.11.2
 v-shield = { path = "../v-shield" }
 blast-core = { path = "../blast-core" }
 ry-gfx = { path = "../ry-gfx", features = ["migui"] }
+ry3d-gfx = { path = "../ry3d-gfx" }
 migui = { path = "../migui", features = ["sdl2"] }
 ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
@@ -59,3 +60,7 @@ path = "src/bin/demo_audio_mixer.rs"
 [[bin]]
 name = "demo_transitions"
 path = "src/bin/demo_transitions.rs"
+
+[[bin]]
+name = "demo_3d_primitives"
+path = "src/bin/demo_3d_primitives.rs"
