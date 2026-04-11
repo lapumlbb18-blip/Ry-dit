@@ -1,7 +1,7 @@
-# Ry-Dit - ROADMAP v0.16.1 → v1.0.0
+# Ry-Dit - ROADMAP v0.17.0 → v1.0.0
 
-**Última actualización**: 2026-04-10
-**Versión actual**: v0.16.1 ✅ Snake + Buscaminas + Action Sprite + Tilemap 2.0 + 12 crates publicados
+**Última actualización**: 2026-04-11
+**Versión actual**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer + UTF-8 fix + Organización
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -15,8 +15,8 @@
 | **Compilación** | 0 errores |
 | **Tests** | 144/144 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 15+ |
-| **Launchers** | 8 con auto-detección DISPLAY + Zink |
+| **Demos funcionales** | 18+ |
+| **Launchers** | 11 con auto-detección DISPLAY + Zink |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
 ---
@@ -102,28 +102,37 @@ Progreso: ████████████████████ 100%
 
 ## Versiones Planificadas
 
-### v0.17.0 — Sprite Sheets + Texturas + Emojis + GIF + Audio
+### v0.17.0 — Demo Militar + Emoji Atlas + Audio Mixer + Organización ✅
 
-**Prioridad**: ALTA | **Pilar**: Gaming + Animaciones
+**Fecha**: 2026-04-11
+
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| Demo Militar | ✅ | Soldado procedural + partículas + granadas en arco + salto |
+| Granadas con trayectoria parabólica | ✅ | Física de gravedad en arco |
+| Partículas de disparo/explosión | ✅ | Efectos visuales |
+| Salto del soldado | ✅ | Física de salto con input |
+| Emoji Atlas UTF-8 | ✅ | TTF_RenderUTF8_Blended fix |
+| 25+ emojis procedurales | ✅ | Sprites PNG generados en runtime |
+| Atlas de texturas | ✅ | Textura única con grid de emojis |
+| Audio Mixer 4 buses | ✅ | Master, SFX, Music, Ambient |
+| Spatial 2D audio | ✅ | Volumen/panning por posición |
+| Fade in/out | ✅ | Transiciones suaves de volumen |
+| docs/ ignorado en git | ✅ | docs/ y launchers/ en .gitignore |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D
+
+**Prioridad**: ALTA | **Pilar**: Gaming + Animaciones + Render
 
 | Feature | Estado | Tiempo est. | Inspiración | Detalle |
 |---------|--------|-------------|-------------|---------|
 | Sprite sheets reales | ⏳ | 6-8h | Todos los engines | Texturas con grid de frames |
 | Texturas en demos | ⏳ | 4-6h | — | Reemplazar rectángulos |
-| Soporte emojis TTF | ⏳ | 4-6h | Todos | UI más expresiva |
 | Carga/edición GIF | ⏳ | 8-12h | LÖVE2D | Animaciones desde archivo |
-| Audio OGG/MP3 + mixer | ⏳ | 8-12h | Godot Audio buses | Música + mixing + spatial |
-
-```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
-```
-
-### v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D
-
-**Prioridad**: ALTA | **Pilar**: Gaming + Render
-
-| Feature | Estado | Tiempo est. | Inspiración | Detalle |
-|---------|--------|-------------|-------------|---------|
 | NIS (NVIDIA Image Scaling) | ⏳ | 6-8h | NVIDIA | Alternativa a FSR |
 | FSR 2.0 (temporal) | ⏳ | 20-30h | AMD FSR 2.0 | Upscaling con temporal |
 | Opacidad/transparencia | ⏳ | 4-6h | — | Alpha en texturas |
@@ -209,7 +218,7 @@ v0.15.0   ████████████████████ 100%
 v0.16.0-a ████████████████████ 100%
 v0.16.0   ████████████████████ 100%
 v0.16.1   ████████████████████ 100%
-v0.17.0   ░░░░░░░░░░░░░░░░░░░░   0%
+v0.17.0   ████████████████████ 100%
 v0.18.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v0.19.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v0.20.0   ░░░░░░░░░░░░░░░░░░░░   0%
@@ -270,13 +279,13 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 <div align="center">
 
-**Ry-Dit v0.16.1 - ROADMAP**
+**Ry-Dit v0.17.0 - ROADMAP**
 
-*12 crates publicados ✅ | 144 tests ✅ | 15+ demos ✅ | 0 errores*
+*12 crates publicados ✅ | 144 tests ✅ | 18+ demos ✅ | 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-*Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF + Audio*
+*Próximo: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D*
 
 *Ver `TASKS_2.md` para análisis estratégico completo*
 

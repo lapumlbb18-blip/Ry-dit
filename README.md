@@ -10,10 +10,10 @@
 
 **"Construido sin prisa, madurado con paciencia"**
 
-[![Version](https://img.shields.io/badge/version-v0.16.1-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.17.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Tests](https://img.shields.io/badge/tests-144%2F144-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Status](https://img.shields.io/badge/estado-v0.16.1--snake--anime--buscaminas-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Status](https://img.shields.io/badge/estado-v0.17.0--militar--emoji--audio-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
@@ -57,6 +57,15 @@ cargo test --workspace
 ### Ejecutar demos
 
 ```bash
+# 🎖️ Militar — Soldado procedural + partículas + granadas en arco + salto
+./launcher_militar.sh
+
+# 😀 Emoji Atlas UTF-8 — 25+ emojis como sprites procedurales
+./launcher_emoji_utf8.sh
+
+# 🎵 Audio Mixer — 4 buses + spatial 2D + fade
+./launcher_audio_mixer.sh
+
 # 🐍 Snake Anime v2 — Juego completo con cámara follow
 ./launcher_anime_v2.sh
 
@@ -138,10 +147,49 @@ entity player
 
 ---
 
+## 🆕 ¿Qué hay de nuevo en v0.17.0?
+
+**Última actualización**: 2026-04-11
+**Versión actual**: v0.17.0 ✅ DEMO MILITAR + EMOJI ATLAS + AUDIO MIXER
+**Estado**: 23 crates | 0 errores | 144 tests | 12 crates.io | 18+ demos
+
+### 🎖️ Demo Militar — Soldado + Partículas + Granadas
+| Feature | Detalle |
+|---------|---------|
+| **Soldado procedural** | Sprite dibujado con primitivas (cabeza, cuerpo, arma) |
+| **Partículas** | Efectos de disparo y explosión |
+| **Granadas en arco** | Trayectoria parabólica con gravedad |
+| **Salto** | Física de salto del soldado |
+| **Movimiento** | Control horizontal con input de teclado |
+
+### 😀 Emoji Atlas UTF-8 — 25+ Emojis como Sprites
+| Feature | Detalle |
+|---------|---------|
+| **UTF-8 fix** | TTF_RenderUTF8_Blended en vez de TTF_RenderText_Blended |
+| **25+ emojis** | Como sprites procedurales PNG generados en runtime |
+| **Atlas de texturas** | Textura única con todos los emojis en grid |
+| **Renderizado rápido** | Blit desde atlas con source_rect |
+
+### 🎵 Audio Mixer — 4 Buses + Spatial 2D + Fade
+| Feature | Detalle |
+|---------|---------|
+| **4 buses de audio** | Master, SFX, Music, Ambient |
+| **Spatial 2D** | Volumen/panning según posición del oyente |
+| **Fade in/out** | Transiciones suaves de volumen |
+| **Mixer global** | Control centralizado de mezcla |
+
+### 🗂️ Organización del Proyecto
+| Feature | Detalle |
+|---------|---------|
+| **docs/ ignorado** | docs/ y launchers/ agregados a .gitignore |
+| **launchers/ ignorado** | Scripts de lanzamiento fuera del tracking |
+
+---
+
 ## 🆕 ¿Qué hay de nuevo en v0.16.1?
 
 **Última actualización**: 2026-04-09
-**Versión actual**: v0.16.1 ✅ SNAKE ANIME + BUSCAMINAS + ACTION SPRITE + TILEMAP 2.0
+**Versión anterior**: v0.16.1 ✅ SNAKE ANIME + BUSCAMINAS + ACTION SPRITE + TILEMAP 2.0
 **Estado**: 23 crates | 0 errores | 144 tests | 12 crates.io | 15+ demos
 
 ### 🐍 Snake Anime v2 — Juego Completo
@@ -218,11 +266,11 @@ entity player
 | 2 | **FSR 1.0** | v0.15.0 | 960x540 → 1280x720 a 48 FPS |
 | 3 | **12 Crates publicados** | v0.16.0 | ry-god, ry-stream, v-shield, ry-backend, migui, ry-gfx, ry-core, ry-anim, toolkit-ry, ry-config, ry-physics, ry-science |
 | 4 | **144 Tests** | v0.16.1 | ry-anim: 65, toolkit-ry: 14, ry-physics: 6, ry-science: 21, + más |
-| 5 | **15+ Demos funcionales** | v0.16.1 | Snake, Buscaminas, Torreta, GPU Instancing, FSR, HUD, etc. |
-| 6 | **0 Errores** | v0.16.1 | Workspace completo compilando limpio |
-| 7 | **Launcher scripts** | v0.16.1 | 8 launchers con auto-detección DISPLAY + Zink |
-| 8 | **action_sprite system** | v0.16.1 | Sprite animation completo con state machine |
-| 9 | **Tilemap v2.0** | v0.16.1 | Texturas reales + CSV import/export + culling |
+| 5 | **18+ Demos funcionales** | v0.17.0 | Militar, Emoji Atlas, Audio Mixer + anteriores |
+| 6 | **0 Errores** | v0.17.0 | Workspace completo compilando limpio |
+| 7 | **Demo Militar** | v0.17.0 | Soldado procedural + granadas en arco + partículas + salto |
+| 8 | **Emoji Atlas UTF-8** | v0.17.0 | 25+ emojis como sprites procedurales + TTF_RenderUTF8_Blended |
+| 9 | **Audio Mixer** | v0.17.0 | 4 buses + spatial 2D + fade in/out |
 
 ---
 
@@ -273,6 +321,9 @@ entity player
 
 | Demo | Descripción | Launcher | Tamaño |
 |------|-------------|----------|--------|
+| **demo_militar** | 🎖️ Soldado procedural + partículas + granadas arco + salto | `launcher_militar.sh` | — |
+| **demo_emoji_utf8** | 😀 25+ emojis como sprites procedurales + UTF-8 fix | `launcher_emoji_utf8.sh` | — |
+| **demo_audio_mixer** | 🎵 4 buses + spatial 2D + fade in/out | `launcher_audio_mixer.sh` | — |
 | **demo_anime_ry_v2** | 🐍 Snake + manzanas + bombas + entidades + minimap | `launcher_anime_v2.sh` | — |
 | **demo_buscaminas** | 💣 Buscaminas 16×16 con mouse | `launcher_buscaminas.sh` | — |
 | **demo_hud_camera** | HUD + Cámara 2D rotación/zoom + health bars | `launcher_hud_camera.sh` | — |
@@ -316,8 +367,8 @@ entity player
 
 | Versión | Features | Pilar | Target |
 |---------|----------|-------|--------|
-| **v0.17.0** | Sprite sheets reales + Texturas + Emojis TTF + GIF + Audio OGG | Gaming + Animaciones | 2-3 meses |
-| **v0.18.0** | Audio/Mix completo + DLSS/NIS + Iluminación 2D + Sombras | Gaming + Render | 3-4 meses |
+| **v0.17.0** ✅ | Demo Militar + Emoji Atlas + Audio Mixer + UTF-8 fix + Organización | Gaming + Animaciones | Completado |
+| **v0.18.0** | DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D + Sombras | Gaming + Render | 3-4 meses |
 | **v0.19.0** | Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI | Gaming + Ciencia | 4-5 meses |
 | **v0.20.0** | Editor visual + Asset pipeline + LAZOS (Python+C+++C) + Multiplayer LAN | Gaming + Streaming | 6-8 meses |
 | **v1.0.0** | GitHub Actions + SAZ + Motor completo + Debugger + Comunidad | Todos | 12-18 meses |
@@ -345,13 +396,13 @@ entity player
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.16.1 — Snake + Buscaminas + Action Sprite + Tilemap 2.0**
+**🛡️ Ry-Dit v0.17.0 — Demo Militar + Emoji Atlas + Audio Mixer**
 
-*23 crates · 144 tests · 12 crates.io · 15+ demos · 0 errores · Low-End First*
+*23 crates · 144 tests · 12 crates.io · 18+ demos · 0 errores · Low-End First*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.17.0 — Sprite sheets reales + Texturas + Emojis + GIF + Audio**
+**Próximo: v0.18.0 — DLSS/NIS + Bordes Suaves + Opacidad + Iluminación 2D + Sombras**
 
 > 📋 `ROADMAP.md` · `TASKS.md` · `TASKS_2.md` (análisis estratégico) · `QWEN.md` (bitácora)
 

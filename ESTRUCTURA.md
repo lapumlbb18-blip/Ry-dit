@@ -1,8 +1,8 @@
-# Ry-Dit - Estructura del Proyecto v0.16.1
+# Ry-Dit - Estructura del Proyecto v0.17.0
 
-**Última actualización**: 2026-04-09
-**Versión**: v0.16.1 ✅ Snake + Buscaminas + Action Sprite + Tilemap 2.0
-**Crates**: 23 | **Publicados**: 12 | **Demos**: 15+
+**Última actualización**: 2026-04-11
+**Versión**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer
+**Crates**: 23 | **Publicados**: 12 | **Demos**: 18+
 
 ---
 
@@ -20,8 +20,20 @@ shield-project/
 ├── CONTRIBUTING.md               # Guía de contribución
 ├── LICENSE                       # MIT License
 │
-├── docs/
+├── docs/                         # 🆕 Ignorado en git
 │   └── GUIA_USUARIO.md           # Guía para el usuario final
+│
+├── launchers/                    # 🆕 Ignorado en git
+│   ├── launcher_militar.sh       # 🆕 Demo Militar
+│   ├── launcher_emoji_utf8.sh    # 🆕 Demo Emoji Atlas UTF-8
+│   ├── launcher_audio_mixer.sh   # 🆕 Demo Audio Mixer
+│   ├── launcher_anime_v2.sh      # Snake Anime v2
+│   ├── launcher_buscaminas.sh    # Buscaminas
+│   ├── launcher_hud_camera.sh    # HUD + Cámara
+│   ├── launcher_gpu_instancing.sh# GPU Instancing
+│   ├── launcher_fsr.sh           # FSR 1.0
+│   ├── launcher_torreta.sh       # Torreta vs Sprites
+│   └── launcher_sdl2.sh          # SDL2 base
 │
 ├── crates/
 │   ├── ry-core/                  # ✅ Core trait + registry (crates.io)
@@ -46,7 +58,7 @@ shield-project/
 │   │       ├── effects.rs        # Bloom, glow, blur, morph
 │   │       ├── science_anim.rs   # 8 animaciones científicas
 │   │       ├── action_assets.rs  # 6 funciones sprite animation (math)
-│   │       ├── action_sprite.rs  # 🆕 SpriteSheet, AnimationClip, AnimatedSprite
+│   │       ├── action_sprite.rs  # SpriteSheet, AnimationClip, AnimatedSprite
 │   │       └── particles.rs      # Sistema de partículas
 │   ├── ry-science/               # ✅ Bezier + stats + illusions (crates.io)
 │   ├── ry-config/                # ✅ Config parser zero-deps (crates.io)
@@ -56,15 +68,18 @@ shield-project/
 │   │       ├── lib.rs            # Stub lib
 │   │       ├── modules/          # 16 módulos internos
 │   │       │   ├── entity.rs     # Entity system (2859 líneas)
-│   │       │   ├── tilemap.rs    # 🆕 Tilemap v2.0 con texturas + CSV
+│   │       │   ├── tilemap.rs    # Tilemap v2.0 con texturas + CSV
 │   │       │   ├── physics.rs    # Módulo physics interno
 │   │       │   └── ...           # 13 módulos más
 │   │       ├── eval/             # Scripting evaluator
-│   │       └── bin/              # 15+ demos
-│   │           ├── demo_anime_ry_v2.rs    # 🆕 Snake + manzanas + bombas
-│   │           ├── demo_buscaminas.rs     # 🆕 Buscaminas 16×16
-│   │           ├── demo_action_sprite.rs  # 🆕 Sprite animation
-│   │           ├── demo_hud_camera.rs     # 🆕 HUD + Cámara 2D
+│   │       └── bin/              # 18+ demos
+│   │           ├── demo_militar.rs        # 🆕 Soldado + partículas + granadas
+│   │           ├── demo_emoji_utf8.rs     # 🆕 25+ emojis + UTF-8 fix
+│   │           ├── demo_audio_mixer.rs    # 🆕 4 buses + spatial 2D + fade
+│   │           ├── demo_anime_ry_v2.rs    # Snake + manzanas + bombas
+│   │           ├── demo_buscaminas.rs     # Buscaminas 16×16
+│   │           ├── demo_action_sprite.rs  # Sprite animation
+│   │           ├── demo_hud_camera.rs     # HUD + Cámara 2D
 │   │           ├── demo_gpu_instancing.rs # 50K partículas
 │   │           ├── demo_fsr.rs            # FSR 1.0
 │   │           ├── demo_torreta_vs_sprites.rs # Juego completo
@@ -77,23 +92,15 @@ shield-project/
 │   │       ├── lib.rs
 │   │       ├── theme.rs          # 5 temas predefinidos
 │   │       ├── widgets.rs        # 18+ widgets HUD
-│   │       └── world_hud.rs      # 🆕 EntityHUD, DebugInfo, StatsHUD, Minimap
+│   │       └── world_hud.rs      # EntityHUD, DebugInfo, StatsHUD, Minimap
 │   ├── migui/                    # ✅ Immediate mode GUI (crates.io)
 │   ├── blast-core/               # Minimal executor
 │   ├── lizer/                    # Legacy + AST cache
 │   ├── v-shield/                 # ✅ Platform layer + sync (crates.io)
-│   ├── ry3d-gfx/                 # 🆕 3D graphics + texto 3D + modelos
+│   ├── ry3d-gfx/                 # 3D graphics + texto 3D + modelos
 │   ├── events-ry/                # Input unificado
 │   ├── ry-loader/                # Module loader
 │   └── ry-script/                # Script loading
-│
-├── launcher_anime_v2.sh          # 🆕 Snake Anime v2
-├── launcher_buscaminas.sh        # 🆕 Buscaminas
-├── launcher_hud_camera.sh        # 🆕 HUD + Cámara
-├── launcher_gpu_instancing.sh    # GPU Instancing
-├── launcher_fsr.sh               # FSR 1.0
-├── launcher_torreta.sh           # Torreta vs Sprites
-├── launcher_sdl2.sh              # SDL2 base
 │
 └── logo_icon_asst/               # Assets disponibles
     └── sprites/                  # Sprites actuales (tank, helicopter, crate, etc.)
@@ -142,6 +149,7 @@ shield-project/
 ### Juegos Completos
 | Demo | Features |
 |------|----------|
+| demo_militar | 🆕 Soldado + partículas + granadas arco + salto |
 | demo_anime_ry_v2 | Snake + manzanas + bombas + entidades + minimap |
 | demo_buscaminas | 16×16 grid + 40 minas + flood fill |
 | demo_torreta_vs_sprites | 3 niveles + cámara + AI + audio |
@@ -156,6 +164,8 @@ shield-project/
 ### Tecnología Engine
 | Demo | Features |
 |------|----------|
+| demo_emoji_utf8 | 🆕 25+ emojis como sprites + UTF-8 fix |
+| demo_audio_mixer | 🆕 4 buses + spatial 2D + fade |
 | demo_action_sprite | Sprite sheet + state machine |
 | demo_rigidbody | Física + colisiones |
 | demo_panel_visual | 4 paneles + consola |
@@ -174,8 +184,8 @@ shield-project/
 
 <div align="center">
 
-**Ry-Dit v0.16.1 — Estructura del Proyecto**
+**Ry-Dit v0.17.0 — Estructura del Proyecto**
 
-*23 crates · 12 publicados · 15+ demos · 8 launchers · 0 errores*
+*23 crates · 12 publicados · 18+ demos · 11 launchers · 0 errores*
 
 </div>

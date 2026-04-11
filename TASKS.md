@@ -1,8 +1,8 @@
 # 🛡️ Ry-Dit - Tareas Completadas y Pendientes
 
-**Última actualización**: 2026-04-10
-**Versión actual**: v0.16.1 ✅ Snake + Buscaminas + Action Sprite + Tilemap 2.0
-**Próxima versión**: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF + Audio
+**Última actualización**: 2026-04-11
+**Versión actual**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer
+**Próxima versión**: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D
 **Análisis estratégico**: Ver `TASKS_2.md` — Comparativa con Unreal, Unity, Godot, Bevy
 
 ---
@@ -15,8 +15,8 @@
 | **Errores** | 0 |
 | **Tests** | 144/144 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 15+ |
-| **Launchers** | 8 con auto-detección DISPLAY |
+| **Demos funcionales** | 18+ |
+| **Launchers** | 11 con auto-detección DISPLAY |
 | **Commits esta sesión** | 15+ |
 
 ---
@@ -31,6 +31,27 @@ Juegos completos, GPU instancing, FSR, sprite animation, tilemap → escenas →
 
 ### 📡 Pilar 3: Streaming + Comunidad en Tiempo Real
 ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
+
+---
+
+## ✅ SESIÓN v0.17.0 — COMPLETADA
+
+### Lo que se hizo en esta sesión:
+
+| # | Tarea | Estado | Detalle |
+|---|-------|--------|---------|
+| 1 | demo_militar | ✅ | Soldado procedural + partículas + granadas en arco + salto |
+| 2 | Granadas con trayectoria parabólica | ✅ | Física de gravedad |
+| 3 | Partículas de disparo/explosión | ✅ | Efectos visuales |
+| 4 | Salto del soldado | ✅ | Física de salto con input |
+| 5 | Emoji Atlas UTF-8 | ✅ | TTF_RenderUTF8_Blended fix |
+| 6 | 25+ emojis procedurales | ✅ | Sprites PNG generados en runtime |
+| 7 | Atlas de texturas | ✅ | Textura única con grid de emojis |
+| 8 | Audio Mixer 4 buses | ✅ | Master, SFX, Music, Ambient |
+| 9 | Spatial 2D audio | ✅ | Volumen/panning por posición |
+| 10 | Fade in/out | ✅ | Transiciones suaves de volumen |
+| 11 | docs/ y launchers/ en .gitignore | ✅ | Organización del proyecto |
+| 12 | 3 launchers nuevos | ✅ | militar, emoji_utf8, audio_mixer |
 
 ---
 
@@ -72,33 +93,24 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 ---
 
-## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.17.0)
+## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.18.0)
 
-### Gaming + Animaciones
+### Gaming + Render
 
 | # | Tarea | Esfuerzo | Dependencia | Inspiración | Detalle |
 |---|-------|----------|-------------|-------------|---------|
 | 1 | **Sprite sheets reales** | 6-8h | Cuando traigas assets | Todos | Texturas con grid de frames |
 | 2 | **Texturas en demos** | 4-6h | #1 Sprite sheets | — | Reemplazar rectángulos por PNG |
-| 3 | **Soporte emojis TTF** | 4-6h | Independiente | Todos | UI más expresiva |
-| 4 | **Carga/edición GIF** | 8-12h | Independiente | LÖVE2D | Animaciones desde archivo |
-| 5 | **Audio OGG/MP3 + mixer** | 8-12h | Independiente | Godot Audio | Música + mixing + spatial 2D |
+| 3 | **Carga/edición GIF** | 8-12h | Independiente | LÖVE2D | Animaciones desde archivo |
+| 4 | **DLSS/NIS** | 6-8h | Independiente | NVIDIA | Alternativa a FSR |
+| 5 | **FSR 2.0 temporal** | 20-30h | Independiente | AMD FSR 2.0 | Upscaling con temporal |
+| 6 | **Opacidad/transparencia** | 4-6h | Independiente | — | Alpha en texturas |
+| 7 | **Iluminación 2D dinámica** | 10-15h | Independiente | Godot Light2D | Luces puntuales 2D |
+| 8 | **Sombras 2D** | 8-12h | #7 Iluminación | Godot | Raycasting shadows |
 
 ---
 
-## 🟡 TAREAS PENDIENTES — PRIORIDAD MEDIA (v0.18.0-v0.19.0)
-
-### Render + Iluminación (v0.18.0)
-
-| # | Tarea | Esfuerzo | Inspiración | Detalle |
-|---|-------|----------|-------------|---------|
-| 6 | NIS (NVIDIA Image Scaling) | 6-8h | NVIDIA | Alternativa a FSR |
-| 7 | FSR 2.0 (temporal upscaling) | 20-30h | AMD FSR 2.0 | Upscaling con temporal |
-| 8 | Opacidad/transparencia | 4-6h | — | Alpha en texturas |
-| 9 | Fade in/out transiciones | 2-4h | Unity | Transiciones entre escenas |
-| 10 | Texturas con canal alpha | 4-6h | — | PNG con transparencia |
-| 11 | **Iluminación 2D dinámica** | 10-15h | Godot Light2D | Luces puntuales 2D |
-| 12 | **Sombras 2D** | 8-12h | Godot | Raycasting shadows |
+## 🟡 TAREAS PENDIENTES — PRIORIDAD MEDIA (v0.19.0-v0.20.0)
 
 ### UI + Escenas + Ciencia (v0.19.0)
 
@@ -195,13 +207,14 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 ## 📋 PRÓXIMA SESIÓN — Lo que traerás
 
 - [ ] **Sprite sheets reales** para mejorar demos
+- [ ] **Texturas PNG** en lugar de rectángulos
+- [ ] **Carga/edición GIF**
+- [ ] **DLSS/NIS** implementación estándar
+- [ ] **Opacidad/transparencia** en texturas
+- [ ] **Iluminación 2D dinámica**
+- [ ] **Sombras 2D** con raycasting
 - [ ] **Videos de los demos** para galería
 - [ ] **Capturas de pantalla** para galería
-- [ ] **Soporte emojis** del teclado en demos
-- [ ] **Carga/edición GIF**
-- [ ] **Audio/Mix más completo** para reproductores
-- [ ] **DLSS/NIS** implementación estándar
-- [ ] **Bordes suaves + texturas + opacidad** final
 - [ ] **Letras en demos** panel visual y migui
 - [ ] **Rybot CLI + GUI** interfaz completa
 - [ ] **Editor separado** (por si Termux cierra procesos) o 2-in-1
@@ -245,13 +258,13 @@ ry-stream LAN + v-shield sync → multiplayer LAN → streaming en vivo
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.16.1 — Tareas Completadas y Pendientes**
+**🛡️ Ry-Dit v0.17.0 — Tareas Completadas y Pendientes**
 
-*23 crates · 144 tests · 12 crates.io · 15+ demos · 0 errores*
+*23 crates · 144 tests · 12 crates.io · 18+ demos · 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.17.0 — Sprite sheets + Texturas + Emojis + GIF + Audio**
+**Próximo: v0.18.0 — Sprite Sheets Reales + Texturas + GIF + DLSS/NIS + Iluminación 2D**
 
 *Ver `TASKS_2.md` para análisis estratégico completo*
 
