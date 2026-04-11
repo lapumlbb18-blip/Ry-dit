@@ -1,8 +1,8 @@
-# Ry-Dit - Estructura del Proyecto v0.17.0
+# Ry-Dit - Estructura del Proyecto v0.18.0
 
 **Última actualización**: 2026-04-11
-**Versión**: v0.17.0 ✅ Demo Militar + Emoji Atlas + Audio Mixer
-**Crates**: 23 | **Publicados**: 12 | **Demos**: 18+
+**Versión**: v0.18.0 ✅ 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix
+**Crates**: 23 | **Publicados**: 12 | **Demos**: 20+
 
 ---
 
@@ -14,7 +14,7 @@ shield-project/
 ├── README.md                     # Documentación principal
 ├── ROADMAP.md                    # Plan de versiones
 ├── TASKS.md                      # Tareas completadas y pendientes
-├── QWEN.md                       # Bitácora técnica
+├── BITACORA.md                   # Bitácora técnica
 ├── ESTRUCTURA.md                 # Este archivo
 ├── MANIFIESTO.md                 # Filosofía Low-End First
 ├── CONTRIBUTING.md               # Guía de contribución

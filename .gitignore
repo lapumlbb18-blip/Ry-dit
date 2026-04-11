@@ -20,12 +20,12 @@ LOG_ERRORES_*.txt
 LOGROS_*.txt
 SESSION_STATE*.md
 CONTEXT*.md
-QWEN.md
 
 # ============================================================================
 # DOCUMENTACIÓN DE SESIONES (NO SUBIR - SOLO INTERNO)
 # ============================================================================
 docs/
+informe_analisis/
 
 # ============================================================================
 # BUILD ARTIFACTS (NO SUBIR - GENERADOS)
@@ -140,15 +140,15 @@ historial/
 ruta_v0.5.0_v0.9.9/
 archive/
 context/
-docs/  # ✅ Documentación de sesiones internas
 
 # QWEN.md duplicados (solo raíz se mantiene)
 **/QWEN.md
 **/qwen.md
+**/BITACORA.md
 **/.qwen/
 
 # Archivos de estado de sesión (Qwen Code) - solo raíz
-# QWEN.md en raíz SÍ se sube (bitácora pública)
+# BITACORA.md en raíz SÍ se sube (bitácora pública)
 .qwen/
 output-language.md
 
