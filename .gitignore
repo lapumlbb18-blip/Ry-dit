@@ -23,6 +23,11 @@ CONTEXT*.md
 QWEN.md
 
 # ============================================================================
+# DOCUMENTACIÓN DE SESIONES (NO SUBIR - SOLO INTERNO)
+# ============================================================================
+docs/
+
+# ============================================================================
 # BUILD ARTIFACTS (NO SUBIR - GENERADOS)
 # ============================================================================
 target/
@@ -168,17 +173,18 @@ CHANGELOG_v0.7.1.2-3.md
 CHANGELOG_v0.7.1.4.md
 
 # ============================================================================
-# ARCHIVOS DE ESTRUCTURA DE ASSETS (NO SUBIR - SOLO LOCAL)
+# LAUNCHERS LOCALES (NO SUBIR - SOLO EJECUCIÓN LOCAL)
 # ============================================================================
-*.jsx
-rydit-military-sprites.jsx
-rydit-military-tilemap.jsx
+launchers/
+*.sh
+!rybot.sh
+!sync_drive_bg.sh
 
 # ============================================================================
-# ARCHIVOS DE TEXTO Y REFERENCIAS LOCALES (NO SUBIR)
+# ARCHIVOS DE TEXTO Y JSX (NO SUBIR - REFERENCIAS LOCALES)
 # ============================================================================
-caracteristicas_de_motores.txt
 *.txt
+*.jsx
 
 # ============================================================================
 # POSICIONAMIENTO Y MARKETING (NO SUBIR - PENDIENTE)
