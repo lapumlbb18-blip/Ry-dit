@@ -15,8 +15,21 @@ mod repl;
 mod modules;
 // mod tests; ← Movido a docs/tests_referencia/ (AST viejo)
 
-// 🆕 RyBot - Inspector + Registry (v0.11.0)
-mod rybot;
+// 🆕 RyBot stub — Motor central movido a crate independiente (crates/rybot/)
+mod rybot {
+    #[derive(Default)]
+    pub struct RyBot;
+    impl RyBot {
+        pub fn new() -> Self { Self }
+        pub fn info(&self, _t: &str, _m: &str) {}
+        pub fn begin_frame(&mut self) {}
+        pub fn end_frame(&mut self, _ft: f32) {}
+        pub fn record_render(&mut self, _ft: f32) {}
+        pub fn set_entity_count(&mut self, _n: usize) {}
+        pub fn save_status(&self, _p: &str) {}
+        pub fn check_unused_modules(&self) {}
+    }
+}
 
 // Re-exportar funciones del módulo eval
 pub use eval::evaluar_expr;

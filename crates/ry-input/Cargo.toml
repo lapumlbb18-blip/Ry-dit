@@ -1,0 +1,14 @@
+[package]
+name = "ry-input"
+version = "0.1.0"
+edition = "2021"
+description = "Input map configurable para Ry-Dit — mapeo de acciones a teclas/ratón/touch"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+keywords = ["input", "keymap", "gamepad", "ry-dit"]
+categories = ["game-engines", "parsing"]
+
+[dependencies]
+ry-config = { path = "../ry-config" }
+
+[dev-dependencies]

@@ -1,0 +1,30 @@
+# Ry-Dit Input Map — Configuración por defecto
+# Formato: accion = fuente1, fuente2, ...
+# Fuentes: teclas, MouseLeft/Right/Middle, ejes, gamepad, touch
+
+# === MOVIMIENTO ===
+move_up = W, Up
+move_down = S, Down
+move_left = A, Left
+move_right = D, Right
+
+# === ACCIONES ===
+jump = Space, W
+attack = J, X, MouseLeft
+special = K, C, MouseRight
+interact = E, Enter
+sprint = LeftShift
+crouch = LeftCtrl
+
+# === MENÚ / UI ===
+pause = Escape, P
+inventory = I, Tab
+map = M
+screenshot = F12
+
+# === GAMEPAD ===
+gp_jump = A
+gp_attack = X
+gp_special = Y
+gp_pause = Start
+gp_inventory = Y

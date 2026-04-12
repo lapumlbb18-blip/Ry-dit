@@ -26,6 +26,7 @@ ry-gfx = { path = "../ry-gfx", features = ["migui"] }
 ry3d-gfx = { path = "../ry3d-gfx" }
 migui = { path = "../migui", features = ["sdl2"] }
 ry-stream = { path = "../ry-stream" }  # 🆕 v0.11.2: LAN streaming
+ry-input = { path = "../ry-input" }  # 🆕 v0.19.0: Input map configurable
 raylib = { version = "5.5.1", default-features = false, features = ["nobuild"] }
 gl = "0.14.0"
 sdl2 = "0.37"
@@ -72,3 +73,7 @@ path = "src/bin/demo_sdl2_raylib_fusion.rs"
 [[bin]]
 name = "demo_3d_touch"
 path = "src/bin/demo_3d_touch.rs"
+
+[[bin]]
+name = "demo_input_map"
+path = "src/bin/demo_input_map.rs"

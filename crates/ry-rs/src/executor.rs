@@ -13,7 +13,7 @@ use crate::{
     ejecutar_stmt, ejecutar_stmt_gfx, ejecutar_stmt_migui, evaluar_expr_migui, InputEstado,
 };
 
-// 🆕 RyBot - Inspector + Registry
+// 🆕 RyBot - Motor central (stub — crate real en crates/rybot/)
 use crate::rybot::RyBot;
 
 /// Ejecutar programa en modo comandante (sin gráficos)

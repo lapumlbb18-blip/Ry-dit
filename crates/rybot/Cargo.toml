@@ -1,0 +1,25 @@
+[package]
+name = "rybot"
+version = "0.1.0"
+edition = "2021"
+description = "Motor central de Ry-Dit — orquesta crates, gestiona escenas, input, físicas, animación, audio, red"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+keywords = ["game-engine", "orchestrator", "ry-dit"]
+categories = ["game-engines"]
+
+[dependencies]
+ry-core = { path = "../ry-core" }
+ry-config = { path = "../ry-config" }
+ry-input = { path = "../ry-input" }
+ry-physics = { path = "../ry-physics" }
+ry-anim = { path = "../ry-anim" }
+ry-science = { path = "../ry-science" }
+migui = { path = "../migui" }
+ry3d-gfx = { path = "../ry3d-gfx" }
+ry-gfx = { path = "../ry-gfx" }
+ry-stream = { path = "../ry-stream" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[dev-dependencies]
