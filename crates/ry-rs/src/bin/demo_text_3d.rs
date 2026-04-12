@@ -34,11 +34,11 @@ fn main() -> Result<(), String> {
         }
 
         let mut d = rl.begin_drawing(&thread);
-        d.clear_background(Color::BLACK);
+        d.clear_background(Color::new(180, 180, 190, 255)); // Gris claro
 
         // ---- MODO 3D ----
         let mut h3d = DrawHandle3D::new(&camera);
-        h3d.clear_3d(ColorRydit::Negro);
+        h3d.clear_3d(ColorRydit::Gris); // Fondo gris en 3D
         h3d.draw_grid_3d(20, 1.0);
         h3d.draw_axes_gizmo(3.0);
 
@@ -56,31 +56,33 @@ fn main() -> Result<(), String> {
         h3d.draw_sphere_3d((0.0, 2.0, -6.0), 1.0, ColorRydit::Naranja);
 
         // ---- LETRAS 3D ----
-        // Encima de cada cubo (altura y = cubo_y + altura/2 + offset)
-        h3d.draw_text_3d((-6.0, 3.0, 0.0), "ROJO", 24.0, ColorRydit::Blanco);
-        h3d.draw_text_3d((-2.0, 3.0, -4.0), "VERDE", 24.0, ColorRydit::Blanco);
-        h3d.draw_text_3d((2.0, 3.0, -8.0), "AZUL", 24.0, ColorRydit::Blanco);
-        h3d.draw_text_3d((6.0, 3.0, -12.0), "AMARILLO", 20.0, ColorRydit::Blanco);
+        // Texto muy cerca de cámara para probar
+        h3d.draw_text_3d_with_bg((0.0, 5.0, 4.0), "¡LETRAS 3D!", 32.0,
+            ColorRydit::Rojo, ColorRydit::Negro);
 
-        // Texto con fondo sobre cilindros
-        h3d.draw_text_3d_with_bg((-4.0, 4.0, -4.0), "CILINDRO 1", 18.0,
-            ColorRydit::Cyan, ColorRydit::Negro);
-        h3d.draw_text_3d_with_bg((4.0, 4.0, -8.0), "CILINDRO 2", 18.0,
-            ColorRydit::Magenta, ColorRydit::Negro);
+        // Texto cerca de cada cubo
+        h3d.draw_text_3d_with_bg((-6.0, 3.5, 0.0), "ROJO", 28.0, ColorRydit::Negro, ColorRydit::Blanco);
+        h3d.draw_text_3d_with_bg((-2.0, 3.5, -4.0), "VERDE", 28.0, ColorRydit::Negro, ColorRydit::Blanco);
+        h3d.draw_text_3d_with_bg((2.0, 3.5, -8.0), "AZUL", 28.0, ColorRydit::Negro, ColorRydit::Blanco);
+        h3d.draw_text_3d_with_bg((6.0, 3.5, -12.0), "AMARILLO", 24.0, ColorRydit::Negro, ColorRydit::Blanco);
+
+        // Texto sobre cilindros
+        h3d.draw_text_3d_with_bg((-4.0, 4.5, -4.0), "CILINDRO 1", 22.0,
+            ColorRydit::Negro, ColorRydit::Cyan);
+        h3d.draw_text_3d_with_bg((4.0, 4.5, -8.0), "CILINDRO 2", 22.0,
+            ColorRydit::Negro, ColorRydit::Magenta);
 
         // Texto sobre esfera
-        h3d.draw_text_3d_with_bg((0.0, 4.0, -6.0), "ESFERA", 20.0,
-            ColorRydit::Naranja, ColorRydit::Negro);
+        h3d.draw_text_3d_with_bg((0.0, 4.5, -6.0), "ESFERA", 24.0,
+            ColorRydit::Negro, ColorRydit::Amarillo);
 
-        // Texto grande flotante
-        h3d.draw_text_3d_with_bg((0.0, 8.0, -6.0), "LETRAS 3D", 28.0,
-            ColorRydit::Blanco, ColorRydit::Negro);
-        h3d.draw_text_3d((0.0, 6.5, -6.0), "ry3d-gfx v0.1.0", 16.0,
-            ColorRydit::Gris);
+        // Texto simple sin fondo (blanco puro)
+        h3d.draw_text_3d((0.0, 8.0, -2.0), "Texto sin fondo", 20.0,
+            ColorRydit::Blanco);
 
         // Texto en el suelo
-        h3d.draw_text_3d((0.0, 0.3, 2.0), "[B] Toggle fondo texto", 12.0,
-            ColorRydit::Gris);
+        h3d.draw_text_3d((0.0, 0.5, 3.0), "[B] Toggle fondo texto", 16.0,
+            ColorRydit::Negro);
 
         drop(h3d);
 
