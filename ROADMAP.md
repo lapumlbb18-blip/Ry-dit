@@ -1,7 +1,7 @@
-# Ry-Dit - ROADMAP v0.18.0 → v1.0.0
+# Ry-Dit - ROADMAP v0.19.0 → v1.0.0
 
-**Última actualización**: 2026-04-11
-**Versión actual**: v0.18.0 ✅ 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix + Emojis
+**Última actualización**: 2026-04-12
+**Versión actual**: v0.19.0 ✅ Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -10,12 +10,12 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Crates** | 23 |
-| **Líneas Rust** | ~38K+ |
+| **Crates** | 25 |
+| **Líneas Rust** | ~42K+ |
 | **Compilación** | 0 errores |
-| **Tests** | 147/147 pasando |
+| **Tests** | 203/203 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 20+ |
+| **Demos funcionales** | 21+ |
 | **Launchers** | 11+ con auto-detección DISPLAY + Zink |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
@@ -150,24 +150,34 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI
+### v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI ✅
 
-**Prioridad**: MEDIA | **Pilar**: Gaming + Ciencia
+**Fecha**: 2026-04-12
 
-| Feature | Estado | Tiempo est. | Inspiración | Detalle |
-|---------|--------|-------------|-------------|---------|
-| Letras 3D en demos | ⏳ | 6-8h | ry3d-gfx | Texto 3D real en demos |
-| Panel visual mejorado | ⏳ | 8-12h | — | migui + toolkit-ry |
-| migui mejoras | ⏳ | 4-6h | Dear ImGui | Más widgets + temas |
-| Rybot CLI completo | ⏳ | 10-15h | — | CLI para crear proyectos |
-| Rybot GUI | ⏳ | 12-16h | — | GUI de Rybot CLI |
-| **Sistema de escenas** | ⏳ | 8-12h | Godot PackedScene | .ryscene archivos |
-| **Scene transitions** | ⏳ | 4-6h | Unity loading | Fade entre niveles |
-| **Scene tree visual** | ⏳ | 12-16h | Godot | Editor de escenas |
-| **Input map configurable** | ⏳ | 6-8h | Godot Input Map | .rydit-input rebind |
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| `ry-input` crate | ✅ | Input map configurable (.rydit-input parser), InputSource (Key, Mouse, Gamepad, Touch), InputState (pressed/just_pressed/just_released) |
+| Macros K!() M!() P!() PA!() | ✅ | Macros ergonómicos para input |
+| 16 acciones game + 17 editor defaults | ✅ | Pre-configuradas con rebind |
+| 18 tests en ry-input | ✅ | Tests de parsing, input state, macros |
+| `rybot` crate | ✅ | Motor central que orquesta todos los crates |
+| SceneTree con parse .ryscene | ✅ | Archivos de escena legibles |
+| 6 subsistemas | ✅ | Input, Physics, Animation, Science, Render, Network |
+| CLI (new, templates, info) | ✅ | Crear proyectos desde terminal |
+| GUI con migui (4 paneles) | ✅ | New Project, Inspector, Scene Tree, Engine Stats |
+| 33 tests en rybot | ✅ | Tests de orquestación, scene tree, CLI, GUI |
+| Letras 3D (draw_text_3d) | ✅ | GetWorldToScreen FFI real en ry3d-gfx |
+| draw_text_3d_with_bg | ✅ | Fondo gris para visibilidad |
+| demo_text_3d | ✅ | Demo exclusivo para letras 3D con fondo |
+| Mesh3D | ✅ | Cubo, esfera, cilindro, plano con GenMesh raylib + UploadMesh + DrawMesh |
+| Skeleton3D | ✅ | 22 bones humanoides con Bone3D jerárquico + draw con líneas y esferas |
+| Panel visual mejorado | ⏳ | migui + toolkit-ry |
+| migui mejoras | ⏳ | Más widgets + temas |
+| Scene transitions con fade | ⏳ | Fade entre niveles |
+| Scene tree visual | ⏳ | Editor de escenas visual |
 
 ```
-Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
+Progreso: ██████████████░░░░░░░░ 70%
 ```
 
 ### v0.20.0 — Editor + LAZOS Multi-lenguaje + Asset Pipeline
@@ -225,7 +235,7 @@ v0.16.0   ████████████████████ 100%
 v0.16.1   ████████████████████ 100%
 v0.17.0   ████████████████████ 100%
 v0.18.0   ████████████████████ 100%
-v0.19.0   ░░░░░░░░░░░░░░░░░░░░   0%
+v0.19.0   ██████████████░░░░░░  70%
 v0.20.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 ```
@@ -284,13 +294,13 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 <div align="center">
 
-**Ry-Dit v0.18.0 - ROADMAP**
+**Ry-Dit v0.19.0 - ROADMAP**
 
-*12 crates publicados ✅ | 147 tests ✅ | 20+ demos ✅ | 0 errores*
+*12 crates publicados ✅ | 203 tests ✅ | 21+ demos ✅ | 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-*Próximo: v0.19.0 — Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI*
+*Próximo: v0.19.0 (completar) — Panel visual + Scene tree visual + Scene transitions*
 
 *Ver `TASKS.md` para tareas completadas y pendientes*
 

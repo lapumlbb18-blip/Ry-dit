@@ -10,9 +10,9 @@
 
 **"Construido sin prisa, madurado con paciencia"** — Filosofía *Low-End First*
 
-[![Version](https://img.shields.io/badge/version-v0.18.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.19.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Tests](https://img.shields.io/badge/tests-147%2F147-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Tests](https://img.shields.io/badge/tests-203%2F203-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
@@ -87,21 +87,24 @@ entity player
 `MacOS`
 ---
 
-## 🆕 Novedades v0.18.0
+## 🆕 Novedades v0.19.0
 
-**Estado**: 23 crates · 0 errores · 147 tests · 12 crates.io · 20+ demos
+**Estado**: 25 crates · 0 errores · ~203 tests · 12 crates.io · 21+ demos
 
 | Feature | Detalle |
 |---------|---------|
-| **3D con controles en pantalla** | Escena 3D interactiva — cámara orbital + controles táctiles funcionales |
-| **ry3d-gfx v0.1.0** | 15 primitivas: cubos, esferas, cilindros, líneas, grid, ejes, bbox |
-| **19 Transiciones** | Fade, Slide, Wipe, Zoom, Circle, Blinds, Dissolve, Spiral... |
-| **Audio Mixer** | 4 buses + spatial 2D + fade in/out |
-| **RyScale** | Sistema de upscaling espacial propio (base FSR 1.0 + experimental NIS-style) |
-| **UTF-8 Fix** | TTF\_RenderUTF8\_Blended → acentos y emojis correctos |
-| **Emoji Atlas** | 25+ emojis como sprites procedurales PNG |
-
-> **[ACTUALIZAR]** Agrega aquí los datos específicos de la sesión más reciente (líneas añadidas, bugs fixeados, commits).
+| **`ry-input` crate** | Input map configurable (.rydit-input parser), InputSource (Key, Mouse, Gamepad, Touch), InputState (pressed/just_pressed/just_released) |
+| **Macros K!() M!() P!() PA!()** | Macros ergonómicos para input |
+| **16 acciones game + 17 editor defaults** | Pre-configuradas con rebind · 18 tests |
+| **`rybot` crate** | Motor central que orquesta todos los crates · SceneTree con parse .ryscene |
+| **6 subsistemas** | Input, Physics, Animation, Science, Render, Network |
+| **CLI (new, templates, info)** | Crear proyectos desde terminal |
+| **GUI con migui (4 paneles)** | New Project, Inspector, Scene Tree, Engine Stats · 33 tests |
+| **Letras 3D (draw_text_3d)** | GetWorldToScreen FFI real en ry3d-gfx |
+| **draw_text_3d_with_bg** | Fondo gris para visibilidad |
+| **Mesh3D** | Cubo, esfera, cilindro, plano con GenMesh raylib + UploadMesh + DrawMesh |
+| **Skeleton3D** | 22 bones humanoides con Bone3D jerárquico + draw con líneas y esferas |
+| **demo_text_3d** | Demo exclusivo para letras 3D con fondo gris |
 
 ---
 
@@ -109,7 +112,8 @@ entity player
 
 | Demo | Descripción | Tamaño |
 |------|-------------|--------|
-| **demo\_3d\_primitives** | 🧊 Escena 3D: cubos, esferas, cilindros + controles táctiles | — |
+| **demo\_text\_3d** | 🔤 Letras 3D con fondo gris para visibilidad | — |
+| **demo\_3d\_primitives** | 🧊 Escena 3D: cubos, esferas, cilindros + Mesh3D + Skeleton3D | — |
 | **demo\_transitions** | 🎬 19 transiciones tipo editor de video | — |
 | **demo\_militar** | 🎖️ Soldado procedural + partículas + granadas en arco + salto | — |
 | **demo\_emoji\_utf8** | 😀 25+ emojis sprites + texto UTF-8 | — |
@@ -140,6 +144,8 @@ entity player
 | 6 | **20+ Demos funcionales** | v0.18.0 | Todos corriendo en Redmi Note 8 |
 | 7 | **0 Errores workspace** | v0.18.0 | 23 crates compilando limpio |
 | 8 | **~30K líneas en 27 días** | v0.17–v0.18 | 1 desarrollador, Android/Termux, sin PC |
+| 9 | **ry-input + rybot** | v0.19.0 | Input map + motor central + 51 tests nuevos |
+| 10 | **25 crates · ~203 tests** | v0.19.0 | Mesh3D + Skeleton3D + Letras 3D reales |
 
 ---
 
@@ -221,8 +227,8 @@ La comunidad técnica está saturada de proyectos generados por IA sin autor rea
 
 | Versión | Features | Estado |
 |---------|----------|--------|
-| **v0.18.0** | 3D + controles táctiles + Transiciones + Audio Mixer + RyScale + UTF-8 | ✅ En curso |
-| **v0.19.0** | Letras 3D + Escenas (.ryscene) + Input map + Rybot CLI+GUI | 🔜 |
+| **v0.19.0** | Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D | ✅ 70% |
+| **v0.18.0** | 3D + controles táctiles + Transiciones + Audio Mixer + RyScale + UTF-8 | ✅ |
 | **v0.20.0** | Editor visual + Asset pipeline + LAZOS (Python+C++) + Multiplayer LAN | 🔜 |
 | **v1.0.0** | GitHub Actions binaries + Motor completo + Debugger + Comunidad | 🎯 Meta |
 
@@ -252,10 +258,10 @@ Cada línea tiene un commit. Cada demo tiene evidencia ejecutable.
 
 ---
 
-**🛡️ Ry-Dit v0.18.0 — Low-End First**
+**🛡️ Ry-Dit v0.19.0 — Low-End First**
 
-*23 crates · 147 tests · 12 crates.io · 20+ demos · 0 errores*
+*25 crates · ~203 tests · 12 crates.io · 21+ demos · 0 errores*
 
 *🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.19.0 — Letras 3D + Escenas + Input map + Rybot**
+**Próximo: v0.19.0 (completar) — Panel visual + Scene tree visual + Scene transitions**
