@@ -88,6 +88,9 @@ pub mod toolkit;
 // 🆕 FSR 1.0 v0.11.4 - FidelityFX Super Resolution (Upscale + Sharpen)
 pub mod fsr;
 
+// 🆕 v0.19.1: Iluminación 2D — luces puntuales + sombras
+pub mod lighting;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 

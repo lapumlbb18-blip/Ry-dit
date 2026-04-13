@@ -74,6 +74,10 @@ name = "demo_text_3d"
 path = "src/bin/demo_text_3d.rs"
 
 [[bin]]
+name = "demo_lighting_2d"
+path = "src/bin/demo_lighting_2d.rs"
+
+[[bin]]
 name = "demo_sdl2_raylib_fusion"
 path = "src/bin/demo_sdl2_raylib_fusion.rs"
 
