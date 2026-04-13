@@ -227,10 +227,12 @@ mod tests {
     #[test]
     fn test_velocity_color_sdl2() {
         let c0 = velocity_color_sdl2(0.0, 300.0);
-        assert!(c0.b() > c0.r()); // Azul a baja velocidad
+        let (r0, g0, b0) = c0.rgb();
+        assert!(b0 > r0); // Azul a baja velocidad
 
         let c_max = velocity_color_sdl2(300.0, 300.0);
-        assert!(c_max.r() >= 240); // Blanco/rojo a alta velocidad
+        let (r_max, _, _) = c_max.rgb();
+        assert!(r_max >= 240); // Blanco/rojo a alta velocidad
     }
 
     #[test]
