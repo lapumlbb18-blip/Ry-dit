@@ -1,3 +1,25 @@
+# 🛡️ Ry-Dit - Tareas Completadas y Pendientes
+
+**Última actualización**: 2026-04-12
+**Versión actual**: v0.19.1 ✅ Iluminación 2D + Flexbox Layout
+**Próxima versión**: v0.19.2 — Render pipeline + Materiales + Conexiones rybot
+**Análisis estratégico**: Ver `TASKS_2.md` — Comparativa con Unreal, Unity, Godot, Bevy
+
+---
+
+## 📊 RESUMEN RÁPIDO
+
+| Métrica | Valor |
+|---------|-------|
+| **Crates** | 25 |
+| **Errores** | 0 |
+| **Tests** | ~225 pasando |
+| **Crates publicados** | 12 |
+| **Demos funcionales** | 22+ |
+| **Launchers** | 11+ con auto-detección DISPLAY |
+
+---
+
 ## 🔴 TAREAS PENDIENTES — PRIORIDAD ALTA (v0.19.1)
 
 ### Render + Iluminación (Análisis de motores completado)
@@ -66,6 +88,52 @@
 
 ---
 
+## 🔧 TAREAS ESTRUCTURALES — Conexiones y renombrados (v0.19.2)
+
+### Crates huérfanos (existen pero nadie los usa)
+
+| # | Crate | Archivos | Problema | Solución | Esfuerzo |
+|---|-------|----------|----------|----------|----------|
+| A1 | **ry-god** | 13 .rs | Security framework aislado, nadie lo importa | Importar en rybot como supervisor de seguridad | 4-6h |
+| A2 | **ry-script** | 1 .rs | Loader de scripts `.rydit` sin usuarios | Integrar con ry-loader o ry-vm | 2-3h |
+| A3 | **ry-system-ry** | 1 .rs | Fuera del workspace Cargo.toml members | Agregar a members o eliminar | 1h |
+
+### Subsystems vacíos en Rybot (wrappers sin lógica real)
+
+| # | Subsystem | Crate real | Qué debe llamar | Esfuerzo |
+|---|-----------|-----------|-----------------|----------|
+| B1 | PhysicsSubsystem | ry-physics | Projectile, N-body, gravity update | 3-4h |
+| B2 | AnimationSubsystem | ry-anim | Disney principles + action_sprite update | 4-6h |
+| B3 | ScienceSubsystem | ry-science | Bezier, stats, geometry update | 2-3h |
+| B4 | RenderSubsystem | ry-gfx | GPU instancing + FSR + transitions | 6-8h |
+| B5 | NetworkSubsystem | ry-stream | WebSocket update + portal | 4-6h |
+
+### Duplicación de código
+
+| # | Conflicto | Ubicaciones | Solución | Esfuerzo |
+|---|-----------|-------------|----------|----------|
+| C1 | **particles.rs** (3 copias) | ry-anim, ry-gfx, ry-rs/modules | Renombrar: `anim_particles`, `gpu_particles`, `script_particles` | 2-3h |
+| C2 | **camera.rs** (2 copias) | ry-gfx, ry-rs/modules | Renombrar: `camera2d`, `script_camera` | 1-2h |
+| C3 | **theme.rs** (2 copias) | ry-gfx/toolkit/, toolkit-ry/ | Eliminar duplicado en ry-gfx, usar toolkit-ry | 3-4h |
+| C4 | **backend_sdl2.rs** (2 copias) | migui, ry-gfx | Aceptar (propósitos distintos), agregar comentario | 0.5h |
+| C5 | **cli.rs** (2 copias) | ry-rs, rybot | Renombrar: `main_cli`, `project_cli` | 1h |
+
+### Input duplicado (events-ry vs ry-input)
+
+| # | Problema | Solución | Esfuerzo |
+|---|----------|----------|----------|
+| D1 | events-ry tiene InputManager, Shell, TextInput — ry-input tiene InputMap, InputState | Unificar: que events-ry dependa de ry-input, o fusionar crates | 6-8h |
+
+### Re-exports faltantes
+
+| # | Crate | Qué exportar | Donde |
+|---|-------|-------------|-------|
+| E1 | ry-rs/lib.rs | Solo re-exporta ry_config + ry_gfx | Agregar pub use de rybot, ry-input, ry-anim, ry3d-gfx, toolkit-ry |
+| E2 | ry-gfx/lib.rs | ~20 módulos públicos sin re-export de tipos clave | Agregar pub use de ColorRydit, RyditGfx, AudioSystem, Key |
+| E3 | ry-rs/modules/mod.rs | Define módulos locales (camera, particles, physics) en vez de re-exportar crates | Reemplazar con re-exports de crates especializados |
+
+---
+
 ## 🟡 TAREAS PARALELAS — SDL2 Avanzado + Raylib + main.rs
 
 ### SDL2 Avanzado en Editores (sensación profesional, no toy)
@@ -107,18 +175,27 @@
 
 ## 📋 PRÓXIMA SESIÓN — Lo que traerás
 
-- [ ] **Iluminación 2D** — luces puntuales + sombras básicas (GLES 2.0)
-- [ ] **Layout Flexbox en migui** — layout automático tipo Bevy UI
+### Render + Iluminación
 - [ ] **Render pipeline abstraction** — forward pass configurable
 - [ ] **Materiales GLSL** — shaders configurables sin hardcodear
 - [ ] **Post-processing crate** — mover bloom/glow/blur de ry-anim
-- [ ] **Frustum culling generalizado** |
-- [ ] **Hot-reload shaders** |
-- [ ] **ry-window unificado** |
-- [ ] **Theme editor GUI** |
-- [ ] **Editor visual** |
-- [ ] **LAZOS Python+C+++C** |
-- [ ] **v1.0 de Ry-Dit** |
+- [ ] **Frustum culling generalizado**
+- [ ] **Hot-reload shaders**
+
+### Estructural (conexiones)
+- [ ] **Conectar rybot subsystems** — physics, anim, science, render, network
+- [ ] **Renombrar particles.rs** — anim_particles, gpu_particles, script_particles
+- [ ] **Renombrar camera.rs** — camera2d, script_camera
+- [ ] **Resolver theme.rs duplicado** — ry-gfx/toolkit vs toolkit-ry
+- [ ] **Re-exports en ry-rs/lib.rs** — rybot, ry-input, ry-anim, ry3d-gfx
+- [ ] **Resolver events-ry vs ry-input** — unificar input
+
+### Editor + Herramientas
+- [ ] **ry-window unificado**
+- [ ] **Theme editor GUI**
+- [ ] **Editor visual**
+- [ ] **LAZOS Python+C+++C**
+- [ ] **v1.0 de Ry-Dit**
 
 ---
 
