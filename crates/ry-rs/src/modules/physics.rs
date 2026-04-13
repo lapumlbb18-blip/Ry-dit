@@ -812,6 +812,88 @@ pub fn physics_max_impact<'a>(
     Valor::Num(world_ref.max_impact_energy())
 }
 
+// ========================================================================
+// 🆕 v0.19.2: SONIDO REACTIVO POR FÍSICA — frecuencia por impacto
+// ========================================================================
+
+/// physics::impact_frequency(base_freq) — Frecuencia ∝ √(energía cinética)
+pub fn physics_impact_frequency<'a>(
+    args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    use crate::eval::evaluar_expr;
+    let base = if !args.is_empty() {
+        match evaluar_expr(&args[0], executor, funcs) {
+            Valor::Num(n) => n as f64, _ => 100.0,
+        }
+    } else { 100.0 };
+    let world = get_physics_world();
+    let world_ref = world.borrow();
+    let energy = world_ref.total_kinetic_energy();
+    let freq = (base + 500.0 * energy.sqrt()).clamp(20.0, 20000.0);
+    Valor::Num(freq)
+}
+
+/// physics::impact_volume() — Volumen ∝ energía de impacto (0.0-1.0)
+pub fn physics_impact_volume<'a>(
+    _args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    let world = get_physics_world();
+    let world_ref = world.borrow();
+    let energy = world_ref.max_impact_energy();
+    let volume = (energy / 10000.0).clamp(0.0, 1.0);
+    Valor::Num(volume)
+}
+
+/// physics::doppler_shift(freq, v_source, v_observer) — f' = f*(v+v_obs)/(v-v_src)
+pub fn physics_doppler_shift<'a>(
+    args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    use crate::eval::evaluar_expr;
+    if args.len() != 3 {
+        return Valor::Error("physics::doppler_shift(freq, v_source, v_observer)".to_string());
+    }
+    let freq = match evaluar_expr(&args[0], executor, funcs) {
+        Valor::Num(n) => n as f64, _ => return Valor::Error("freq debe ser num".to_string()),
+    };
+    let v_src = match evaluar_expr(&args[1], executor, funcs) {
+        Valor::Num(n) => n as f64, _ => return Valor::Error("v_source debe ser num".to_string()),
+    };
+    let v_obs = match evaluar_expr(&args[2], executor, funcs) {
+        Valor::Num(n) => n as f64, _ => return Valor::Error("v_observer debe ser num".to_string()),
+    };
+    let v_sound = 343.0;
+    let denom = v_sound - v_src;
+    if denom.abs() < 0.01 { return Valor::Num((freq * 2.0).clamp(20.0, 20000.0)); }
+    let shifted = freq * (v_sound + v_obs) / denom;
+    Valor::Num(shifted.clamp(20.0, 20000.0))
+}
+
+/// physics::impact_profile() — Retorna [freq, volume, "tipo"]
+/// Tipos: "rumble", "impact", "crash", "explosion"
+pub fn physics_impact_profile<'a>(
+    _args: &[Expr<'a>],
+    executor: &mut Executor,
+    funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    let world = get_physics_world();
+    let world_ref = world.borrow();
+    let energy = world_ref.max_impact_energy();
+    let total_e = world_ref.total_kinetic_energy();
+    let freq = (100.0 + 500.0 * total_e.sqrt()).clamp(20.0, 20000.0);
+    let volume = (energy / 10000.0).clamp(0.0, 1.0);
+    let stype = if energy < 100.0 { "rumble" }
+        else if energy < 5000.0 { "impact" }
+        else if energy < 50000.0 { "crash" }
+        else { "explosion" };
+    Valor::Array(vec![Valor::Num(freq), Valor::Num(volume), Valor::Texto(stype.to_string())])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

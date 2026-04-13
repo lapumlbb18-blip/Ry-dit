@@ -1801,6 +1801,27 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
                 use crate::modules::physics::{physics_set_bounds};
                 let result = physics_set_bounds(args, executor, funcs);
                 executor.guardar("__RESULT__", result);
+            }
+            // 🆕 v0.19.2: Sonido reactivo por física
+            else if func_name == "physics::impact_frequency" {
+                use crate::modules::physics::{physics_impact_frequency};
+                let result = physics_impact_frequency(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::impact_volume" {
+                use crate::modules::physics::{physics_impact_volume};
+                let result = physics_impact_volume(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::doppler_shift" && args.len() == 3 {
+                use crate::modules::physics::{physics_doppler_shift};
+                let result = physics_doppler_shift(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::impact_profile" {
+                use crate::modules::physics::{physics_impact_profile};
+                let result = physics_impact_profile(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
                 let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
