@@ -370,6 +370,85 @@ impl PhysicsWorld {
     pub fn clear_bounds<'a>(&mut self) {
         self.bounds = None;
     }
+
+    // ========================================================================
+    // 🆕 v0.19.2: GRAVITACIÓN NEWTONIANA — F = G·m₁·m₂/r²
+    // ========================================================================
+
+    /// Aplicar gravitación newtoniana entre TODOS los cuerpos (O(n²))
+    pub fn apply_newtonian_gravity(&mut self, dt: f32, g: f64) {
+        let ids: Vec<String> = self.bodies.keys().cloned().collect();
+        let n = ids.len();
+        for i in 0..n {
+            for j in (i + 1)..n {
+                let id_i = &ids[i];
+                let id_j = &ids[j];
+                let (xi, yi, mi, si) = {
+                    if let Some(b) = self.bodies.get(id_i) {
+                        (b.x as f64, b.y as f64, b.mass as f64, b.is_static)
+                    } else { continue; }
+                };
+                let (xj, yj, mj, sj) = {
+                    if let Some(b) = self.bodies.get(id_j) {
+                        (b.x as f64, b.y as f64, b.mass as f64, b.is_static)
+                    } else { continue; }
+                };
+                let dx = xj - xi;
+                let dy = yj - yi;
+                let dist_sq = dx * dx + dy * dy;
+                let dist = dist_sq.sqrt();
+                if dist < 5.0 { continue; }
+                let force = g * mi * mj / dist_sq;
+                let ax_i = force * dx / (dist * mi);
+                let ay_i = force * dy / (dist * mi);
+                let ax_j = -force * dx / (dist * mj);
+                let ay_j = -force * dy / (dist * mj);
+                if !si {
+                    if let Some(b) = self.bodies.get_mut(id_i) {
+                        b.vx += ax_i as f32 * dt;
+                        b.vy += ay_i as f32 * dt;
+                    }
+                }
+                if !sj {
+                    if let Some(b) = self.bodies.get_mut(id_j) {
+                        b.vx += ax_j as f32 * dt;
+                        b.vy += ay_j as f32 * dt;
+                    }
+                }
+            }
+        }
+    }
+
+    /// Energía cinética total del sistema (para audio reactivo)
+    pub fn total_kinetic_energy(&self) -> f64 {
+        let mut e = 0.0;
+        for (_, b) in &self.bodies {
+            if !b.is_static {
+                let v2 = (b.vx as f64).powi(2) + (b.vy as f64).powi(2);
+                e += 0.5 * b.mass as f64 * v2;
+            }
+        }
+        e
+    }
+
+    /// Impacto máximo (mayor energía de colisión potencial)
+    pub fn max_impact_energy(&self) -> f64 {
+        let mut max_e = 0.0;
+        let ids: Vec<String> = self.bodies.keys().cloned().collect();
+        for i in 0..ids.len() {
+            for j in (i + 1)..ids.len() {
+                if let (Some(a), Some(b)) = (self.bodies.get(&ids[i]), self.bodies.get(&ids[j])) {
+                    if a.collides_with(b) {
+                        let dvx = (a.vx as f64 - b.vx as f64).abs();
+                        let dvy = (a.vy as f64 - b.vy as f64).abs();
+                        let e = 0.5 * (a.mass as f64 + b.mass as f64) * (dvx * dvx + dvy * dvy);
+                        if e > max_e { max_e = e; }
+                    }
+                }
+            }
+        }
+        max_e
+    }
 }
 
 impl Default for PhysicsWorld {
@@ -674,6 +753,63 @@ pub fn physics_check_collision<'a>(
     } else {
         Valor::Error("Uno o ambos cuerpos no existen".to_string())
     }
+}
+
+// ========================================================================
+// 🆕 v0.19.2: FUNCIONES PARA ACTIVAR FÍSICA EN GAME LOOP
+// ========================================================================
+
+/// physics::enable() - Activar física en game loop
+pub fn physics_enable<'a>(
+    _args: &[Expr<'a>],
+    executor: &mut Executor,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    executor.guardar("__PHYSICS_ENABLED__", Valor::Bool(true));
+    Valor::Texto("Física activada en game loop".to_string())
+}
+
+/// physics::enable_newton(g) - Activar gravitación newtoniana con constante G
+pub fn physics_enable_newton<'a>(
+    args: &[Expr<'a>],
+    executor: &mut Executor,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    use crate::eval::evaluar_expr;
+    let g = if !args.is_empty() {
+        match evaluar_expr(&args[0], executor, _funcs) {
+            Valor::Num(n) => n,
+            _ => 100.0,
+        }
+    } else {
+        100.0
+    };
+    executor.guardar("__PHYSICS_ENABLED__", Valor::Bool(true));
+    executor.guardar("__NEWTON_GRAVITY__", Valor::Bool(true));
+    executor.guardar("__GRAVITY_G__", Valor::Num(g));
+    Valor::Texto(format!("Gravitación newtoniana activada (G={})", g))
+}
+
+/// physics::kinetic_energy() - Obtener energía cinética total
+pub fn physics_kinetic_energy<'a>(
+    _args: &[Expr<'a>],
+    _executor: &mut Executor,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    let world = get_physics_world();
+    let world_ref = world.borrow();
+    Valor::Num(world_ref.total_kinetic_energy())
+}
+
+/// physics::max_impact() - Obtener impacto máximo
+pub fn physics_max_impact<'a>(
+    _args: &[Expr<'a>],
+    _executor: &mut Executor,
+    _funcs: &mut HashMap<String, (Vec<String>, Vec<Stmt<'a>>)>,
+) -> Valor {
+    let world = get_physics_world();
+    let world_ref = world.borrow();
+    Valor::Num(world_ref.max_impact_energy())
 }
 
 #[cfg(test)]

@@ -157,7 +157,25 @@ pub fn ejecutar_programa_gfx<'a>(
                         break;
                     }
 
-                    // === FASE 1: Acumular comandos en Render Queue ===
+                    // === FASE 1: Actualizar física ===
+                    // ✅ v0.19.2: Physics world update en cada frame
+                    if let Some(blast_core::Valor::Bool(true)) = executor.leer("__PHYSICS_ENABLED__") {
+                        use crate::modules::physics::get_physics_world;
+                        let world = get_physics_world();
+                        let mut world_ref = world.borrow_mut();
+                        world_ref.update(dt);
+
+                        // ✅ Gravitación Newtoniana entre cuerpos (si hay 2+)
+                        if let Some(blast_core::Valor::Bool(true)) = executor.leer("__NEWTON_GRAVITY__") {
+                            let g_constant: f64 = match executor.leer("__GRAVITY_G__") {
+                                Some(blast_core::Valor::Num(g)) => g,
+                                _ => 100.0, // G escalado para juego
+                            };
+                            world_ref.apply_newtonian_gravity(dt, g_constant);
+                        }
+                    }
+
+                    // === FASE 2: Acumular comandos en Render Queue ===
 
                     // Clear screen
                     queue.push(DrawCommand::Clear {
@@ -282,6 +300,20 @@ pub fn ejecutar_programa_gfx<'a>(
                     let dt = now.duration_since(last_time).as_secs_f32();
                     last_time = now;
                     executor.guardar("__DT__", blast_core::Valor::Num(dt as f64));
+
+                    // ✅ v0.19.2: Physics update en Block game loop
+                    if let Some(blast_core::Valor::Bool(true)) = executor.leer("__PHYSICS_ENABLED__") {
+                        use crate::modules::physics::get_physics_world;
+                        let world = get_physics_world();
+                        let mut world_ref = world.borrow_mut();
+                        world_ref.update(dt);
+                        if let Some(blast_core::Valor::Bool(true)) = executor.leer("__NEWTON_GRAVITY__") {
+                            let g: f64 = match executor.leer("__GRAVITY_G__") {
+                                Some(blast_core::Valor::Num(g)) => g, _ => 100.0,
+                            };
+                            world_ref.apply_newtonian_gravity(dt, g);
+                        }
+                    }
 
                     // Clear queue
                     queue.clear();

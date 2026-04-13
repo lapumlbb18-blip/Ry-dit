@@ -1731,6 +1731,62 @@ pub fn ejecutar_stmt_gfx<'stmt, 'data>(
                 if let Some(r) = result {
                     executor.guardar("__RESULT__", r);
                 }
+            }
+            // ✅ v0.19.2: Funciones de física newtoniana
+            else if func_name == "physics::enable" {
+                use crate::modules::physics::{physics_enable};
+                let result = physics_enable(&[], executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::enable_newton" {
+                use crate::modules::physics::{physics_enable_newton};
+                let result = physics_enable_newton(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::kinetic_energy" {
+                use crate::modules::physics::{physics_kinetic_energy};
+                let result = physics_kinetic_energy(&[], executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::max_impact" {
+                use crate::modules::physics::{physics_max_impact};
+                let result = physics_max_impact(&[], executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::create_body" && args.len() == 5 {
+                use crate::modules::physics::{physics_create_body};
+                let result = physics_create_body(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::update" {
+                use crate::modules::physics::{physics_update};
+                let result = physics_update(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::get_position" && args.len() == 1 {
+                use crate::modules::physics::{physics_get_position};
+                let result = physics_get_position(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::set_position" && args.len() == 3 {
+                use crate::modules::physics::{physics_set_position};
+                let result = physics_set_position(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::set_velocity" && args.len() == 3 {
+                use crate::modules::physics::{physics_set_velocity};
+                let result = physics_set_velocity(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::check_collision" && args.len() == 2 {
+                use crate::modules::physics::{physics_check_collision};
+                let result = physics_check_collision(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
+            }
+            else if func_name == "physics::set_bounds" && args.len() == 4 {
+                use crate::modules::physics::{physics_set_bounds};
+                let result = physics_set_bounds(args, executor, funcs);
+                executor.guardar("__RESULT__", result);
             } else {
                 // Función de usuario - clonar datos para evitar borrow checker issues
                 let func_data = funcs.get(&func_name).map(|(p, b)| (p.clone(), b.clone()));
