@@ -91,6 +91,9 @@ pub mod fsr;
 // 🆕 v0.19.1: Iluminación 2D — luces puntuales + sombras
 pub mod lighting;
 
+// 🆕 v0.19.2: SDL2 Helpers — puente para demos SDL2
+pub mod sdl2_helpers;
+
 use raylib::consts::KeyboardKey;
 use raylib::prelude::*;
 
