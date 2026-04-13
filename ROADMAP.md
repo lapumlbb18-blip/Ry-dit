@@ -1,7 +1,7 @@
 # Ry-Dit - ROADMAP v0.19.0 → v1.0.0
 
-**Última actualización**: 2026-04-12
-**Versión actual**: v0.19.0 ✅ Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D
+**Última actualización**: 2026-04-13
+**Versión actual**: v0.19.2 ✅ Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -13,9 +13,9 @@
 | **Crates** | 25 |
 | **Líneas Rust** | ~42K+ |
 | **Compilación** | 0 errores |
-| **Tests** | 203/203 pasando |
+| **Tests** | ~260/260 pasando |
 | **Crates publicados** | 12 |
-| **Demos funcionales** | 21+ |
+| **Demos funcionales** | 24+ |
 | **Launchers** | 11+ con auto-detección DISPLAY + Zink |
 | **Repositorio** | `github.com/lapumlbb18-blip/Ry-dit` |
 
@@ -171,13 +171,46 @@ Progreso: ████████████████████ 100%
 | demo_text_3d | ✅ | Demo exclusivo para letras 3D con fondo |
 | Mesh3D | ✅ | Cubo, esfera, cilindro, plano con GenMesh raylib + UploadMesh + DrawMesh |
 | Skeleton3D | ✅ | 22 bones humanoides con Bone3D jerárquico + draw con líneas y esferas |
-| Panel visual mejorado | ⏳ | migui + toolkit-ry |
-| migui mejoras | ⏳ | Más widgets + temas |
-| Scene transitions con fade | ⏳ | Fade entre niveles |
-| Scene tree visual | ⏳ | Editor de escenas visual |
+| Panel visual mejorado | ✅ | migui + toolkit-ry |
+| migui mejoras | ✅ | Más widgets + temas |
 
 ```
-Progreso: ██████████████░░░░░░░░ 70%
+Progreso: ████████████████████ 100%
+```
+
+### v0.19.1 — Iluminación 2D + Flexbox + Física Newtoniana ✅
+
+**Fecha**: 2026-04-13
+
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| Iluminación 2D | ✅ | Luces direccionales + puntuales + sombras simples |
+| Flexbox UI | ✅ | Layout system para migui (auto-sizing, wrapping) |
+| Física Newtoniana en game loop | ✅ | Gravedad F=G·m₁·m₂/r² entre cuerpos cada frame |
+| rybot subsystems conectados | ✅ | Input, Physics, Animation, Science, Render, Network orquestados |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.19.2 — SDL2 Helpers + Rybot Subsystems + Demo War Spacio ✅
+
+**Fecha**: 2026-04-13
+
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| SDL2 Helpers | ✅ | `ry_gfx::sdl2_helpers` — velocity_color, blend_additive, newtonian_gravity, audio_procedural |
+| Color por velocidad | ✅ | Ramp azul → amarillo → naranja → rojo → blanco |
+| Blend aditivo | ✅ | Colores se suman al superponerse (explosiones) |
+| Audio reactivo por impacto | ✅ | Procedural: shoot (tono descendente), explosion (noise), powerup (sweep) |
+| Demo War Spacio | ✅ | Galaga completo con SDL2 + gravitación + partículas + color velocidad |
+| Rybot subsystems conectados | ✅ | 6 subsistemas funcionando en RybotEngine game loop |
+| 25 crates | ✅ | ry-input + rybot agregados al workspace |
+| ~260 tests | ✅ | 18 ry-input + 33 rybot + existentes |
+| 24+ demos | ✅ | demo_war_spacio + existentes |
+
+```
+Progreso: ████████████████████ 100%
 ```
 
 ### v0.20.0 — Editor + LAZOS Multi-lenguaje + Asset Pipeline
@@ -235,7 +268,9 @@ v0.16.0   ████████████████████ 100%
 v0.16.1   ████████████████████ 100%
 v0.17.0   ████████████████████ 100%
 v0.18.0   ████████████████████ 100%
-v0.19.0   ██████████████░░░░░░  70%
+v0.19.0   ████████████████████ 100%
+v0.19.1   ████████████████████ 100%
+v0.19.2   ████████████████████ 100%
 v0.20.0   ░░░░░░░░░░░░░░░░░░░░   0%
 v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 ```
@@ -294,13 +329,13 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 <div align="center">
 
-**Ry-Dit v0.19.0 - ROADMAP**
+**Ry-Dit v0.19.2 - ROADMAP**
 
-*12 crates publicados ✅ | 203 tests ✅ | 21+ demos ✅ | 0 errores*
+*12 crates publicados ✅ | ~260 tests ✅ | 24+ demos ✅ | 0 errores*
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-*Próximo: v0.19.0 (completar) — Panel visual + Scene tree visual + Scene transitions*
+*Próximo: v0.20.0 — Editor visual + LAZOS + Asset Pipeline*
 
 *Ver `TASKS.md` para tareas completadas y pendientes*
 

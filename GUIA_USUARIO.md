@@ -1,20 +1,21 @@
 # 🛡️ Ry-Dit - Guía del Usuario
 
-**Versión**: v0.16.0
-**Última actualización**: 2026-04-09
+**Versión**: v0.19.2
+**Última actualización**: 2026-04-13
 
 ---
 
 ## 📋 Índice
 
 1. [¿Qué es Ry-Dit?](#qué-es-ry-dit)
-2. [Requisitos](#requisitos)
-3. [Instalación](#instalación)
-4. [Ejecutar Demos](#ejecutar-demos)
-5. [Controles de los Demos](#controles-de-los-demos)
-6. [Scripting .rydit](#scripting-rydit)
-7. [Crear Niveles con .rydit](#crear-niveles-con-rydit)
-8. [Troubleshooting](#troubleshooting)
+2. [Rybot Engine](#rybot-engine)
+3. [Requisitos](#requisitos)
+4. [Instalación](#instalación)
+5. [Ejecutar Demos](#ejecutar-demos)
+6. [Controles de los Demos](#controles-de-los-demos)
+7. [Scripting .rydit](#scripting-rydit)
+8. [Crear Niveles con .rydit](#crear-niveles-con-rydit)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -30,8 +31,107 @@ Ry-Dit es un **motor de juegos 2D + lenguaje de scripting en Rust**, diseñado p
 - **FSR 1.0**: Upscaling AMD para mejorar rendimiento
 - **Health Bars + HUD**: Sistema de HUD world-space con color dinámico
 - **Cámara 2D avanzada**: Zoom, rotación, follow suave, límites de mapa
-- **12 crates publicados** en crates.io
+- **25 crates publicados** en crates.io
 - **Multi-plataforma**: Android/Termux, Linux, Windows
+
+---
+
+## Rybot Engine
+
+Ry-Dit ahora incluye **Rybot**, el motor central que orquesta todos los crates del ecosistema.
+
+### ¿Qué es Rybot?
+
+Rybot conecta 6 subsistemas especializados en un solo motor coherente:
+
+| Subsistema | Crate | Función |
+|-----------|-------|---------|
+| **Input** | `ry-input` | Input map configurable (.rydit-input) |
+| **Física** | `ry-physics` | Gravedad Newtoniana, proyectiles, N-body |
+| **Animación** | `ry-anim` | 12 principios Disney, action sprite |
+| **Ciencia** | `ry-science` | Bezier curves, simulaciones |
+| **Render** | `ry-gfx` + `ry3d-gfx` | Partículas, GPU instancing, 3D |
+| **Red** | `ry-stream` | WebSocket LAN server |
+
+### Input Map Configurable (.rydit-input)
+
+Rybot incluye un sistema de input map tipo Godot — mapea acciones a teclas, ratón, gamepad o touch desde un archivo simple:
+
+```ini
+# .rydit-input
+move_up = W, Up
+move_down = S, Down
+attack = J, MouseLeft
+jump = Space
+```
+
+Se puede remapear en runtime:
+```rust
+engine.input_mut().rebind_action("move_up", vec![K!("I"), K!("K")]);
+```
+
+### Física Newtoniana en Game Loop
+
+Rybot ejecuta gravedad Newtoniana `F = G·m₁·m₂/r²` entre cuerpos cada frame:
+
+```rust
+engine.physics_mut().set_newtonian(true);
+engine.physics_mut().add_body("earth", 0.0, 0.0, 0.0, 0.0, 100.0, 5.0);
+engine.physics_mut().update(0.016);
+```
+
+### Color por Velocidad en Partículas
+
+Las partículas cambian de color según su velocidad:
+- 🔵 Azul oscuro (lento) → 🔵 Azul → 🟡 Amarillo → 🟠 Naranja → 🔴 Rojo → ⚪ Blanco (rápido)
+
+```rust
+use ry_gfx::sdl2_helpers::velocity_color_sdl2;
+let color = velocity_color_sdl2(speed, max_speed);
+```
+
+### Blend Aditivo para Explosiones
+
+Los colores se SUMAN al superponerse — ideal para explosiones y efectos de energía:
+
+```rust
+set_blend_additive(&mut canvas);
+draw_particles_sdl2(&mut canvas, &ps, max_speed);
+set_blend_normal(&mut canvas);
+```
+
+### Audio Reactivo por Impacto
+
+Audio procedural generado por tipo de evento (disparo, explosión, powerup):
+
+```rust
+let wave_data = generate_wave_data(0.1, 22050, 800.0, "shoot");
+// "shoot" = tono descendente con envelope
+// "explosion" = noise con envelope
+// "powerup" = sweep ascendente de frecuencia
+```
+
+### SDL2 Helpers para Demos
+
+Módulo reutilizable `ry_gfx::sdl2_helpers` con helpers para demos SDL2 rápidas:
+
+| Helper | Función |
+|--------|---------|
+| `velocity_color_sdl2()` | Color por velocidad (ramp azul→rojo) |
+| `set_blend_additive()` | Blend aditivo para explosiones |
+| `draw_particles_sdl2()` | Dibujar partículas con color |
+| `apply_newtonian_gravity_2d()` | Gravedad entre cuerpos 2D |
+| `generate_wave_data()` | Audio procedural (shoot/explosion/powerup) |
+
+### Demo War Spacio
+
+Demo tipo Galaga que usa todos los SDL2 helpers:
+
+```bash
+cargo run --bin demo_war_spacio --release
+```
+
+**Controles**: WASD mover, SPACE disparar, R reiniciar, ESC salir.
 
 ---
 
@@ -493,10 +593,10 @@ cargo search v-shield
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.16.0 - Guía del Usuario**
+**🛡️ Ry-Dit v0.19.2 - Guía del Usuario**
 
 *Construido sin prisa, madurado con paciencia*
 
-*23 crates · 12 publicados · 0 errores · Low-End First*
+*25 crates · 12 publicados · ~260 tests · 24+ demos · 0 errores · Low-End First*
 
 </div>

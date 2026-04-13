@@ -1,8 +1,8 @@
-# Ry-Dit - Estructura del Proyecto v0.18.0
+# Ry-Dit - Estructura del Proyecto v0.19.2
 
-**Última actualización**: 2026-04-11
-**Versión**: v0.18.0 ✅ 3D Primitives + Transiciones + Audio Mixer + UTF-8 Fix
-**Crates**: 23 | **Publicados**: 12 | **Demos**: 20+
+**Última actualización**: 2026-04-13
+**Versión**: v0.19.2 ✅ Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox
+**Crates**: 25 | **Publicados**: 12 | **Demos**: 24+ | **Tests**: ~260
 
 ---
 
@@ -72,18 +72,19 @@ shield-project/
 │   │       │   ├── physics.rs    # Módulo physics interno
 │   │       │   └── ...           # 13 módulos más
 │   │       ├── eval/             # Scripting evaluator
-│   │       └── bin/              # 18+ demos
-│   │           ├── demo_militar.rs        # 🆕 Soldado + partículas + granadas
-│   │           ├── demo_emoji_utf8.rs     # 🆕 25+ emojis + UTF-8 fix
-│   │           ├── demo_audio_mixer.rs    # 🆕 4 buses + spatial 2D + fade
-│   │           ├── demo_anime_ry_v2.rs    # Snake + manzanas + bombas
+│   │       └── bin/              # 24+ demos
+│   │           ├── demo_war_spacio.rs     # 🆕 Galaga + Gravitación + SDL2 Helpers
+│   │           ├── demo_militar.rs        # Soldado + partículas + granadas
+│   │           ├── demo_emoji_utf8.rs     # 25+ emojis + UTF-8 fix
+│   │           ├── demo_audio_mixer.rs    # 4 buses + spatial 2D + fade
+│   │           ├── demo_anime_ry_v2.rs    # Snake Anime v2
 │   │           ├── demo_buscaminas.rs     # Buscaminas 16×16
 │   │           ├── demo_action_sprite.rs  # Sprite animation
 │   │           ├── demo_hud_camera.rs     # HUD + Cámara 2D
 │   │           ├── demo_gpu_instancing.rs # 50K partículas
 │   │           ├── demo_fsr.rs            # FSR 1.0
 │   │           ├── demo_torreta_vs_sprites.rs # Juego completo
-│   │           └── ...                    # 8+ demos más
+│   │           └── ...                    # 12+ demos más
 │   ├── ry-stream/                # ✅ LAN streaming (crates.io)
 │   ├── ry-god/                   # ✅ Security (crates.io)
 │   ├── ry-backend/               # ✅ Dual backend (crates.io)
@@ -100,7 +101,19 @@ shield-project/
 │   ├── ry3d-gfx/                 # 3D graphics + texto 3D + modelos
 │   ├── events-ry/                # Input unificado
 │   ├── ry-loader/                # Module loader
-│   └── ry-script/                # Script loading
+│   ├── ry-script/                # Script loading
+│   ├── ry-input/                 # ✅ Input map configurable + macros K! M! P! PA!
+│   ├── rybot/                    # ✅ Motor central + SceneTree + CLI/GUI + 6 subsistemas conectados
+│   │   └── src/
+│   │       ├── lib.rs            # RybotEngine, EngineState, EngineStats
+│   │       ├── subsystems.rs     # Input/Physics/Animation/Science/Render/Network
+│   │       ├── scene_tree.rs     # SceneTree, SceneNode, NodeType, parse .ryscene
+│   │       ├── templates.rs      # ProjectTemplate, create_project, list_templates
+│   │       ├── cli.rs            # CLI: new, templates, info
+│   │       └── gui.rs            # GUI con migui (4 paneles)
+│   └── ry-gfx/
+│       └── src/
+│           └── sdl2_helpers.rs   # 🆕 SDL2 helpers: velocity_color, blend_additive, newtonian_gravity, audio_procedural
 │
 └── logo_icon_asst/               # Assets disponibles
     └── sprites/                  # Sprites actuales (tank, helicopter, crate, etc.)
@@ -136,6 +149,12 @@ shield-project/
 | blast-core | ❌ | — |
 | ry3d-gfx | ✅ | 3 |
 
+### Sin publicar (nuevos)
+| Crate | README | Tests |
+|-------|--------|-------|
+| ry-input | ❌ | 18 |
+| rybot | ❌ | 33 |
+
 ### Eliminados
 | Crate | Razón |
 |-------|-------|
@@ -149,7 +168,8 @@ shield-project/
 ### Juegos Completos
 | Demo | Features |
 |------|----------|
-| demo_militar | 🆕 Soldado + partículas + granadas arco + salto |
+| demo_war_spacio | 🆕 Galaga + Gravitación Newtoniana + SDL2 Helpers + Color velocidad |
+| demo_militar | Soldado + partículas + granadas arco + salto |
 | demo_anime_ry_v2 | Snake + manzanas + bombas + entidades + minimap |
 | demo_buscaminas | 16×16 grid + 40 minas + flood fill |
 | demo_torreta_vs_sprites | 3 niveles + cámara + AI + audio |
@@ -184,8 +204,10 @@ shield-project/
 
 <div align="center">
 
-**Ry-Dit v0.17.0 — Estructura del Proyecto**
+**Ry-Dit v0.19.2 — Estructura del Proyecto**
 
-*23 crates · 12 publicados · 18+ demos · 11 launchers · 0 errores*
+*25 crates · 12 publicados · ~260 tests · 24+ demos · 0 errores*
+
+*Rybot subsystems conectados: Input + Physics + Animation + Science + Render + Network*
 
 </div>

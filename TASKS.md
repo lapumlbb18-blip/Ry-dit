@@ -108,6 +108,56 @@
 | B4 | RenderSubsystem | ry-gfx | GPU instancing + FSR + transitions | 6-8h |
 | B5 | NetworkSubsystem | ry-stream | WebSocket update + portal | 4-6h |
 
+---
+
+## 🚀 TAREAS FÍSICA AVANZADA + SIMULACIONES (v0.19.3-v0.20.0)
+
+### Partículas con física Newtoniana (ry-anim + ry-gfx)
+
+| # | Feature | Fórmula | Impacto visual | Esfuerzo |
+|---|---------|---------|----------------|----------|
+| F1 | **Gravitación newtoniana** | F = G·m₁·m₂/r² | Meteoros, órbitas, lluvia de estrellas | 4-6h |
+| F2 | **Colisiones elásticas** | p = m·v, conservación momentum | Choque vehículos, bolas de billar | 6-8h |
+| F3 | **Arrastre/fricción aire** | F_d = ½·ρ·v²·C_d·A | Paracaídas, hojas cayendo | 3-4h |
+| F4 | **Viento/turbulencia** | Vector fuerza variable | Banderas, humo, polvo | 3-4h |
+| F5 | **Flocking (cohesión/separación)** | Reglas de Reynolds | Bandadas de pájaros, cardúmenes | 4-6h |
+
+### Efectos visuales de partículas
+
+| # | Feature | Detalle | Esfuerzo |
+|---|---------|---------|----------|
+| F6 | **Color por velocidad** | Azul=lento → Rojo=rápido | 2-3h |
+| F7 | **Size por energía** | Partícula crece con velocidad | 1-2h |
+| F8 | **Alpha por vida** | Fade out natural | 1-2h |
+| F9 | **Blend aditivo** | Explosiones brillantes | 2-3h |
+| F10 | **Trail de partículas** | Estela luminosa (ya existe en ry-anim) | Conectar |
+
+### Simulaciones avanzadas
+
+| # | Simulación | Detalle | Esfuerzo |
+|---|-----------|---------|----------|
+| F11 | **Meteor shower** | Gravitación + fricción + explosión impacto | 6-8h |
+| F12 | **Choque vehículos** | Colisión elástica + deformación + partículas | 8-12h |
+| F13 | **Fuego con convección** | Partículas suben + viento térmico | 4-6h |
+| F14 | **Agua SPH** | Smoothed Particle Hydrodynamics básico | 10-15h |
+| F15 | **Explosión onda choque** | Onda expansiva + escombros | 4-6h |
+
+### Sonido por física (audio reactivo)
+
+| # | Feature | Fórmula | Esfuerzo |
+|---|---------|---------|----------|
+| F16 | **Frecuencia por impacto** | f ∝ √(energía cinética) | 2-3h |
+| F17 | **Volumen por masa×velocidad** | V ∝ m·v² (energía) | 2-3h |
+| F18 | **Doppler pitch shift** | f' = f·(v±v_o)/(v±v_s) | 3-4h |
+| F19 | **Frecuencias altas→bajas** | Aturdidor → suave con tiempo | 2-3h |
+
+### Texturas + peso físico
+
+| # | Feature | Detalle | Esfuerzo |
+|---|---------|---------|----------|
+| F20 | **Texturas aumentan masa** | Sprite con textura = más peso en física | 3-4h |
+| F21 | **Deformación por impacto** | Mesh se deforma según fuerza | 6-8h |
+
 ### Duplicación de código
 
 | # | Conflicto | Ubicaciones | Solución | Esfuerzo |

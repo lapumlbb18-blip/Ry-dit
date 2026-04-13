@@ -10,9 +10,9 @@
 
 **"Construido sin prisa, madurado con paciencia"** — Filosofía *Low-End First*
 
-[![Version](https://img.shields.io/badge/version-v0.19.0-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Version](https://img.shields.io/badge/version-v0.19.2-blue.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Errors](https://img.shields.io/badge/errors-0-green.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
-[![Tests](https://img.shields.io/badge/tests-203%2F203-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
+[![Tests](https://img.shields.io/badge/tests-~260-brightgreen.svg)](https://github.com/lapumlbb18-blip/Ry-dit)
 [![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![SDL2](https://img.shields.io/badge/SDL2-0.37-red.svg)](https://www.libsdl.org/)
 [![Raylib](https://img.shields.io/badge/raylib-5.0-orange.svg)](https://www.raylib.com/)
@@ -20,7 +20,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![crates.io](https://img.shields.io/badge/crates.io-12%20publicados-purple.svg)](https://crates.io/crates/ry-anim)
 
-[🚀 Inicio Rápido](#-inicio-rápido) • [🎮 Demos](#-demos-funcionales) • [🆕 Novedades](#-novedades-v0180) • [🏆 Logros](#-logros) • [📦 Crates](#-crates-publicados) • [🤖 IA en el Desarrollo](#-ia-en-el-desarrollo) • [🎯 Roadmap](#-roadmap)
+[🚀 Inicio Rápido](#-inicio-rápido) • [🎮 Demos](#-demos-funcionales) • [🆕 Novedades](#-novedades-v0192) • [🏆 Logros](#-logros) • [📦 Crates](#-crates-publicados) • [🤖 IA en el Desarrollo](#-ia-en-el-desarrollo) • [🎯 Roadmap](#-roadmap)
 
 ---
 
@@ -87,24 +87,21 @@ entity player
 `MacOS`
 ---
 
-## 🆕 Novedades v0.19.0
+## 🆕 Novedades v0.19.2
 
-**Estado**: 25 crates · 0 errores · ~203 tests · 12 crates.io · 21+ demos
+**Estado**: 25 crates · 0 errores · ~260 tests · 12 crates.io · 24+ demos
 
 | Feature | Detalle |
 |---------|---------|
-| **`ry-input` crate** | Input map configurable (.rydit-input parser), InputSource (Key, Mouse, Gamepad, Touch), InputState (pressed/just_pressed/just_released) |
-| **Macros K!() M!() P!() PA!()** | Macros ergonómicos para input |
-| **16 acciones game + 17 editor defaults** | Pre-configuradas con rebind · 18 tests |
-| **`rybot` crate** | Motor central que orquesta todos los crates · SceneTree con parse .ryscene |
-| **6 subsistemas** | Input, Physics, Animation, Science, Render, Network |
-| **CLI (new, templates, info)** | Crear proyectos desde terminal |
-| **GUI con migui (4 paneles)** | New Project, Inspector, Scene Tree, Engine Stats · 33 tests |
-| **Letras 3D (draw_text_3d)** | GetWorldToScreen FFI real en ry3d-gfx |
-| **draw_text_3d_with_bg** | Fondo gris para visibilidad |
-| **Mesh3D** | Cubo, esfera, cilindro, plano con GenMesh raylib + UploadMesh + DrawMesh |
-| **Skeleton3D** | 22 bones humanoides con Bone3D jerárquico + draw con líneas y esferas |
-| **demo_text_3d** | Demo exclusivo para letras 3D con fondo gris |
+| **Rybot 6 subsistemas conectados** | Input, Physics, Animation, Science, Render, Network orquestados en RybotEngine |
+| **SDL2 Helpers** | `ry_gfx::sdl2_helpers` — velocity_color, blend_additive, newtonian_gravity, audio_procedural |
+| **Color por velocidad** | Ramp visual: azul oscuro → azul → amarillo → naranja → rojo → blanco |
+| **Blend aditivo** | Colores se SUMAN al superponerse — explosiones y energía |
+| **Audio reactivo** | Procedural: shoot (tono descendente), explosion (noise), powerup (sweep) |
+| **Demo War Spacio** | Galaga con SDL2 + gravitación Newtoniana + partículas + color velocidad |
+| **Iluminación 2D** | Luces direccionales + puntuales + sombras simples |
+| **Flexbox UI** | Layout system para migui (auto-sizing, wrapping) |
+| **Gravedad Newtoniana** | F=G·m₁·m₂/r² entre cuerpos en game loop |
 
 ---
 
@@ -112,6 +109,7 @@ entity player
 
 | Demo | Descripción | Tamaño |
 |------|-------------|--------|
+| **demo\_war\_spacio** | 🚀 Galaga + gravitación Newtoniana + SDL2 Helpers + color velocidad | — |
 | **demo\_text\_3d** | 🔤 Letras 3D con fondo gris para visibilidad | — |
 | **demo\_3d\_primitives** | 🧊 Escena 3D: cubos, esferas, cilindros + Mesh3D + Skeleton3D | — |
 | **demo\_transitions** | 🎬 19 transiciones tipo editor de video | — |
@@ -146,6 +144,8 @@ entity player
 | 8 | **~30K líneas en 27 días** | v0.17–v0.18 | 1 desarrollador, Android/Termux, sin PC |
 | 9 | **ry-input + rybot** | v0.19.0 | Input map + motor central + 51 tests nuevos |
 | 10 | **25 crates · ~203 tests** | v0.19.0 | Mesh3D + Skeleton3D + Letras 3D reales |
+| 11 | **SDL2 Helpers + War Spacio** | v0.19.2 | velocity_color, blend_additivo, newtonian_gravity, audio_procedural |
+| 12 | **25 crates · ~260 tests · 24+ demos** | v0.19.2 | Rybot 6 subsistemas conectados + Iluminación 2D + Flexbox |
 
 ---
 
@@ -227,7 +227,9 @@ La comunidad técnica está saturada de proyectos generados por IA sin autor rea
 
 | Versión | Features | Estado |
 |---------|----------|--------|
-| **v0.19.0** | Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D | ✅ 70% |
+| **v0.19.2** | Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox | ✅ |
+| **v0.19.1** | Iluminación 2D + Flexbox + Física Newtoniana | ✅ |
+| **v0.19.0** | Input Map + Rybot + Mesh 3D + Skeleton + Letras 3D | ✅ |
 | **v0.18.0** | 3D + controles táctiles + Transiciones + Audio Mixer + RyScale + UTF-8 | ✅ |
 | **v0.20.0** | Editor visual + Asset pipeline + LAZOS (Python+C++) + Multiplayer LAN | 🔜 |
 | **v1.0.0** | GitHub Actions binaries + Motor completo + Debugger + Comunidad | 🎯 Meta |
@@ -246,6 +248,7 @@ La comunidad técnica está saturada de proyectos generados por IA sin autor rea
 | `ESTRUCTURA.md` | Estructura del workspace y crates |
 | `BITACORA.md` | Bitácora técnica — analisis evaluaciones sesiones, bugs, decisiones |
 | `GUIA_USUARIO.md` | Guía de instalación y uso |
+| `GUIA_ROBOT.md` | Guía del motor central Rybot y sus 6 subsistemas |
 | `CONTRIBUTING.md` | Guía de contribución |
 
 ---
@@ -258,10 +261,10 @@ Cada línea tiene un commit. Cada demo tiene evidencia ejecutable.
 
 ---
 
-**🛡️ Ry-Dit v0.19.0 — Low-End First**
+**🛡️ Ry-Dit v0.19.2 — Low-End First**
 
-*25 crates · ~203 tests · 12 crates.io · 21+ demos · 0 errores*
+*25 crates · ~260 tests · 12 crates.io · 24+ demos · 0 errores*
 
 *🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-**Próximo: v0.19.0 (completar) — Panel visual + Scene tree visual + Scene transitions**
+**Próximo: v0.20.0 — Editor visual + LAZOS + Asset Pipeline**
