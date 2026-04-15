@@ -118,6 +118,189 @@ impl Default for Camera3DBuilder {
 }
 
 // ============================================================================
+// CÁMARAS 3D AVANZADAS
+// ============================================================================
+
+/// Cámara orbital — mouse drag para rotar, scroll para zoom
+/// Ideal para visores 3D, editores, escenas estáticas
+pub struct OrbitCamera3D {
+    pub target: Vector3,
+    pub distance: f32,
+    pub yaw: f32,    // rotación horizontal (radianes)
+    pub pitch: f32,  // rotación vertical (radianes)
+    pub min_pitch: f32,
+    pub max_pitch: f32,
+    pub min_distance: f32,
+    pub max_distance: f32,
+}
+
+impl OrbitCamera3D {
+    pub fn new(target: Vector3, distance: f32, yaw: f32, pitch: f32) -> Self {
+        Self {
+            target,
+            distance,
+            yaw,
+            pitch,
+            min_pitch: -89.0_f32.to_radians(),
+            max_pitch: 89.0_f32.to_radians(),
+            min_distance: 1.0,
+            max_distance: 1000.0,
+        }
+    }
+
+    /// Desde posición inicial mirando a target
+    pub fn from_position(pos: Vector3, target: Vector3) -> Self {
+        let dx = pos.x - target.x;
+        let dy = pos.y - target.y;
+        let dz = pos.z - target.z;
+        let distance = (dx * dx + dy * dy + dz * dz).sqrt();
+        let yaw = dz.atan2(dx);
+        let pitch = (dy / distance).asin();
+        Self::new(target, distance, yaw, pitch)
+    }
+
+    /// Actualizar cámara con input de mouse
+    pub fn update(&mut self, dx: f32, dy: f32, scroll: f32, mouse_down: bool) {
+        if mouse_down {
+            self.yaw += dx * 0.005;
+            self.pitch -= dy * 0.005;
+            self.pitch = self.pitch.clamp(self.min_pitch, self.max_pitch);
+        }
+        self.distance -= scroll * 2.0;
+        self.distance = self.distance.clamp(self.min_distance, self.max_distance);
+    }
+
+    /// Convertir a Camera3D de raylib
+    pub fn to_camera(&self) -> Camera3D {
+        let x = self.target.x + self.distance * self.pitch.cos() * self.yaw.cos();
+        let y = self.target.y + self.distance * self.pitch.sin();
+        let z = self.target.z + self.distance * self.pitch.cos() * self.yaw.sin();
+        Camera3D::perspective(
+            Vector3::new(x, y, z),
+            self.target,
+            Vector3::new(0.0, 1.0, 0.0),
+            45.0,
+        )
+    }
+
+    /// Obtener posición actual de la cámara
+    pub fn position(&self) -> Vector3 {
+        let x = self.target.x + self.distance * self.pitch.cos() * self.yaw.cos();
+        let y = self.target.y + self.distance * self.pitch.sin();
+        let z = self.target.z + self.distance * self.pitch.cos() * self.yaw.sin();
+        Vector3::new(x, y, z)
+    }
+
+    /// Resetear a posición inicial
+    pub fn reset(&mut self, target: Vector3, distance: f32, yaw: f32, pitch: f32) {
+        self.target = target;
+        self.distance = distance;
+        self.yaw = yaw;
+        self.pitch = pitch;
+    }
+}
+
+/// Cámara FPS — WASD para mover, mouse para mirar
+/// Ideal para juegos, exploración 3D, primera persona
+pub struct FpsCamera3D {
+    pub position: Vector3,
+    pub yaw: f32,
+    pub pitch: f32,
+    pub speed: f32,
+    pub sensitivity: f32,
+    pub min_pitch: f32,
+    pub max_pitch: f32,
+}
+
+impl FpsCamera3D {
+    pub fn new(position: Vector3, yaw: f32, pitch: f32) -> Self {
+        Self {
+            position,
+            yaw,
+            pitch,
+            speed: 5.0,
+            sensitivity: 0.003,
+            min_pitch: -89.0_f32.to_radians(),
+            max_pitch: 89.0_f32.to_radians(),
+        }
+    }
+
+    /// Desde posición inicial mirando hacia adelante (eje -Z)
+    pub fn from_position(pos: Vector3) -> Self {
+        Self::new(pos, 0.0, 0.0)
+    }
+
+    /// Actualizar cámara con input
+    pub fn update(&mut self, dx: f32, dy: f32, forward: bool, backward: bool, left: bool, right: bool, dt: f32) {
+        // Mouse look
+        self.yaw += dx * self.sensitivity;
+        self.pitch -= dy * self.sensitivity;
+        self.pitch = self.pitch.clamp(self.min_pitch, self.max_pitch);
+
+        // WASD movement
+        let move_speed = self.speed * dt;
+        let forward_dir = Vector3::new(-self.yaw.sin(), 0.0, -self.yaw.cos());
+        let right_dir = Vector3::new(self.yaw.cos(), 0.0, -self.yaw.sin());
+
+        if forward {
+            self.position.x += forward_dir.x * move_speed;
+            self.position.y += forward_dir.y * move_speed;
+            self.position.z += forward_dir.z * move_speed;
+        }
+        if backward {
+            self.position.x -= forward_dir.x * move_speed;
+            self.position.y -= forward_dir.y * move_speed;
+            self.position.z -= forward_dir.z * move_speed;
+        }
+        if left {
+            self.position.x -= right_dir.x * move_speed;
+            self.position.y -= right_dir.y * move_speed;
+            self.position.z -= right_dir.z * move_speed;
+        }
+        if right {
+            self.position.x += right_dir.x * move_speed;
+            self.position.y += right_dir.y * move_speed;
+            self.position.z += right_dir.z * move_speed;
+        }
+    }
+
+    /// Convertir a Camera3D de raylib
+    pub fn to_camera(&self) -> Camera3D {
+        let target = Vector3::new(
+            self.position.x - self.yaw.sin() * self.pitch.cos(),
+            self.position.y + self.pitch.sin(),
+            self.position.z - self.yaw.cos() * self.pitch.cos(),
+        );
+        Camera3D::perspective(
+            self.position,
+            target,
+            Vector3::new(0.0, 1.0, 0.0),
+            60.0,
+        )
+    }
+
+    /// Obtener dirección forward
+    pub fn forward(&self) -> Vector3 {
+        Vector3::new(-self.yaw.sin() * self.pitch.cos(), self.pitch.sin(), -self.yaw.cos() * self.pitch.cos())
+    }
+
+    /// Obtener dirección right
+    pub fn right(&self) -> Vector3 {
+        Vector3::new(self.yaw.cos(), 0.0, -self.yaw.sin())
+    }
+
+    /// Cambiar velocidad
+    pub fn set_speed(&mut self, speed: f32) {
+        self.speed = speed;
+    }
+
+    /// Cambiar sensibilidad
+    pub fn set_sensitivity(&mut self, sensitivity: f32) {
+        self.sensitivity = sensitivity;
+    }
+}
+
+// ============================================================================
 // DRAW HANDLE 3D
 // ============================================================================
 
@@ -348,7 +531,6 @@ impl<'a> DrawHandle3D<'a> {
     /// Dibujar modelo 3D en posición con escala
     pub fn draw_model(&mut self, model: &Model3D, pos: (f32,f32,f32), scale: f32, tint: ColorRydit) {
         let pos3 = raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 };
-        let scale3 = raylib::ffi::Vector3 { x: scale, y: scale, z: scale };
         let tint_color = to_ffi_color(tint);
         unsafe {
             raylib::ffi::DrawModel(model.inner, pos3, scale, tint_color);
@@ -369,6 +551,129 @@ impl<'a> DrawHandle3D<'a> {
     /// Dibujar modelo 3D con rotación (escala uniforme)
     pub fn draw_model_ex_uniform(&mut self, model: &Model3D, pos: (f32,f32,f32), rot_axis: (f32,f32,f32), rot_angle: f32, scale: f32, tint: ColorRydit) {
         self.draw_model_ex(model, pos, rot_axis, rot_angle, (scale, scale, scale), tint);
+    }
+
+    // ========================================================================
+    // PRIMITIVAS EXTRA — cono, toroide, cápsula, pirámide
+    // ========================================================================
+
+    /// Dibujar cono 3D (usando cilindro con radio top = 0)
+    pub fn draw_cone_3d(&mut self, pos: (f32,f32,f32), radius: f32, h: f32, color: ColorRydit) {
+        unsafe {
+            raylib::ffi::DrawCylinder(
+                raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 },
+                0.0, radius, h, 16, to_ffi_color(color));
+        }
+    }
+
+    /// Dibujar cono wireframe
+    pub fn draw_cone_wires_3d(&mut self, pos: (f32,f32,f32), radius: f32, h: f32, color: ColorRydit) {
+        unsafe {
+            raylib::ffi::DrawCylinderWires(
+                raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 },
+                0.0, radius, h, 16, to_ffi_color(color));
+        }
+    }
+
+    /// Dibujar esfera sólida (alias)
+    pub fn draw_sphere_solid(&mut self, center: (f32,f32,f32), radius: f32, color: ColorRydit) {
+        self.draw_sphere_3d(center, radius, color);
+    }
+
+    /// Dibujar cilindro (alias con rayos configurables)
+    pub fn draw_cylinder_ex(&mut self, pos: (f32,f32,f32), rt: f32, rb: f32, h: f32, segments: i32, color: ColorRydit) {
+        unsafe {
+            raylib::ffi::DrawCylinder(
+                raylib::ffi::Vector3 { x: pos.0, y: pos.1, z: pos.2 },
+                rt, rb, h, segments, to_ffi_color(color));
+        }
+    }
+
+    /// Dibujar cápsula 3D
+    pub fn draw_capsule_3d(&mut self, start: (f32,f32,f32), end: (f32,f32,f32), radius: f32, segments: i32, rings: i32, color: ColorRydit) {
+        unsafe {
+            raylib::ffi::DrawCapsule(
+                raylib::ffi::Vector3 { x: start.0, y: start.1, z: start.2 },
+                raylib::ffi::Vector3 { x: end.0, y: end.1, z: end.2 },
+                radius, segments, rings, to_ffi_color(color));
+        }
+    }
+
+    /// Dibujar cápsula wireframe
+    pub fn draw_capsule_wires_3d(&mut self, start: (f32,f32,f32), end: (f32,f32,f32), radius: f32, segments: i32, rings: i32, color: ColorRydit) {
+        unsafe {
+            raylib::ffi::DrawCapsuleWires(
+                raylib::ffi::Vector3 { x: start.0, y: start.1, z: start.2 },
+                raylib::ffi::Vector3 { x: end.0, y: end.1, z: end.2 },
+                radius, segments, rings, to_ffi_color(color));
+        }
+    }
+
+    // ========================================================================
+    // SKYBOX — Cielo procedural
+    // ========================================================================
+
+    /// Dibujar skybox procedural (esfera gigante con gradiente)
+    ///
+    /// Colores: top_color (arriba) → bottom_color (abajo)
+    /// radius: radio de la esfera cielo (típicamente 500-1000)
+    pub fn draw_skybox(&mut self, top_color: ColorRydit, bottom_color: ColorRydit, radius: f32) {
+        // Dibujar esfera gigante como skybox
+        // Simular gradiente con anillos de color interpolado
+        let tc = top_color.to_color();
+        let bc = bottom_color.to_color();
+        let steps = 12;
+        for i in 0..steps {
+            let t = i as f32 / steps as f32;
+            let y = (t - 0.5) * radius * 2.0;
+            let ring_radius = (radius * radius - y * y).sqrt();
+            if ring_radius > 0.0 {
+                let r = (tc.r as f32 * (1.0 - t) + bc.r as f32 * t) as u8;
+                let g = (tc.g as f32 * (1.0 - t) + bc.g as f32 * t) as u8;
+                let b = (tc.b as f32 * (1.0 - t) + bc.b as f32 * t) as u8;
+                let color = raylib::ffi::Color { r, g, b, a: 255 };
+
+                // Ring como cilindro muy alto
+                unsafe {
+                    raylib::ffi::DrawCylinder(
+                        raylib::ffi::Vector3 { x: 0.0, y, z: 0.0 },
+                        ring_radius, ring_radius,
+                        radius * 2.0 / steps as f32, 32,
+                        color);
+                }
+            }
+        }
+    }
+
+    /// Skybox preset: día (azul → navy)
+    pub fn draw_skybox_day(&mut self) {
+        self.draw_skybox(ColorRydit::Azul, ColorRydit::AzulOscuro, 500.0);
+    }
+
+    /// Skybox preset: atardecer (naranja → vino)
+    pub fn draw_skybox_sunset(&mut self) {
+        self.draw_skybox(ColorRydit::Naranja, ColorRydit::Vino, 500.0);
+    }
+
+    /// Skybox preset: noche (negro → azul oscuro)
+    pub fn draw_skybox_night(&mut self) {
+        self.draw_skybox(ColorRydit::Negro, ColorRydit::AzulOscuro, 500.0);
+    }
+
+    // ========================================================================
+    // ILUMINACIÓN 3D BÁSICA
+    // ========================================================================
+
+    /// Configurar luz ambiental para la escena 3D
+    /// (raylib FFI no expone SetAmbientColor directamente, reservado para shaders)
+    pub fn set_ambient_light(&mut self, _color: ColorRydit) {
+        // Reservado para implementación con shaders personalizados
+        // raylib 5.0+ no expone SetAmbientColor en FFI directo
+    }
+
+    /// Configurar luz direccional para la escena 3D
+    pub fn set_directional_light(&mut self, _color: ColorRydit, _direction: (f32,f32,f32)) {
+        // Reservado para implementación con shaders personalizados
     }
 }
 
@@ -408,6 +713,48 @@ impl Mesh3D {
         Self { inner: mesh }
     }
 
+    /// Generar cono
+    pub fn cone(radius: f32, h: f32, slices: u32) -> Self {
+        let mesh = unsafe { raylib::ffi::GenMeshCone(radius, h, slices as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Generar toroide (dona)
+    pub fn torus(radius: f32, size: f32, rad_seg: u32, sides: u32) -> Self {
+        let mesh = unsafe { raylib::ffi::GenMeshTorus(radius, size, rad_seg as i32, sides as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Generar cápsula (cilindro + semiesferas como fallback)
+    pub fn capsule(radius: f32, h: f32, slices: u32, rings: u32) -> Self {
+        // GenMeshCapsule no existe en raylib-sys bindings — usar cilindro como fallback
+        let _ = rings;
+        let mesh = unsafe { raylib::ffi::GenMeshCylinder(radius, h, slices as i32) };
+        Self { inner: mesh }
+    }
+
+    /// Generar pirámide (base cuadrada con cilindro de 4 segmentos como fallback)
+    pub fn pyramid(base: f32, h: f32) -> Self {
+        // GenMeshPyramid no existe en bindings — usar cilindro como fallback
+        let mesh = unsafe { raylib::ffi::GenMeshCylinder(base, base * 0.1, 4) };
+        Self { inner: mesh }
+    }
+
+    /// Generar altura map (terreno desde heightmap)
+    pub fn heightmap(image_path: &str, size: (f32,f32,f32)) -> Self {
+        use std::ffi::CString;
+        let c_path = CString::new(image_path).unwrap_or_default();
+        let img = unsafe { raylib::ffi::LoadImage(c_path.as_ptr()) };
+        let mesh = unsafe { raylib::ffi::GenMeshHeightmap(img, raylib::ffi::Vector3 { x: size.0, y: size.1, z: size.2 }) };
+        unsafe { raylib::ffi::UnloadImage(img) };
+        Self { inner: mesh }
+    }
+
+    /// Generar cubo con textura (para skybox face)
+    pub fn cube_textured(_size: f32) -> Self {
+        Self::cube(1) // placeholder — texturado via Material
+    }
+
     /// Upload mesh to GPU
     pub fn upload_gpu(&mut self) {
         unsafe { raylib::ffi::UploadMesh(&mut self.inner, false) };
@@ -423,7 +770,7 @@ impl Mesh3D {
         };
         let c = to_ffi_color(tint);
         unsafe {
-            let mut mat = raylib::ffi::LoadMaterialDefault();
+            let mat = raylib::ffi::LoadMaterialDefault();
             // material.maps is *mut MaterialMap — set color via pointer
             if !mat.maps.is_null() {
                 (*mat.maps).color = c;
@@ -561,7 +908,148 @@ mod tests {
 
     #[test]
     fn test_model3d_not_loaded() {
-        // Modelo sin cargar (solo verifica compilación)
         assert!(!Model3D { inner: unsafe { std::mem::zeroed() }, loaded: false }.is_loaded());
+    }
+
+    // --- OrbitCamera3D ---
+
+    #[test]
+    fn test_orbit_camera_new() {
+        let cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.0);
+        assert_eq!(cam.target.x, 0.0);
+        assert_eq!(cam.distance, 10.0);
+        assert_eq!(cam.yaw, 0.0);
+        assert_eq!(cam.pitch, 0.0);
+    }
+
+    #[test]
+    fn test_orbit_camera_from_position() {
+        let cam = OrbitCamera3D::from_position(Vector3::new(5.0, 5.0, 5.0), Vector3::zero());
+        assert!(cam.distance > 8.0);
+        assert!(cam.distance < 9.0);
+    }
+
+    #[test]
+    fn test_orbit_camera_update() {
+        let mut cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.0);
+        cam.update(10.0, 0.0, 0.0, true);
+        assert!(cam.yaw > 0.0);
+
+        cam.update(0.0, 10.0, 0.0, true);
+        assert!(cam.pitch < 0.0);
+    }
+
+    #[test]
+    fn test_orbit_camera_clamp_pitch() {
+        let mut cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.0);
+        cam.update(0.0, 1000.0, 0.0, true);
+        assert!(cam.pitch >= cam.min_pitch);
+        assert!(cam.pitch <= cam.max_pitch);
+    }
+
+    #[test]
+    fn test_orbit_camera_zoom() {
+        let mut cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.0);
+        cam.update(0.0, 0.0, 5.0, false);
+        assert!(cam.distance < 10.0);
+
+        cam.update(0.0, 0.0, -10.0, false);
+        assert!(cam.distance >= cam.min_distance);
+    }
+
+    #[test]
+    fn test_orbit_camera_to_camera() {
+        let cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.3); // pitch > 0
+        let c = cam.to_camera();
+        assert!(c.position.y > 0.0);
+    }
+
+    #[test]
+    fn test_orbit_camera_reset() {
+        let mut cam = OrbitCamera3D::new(Vector3::zero(), 10.0, 0.0, 0.0);
+        cam.update(1.0, 1.0, 1.0, true);
+        cam.reset(Vector3::new(1.0, 2.0, 3.0), 5.0, 0.5, 0.3);
+        assert_eq!(cam.target.x, 1.0);
+        assert_eq!(cam.distance, 5.0);
+        assert_eq!(cam.yaw, 0.5);
+        assert_eq!(cam.pitch, 0.3);
+    }
+
+    // --- FpsCamera3D ---
+
+    #[test]
+    fn test_fps_camera_new() {
+        let cam = FpsCamera3D::new(Vector3::new(0.0, 2.0, 0.0), 0.0, 0.0);
+        assert_eq!(cam.position.y, 2.0);
+        assert_eq!(cam.yaw, 0.0);
+        assert_eq!(cam.pitch, 0.0);
+    }
+
+    #[test]
+    fn test_fps_camera_from_position() {
+        let cam = FpsCamera3D::from_position(Vector3::new(5.0, 3.0, 5.0));
+        assert_eq!(cam.position.x, 5.0);
+        assert_eq!(cam.speed, 5.0);
+    }
+
+    #[test]
+    fn test_fps_camera_move_forward() {
+        let mut cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        cam.update(0.0, 0.0, true, false, false, false, 1.0);
+        assert!(cam.position.z < 0.0); // forward is -Z
+    }
+
+    #[test]
+    fn test_fps_camera_move_right() {
+        let mut cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        cam.update(0.0, 0.0, false, false, false, true, 1.0);
+        assert!(cam.position.x > 0.0);
+    }
+
+    #[test]
+    fn test_fps_camera_look() {
+        let mut cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        cam.update(100.0, 0.0, false, false, false, false, 1.0);
+        assert!(cam.yaw > 0.0);
+
+        cam.update(0.0, 100.0, false, false, false, false, 1.0);
+        assert!(cam.pitch < 0.0);
+    }
+
+    #[test]
+    fn test_fps_camera_clamp_pitch() {
+        let mut cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        for _ in 0..1000 {
+            cam.update(0.0, 10.0, false, false, false, false, 1.0);
+        }
+        assert!(cam.pitch >= cam.min_pitch);
+        assert!(cam.pitch <= cam.max_pitch);
+    }
+
+    #[test]
+    fn test_fps_camera_directions() {
+        let cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        let fwd = cam.forward();
+        let right = cam.right();
+        // Default: forward is -Z
+        assert!(fwd.z < 0.0);
+        // Right is +X
+        assert!(right.x > 0.0);
+    }
+
+    #[test]
+    fn test_fps_camera_settings() {
+        let mut cam = FpsCamera3D::from_position(Vector3::new(0.0, 0.0, 0.0));
+        cam.set_speed(10.0);
+        cam.set_sensitivity(0.01);
+        assert_eq!(cam.speed, 10.0);
+        assert_eq!(cam.sensitivity, 0.01);
+    }
+
+    #[test]
+    fn test_fps_camera_to_camera() {
+        let cam = FpsCamera3D::from_position(Vector3::new(0.0, 2.0, 0.0));
+        let c = cam.to_camera();
+        assert_eq!(c.position.y, 2.0);
     }
 }

@@ -171,6 +171,10 @@ pub struct ParticleEmitter {
     pub active: bool,
     pub one_shot: bool, // Emitir una vez y desactivar
     pub emitted: bool,  // Ya emitió (para one_shot)
+    /// Turbulencia térmica (fuego convección, humo)
+    pub turbulence: f32,
+    /// Alias para rate (compatibilidad)
+    pub particles_per_second: f32,
 }
 
 impl ParticleEmitter {
@@ -195,6 +199,8 @@ impl ParticleEmitter {
             active: true,
             one_shot: false,
             emitted: false,
+            turbulence: 0.0,
+            particles_per_second: 0.0,
         }
     }
 
@@ -240,6 +246,11 @@ impl ParticleEmitter {
         let mut particle = Particle::new(self.x, self.y, vx, vy, color, size, life);
         particle.gravity = self.gravity;
         particle.friction = self.friction;
+        // Añadir turbulencia térmica si está configurada
+        if self.turbulence > 0.0 {
+            particle.vx += (rand_f32() - 0.5) * self.turbulence;
+            particle.vy += (rand_f32() - 0.5) * self.turbulence * 0.5;
+        }
         self.particles.push(particle);
 
         if self.one_shot {
@@ -452,21 +463,24 @@ impl ParticleEmitter {
         emitter
     }
 
-    /// Efecto de fuego
+    /// Efecto de fuego (fuego básico, llama baja)
+    ///
+    /// Wrapper de `fire_convection` con intensidad 0.35 para fuego simple.
+    /// Para fuego avanzado con turbulencia térmica, usar `fire_convection` directamente.
     pub fn fire(x: f32, y: f32) -> Self {
-        let mut emitter = Self::new(x, y, 30.0);
-        emitter.spread = 30.0; // Hacia arriba
-        emitter.speed_min = 50.0;
-        emitter.speed_max = 100.0;
-        emitter.size_min = 5.0;
-        emitter.size_max = 15.0;
-        emitter.color_start = Color::new(255, 200, 50, 200); // Amarillo
-        emitter.color_end = Color::new(255, 50, 0, 50); // Rojo transparente
-        emitter.gravity = -30.0; // Hacia arriba
-        emitter
+        Self::fire_convection(x, y, 0.35)
     }
 
-    /// Efecto de humo
+    /// Efecto de humo (sin fuego)
+    ///
+    /// Humo gris que sube lentamente — independiente del fuego.
+    /// Para humo como fase final del fuego, usar `fire_convection`
+    /// que incluye el degradado → humo oscuro automáticamente.
+    ///
+    /// # Usos típicos
+    /// - Estela de granada/explosión (demo_militar)
+    /// - Chimenea, niebla, vapor
+    /// - Combina con `fire_convection` para humo secundario separado
     pub fn smoke(x: f32, y: f32) -> Self {
         let mut emitter = Self::new(x, y, 10.0);
         emitter.spread = 45.0;
@@ -506,6 +520,58 @@ impl ParticleEmitter {
         emitter.color_start = Color::new(255, 255, 100, 255); // Amarillo brillante
         emitter.color_end = Color::new(255, 100, 0, 255);
         emitter.gravity = 100.0; // Caen rápido
+        emitter
+    }
+
+    // ========================================================================
+    // FUEGO CON CONVECCIÓN — Hoguera, antorcha, incendio
+    // ========================================================================
+
+    /// Fuego con convección (partículas suben + turbulencia térmica)
+    ///
+    /// Las partículas calientes suben (convección) con turbulencia
+    /// que simula viento térmico. Colores: blanco→amarillo→naranja→rojo→negro (humo).
+    ///
+    /// El humo es la **fase final** del enfriamiento del fuego — no se duplica
+    /// con `smoke()`. Para humo sin fuego (chimenea, niebla), usar `smoke()`.
+    ///
+    /// # Parámetros
+    /// - `intensity`: 0.0 = brasa suave, 0.35 = fuego bajo, 0.8 = antorcha, 1.2+ = incendio
+    pub fn fire_convection(x: f32, y: f32, intensity: f32) -> Self {
+        let intensity = intensity.max(0.1); // Mínimo brasa
+        let mut emitter = Self::new(x, y, 80.0 * intensity);
+        emitter.spread = 30.0; // Cono estrecho
+        emitter.speed_min = 80.0 * intensity;
+        emitter.speed_max = 200.0 * intensity;
+        emitter.size_min = 8.0;
+        emitter.size_max = 20.0;
+        emitter.color_start = Color::new(255, 255, 200, 255); // Blanco caliente
+        emitter.color_end = Color::new(40, 20, 10, 150); // Humo oscuro (fase final)
+        emitter.gravity = -150.0; // Convección: suben (negativo = arriba)
+        emitter.wind_x = 0.0; // Sin viento lateral base
+        emitter.turbulence = 50.0 * intensity; // Turbulencia térmica
+        emitter
+    }
+
+    /// Antorcha (fuego vertical con humo)
+    pub fn torch(x: f32, y: f32) -> Self {
+        Self::fire_convection(x, y, 0.8)
+    }
+
+    /// Hoguera grande (fuego intenso con mucho humo)
+    pub fn bonfire(x: f32, y: f32) -> Self {
+        let mut emitter = Self::fire_convection(x, y, 1.2);
+        emitter.spread = 50.0;
+        emitter.rate = 150.0;
+        emitter
+    }
+
+    /// Incendio (fuego grande con viento y turbulencia alta)
+    pub fn wildfire(x: f32, y: f32, wind_strength: f32) -> Self {
+        let mut emitter = Self::bonfire(x, y);
+        emitter.wind_x = wind_strength;
+        emitter.turbulence = 100.0;
+        emitter.rate = 200.0;
         emitter
     }
 }

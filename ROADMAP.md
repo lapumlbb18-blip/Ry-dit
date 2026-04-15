@@ -1,7 +1,8 @@
 # Ry-Dit - ROADMAP v0.19.0 → v1.0.0
 
-**Última actualización**: 2026-04-13
+**Última actualización**: 2026-04-14
 **Versión actual**: v0.19.2 ✅ Rybot Subsystems + SDL2 Helpers + War Spacio + Iluminación 2D + Flexbox
+**Próxima versión**: v0.20.0 — postfx-ry + ry-windows + ry3d-gfx + Asset Pipeline + Editor
 **Análisis estratégico**: Ver `TASKS_2.md` — Análisis comparativo con Unreal, Unity, Godot, Bevy
 
 ---
@@ -213,45 +214,62 @@ Progreso: ████████████████████ 100%
 Progreso: ████████████████████ 100%
 ```
 
-### v0.20.0 — Editor + LAZOS Multi-lenguaje + Asset Pipeline
+### v0.19.3 — Ciencia Avanzada + Radiación + Genética ✅
 
-**Prioridad**: MEDIA | **Pilar**: Gaming + Streaming
+**Fecha**: 2026-04-15 (Gemini CLI)
+
+| Feature | Estado | Detalle |
+|---------|--------|---------|
+| L-System Avanzado | ✅ | 8 presets (binary_tree, fern, coral, dragon, etc.) + Interpretación turtle |
+| Sistema Solar (Kepler) | ✅ | Órbitas reales (Leyes de Kepler) + Ecuación de Kepler solver |
+| Radiación Atómica | ✅ | Fisión, Fusión, Decaimiento, Geiger rate, Exposición |
+| Fuego Convección | ✅ | Física de partículas térmicas unificada en ry-physics |
+| Mutación Genética (DNA) | ✅ | **NUEVO**: Secuencias DNA, mutación por radiación, crossover y expresión |
+| 49 tests en ry-science | ✅ | 100% pasando (incluye genética) |
+| 34 tests en ry-physics | ✅ | 100% pasando (incluye radiación/Kepler) |
+
+```
+Progreso: ████████████████████ 100%
+```
+
+### v0.20.0 — ryfrac-postFX + ry-windows + ry3d-gfx + Asset Pipeline + Editor
+
+**Prioridad**: ALTA | **Pilar**: Gaming + Animaciones + Ciencia
 
 | Feature | Estado | Tiempo est. | Inspiración | Detalle |
 |---------|--------|-------------|-------------|---------|
-| Editor separado (o 2-in-1) | ⏳ | 20-30h | Godot/Unity | Editor visual de juegos |
-| LAZOS Python bridge | ⏳ | 20-30h | Unity Python | Scripting Python en Ry-Dit |
-| LAZOS C++ bridge | ⏳ | 15-20h | Godot GDExtension | Native extensions C++ |
-| LAZOS C bridge | ⏳ | 10-15h | — | Native extensions C |
-| Tilemap editor visual | ⏳ | 12-16h | Godot TileMap | Editor GUI de tilemap |
-| **Asset pipeline** | ⏳ | 8-12h | Bevy asset server | Carga automática + hot reload |
-| **Layout Flexbox UI** | ⏳ | 15-20h | Bevy UI / Godot | migui con layout system |
-| **Hot reload de assets** | ⏳ | 6-8h | Unity reimport | Recarga sin reiniciar |
-| **Stream multiplayer LAN** | ⏳ | 10-15h | — | ry-stream multiplayer |
+| **postfx-ry** (NUEVO) ✅ | 15-20h | — | Post-processing (bloom, blur, sharpen, color grade) + Materiales + Química + Transformación visual. **v0.1.0 creada**: 6 efectos GPU, FBO chain, presets cyberpunk/natural/retro, 2 tests. |
+| **ry-windows** (NUEVO) ✅ | 12-16h | — | Ventana unificada configurable. **v0.1.0 creada**: 7 plataformas, 2 backends, 15 WindowEvent tipos, InputState, presets game_2d/editor/demo, 9 tests. |
+| **ry3d-gfx** (EXPANSIÓN) ✅ | 20-30h | — | **Expansión v0.2.0**: OrbitCamera3D, FpsCamera3D, Skybox procedural, 5 primitivas extra, iluminación 3D básica, 21 tests. |
+| **Asset pipeline** | ⏳ | 10-15h | Bevy asset server | Carga automática de assets + compresión (basis-universal, ktx2) + hot reload. `AssetServer::load()` idiomático. |
+| **Tilemap editor visual** | ⏳ | 12-16h | Godot TileMap | Editor GUI de tilemap + tileset con preview, paint, export CSV. |
+| **Editor visual + por código** | ⏳ | 20-30h | Godot/Unity | Editor visual de juegos (separado o 2-in-1). Ambos modos: visual (drag & drop) y por código. Fusión de físicas + animaciones Disney + procesos científicos/biológicos. Sencillo pero potente. |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
 ```
 
-### v1.0.0 — Motor Completo + GitHub Actions + SAZ + Comunidad
+### v1.0.0 — Motor Completo + GitHub Actions + SAZ + Comunidad + LAZOS
 
 **Prioridad**: META | **Pilar**: Todos
 
 | Feature | Estado | Tiempo est. | Detalle |
 |---------|--------|-------------|---------|
+| **LAZOS Python bridge** | ⏳ | 20-30h | Scripting Python en Ry-Dit |
+| **LAZOS C++ bridge** | ⏳ | 15-20h | Native extensions C++ |
+| **LAZOS C bridge** | ⏳ | 10-15h | Native extensions C |
 | GitHub Actions CI completo | ⏳ | 6-8h | Linux + Windows + macOS + Android |
 | SAZ (Shield Archive Format) | ⏳ | 10-15h | Paquete de proyecto |
 | Motor estable | ⏳ | 20-30h | API estable + sin breaking changes |
 | Documentación completa | ⏳ | 15-20h | Docs para todos los crates |
 | Videos tutoriales | ⏳ | 10-15h | YouTube + Discord |
-| 15+ crates publicados | ⏳ | 5-10h | Todos los crates con README |
+| 15+ crates publicadas | ⏳ | 5-10h | Todos los crates con README |
 | Comunidad | ⏳ | — | Discord + docs + ejemplos |
 | **Debugger .rydit** | ⏳ | 10-15h | Breakpoints + step-through |
 | **Profiler CPU/GPU** | ⏳ | 8-12h | Profiling integrado |
-| **Post-processing** | ⏳ | 6-8h | Bloom, glow, blur, color grade |
 | **Export desktop nativo** | ⏳ | 6-8h | Linux + Windows + macOS builds |
 | **Plugin registry** | ⏳ | 8-12h | crates.io integration |
-| **Render pipelines** | ⏳ | 10-15h | Forward + Deferred como features |
+| **Stream multiplayer LAN** | ⏳ | 10-15h | ry-stream multiplayer |
 
 ```
 Progreso: ░░░░░░░░░░░░░░░░░░░░ 0%
@@ -335,7 +353,7 @@ v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%
 
 *3 Pilares: 🎮 Gaming · 🎬 Animaciones+Ciencia · 📡 Streaming+Comunidad*
 
-*Próximo: v0.20.0 — Editor visual + LAZOS + Asset Pipeline*
+*Próximo: v0.20.0 — postfx-ry ✅ + ry-windows ✅ + ry3d-gfx ✅ + Asset Pipeline + Editor*
 
 *Ver `TASKS.md` para tareas completadas y pendientes*
 

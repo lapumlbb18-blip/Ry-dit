@@ -1,0 +1,16 @@
+[package]
+name = "postfx-ry"
+version = "0.1.0"
+edition = "2021"
+description = "Post-processing effects for Ry-Dit — Bloom, blur, sharpen, color grading, materials"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/postfx-ry"
+readme = "README.md"
+keywords = ["post-processing", "bloom", "blur", "effects", "game-engine"]
+categories = ["game-development", "graphics", "rendering"]
+
+[dependencies]
+ry-gfx = { path = "../ry-gfx" }
+gl = "0.14.0"

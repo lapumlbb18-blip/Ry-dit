@@ -1,0 +1,24 @@
+[package]
+name = "ry-windows"
+version = "0.1.0"
+edition = "2021"
+description = "Unified window management for Ry-Dit — SDL2 + Raylib, multiplatform, configurable UI"
+license = "MIT"
+repository = "https://github.com/lapumlbb18-blip/Ry-dit"
+homepage = "https://github.com/lapumlbb18-blip/Ry-dit"
+documentation = "https://docs.rs/ry-windows"
+readme = "README.md"
+keywords = ["window", "multiplatform", "sdl2", "raylib", "game-engine"]
+categories = ["game-development", "gui"]
+
+[dependencies]
+ry-gfx = { path = "../ry-gfx", optional = true }
+ry-input = { path = "../ry-input", optional = true }
+raylib = { version = "5.5.1", default-features = false, features = ["nobuild"], optional = true }
+sdl2 = { version = "0.37", features = ["ttf", "image", "mixer"], optional = true }
+
+[features]
+default = ["sdl2-backend"]
+sdl2-backend = ["dep:sdl2"]
+raylib-backend = ["dep:raylib"]
+full = ["dep:ry-gfx", "dep:ry-input", "sdl2-backend"]

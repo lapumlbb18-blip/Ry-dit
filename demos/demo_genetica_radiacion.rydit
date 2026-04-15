@@ -1,0 +1,53 @@
+// demo_genetica_radiacion.rydit
+// Prueba de integración: Genética (Science) + Radiación (Physics)
+//
+// Flujo:
+// 1. Crear una criatura con ADN inicial.
+// 2. Exponerla a una fuente de radiación (Physics).
+// 3. Calcular la mutación resultante en el ADN (Science).
+// 4. Expresar el nuevo fenotipo.
+
+print("--- INICIANDO DEMO: GENÉTICA + RADIACIÓN ---")
+
+// 1. Estado Inicial
+let dna_inicial = science::dna::new(32)
+print("ADN Original: " + dna_inicial.sequence)
+
+// 2. Simulación de entorno radiactivo
+// Supongamos una fuente de partículas Alpha con cierta energía
+let energia_fuente = 0.005 // Joules/kg
+let tipo_particula = 1 // 1=Alpha (wr=20)
+let exposicion = physics::radiation::exposure(energia_fuente, tipo_particula)
+let dosis_msv = exposicion[1]
+let riesgo = exposicion[2]
+
+print("Exposición detectada: " + dosis_msv + " mSv (Riesgo: " + riesgo + ")")
+
+// 3. Mutación inducida
+// El factor de radiación se deriva de la dosis (ej: msv / 100)
+let factor_mutacion = dosis_msv / 10.0
+let mutacion = science::dna::mutate({
+    "sequence": dna_inicial.sequence,
+    "rate": 0.02,
+    "radiation": factor_mutacion
+})
+
+print("Mutaciones ocurridas: " + mutacion.mutations)
+print("ADN Mutado:   " + mutacion.sequence)
+
+// 4. Expresión del Fenotipo (Atributos de la criatura)
+// Los valores resultantes pueden mapearse a: [R, G, B, Tamaño, Velocidad, etc.]
+let fenotipo = science::dna::express({
+    "sequence": mutacion.sequence,
+    "gene_length": 4
+})
+
+print("Fenotipo expresado (8 genes):")
+print(fenotipo.phenotype)
+
+// 5. Verificación de cambios
+if (dna_inicial.sequence == mutacion.sequence) {
+    print("RESULTADO: No hubo mutación detectable.")
+} else {
+    print("RESULTADO: ¡Evolución/Mutación completada con éxito!")
+}

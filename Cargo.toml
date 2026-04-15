@@ -23,6 +23,8 @@ members = [
     "crates/events-ry",  # 🆕 v0.13.0: Input unificado + Text Input + Shell (corazón del editor)
     "crates/ry-input",   # 🆕 v0.19.0: Input map configurable (.rydit-input)
     "crates/rybot",       # 🆕 v0.19.0: Motor central — orquesta crates
+    "crates/postfx-ry",   # 🆕 v0.20.0: Post-processing effects (bloom, blur, color grade)
+    "crates/ry-windows",  # 🆕 v0.20.0: Unified window management (SDL2 + Raylib, multiplatform)
 ]
 
 # =============================================================================
