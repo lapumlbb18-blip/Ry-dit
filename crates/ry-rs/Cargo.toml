@@ -96,3 +96,7 @@ path = "src/bin/demo_3d_touch.rs"
 [[bin]]
 name = "demo_input_map"
 path = "src/bin/demo_input_map.rs"
+
+[[bin]]
+name = "demo_fase2_completo"
+path = "src/bin/demo_fase2_completo.rs"

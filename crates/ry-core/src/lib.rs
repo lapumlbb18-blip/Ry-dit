@@ -5,6 +5,8 @@
 //! # Versión
 //! **v0.8.2** - Sistema Universal Ry (metadata + hot reload hooks)
 
+pub mod assets;
+
 use serde_json::Value;
 use std::collections::HashMap;
 

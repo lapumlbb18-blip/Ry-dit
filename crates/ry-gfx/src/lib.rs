@@ -1272,6 +1272,11 @@ impl<'a> DrawHandle<'a> {
         self.draw.draw_rectangle_lines(x, y, w, h, color.to_color());
     }
 
+    /// Dibujar círculo con líneas (outline)
+    pub fn draw_circle_lines(&mut self, x: i32, y: i32, radius: f32, color: ColorRydit) {
+        self.draw.draw_circle_lines(x, y, radius, color.to_color());
+    }
+
     /// Dibujar anillo (ring)
     pub fn draw_ring(
         &mut self,
