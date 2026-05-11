@@ -1,27 +1,31 @@
-# 🛡️ Ry-Dit: Motor de Desarrollo Consolidado (v0.23.0)
+# 🛡️ Ry-Dit: Motor de Desarrollo Híbrido (v0.23.0)
 
-**Ry-Dit** es un ecosistema de desarrollo de juegos y simulaciones diseñado específicamente para entornos de alto rendimiento y portabilidad (Android/Termux, Linux, Windows). Basado en el **Patrón Fusional**, combina la estabilidad de **SDL2** con la potencia gráfica de **Raylib 6.0**.
+**Ry-Dit** es un motor de juegos y simulaciones de alto rendimiento diseñado para la máxima portabilidad (Android/Termux, Linux, Windows). Su arquitectura única combina la robustez de **SDL2** para la gestión del sistema con la potencia de bajo nivel de **RLGL (Raylib Graph Library)** para el renderizado GPU.
 
-## 🚀 Estado Actual: v0.23.0 (Fusional Alpha)
-Hemos restaurado el flujo de trabajo liderado por **SDL2** para el editor y las herramientas de usuario, relegando a Raylib a tareas de renderizado especializado.
+## 🚀 Hito Alcanzado: Consolidación Estructural v0.23.0
+Esta versión marca el éxito de la transición hacia una arquitectura profesional desacoplada, eliminando las limitaciones del renderizado por software antiguo.
 
-### ✅ Logros Recientes
-- **Arquitectura Híbrida**: SDL2 gestiona la ventana, el input y el texto TTF; Raylib gestiona el 3D y las partículas.
-- **Editor Restaurado**: Soporte nativo para Termux-X11 con estabilidad mejorada.
-- **Puente FFI**: Renderizado de viewports de Raylib directamente sobre canvas de SDL2.
-- **Limpieza de Workspace**: Todos los crates (`migui`, `rybot`, `ry-gfx`, `ry-rs`) verificados y compilando.
+### ✅ Logros Clave (Éxito de Sesión)
+- **Fusión Arquitectónica SDL2 + RLGL**: Implementación exitosa del modelo híbrido. SDL2 controla el ciclo de vida, la ventana y los eventos, mientras que RLGL controla directamente la GPU.
+- **Eliminación de SDL_Canvas**: Se ha eliminado la dependencia de `SDL_Canvas` en el núcleo del motor, liberando el contexto OpenGL para un renderizado nativo y eficiente.
+- **Compilación 100% Limpia**: Todos los crates centrales (`ry-gfx`, `ry-core`, `rybot`, `migui`, `ry-rs`) verifican y compilan sin errores (`cargo check` OK).
+- **Entorno de Desarrollo Purificado**: Se han movido más de 24 binarios legacy a `crates/ry-rs/pendientes_importantes/`, permitiendo un ciclo de desarrollo ágil y libre de ruido técnico.
+- **Capa de Compatibilidad (Shims)**: Implementación de puente de compatibilidad en `ry-gfx` para facilitar la migración de sistemas existentes a la nueva API de RLGL.
 
-### 🛠️ Tareas Pendientes (Próxima Sesión)
-1.  **Compilación Raylib 6.0**: Construir la librería personalizada con el backend de SDL2 activo.
-2.  **Sincronización de Contexto**: Validar el intercambio de texturas OpenGL entre SDL2 y Raylib sin copia de CPU.
-3.  **Touch Avanzado**: Implementar el mapeo de gestos multitouch de SDL2 hacia la cámara 3D de Raylib.
-4.  **Estabilización de UI**: Migrar todos los widgets de `toolkit-ry` al nuevo backend de texto profesional.
+### 🏗️ Arquitectura Híbrida
+1.  **Sistema (SDL2)**: Gestión de Ventana, Contexto OpenGL 3.3 Core, Input de Teclado/Ratón/Touch.
+2.  **Gráficos (RLGL/Raylib-FFI)**: Renderizado 2D/3D unificado, gestión de buffers de vértices y shaders de alto rendimiento.
 
-## 🏗️ Estructura del Proyecto
-- `crates/ry-gfx`: Capa de abstracción gráfica dual (Líder SDL2/Raylib).
-- `crates/ry-editor`: Entorno de desarrollo unificado.
-- `crates/migui`: GUI de modo inmediato pura en Rust con soporte SDL2 TTF.
-- `crates/rybot`: Orquestador central y subsistemas del motor.
+## 📁 Estructura Principal
+- `crates/ry-gfx`: Corazón gráfico híbrido con soporte RLGL.
+- `crates/ry-rs`: Punto de entrada principal y lógica de alto nivel.
+- `crates/migui`: Interfaz de usuario (GUI) optimizada para el nuevo backend.
+- `crates/rybot`: Subsistemas orquestados (Física, Animación, Ciencia).
+
+## 🛠️ Próximos Pasos (v0.24.0)
+- **Migración de Demos**: Recuperación sistemática de las demostraciones en la nueva arquitectura.
+- **Unificación de Assets**: Implementación de carga de texturas (`Texture2D`) nativas de Raylib.
+- **Optimización Mobile**: Pruebas de rendimiento en drivers Adreno (Qualcomm) vía Termux-X11.
 
 ---
-**Nota**: El proyecto se encuentra en una fase de transición hacia Raylib 6.0 para maximizar la compatibilidad en dispositivos Android mediante Termux-X11.
+**Filosofía**: *Low-End First, High-End Performance.* Diseñado para brillar donde otros motores fallan.
