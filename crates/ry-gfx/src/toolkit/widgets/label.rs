@@ -48,7 +48,7 @@ impl Label {
     /// Renderizar label
     pub fn render(&self, backend: &mut Sdl2Backend, _theme: &Theme) {
         let (r, g, b) = self.color.unwrap_or((255, 255, 255));
-        backend.draw_text(&self.text, self.x, self.y, self.font_size, r, g, b);
+        backend.draw_text_old(&self.text, self.x, self.y, self.font_size, r, g, b);
     }
 
     /// Obtener bounds

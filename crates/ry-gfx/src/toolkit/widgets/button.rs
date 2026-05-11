@@ -53,22 +53,22 @@ impl Button {
         };
 
         // Dibujar fondo
-        backend.canvas.set_draw_color(color);
+        backend.set_draw_color(color);
         let rect = Rect::new(self.x, self.y, self.width as u32, self.height as u32);
-        let _ = backend.canvas.fill_rect(rect);
+        let _ = backend.fill_rect(rect);
 
         // Dibujar borde
-        backend.canvas.set_draw_color(theme.button_border);
-        let _ = backend.canvas.draw_rect(rect);
+        backend.set_draw_color(theme.button_border);
+        let _ = backend.draw_rect(rect);
 
         // Dibujar texto (placeholder - rectángulo blanco)
         let text_width = self.text.len() as i32 * 8;
         let text_x = self.x + (self.width - text_width) / 2;
         let text_y = self.y + (self.height - 16) / 2;
 
-        backend.canvas.set_draw_color(Color::RGB(255, 255, 255));
+        backend.set_draw_color(Color::RGB(255, 255, 255));
         let text_rect = Rect::new(text_x, text_y, text_width as u32, 16);
-        let _ = backend.canvas.fill_rect(text_rect);
+        let _ = backend.fill_rect(text_rect);
     }
 
     /// Verificar si el click está en el botón

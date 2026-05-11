@@ -63,6 +63,9 @@ pub mod gpu_instancing;
 pub mod input_sdl2;
 
 // Módulo de Backend SDL2 v0.10.6 - Ventana + OpenGL + Assets
+pub mod renderer;
+pub mod renderer_impl;
+pub mod shim;
 pub mod backend_sdl2;
 
 // Módulo de Audio SDL2 v0.10.8 - SDL2_mixer (pendiente)
@@ -1092,8 +1095,8 @@ impl RyditGfx {
             d.draw_line(x1, y1, x2, y2, color);
         } else if let Some(ref mut b) = self.backend_sdl2 {
             let (r, g, b_val) = color.to_rgb();
-            b.canvas.set_draw_color(sdl2::pixels::Color::RGB(r, g, b_val));
-            let _ = b.canvas.draw_line((x1, y1), (x2, y2));
+            b.set_draw_color(sdl2::pixels::Color::RGB(r, g, b_val));
+            let _ = b.draw_line((x1, y1), (x2, y2));
         }
     }
 
@@ -1104,7 +1107,7 @@ impl RyditGfx {
             d.draw_text(text, x, y, size, color);
         } else if let Some(ref mut b) = self.backend_sdl2 {
             let (r_val, g_val, b_val) = color.to_rgb();
-            b.draw_text(text, x, y, size as u16, r_val, g_val, b_val);
+            b.draw_text_old(text, x, y, size as u16, r_val, g_val, b_val);
         }
     }
 

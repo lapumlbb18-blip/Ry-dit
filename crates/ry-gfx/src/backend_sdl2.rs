@@ -26,26 +26,26 @@ use migui::{Color as MiguiColor, MiguiBackend, Rect as MiguiRect};
 #[cfg(feature = "migui")]
 impl MiguiBackend for Sdl2Backend {
     fn clear(&mut self, color: MiguiColor) {
-        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
-        self.canvas.clear();
+        self.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
+        self.clear();
     }
 
     fn draw_rect(&mut self, rect: MiguiRect, color: MiguiColor) {
-        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+        self.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
         let sdl_rect = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
-        let _ = self.canvas.fill_rect(sdl_rect);
+        self.fill_rect(sdl_rect);
     }
 
     fn draw_text(&mut self, text: &str, x: f32, y: f32, size: f32, color: MiguiColor) {
-        self.draw_text(text, x as i32, y as i32, size as u16, color.r, color.g, color.b);
+        self.draw_text_old(text, x as i32, y as i32, size as u16, color.r, color.g, color.b);
     }
 
-    fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, color: MiguiColor, thickness: f32) {
-        self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+    fn draw_line(&mut self, x1: f32, y1: f32, x2: f32, y2: f32, color: MiguiColor, _thickness: f32) {
+        self.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
         // SDL2 nativo no tiene line_thickness directo en canvas básico, dibujamos línea simple
-        let _ = self.canvas.draw_line(
-            sdl2::rect::Point::new(x1 as i32, y1 as i32),
-            sdl2::rect::Point::new(x2 as i32, y2 as i32)
+        self.draw_line(
+            (x1 as i32, y1 as i32),
+            (x2 as i32, y2 as i32)
         );
     }
 }
@@ -56,10 +56,14 @@ pub struct Sdl2Backend {
     pub context: sdl2::Sdl,
     /// Subsistema de video
     pub video_subsystem: sdl2::VideoSubsystem,
-    /// Canvas para render 2D (incluye la ventana)
-    pub canvas: Canvas<sdl2::video::Window>,
     /// Event pump para input
     pub event_pump: sdl2::EventPump,
+    /// Renderer basado en rlgl
+    pub renderer: crate::renderer_impl::Sdl2Renderer,
+    /// Color actual para el shim
+    pub last_color: Option<sdl2::pixels::Color>,
+    /// Ventana SDL2
+    pub window: sdl2::video::Window,
     /// Estado del input
     pub input: InputState,
     /// Dimensiones de la ventana
@@ -69,8 +73,9 @@ pub struct Sdl2Backend {
     pub title: String,
     /// Contexto OpenGL (para GPU Instancing)
     pub gl_context: Option<sdl2::video::GLContext>,
-    /// TextureCreator para texturas 2D
+    /* COMENTADO: Requiere Canvas
     pub texture_creator: TextureCreator<sdl2::video::WindowContext>,
+    */
     /// Fuente SDL2_ttf (opcional)
     pub font: Option<FontFFI>,
 }
@@ -112,18 +117,19 @@ impl Sdl2Backend {
         let _image_context =
             sdl2::image::init(InitFlag::PNG | InitFlag::JPG).map_err(|e| e.to_string())?;
 
-        // Crear canvas para render 2D
-        let canvas = window
-            .into_canvas()
-            .present_vsync() // VSync activado
-            .build()
-            .map_err(|e| e.to_string())?;
+        // Crear canvas para render 2D (ELIMINADO para permitir rlgl)
+        // let canvas = window
+        //    .into_canvas()
+        //    .present_vsync() // VSync activado
+        //    .build()
+        //    .map_err(|e| e.to_string())?;
 
         // Obtener event pump
         let event_pump = context.event_pump().map_err(|e| e.to_string())?;
 
-        // Crear TextureCreator para texturas 2D
-        let texture_creator = canvas.texture_creator();
+        /* COMENTADO: Requiere Canvas
+        let texture_creator = window.texture_creator();
+        */
 
         // Inicializar SDL2_ttf (opcional, sin font por defecto)
         let font = match FontFFI::init() {
@@ -145,14 +151,16 @@ impl Sdl2Backend {
         Ok(Self {
             context,
             video_subsystem,
-            canvas,
             event_pump,
+            renderer: crate::renderer_impl::Sdl2Renderer,
+            last_color: None,
+            window,
             input: InputState::new(),
             width,
             height,
             title: title.to_string(),
             gl_context: Some(gl_context),
-            texture_creator,
+            // texture_creator,
             font,
         })
     }
@@ -195,8 +203,10 @@ impl Sdl2Backend {
                 } => {
                     self.width = w;
                     self.height = h;
-                    let viewport = Rect::new(0, 0, w as u32, h as u32);
-                    self.canvas.set_viewport(viewport);
+                    // Actualizar viewport en rlgl
+                    unsafe {
+                        raylib::ffi::rlViewport(0, 0, w as i32, h as i32);
+                    }
                 }
                 _ => {}
             }
@@ -208,20 +218,20 @@ impl Sdl2Backend {
     /// Iniciar frame de renderizado
     pub fn begin_draw(&mut self) {
         // Limpiar pantalla (negro por defecto)
-        self.canvas.set_draw_color(Color::RGB(0, 0, 0));
-        self.canvas.clear();
+        self.set_draw_color(Color::RGB(0, 0, 0));
+        self.clear();
     }
 
     /// Limpiar fondo con color
     pub fn clear_background(&mut self, color: ColorRydit) {
         let (r, g, b) = color.to_rgb();
-        self.canvas.set_draw_color(Color::RGB(r, g, b));
-        self.canvas.clear();
+        self.set_draw_color(Color::RGB(r, g, b));
+        self.clear();
     }
 
     /// Finalizar frame de renderizado
     pub fn end_draw(&mut self) {
-        self.canvas.present();
+        self.present();
     }
 
     /// Verificar si la ventana debe cerrarse
@@ -240,26 +250,26 @@ impl Sdl2Backend {
         self.input.is_key_just_pressed(nombre)
     }
 
-    /// Dibujar rectángulo
-    pub fn draw_rect(&mut self, x: i32, y: i32, w: i32, h: i32, r: u8, g: u8, b: u8) {
-        self.canvas.set_draw_color(Color::RGB(r, g, b));
+    /// Dibujar rectángulo (ahora redirige al shim)
+    pub fn draw_rect_old(&mut self, x: i32, y: i32, w: i32, h: i32, r: u8, g: u8, b: u8) {
+        self.set_draw_color(Color::RGB(r, g, b));
         let rect = sdl2::rect::Rect::new(x, y, w as u32, h as u32);
-        self.canvas.fill_rect(rect).unwrap();
+        self.fill_rect(rect);
     }
 
     /// Dibujar rectángulo con ColorRydit
     pub fn draw_rect_color(&mut self, x: i32, y: i32, w: i32, h: i32, color: ColorRydit) {
         let (r, g, b) = color.to_rgb();
-        self.draw_rect(x, y, w, h, r, g, b);
+        self.draw_rect_old(x, y, w, h, r, g, b);
     }
 
     /// Dibujar círculo (aproximación con rectángulos)
     pub fn draw_circle(&mut self, cx: i32, cy: i32, radius: i32, r: u8, g: u8, b: u8) {
         // Círculo simple usando fill_rect
         let diameter = radius * 2;
-        self.canvas.set_draw_color(Color::RGB(r, g, b));
+        self.set_draw_color(Color::RGB(r, g, b));
         let rect = Rect::new(cx - radius, cy - radius, diameter as u32, diameter as u32);
-        let _ = self.canvas.fill_rect(rect); // Ignorar error
+        self.fill_rect(rect);
     }
 
     /// Cargar fuente SDL2_ttf
@@ -271,14 +281,15 @@ impl Sdl2Backend {
     }
 
     /// Dibujar texto con SDL2_ttf
-    pub fn draw_text(&mut self, text: &str, x: i32, y: i32, _size: u16, r: u8, g: u8, b: u8) {
+    /// Dibujar texto con SDL2_ttf (Legado - requiere Canvas para dibujo directo)
+    pub fn draw_text_old(&mut self, text: &str, x: i32, y: i32, _size: u16, r: u8, g: u8, b: u8) {
         // Verificar que tenemos una fuente cargada
         let font = match &self.font {
             Some(f) => f,
             None => {
                 // Fallback: dibujar rectángulo placeholder
                 let width = text.len() as i32 * 10;
-                self.draw_rect(x, y, width, 16, r, g, b);
+                self.draw_rect_old(x, y, width, 16, r, g, b);
                 return;
             }
         };
@@ -295,11 +306,11 @@ impl Sdl2Backend {
         unsafe {
             // Crear wrapper Surface alrededor del raw pointer
             // La superficie será liberada cuando el wrapper se dropee
-            let sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
+            let _sdl_surface = Surface::from_ll(surface_ptr as *mut sdl2::sys::SDL_Surface);
 
-
+            /* COMENTADO: Requiere Canvas
             // Crear textura desde superficie
-            let texture = match self.texture_creator.create_texture_from_surface(&sdl_surface) {
+            let texture = match self.texture_creator.create_texture_from_surface(&_sdl_surface) {
                 Ok(t) => t,
                 Err(e) => {
                     eprintln!("[SDL2-BACKEND]: Error creando textura: {}", e);
@@ -311,6 +322,9 @@ impl Sdl2Backend {
             let query = texture.query();
             let dst_rect = Rect::new(x, y, query.width, query.height);
             let _ = self.canvas.copy(&texture, None, dst_rect);
+            */
+            
+            // TODO: Implementar renderizado de texto vía rlgl (texturas OpenGL)
         }
     }
 
@@ -323,22 +337,22 @@ impl Sdl2Backend {
         for cmd in commands {
             match cmd {
                 migui::DrawCommand::Clear { color } => {
-                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
-                    self.canvas.clear();
+                    self.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+                    self.clear();
                 }
                 migui::DrawCommand::DrawRect { rect, color } => {
-                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
+                    self.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
                     let r = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
-                    let _ = self.canvas.fill_rect(r);
+                    let _ = self.fill_rect(r);
                 }
                 migui::DrawCommand::DrawText { text, x, y, size, color } => {
-                    self.draw_text(text, *x as i32, *y as i32, *size as u16, color.r, color.g, color.b);
+                    self.draw_text_old(text, *x as i32, *y as i32, *size as u16, color.r, color.g, color.b);
                 }
                 migui::DrawCommand::DrawLine { x1, y1, x2, y2, color, thickness: _ } => {
-                    self.canvas.set_draw_color(Color::RGBA(color.r, color.g, color.b, color.a));
-                    let _ = self.canvas.draw_line(
-                        sdl2::rect::Point::new(*x1 as i32, *y1 as i32),
-                        sdl2::rect::Point::new(*x2 as i32, *y2 as i32)
+                    self.set_draw_color(sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a));
+                    self.draw_line(
+                        (*x1 as i32, *y1 as i32),
+                        (*x2 as i32, *y2 as i32)
                     );
                 }
                 migui::DrawCommand::DrawViewport3D { id, rect } => {
@@ -365,15 +379,15 @@ impl Sdl2Backend {
                         // Para esta implementación, usaremos un rectángulo de color como "zona de influencia"
                         // hasta que el sistema de FFI esté 100% linkeado con la 6.0.
                         let r = Rect::new(rect.x as i32, rect.y as i32, rect.w as u32, rect.h as u32);
-                        self.canvas.set_draw_color(Color::RGB(40, 40, 50));
-                        let _ = self.canvas.fill_rect(r);
+                        self.set_draw_color(sdl2::pixels::Color::RGB(40, 40, 50));
+                        self.fill_rect(r);
                         
                         // Borde del viewport
-                        self.canvas.set_draw_color(Color::RGB(100, 100, 255));
-                        let _ = self.canvas.draw_rect(r);
+                        self.set_draw_color(sdl2::pixels::Color::RGB(100, 100, 255));
+                        self.draw_rect(r);
                         
                         // Etiqueta del viewport
-                        self.draw_text(&format!("Viewport: {}", id), rect.x as i32 + 5, rect.y as i32 + 5, 12, 100, 100, 255);
+                        self.draw_text_old(&format!("Viewport: {}", id), rect.x as i32 + 5, rect.y as i32 + 5, 12, 100, 100, 255);
                     }
                 }
             }

@@ -47,62 +47,65 @@ tungstenite = "0.21"
 name = "rydit-rs"
 path = "src/main.rs"
 
-[[bin]]
-name = "demo_stream"
-path = "src/bin/demo_stream.rs"
+# BINARIOS LEGACY (Movidis a pendientes_importantes)
+# Para habilitar un demo, muévelo de vuelta a src/bin y descomenta aquí.
 
-[[bin]]
-name = "demo_militar"
-path = "src/bin/demo_militar.rs"
+# [[bin]]
+# name = "demo_stream"
+# path = "src/bin/demo_stream.rs"
 
-[[bin]]
-name = "demo_emoji_utf8"
-path = "src/bin/demo_emoji_utf8.rs"
+# [[bin]]
+# name = "demo_militar"
+# path = "src/bin/demo_militar.rs"
 
-[[bin]]
-name = "demo_audio_mixer"
-path = "src/bin/demo_audio_mixer.rs"
+# [[bin]]
+# name = "demo_emoji_utf8"
+# path = "src/bin/demo_emoji_utf8.rs"
 
-[[bin]]
-name = "demo_transitions"
-path = "src/bin/demo_transitions.rs"
+# [[bin]]
+# name = "demo_audio_mixer"
+# path = "src/bin/demo_audio_mixer.rs"
 
-[[bin]]
-name = "demo_3d_primitives"
-path = "src/bin/demo_3d_primitives.rs"
+# [[bin]]
+# name = "demo_transitions"
+# path = "src/bin/demo_transitions.rs"
 
-[[bin]]
-name = "demo_text_3d"
-path = "src/bin/demo_text_3d.rs"
+# [[bin]]
+# name = "demo_3d_primitives"
+# path = "src/bin/demo_3d_primitives.rs"
 
-[[bin]]
-name = "demo_lighting_2d"
-path = "src/bin/demo_lighting_2d.rs"
+# [[bin]]
+# name = "demo_text_3d"
+# path = "src/bin/demo_text_3d.rs"
 
-[[bin]]
-name = "demo_meteor_shower"
-path = "src/bin/demo_meteor_shower.rs"
+# [[bin]]
+# name = "demo_lighting_2d"
+# path = "src/bin/demo_lighting_2d.rs"
 
-[[bin]]
-name = "demo_war_spacio"
-path = "src/bin/demo_war_spacio.rs"
+# [[bin]]
+# name = "demo_meteor_shower"
+# path = "src/bin/demo_meteor_shower.rs"
 
-[[bin]]
-name = "demo_sdl2_raylib_fusion"
-path = "src/bin/demo_sdl2_raylib_fusion.rs"
+# [[bin]]
+# name = "demo_war_spacio"
+# path = "src/bin/demo_war_spacio.rs"
 
-[[bin]]
-name = "demo_3d_touch"
-path = "src/bin/demo_3d_touch.rs"
+# [[bin]]
+# name = "demo_sdl2_raylib_fusion"
+# path = "src/bin/demo_sdl2_raylib_fusion.rs"
 
-[[bin]]
-name = "demo_input_map"
-path = "src/bin/demo_input_map.rs"
+# [[bin]]
+# name = "demo_3d_touch"
+# path = "src/bin/demo_3d_touch.rs"
 
-[[bin]]
-name = "demo_fase2_completo"
-path = "src/bin/demo_fase2_completo.rs"
+# [[bin]]
+# name = "demo_input_map"
+# path = "src/bin/demo_input_map.rs"
 
-[[bin]]
-name = "demo_ryart_cyberpunk"
-path = "src/bin/demo_ryart_cyberpunk.rs"
+# [[bin]]
+# name = "demo_fase2_completo"
+# path = "src/bin/demo_fase2_completo.rs"
+
+# [[bin]]
+# name = "demo_ryart_cyberpunk"
+# path = "src/bin/demo_ryart_cyberpunk.rs"

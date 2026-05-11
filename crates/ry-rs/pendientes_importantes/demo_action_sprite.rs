@@ -67,7 +67,7 @@ fn main() -> Result<(), String> {
     // CREAR SPRITE SHEET (generado proceduralmente si no hay PNG)
     // ========================================================================
     let sprite_sheet_path = "/data/data/com.termux/files/home/shield-project/hero_sprites.png";
-    let sprite_texture: Option<sdl2::render::Texture<'static>> = if std::path::Path::new(sprite_sheet_path).exists() {
+    let sprite_texture: Option<sdl2::render::Texture<'static>> = None; /* if std::path::Path::new(sprite_sheet_path).exists() {
         match Surface::from_file(sprite_sheet_path) {
             Ok(surface) => {
                 match backend.canvas.texture_creator().create_texture_from_surface(&surface) {
@@ -79,8 +79,9 @@ fn main() -> Result<(), String> {
         }
     } else {
         eprintln!("⚠️  No existe '{}', generando sprite sheet procedural", sprite_sheet_path);
-        generate_sprite_sheet(&backend.canvas.texture_creator(), sprite_sheet_path).ok()
-    };
+        // generate_sprite_sheet(&backend.canvas.texture_creator(), sprite_sheet_path).ok()
+        None
+    }; */
 
     let texture_id = "hero";
     if sprite_texture.is_some() {
@@ -121,7 +122,7 @@ fn main() -> Result<(), String> {
     let suelo_y = 380.0;
 
     // Texturas HUD cacheadas
-    let tc = &backend.canvas.texture_creator();
+    // let tc = &backend.canvas.texture_creator();
     let mut txt_hud: Option<sdl2::render::Texture<'static>> = None;
 
     // ========================================================================
@@ -136,23 +137,18 @@ fn main() -> Result<(), String> {
         let mut mover = 0i32;
         let mut saltar = false;
 
-        for ev in backend.event_pump.poll_iter() {
-            match ev {
-                Event::Quit { .. } | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
-                    running = false; break 'run;
-                }
-                Event::KeyDown { keycode: Some(Keycode::Space), repeat: false, .. } => {
-                    saltar = true;
-                }
-                _ => {}
-            }
+        if backend.procesar_eventos() {
+            running = false; break 'run;
         }
 
-        let ks = sdl2::keyboard::KeyboardState::new(&backend.event_pump);
-        if ks.is_scancode_pressed(sdl2::keyboard::Scancode::Left) || ks.is_scancode_pressed(sdl2::keyboard::Scancode::A) {
+        if backend.is_key_just_pressed("space") {
+            saltar = true;
+        }
+
+        if backend.is_key_pressed("a") || backend.is_key_pressed("arrow_left") {
             mover = -1;
         }
-        if ks.is_scancode_pressed(sdl2::keyboard::Scancode::Right) || ks.is_scancode_pressed(sdl2::keyboard::Scancode::D) {
+        if backend.is_key_pressed("d") || backend.is_key_pressed("arrow_right") {
             mover = 1;
         }
 
@@ -194,7 +190,7 @@ fn main() -> Result<(), String> {
         sprite.update(dt as f64);
 
         // ---- HUD TEXT ----
-        frame_count += 1;
+        /* frame_count += 1;
         if frame_count % 15 == 0 {
             let state_info = sprite.state_info();
             let frame = sprite.current_frame();
@@ -209,22 +205,24 @@ fn main() -> Result<(), String> {
             );
             txt_hud = crear_textura(&backend.font, &txt, 230, 230, 240, tc)
                 .map(|t| unsafe { std::mem::transmute(t) });
-        }
+        } */
 
         // ---- RENDER ----
-        backend.canvas.set_draw_color(Color::RGB(18, 18, 24));
-        backend.canvas.clear();
+        backend.set_draw_color(Color::RGB(18, 18, 24));
+        backend.clear();
 
         // Suelo
-        backend.canvas.set_draw_color(Color::RGB(60, 60, 80));
-        let _ = backend.canvas.fill_rect(Rect::new(0, suelo_y as i32 + 128, 800, (600 - suelo_y as i32 - 128) as u32));
+        backend.set_draw_color(Color::RGB(60, 60, 80));
+        let _ = backend.fill_rect(Rect::new(0, suelo_y as i32 + 128, 800, (600 - suelo_y as i32 - 128) as u32));
 
         // Línea de suelo
-        backend.canvas.set_draw_color(Color::RGB(100, 100, 120));
-        let _ = backend.canvas.draw_rect(Rect::new(0, suelo_y as i32 + 128, 800, 2));
+        backend.set_draw_color(Color::RGB(100, 100, 120));
+        let _ = backend.draw_rect(Rect::new(0, suelo_y as i32 + 128, 800, 2));
 
         // Dibujar sprite animado
-        if let Some(ref tex) = sprite_texture {
+        if let Some(ref _tex) = sprite_texture {
+            // Comentado: Requiere Canvas
+            /*
             let cmd = sprite.render(texture_id, x, y, SpriteColor::blanco());
             let flip = sprite.flip_info();
 
@@ -268,10 +266,11 @@ fn main() -> Result<(), String> {
                     Rect::new(dest_x as i32, dest_y, dest_w, dest_h),
                 ).ok();
             }
+            */
         } else {
             // Fallback: rectángulo de color con info de frame
             let frame = sprite.current_frame();
-            let rect = sprite.current_frame_rect();
+            // let rect = sprite.current_frame_rect();
             let colores = [
                 Color::RGB(255, 100, 100),
                 Color::RGB(100, 255, 100),
@@ -279,31 +278,31 @@ fn main() -> Result<(), String> {
                 Color::RGB(255, 255, 100),
             ];
             let c = colores[frame % 4];
-            backend.canvas.set_draw_color(c);
-            let _ = backend.canvas.fill_rect(Rect::new(x as i32, y as i32, 64, 64));
+            backend.set_draw_color(c);
+            let _ = backend.fill_rect(Rect::new(x as i32, y as i32, 64, 64));
             // Frame number como rectángulos
-            backend.canvas.set_draw_color(Color::WHITE);
-            let _ = backend.canvas.fill_rect(Rect::new(x as i32 + 2, y as i32 + 2, 60, 4));
+            backend.set_draw_color(Color::WHITE);
+            let _ = backend.fill_rect(Rect::new(x as i32 + 2, y as i32 + 2, 60, 4));
         }
 
         // HUD
-        if let Some(ref tex) = txt_hud {
-            let q = tex.query();
+        if let Some(ref _tex) = txt_hud {
+            /* let q = tex.query();
             let w = q.width as u32;
-            backend.canvas.set_draw_color(Color::RGBA(0, 0, 0, 180));
-            let _ = backend.canvas.fill_rect(Rect::new(10, 10, w + 16, 24));
-            backend.canvas.copy(tex, None, Rect::new(14, 12, w, 18)).ok();
+            backend.set_draw_color(Color::RGBA(0, 0, 0, 180));
+            let _ = backend.fill_rect(Rect::new(10, 10, w + 16, 24));
+            backend.canvas.copy(tex, None, Rect::new(14, 12, w, 18)).ok(); */
         }
 
         // Instrucciones
-        let instrucciones = crear_textura(&backend.font, "← → / A D: Mover | SPACE: Saltar | ESC: Salir", 150, 150, 150, tc);
-        if let Some(ref tex) = instrucciones {
+        // let instrucciones = crear_textura(&backend.font, "← → / A D: Mover | SPACE: Saltar | ESC: Salir", 150, 150, 150, tc);
+        /* if let Some(ref tex) = instrucciones {
             let q = tex.query();
             let w = q.width as u32;
             let _ = backend.canvas.copy(tex, None, Rect::new(10, 570, w, 18));
-        }
+        } */
 
-        backend.canvas.present();
+        backend.present();
 
         // Cap 60 FPS
         let elapsed = frame_start.elapsed();

@@ -227,12 +227,12 @@ fn main() -> Result<(), String> {
         }
     }
 
-    let tc = &backend.canvas.texture_creator();
+    // let tc = &backend.canvas.texture_creator();
     let mut grid = Grid::new();
     let mut txt_hud: Option<sdl2::render::Texture<'static>> = None;
     let mut txt_msg: Option<sdl2::render::Texture<'static>> = None;
 
-    fn update_hud(grid: &Grid, tc: &sdl2::render::TextureCreator<sdl2::video::WindowContext>,
+    /* fn update_hud(grid: &Grid, tc: &sdl2::render::TextureCreator<sdl2::video::WindowContext>,
                    font: &Option<ry_gfx::sdl2_ffi::FontFFI>) -> (Option<sdl2::render::Texture<'static>>, Option<sdl2::render::Texture<'static>>) {
         let flags = MINES - grid.flags_placed;
         let hud_txt = crear_textura(font, &format!("💣 Minas: {} | 🚩 Banderas: {}", MINES, flags), 255, 255, 255, tc)
@@ -253,7 +253,7 @@ fn main() -> Result<(), String> {
 
     let (h, m) = update_hud(&grid, tc, &backend.font);
     txt_hud = h;
-    txt_msg = m;
+    txt_msg = m; */
 
     let mut running = true;
     'run: loop {
@@ -264,8 +264,8 @@ fn main() -> Result<(), String> {
                 }
                 Event::KeyDown { keycode: Some(Keycode::R), .. } => {
                     grid = Grid::new();
-                    let (h, m) = update_hud(&grid, tc, &backend.font);
-                    txt_hud = h; txt_msg = m;
+                    // let (h, m) = update_hud(&grid, tc, &backend.font);
+                    // txt_hud = h; txt_msg = m;
                 }
                 Event::MouseButtonDown { mouse_btn, x, y, .. } => {
                     if grid.game_over || grid.won { continue; }
@@ -278,15 +278,15 @@ fn main() -> Result<(), String> {
                             if grid.state[ty][tx] != TileState::Flagged {
                                 grid.reveal(tx, ty);
                                 if grid.game_over { grid.reveal_all_mines(); }
-                                let (_, m) = update_hud(&grid, tc, &backend.font);
-                                txt_msg = m;
+                                // let (_, m) = update_hud(&grid, tc, &backend.font);
+                                // txt_msg = m;
                             }
                         }
                         MouseButton::Right => {
                             if grid.state[ty][tx] != TileState::Revealed {
                                 grid.toggle_flag(tx, ty);
-                                let (h, _) = update_hud(&grid, tc, &backend.font);
-                                txt_hud = h;
+                                // let (h, _) = update_hud(&grid, tc, &backend.font);
+                                // txt_hud = h;
                             }
                         }
                         _ => {}
@@ -297,18 +297,20 @@ fn main() -> Result<(), String> {
         }
 
         // ---- RENDER ----
-        backend.canvas.set_draw_color(Color::RGB(30, 30, 40));
-        backend.canvas.clear();
+        backend.set_draw_color(Color::RGB(30, 30, 40));
+        backend.clear();
 
         // HUD fondo
-        backend.canvas.set_draw_color(Color::RGB(20, 20, 30));
-        let _ = backend.canvas.fill_rect(Rect::new(0, 0, SCREEN_W as u32, HUD_H as u32));
+        backend.set_draw_color(Color::RGB(20, 20, 30));
+        let _ = backend.fill_rect(Rect::new(0, 0, SCREEN_W as u32, HUD_H as u32));
 
         // HUD texto
-        if let Some(ref tex) = txt_hud {
-            let q = tex.query();
-            let _ = backend.canvas.copy(tex, None, Rect::new(10, 20, q.width, q.height));
+        if let Some(ref _tex) = txt_hud {
+            /* let q = tex.query();
+            let _ = backend.canvas.copy(tex, None, Rect::new(10, 20, q.width, q.height)); */
         }
+        // Fallback para HUD
+        backend.draw_text_old(&format!("💣 Minas: {} | 🚩 Banderas: {}", MINES, MINES - grid.flags_placed), 10, 20, 16, 255, 255, 255);
 
         // Grid
         for y in 0..GRID_H {
@@ -320,22 +322,22 @@ fn main() -> Result<(), String> {
 
                 match state {
                     TileState::Hidden => {
-                        backend.canvas.set_draw_color(Color::RGB(80, 80, 100));
-                        let _ = backend.canvas.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
+                        backend.set_draw_color(Color::RGB(80, 80, 100));
+                        let _ = backend.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
                         // Borde 3D
-                        backend.canvas.set_draw_color(Color::RGB(120, 120, 140));
-                        let _ = backend.canvas.draw_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
+                        backend.set_draw_color(Color::RGB(120, 120, 140));
+                        let _ = backend.draw_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
                     }
                     TileState::Revealed => {
                         if is_mine && grid.game_over {
-                            backend.canvas.set_draw_color(Color::RGB(200, 50, 50));
-                            let _ = backend.canvas.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
+                            backend.set_draw_color(Color::RGB(200, 50, 50));
+                            let _ = backend.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
                             // 💣 emoji como círculo rojo
-                            backend.canvas.set_draw_color(Color::RGB(255, 255, 255));
-                            let _ = backend.canvas.fill_rect(Rect::new(px + 12, py + 12, 12, 12));
+                            backend.set_draw_color(Color::RGB(255, 255, 255));
+                            let _ = backend.fill_rect(Rect::new(px + 12, py + 12, 12, 12));
                         } else {
-                            backend.canvas.set_draw_color(Color::RGB(50, 50, 65));
-                            let _ = backend.canvas.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
+                            backend.set_draw_color(Color::RGB(50, 50, 65));
+                            let _ = backend.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
 
                             // Número
                             let n = grid.numbers[y][x];
@@ -351,35 +353,40 @@ fn main() -> Result<(), String> {
                                     Color::RGB(128, 128, 128),  // 8 - gris
                                 ];
                                 let c = colores[(n - 1) as usize];
-                                backend.canvas.set_draw_color(c);
-                                let _ = backend.canvas.fill_rect(Rect::new(px + 14, py + 14, 8, 8));
+                                backend.set_draw_color(c);
+                                let _ = backend.fill_rect(Rect::new(px + 14, py + 14, 8, 8));
                             }
                         }
                     }
                     TileState::Flagged => {
-                        backend.canvas.set_draw_color(Color::RGB(80, 80, 100));
-                        let _ = backend.canvas.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
+                        backend.set_draw_color(Color::RGB(80, 80, 100));
+                        let _ = backend.fill_rect(Rect::new(px + 1, py + 1, TILE_SIZE as u32 - 2, TILE_SIZE as u32 - 2));
                         // 🚩 bandera = triángulo rojo
-                        backend.canvas.set_draw_color(Color::RGB(255, 50, 50));
-                        let _ = backend.canvas.fill_rect(Rect::new(px + 14, py + 8, 4, 20));
-                        let _ = backend.canvas.fill_rect(Rect::new(px + 14, py + 8, 14, 10));
+                        backend.set_draw_color(Color::RGB(255, 50, 50));
+                        let _ = backend.fill_rect(Rect::new(px + 14, py + 8, 4, 20));
+                        let _ = backend.fill_rect(Rect::new(px + 14, py + 8, 14, 10));
                     }
                 }
             }
         }
 
         // Mensaje game over / win
-        if let Some(ref tex) = txt_msg {
-            let q = tex.query();
+        if let Some(ref _tex) = txt_msg {
+            /* let q = tex.query();
             let _ = backend.canvas.copy(tex, None, Rect::new(
                 (SCREEN_W - q.width as i32) / 2,
                 (SCREEN_H - q.height as i32) / 2,
                 q.width,
                 q.height,
-            ));
+            )); */
+        }
+        if grid.game_over {
+            backend.draw_text_old("💥 GAME OVER — Presiona R para reiniciar", (SCREEN_W - 300) / 2, (SCREEN_H - 20) / 2, 20, 255, 80, 80);
+        } else if grid.won {
+            backend.draw_text_old("🎉 ¡GANASTE! — Presiona R para reiniciar", (SCREEN_W - 300) / 2, (SCREEN_H - 20) / 2, 20, 80, 255, 80);
         }
 
-        backend.canvas.present();
+        backend.present();
     }
 
     println!("\n✅ Buscaminas cerrado");

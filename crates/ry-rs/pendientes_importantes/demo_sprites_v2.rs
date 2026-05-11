@@ -96,16 +96,16 @@ fn main() -> Result<(), String> {
         }
         
         // Render
-        gfx.canvas.set_draw_color(sdl2::pixels::Color::RGB(10, 10, 20));
-        gfx.canvas.clear();
+        gfx.set_draw_color(sdl2::pixels::Color::RGB(10, 10, 20));
+        gfx.clear();
         
         // Grid
-        gfx.canvas.set_draw_color(sdl2::pixels::Color::RGB(30, 30, 40));
+        gfx.set_draw_color(sdl2::pixels::Color::RGB(30, 30, 40));
         for x in (0..800).step_by(50) {
-            let _ = gfx.canvas.draw_line(sdl2::rect::Point::new(x, 0), sdl2::rect::Point::new(x, 600));
+            let _ = gfx.draw_line((x, 0), (x, 600));
         }
         for y in (0..600).step_by(50) {
-            let _ = gfx.canvas.draw_line(sdl2::rect::Point::new(0, y), sdl2::rect::Point::new(800, y));
+            let _ = gfx.draw_line((0, y), (800, y));
         }
         
         // Sprites
@@ -113,30 +113,30 @@ fn main() -> Result<(), String> {
             let sz = s.size as i32;
             
             // Rect de color
-            gfx.canvas.set_draw_color(sdl2::pixels::Color::RGB(s.color.0, s.color.1, s.color.2));
-            let _ = gfx.canvas.fill_rect(sdl2::rect::Rect::new(s.x, s.y, sz as u32, sz as u32));
+            gfx.set_draw_color(sdl2::pixels::Color::RGB(s.color.0, s.color.1, s.color.2));
+            let _ = gfx.fill_rect(sdl2::rect::Rect::new(s.x, s.y, sz as u32, sz as u32));
             
             // Indicador si existe archivo
             if s.existe {
-                gfx.canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-                let _ = gfx.canvas.fill_rect(sdl2::rect::Rect::new(s.x + 2, s.y + 2, (sz - 4) as u32, 4));
+                gfx.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+                let _ = gfx.fill_rect(sdl2::rect::Rect::new(s.x + 2, s.y + 2, (sz - 4) as u32, 4));
             }
             
             // Borde selección
             if i == sel {
-                gfx.canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 0));
-                let _ = gfx.canvas.draw_rect(sdl2::rect::Rect::new(s.x - 3, s.y - 3, (sz + 6) as u32, (sz + 6) as u32));
+                gfx.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 0));
+                let _ = gfx.draw_rect(sdl2::rect::Rect::new(s.x - 3, s.y - 3, (sz + 6) as u32, (sz + 6) as u32));
             }
         }
         
         // UI
-        gfx.draw_text("🛡️ Demo Sprites V2", 20, 10, 20, 255, 255, 255);
-        gfx.draw_text(&format!("Frame: {} | Archivos: {}/4", frame, existentes), 20, 35, 16, 0, 255, 0);
-        gfx.draw_text(&format!("Sel: {}", sprites[sel].nombre), 20, 55, 14, 255, 255, 0);
-        gfx.draw_text("<->=Mover | 1-4=Select | A=Anim | R=Reset | ESC=Salir", 10, 565, 14, 128, 128, 128);
-        gfx.draw_text("Blanco arriba = archivo existe", 10, 585, 14, 128, 128, 128);
+        gfx.draw_text_old("🛡️ Demo Sprites V2", 20, 10, 20, 255, 255, 255);
+        gfx.draw_text_old(&format!("Frame: {} | Archivos: {}/4", frame, existentes), 20, 35, 16, 0, 255, 0);
+        gfx.draw_text_old(&format!("Sel: {}", sprites[sel].nombre), 20, 55, 14, 255, 255, 0);
+        gfx.draw_text_old("<->=Mover | 1-4=Select | A=Anim | R=Reset | ESC=Salir", 10, 565, 14, 128, 128, 128);
+        gfx.draw_text_old("Blanco arriba = archivo existe", 10, 585, 14, 128, 128, 128);
         
-        gfx.canvas.present();
+        gfx.present();
     }
     
     println!("\n✅ Demo: {} frames", frame);

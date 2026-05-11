@@ -71,8 +71,8 @@ fn main() -> Result<(), String> {
         }
 
         // 3. Renderizado
-        backend.canvas.set_draw_color(Color::RGB(220, 220, 220)); 
-        backend.canvas.clear();
+        backend.set_draw_color(Color::RGB(220, 220, 220)); 
+        backend.clear();
 
         // Dibujar el arte persistente (Optimizamos para ver TODO)
         // Recorremos el canvas completo con step 2 para visibilidad garantizada
@@ -83,29 +83,29 @@ fn main() -> Result<(), String> {
                 
                 if color != ColorRydit::Negro {
                     let c = color.to_color();
-                    backend.canvas.set_draw_color(Color::RGB(c.r, c.g, c.b));
+                    backend.set_draw_color(Color::RGB(c.r, c.g, c.b));
                     // Dibujamos rects más grandes para asegurar que se vean
-                    let _ = backend.canvas.fill_rect(Rect::new(x as i32, y as i32, 2, 2));
+                    let _ = backend.fill_rect(Rect::new(x as i32, y as i32, 2, 2));
                 }
             }
         }
 
         // Barra de Herramientas (Estilo Buscaminas/Cyberpunk)
-        backend.canvas.set_draw_color(Color::RGB(40, 40, 40));
-        let _ = backend.canvas.fill_rect(Rect::new(0, 0, 1280, 50));
+        backend.set_draw_color(Color::RGB(40, 40, 40));
+        let _ = backend.fill_rect(Rect::new(0, 0, 1280, 50));
         
         // Indicador de Click (Debug)
         let indicator_color = if left_click { Color::RGB(255, 0, 0) } 
                              else if right_click { Color::RGB(0, 0, 255) } 
                              else { Color::RGB(80, 80, 80) };
-        backend.canvas.set_draw_color(indicator_color);
-        let _ = backend.canvas.fill_rect(Rect::new(10, 10, 30, 30));
+        backend.set_draw_color(indicator_color);
+        let _ = backend.fill_rect(Rect::new(10, 10, 30, 30));
 
         // Cursor (Para validar posición mx, my)
-        backend.canvas.set_draw_color(Color::RGB(0, 0, 0));
-        let _ = backend.canvas.draw_rect(Rect::new(mx - 5, my - 5, 10, 10));
+        backend.set_draw_color(Color::RGB(0, 0, 0));
+        let _ = backend.draw_rect(Rect::new(mx - 5, my - 5, 10, 10));
 
-        backend.canvas.present();
+        backend.present();
     }
 
     Ok(())

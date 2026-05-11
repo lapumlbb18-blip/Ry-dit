@@ -72,6 +72,8 @@ fn main() -> Result<(), String> {
         print!("  ├─ {}... ", archivo);
 
         let textura = if std::path::Path::new(&path).exists() {
+            // Comentado: Requiere Canvas
+            /*
             match Surface::from_file(&path) {
                 Ok(surface) => {
                     match backend.canvas.texture_creator().create_texture_from_surface(&surface) {
@@ -86,6 +88,9 @@ fn main() -> Result<(), String> {
                 }
                 Err(e) => { eprintln!("❌ surface: {}", e); None }
             }
+            */
+            println!("⚠️ sprite loading skipped (requires Canvas)");
+            None
         } else {
             eprintln!("❌ no existe");
             None
@@ -165,40 +170,41 @@ fn main() -> Result<(), String> {
         backend.clear_background(ry_gfx::ColorRydit::Negro);
 
         // Plataformas
-        backend.canvas.set_draw_color(Color::RGB(100, 100, 120));
+        backend.set_draw_color(Color::RGB(100, 100, 120));
         for plat in &plataformas {
-            let _ = backend.canvas.fill_rect(*plat);
-            backend.canvas.set_draw_color(Color::RGB(150, 150, 170));
-            let _ = backend.canvas.fill_rect(Rect::new(plat.x, plat.y, plat.width(), 3));
-            backend.canvas.set_draw_color(Color::RGB(100, 100, 120));
+            let _ = backend.fill_rect(*plat);
+            backend.set_draw_color(Color::RGB(150, 150, 170));
+            let _ = backend.fill_rect(Rect::new(plat.x, plat.y, plat.width(), 3));
+            backend.set_draw_color(Color::RGB(100, 100, 120));
         }
 
         // Sprites
         for s in &sprites {
             let scale = 4;
-            if let Some(ref tex) = s.textura {
-                let _ = backend.canvas.copy(tex, None, Rect::new(s.x as i32, s.y as i32, s.w * scale, s.h * scale));
+            if let Some(ref _tex) = s.textura {
+                // Comentado: Requiere Canvas
+                // let _ = backend.canvas.copy(tex, None, Rect::new(s.x as i32, s.y as i32, s.w * scale, s.h * scale));
             } else {
-                backend.canvas.set_draw_color(s.color);
-                let _ = backend.canvas.fill_rect(Rect::new(s.x as i32, s.y as i32, s.w * scale, s.h * scale));
+                backend.set_draw_color(s.color);
+                let _ = backend.fill_rect(Rect::new(s.x as i32, s.y as i32, s.w * scale, s.h * scale));
             }
         }
 
         // Jugador
-        backend.canvas.set_draw_color(Color::RGB(255, 50, 50));
-        let _ = backend.canvas.fill_rect(j_rect);
+        backend.set_draw_color(Color::RGB(255, 50, 50));
+        let _ = backend.fill_rect(j_rect);
 
         // Ojos
-        backend.canvas.set_draw_color(Color::RGB(255, 255, 255));
+        backend.set_draw_color(Color::RGB(255, 255, 255));
         let ojo = if j_x > 100.0 { 24 } else { 4 };
-        let _ = backend.canvas.fill_rect(Rect::new(j_x as i32 + ojo, j_y as i32 + 10, 5, 5));
-        let _ = backend.canvas.fill_rect(Rect::new(j_x as i32 + ojo + 12, j_y as i32 + 10, 5, 5));
+        let _ = backend.fill_rect(Rect::new(j_x as i32 + ojo, j_y as i32 + 10, 5, 5));
+        let _ = backend.fill_rect(Rect::new(j_x as i32 + ojo + 12, j_y as i32 + 10, 5, 5));
 
         // TEXTO con draw_text del backend (usa FontFFI internamente)
-        backend.draw_text("🛡️ RyDit - TTF + Sprites + Colisiones", 15, 15, 20, 255, 255, 255);
-        backend.draw_text(&format!("Saltos: {} | Sprites: {}/4", saltos, cargados), 15, 45, 16, 0, 255, 0);
-        backend.draw_text(&format!("Jugador: ({:.0}, {:.0}) | {}", j_x, j_y, if en_suelo { "✅ suelo" } else { "❌ aire" }), 15, 75, 14, 255, 255, 0);
-        backend.draw_text("A/D = Mover | SPACE = Saltar | ESC = Salir", 15, 555, 14, 150, 150, 150);
+        backend.draw_text_old("🛡️ RyDit - TTF + Sprites + Colisiones", 15, 15, 20, 255, 255, 255);
+        backend.draw_text_old(&format!("Saltos: {} | Sprites: {}/4", saltos, cargados), 15, 45, 16, 0, 255, 0);
+        backend.draw_text_old(&format!("Jugador: ({:.0}, {:.0}) | {}", j_x, j_y, if en_suelo { "✅ suelo" } else { "❌ aire" }), 15, 75, 14, 255, 255, 0);
+        backend.draw_text_old("A/D = Mover | SPACE = Saltar | ESC = Salir", 15, 555, 14, 150, 150, 150);
 
         backend.end_draw();
     }
