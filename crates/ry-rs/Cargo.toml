@@ -106,6 +106,6 @@ path = "src/main.rs"
 # name = "demo_fase2_completo"
 # path = "src/bin/demo_fase2_completo.rs"
 
-# [[bin]]
-# name = "demo_ryart_cyberpunk"
-# path = "src/bin/demo_ryart_cyberpunk.rs"
+[[bin]]
+name = "demo_ryart_cyberpunk"
+path = "src/bin/demo_ryart_cyberpunk.rs"

@@ -162,7 +162,21 @@ impl Sdl2Backend {
             gl_context: Some(gl_context),
             // texture_creator,
             font,
-        })
+        });
+
+        // INICIALIZACIÓN CRÍTICA RLGL (Para arquitectura híbrida)
+        unsafe {
+            // Informar a Raylib de las dimensiones actuales
+            raylib::ffi::rlViewport(0, 0, width as i32, height as i32);
+            // Configurar modo de renderizado
+            raylib::ffi::rlMatrixMode(raylib::ffi::RL_PROJECTION);
+            raylib::ffi::rlLoadIdentity();
+            raylib::ffi::rlOrtho(0.0, width as f64, height as f64, 0.0, 0.0, 1.0);
+            raylib::ffi::rlMatrixMode(raylib::ffi::RL_MODELVIEW);
+            raylib::ffi::rlLoadIdentity();
+        }
+
+        Ok(backend)
     }
 
     /// Procesar eventos SDL2 (debe llamarse en cada frame)
