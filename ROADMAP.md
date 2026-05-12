@@ -52,7 +52,7 @@ Progreso: ████████████████████ 100%
 | Versión | Foco Principal | Estado |
 |---------|----------------|--------|
 | **v0.23.0** | Consolidación SDL2 + RLGL | ✅ Completado |
-| **v0.24.0** | Migración de Demos a la nueva arquitectura | ⏳ Siguiente paso |
+| **v0.24.0** | Migración de Demos + Arquitectura Nativa OpenGL 3.3 | ⏳ En proceso |
 | **v0.25.0** | Unificación de carga de Assets (Texture2D) | ⏳ Pendiente |
 | **v1.0.0**  | Motor Completo + GitHub Actions CI/CD | ⏳ Pendiente |
 
