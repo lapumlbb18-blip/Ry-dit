@@ -86,9 +86,9 @@ path = "src/main.rs"
 # name = "demo_meteor_shower"
 # path = "src/bin/demo_meteor_shower.rs"
 
-# [[bin]]
-# name = "demo_war_spacio"
-# path = "src/bin/demo_war_spacio.rs"
+[[bin]]
+name = "demo_war_spacio"
+path = "src/bin/demo_war_spacio.rs"
 
 # [[bin]]
 # name = "demo_sdl2_raylib_fusion"
@@ -105,6 +105,14 @@ path = "src/main.rs"
 # [[bin]]
 # name = "demo_fase2_completo"
 # path = "src/bin/demo_fase2_completo.rs"
+
+[[bin]]
+name = "demo_new_standard"
+path = "src/bin/demo_new_standard.rs"
+
+[[bin]]
+name = "demo_test_gameloop"
+path = "src/bin/demo_test_gameloop.rs"
 
 [[bin]]
 name = "demo_ryart_cyberpunk"

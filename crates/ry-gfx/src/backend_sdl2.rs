@@ -110,8 +110,32 @@ impl Sdl2Backend {
             .gl_make_current(&gl_context)
             .map_err(|e| e.to_string())?;
 
+        println!("[SDL2-BACKEND]: Cargando extensiones OpenGL...");
         // Cargar extensiones OpenGL (usamos video_subsystem)
         gl::load_with(|name| video_subsystem.gl_get_proc_address(name) as *const _);
+
+        println!("[SDL2-BACKEND]: Consultando información del driver...");
+        // --- ANÁLISIS DE DRIVER ---
+        unsafe {
+            let vendor_ptr = gl::GetString(gl::VENDOR) as *const std::os::raw::c_char;
+            if !vendor_ptr.is_null() {
+                let vendor = std::ffi::CStr::from_ptr(vendor_ptr).to_string_lossy();
+                println!("[OPENGL-INFO]: Vendor: {}", vendor);
+            }
+            
+            let renderer_ptr = gl::GetString(gl::RENDERER) as *const std::os::raw::c_char;
+            if !renderer_ptr.is_null() {
+                let renderer = std::ffi::CStr::from_ptr(renderer_ptr).to_string_lossy();
+                println!("[OPENGL-INFO]: Renderer: {}", renderer);
+            }
+
+            let version_ptr = gl::GetString(gl::VERSION) as *const std::os::raw::c_char;
+            if !version_ptr.is_null() {
+                let version = std::ffi::CStr::from_ptr(version_ptr).to_string_lossy();
+                println!("[OPENGL-INFO]: Version: {}", version);
+            }
+        }
+        // -------------------------
 
         // Inicializar SDL2_image (PNG, JPG) - GIF no disponible en esta versión
         let _image_context =
@@ -148,7 +172,7 @@ impl Sdl2Backend {
         println!("[SDL2-BACKEND]: VSync activado");
         println!("[SDL2-BACKEND]: SDL2_image inicializado (PNG, JPG)");
 
-        Ok(Self {
+        let backend = Self {
             context,
             video_subsystem,
             event_pump,
@@ -162,18 +186,11 @@ impl Sdl2Backend {
             gl_context: Some(gl_context),
             // texture_creator,
             font,
-        });
+        };
 
-        // INICIALIZACIÓN CRÍTICA RLGL (Para arquitectura híbrida)
+        // INICIALIZACIÓN CRÍTICA OPENGL
         unsafe {
-            // Informar a Raylib de las dimensiones actuales
-            raylib::ffi::rlViewport(0, 0, width as i32, height as i32);
-            // Configurar modo de renderizado
-            raylib::ffi::rlMatrixMode(raylib::ffi::RL_PROJECTION);
-            raylib::ffi::rlLoadIdentity();
-            raylib::ffi::rlOrtho(0.0, width as f64, height as f64, 0.0, 0.0, 1.0);
-            raylib::ffi::rlMatrixMode(raylib::ffi::RL_MODELVIEW);
-            raylib::ffi::rlLoadIdentity();
+            gl::Viewport(0, 0, width as i32, height as i32);
         }
 
         Ok(backend)
@@ -343,6 +360,7 @@ impl Sdl2Backend {
     }
 
     /// Renderizar comandos de migui usando el backend de SDL2
+    #[cfg(feature = "migui")]
     pub fn render_migui_commands(
         &mut self, 
         commands: &[migui::DrawCommand], 

@@ -33,6 +33,7 @@ impl Sdl2Backend {
     }
 
     pub fn present(&mut self) {
-        self.renderer.present();
+        // self.renderer.present(); // Ya no es necesario
+        self.window.gl_swap_window();
     }
 }

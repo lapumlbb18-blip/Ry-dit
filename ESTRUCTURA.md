@@ -45,15 +45,18 @@ El motor ha transicionado de una dependencia total de `SDL2::Canvas` a una arqui
 
 ---
 
-## 🎮 Estado de los Demos
+**Estado de los Demos**
+
+✅ **Gameloop Validado**: Se ha confirmado que el patrón `Sdl2Backend` + `InputManager` (`events-ry`) es el estándar operativo para la arquitectura híbrida.
 
 Todos los demos antiguos han sido movidos a `crates/ry-rs/pendientes_importantes/`. 
 **Razón**: El cambio a la arquitectura sin `Canvas` rompe la compatibilidad binaria directa. 
 
 **Plan de Recuperación**:
 1.  Re-habilitar demos uno a uno en `src/bin/`.
-2.  Actualizar firmas (ej: `draw_text` -> `draw_text_old`).
-3.  Migrar renderizado de texturas de `SDL_Texture` a texturas de Raylib (`Texture2D`).
+2.  **Patrón estándar**: Usar `Sdl2Backend` + `InputManager`.
+3.  Actualizar firmas (ej: `draw_text` -> `draw_text_old`).
+4.  Migrar renderizado de texturas de `SDL_Texture` a texturas de Raylib (`Texture2D`).
 
 ---
 
