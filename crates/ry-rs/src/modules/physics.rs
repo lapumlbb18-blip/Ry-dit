@@ -3,7 +3,9 @@
 // v0.9.3: Gravedad, fricción, colisión con respuesta
 
 use blast_core::{Executor, Valor};
+use ry_core::{ModuleError, ModuleResult, RyditModule};
 use ry_parser::{Expr, Stmt};
+use serde_json::{json, Value};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -894,6 +896,62 @@ pub fn physics_impact_profile<'a>(
     Valor::Array(vec![Valor::Num(freq), Valor::Num(volume), Valor::Texto(stype.to_string())])
 }
 
+// ============================================================================
+// RYDIT MODULE IMPLEMENTATION (v0.24.0+)
+// ============================================================================
+
+use ry_core::ModuleMetadata;
+
+pub struct PhysicsWorldModule;
+
+impl RyditModule for PhysicsWorldModule {
+    fn name(&self) -> &'static str {
+        "physics_world"
+    }
+
+    fn version(&self) -> &'static str {
+        "1.0.0"
+    }
+
+    fn register(&self) -> HashMap<&'static str, &'static str> {
+        let mut cmds = HashMap::new();
+        cmds.insert("enable", "Activar física en game loop");
+        cmds.insert("set_gravity", "Establecer gravedad global");
+        cmds.insert("create_body", "Crear cuerpo físico (id, x, y, w, h)");
+        cmds
+    }
+
+    fn execute(&self, command: &str, params: serde_json::Value) -> ry_core::ModuleResult {
+        // Mapear comandos JSON a funciones internas
+        // (Simplificado para brevedad, se puede expandir)
+        match command {
+            "enable" => Ok(serde_json::json!({"status": "enabled"})),
+            _ => Err(ry_core::ModuleError {
+                code: "UNKNOWN".to_string(),
+                message: "Comando no implementado en bridge".to_string(),
+            }),
+        }
+    }
+
+    fn on_update(&mut self, dt: f32) {
+        // ✅ ACTUALIZACIÓN AUTOMÁTICA (Ensamblador)
+        let world = get_physics_world();
+        let mut world_ref = world.borrow_mut();
+        world_ref.update(dt);
+        
+        // Aplicar gravitación si está activa en el contexto global (opcional)
+        // Nota: En una implementación más pura, el estado de __NEWTON_GRAVITY__
+        // debería estar dentro de PhysicsWorld.
+    }
+
+    fn metadata(&self) -> ModuleMetadata {
+        ModuleMetadata::new()
+            .with_name("physics_world")
+            .with_version("1.0.0")
+            .with_description("Motor de física integrado en el ciclo de vida")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -913,7 +971,7 @@ mod tests {
     fn test_physics_gravity() {
         let mut body = PhysicsBody::new(0.0, 0.0, 10.0, 10.0);
         body.apply_gravity(1.0 / 60.0);
-        assert!(body.vy > 0.0); // Debe caer hacia abajo
+        assert!(body.vy > 0.0);
     }
 
     #[test]

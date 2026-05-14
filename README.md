@@ -1,31 +1,32 @@
-# 🛡️ Ry-Dit: Motor de Desarrollo Híbrido (v0.23.0)
+# 🛡️ Ry-Dit: Motor de Desarrollo Híbrido (v0.24.0)
 
-**Ry-Dit** es un motor de juegos y simulaciones de alto rendimiento diseñado para la máxima portabilidad (Android/Termux, Linux, Windows). Su arquitectura única combina la robustez de **SDL2** para la gestión del sistema con la potencia de bajo nivel de **RLGL (Raylib Graph Library)** para el renderizado GPU.
+**Ry-Dit** es un motor de desarrollo universal diseñado para la máxima modularidad y portabilidad. Su arquitectura de **Ensamblador Maestro** permite orquestar subsistemas independientes (física, partículas, animación) bajo un núcleo híbrido que combina la gestión de sistema de **SDL2** con la potencia visual de **RLGL**.
 
-## 🚀 Hito Alcanzado: Consolidación Estructural v0.23.0
-Esta versión marca el éxito de la transición hacia una arquitectura profesional desacoplada, eliminando las limitaciones del renderizado por software antiguo.
+## 🚀 Hito Alcanzado: Arquitectura de Ensamblador Maestro (v0.24.0)
+Esta versión introduce el concepto de **Ensamblaje Dinámico**, donde el motor ya no tiene lógica "cableada", sino que orquesta módulos inteligentes que se integran en el ciclo de vida.
 
-### ✅ Logros Clave (Éxito de Sesión)
-- **Fusión Arquitectónica SDL2 + RLGL**: Implementación exitosa del modelo híbrido. SDL2 controla el ciclo de vida, la ventana y los eventos, mientras que RLGL controla directamente la GPU.
-- **Eliminación de SDL_Canvas**: Se ha eliminado la dependencia de `SDL_Canvas` en el núcleo del motor, liberando el contexto OpenGL para un renderizado nativo y eficiente.
-- **Compilación 100% Limpia**: Todos los crates centrales (`ry-gfx`, `ry-core`, `rybot`, `migui`, `ry-rs`) verifican y compilan sin errores (`cargo check` OK).
-- **Entorno de Desarrollo Purificado**: Se han movido más de 24 binarios legacy a `crates/ry-rs/pendientes_importantes/`, permitiendo un ciclo de desarrollo ágil y libre de ruido técnico.
-- **Capa de Compatibilidad (Shims)**: Implementación de puente de compatibilidad en `ry-gfx` para facilitar la migración de sistemas existentes a la nueva API de RLGL.
+### ✅ Logros Clave (Novedades de la Sesión)
+- **Patrón Ensamblador (Master Assembler)**: Implementación del `ModuleRegistry` en el `Executor` y en el `Editor`. El motor ahora orquesta automáticamente el inicio, la actualización y el dibujo de todos los subsistemas registrados.
+- **RyditModule con Ciclo de Vida**: Evolución del trait de módulos para soportar `on_init`, `on_update` y `on_draw`. Esto permite que componentes como físicas y partículas sean totalmente autónomos.
+- **Renderizado GPU Real (RLGL Integration)**: Activación completa de `raylib::ffi` dentro del `Renderer`. Los comandos de dibujo ahora son procesados nativamente por la GPU, restaurando la funcionalidad de los shims de compatibilidad.
+- **Control Total en Ry-Editor**: El editor visual se ha convertido en un Ensamblador Maestro. Puede cargar módulos en tiempo real y orquestar el **Scene Tree Universal**, aislando el contexto de diseño de la interfaz de usuario.
+- **Estabilidad de Workspace**: Verificación exitosa de todo el ecosistema (`cargo check` global OK).
 
-### 🏗️ Arquitectura Híbrida
-1.  **Sistema (SDL2)**: Gestión de Ventana, Contexto OpenGL 3.3 Core, Input de Teclado/Ratón/Touch.
-2.  **Gráficos (RLGL/Raylib-FFI)**: Renderizado 2D/3D unificado, gestión de buffers de vértices y shaders de alto rendimiento.
+### 🏗️ Arquitectura de Ensamblado
+1.  **Núcleo (Ry-Core)**: Define el trait `RyditModule` y el registro de orquestación.
+2.  **Módulos (Physics, Particles, etc.)**: Subsistemas independientes que implementan su propia lógica de frame.
+3.  **Ensambladores (Executor, Editor)**: Entidades que consumen el registro para dar vida a la aplicación o juego de forma universal.
 
 ## 📁 Estructura Principal
-- `crates/ry-gfx`: Corazón gráfico híbrido con soporte RLGL.
-- `crates/ry-rs`: Punto de entrada principal y lógica de alto nivel.
-- `crates/migui`: Interfaz de usuario (GUI) optimizada para el nuevo backend.
-- `crates/rybot`: Subsistemas orquestados (Física, Animación, Ciencia).
+- `crates/ry-core`: Definición del sistema universal RY y el Ensamblador.
+- `crates/ry-editor`: Entorno de diseño con orquestación de módulos en tiempo real.
+- `crates/ry-gfx`: Backend gráfico híbrido (SDL2 + RLGL).
+- `crates/ry-rs`: Módulos de implementación y lógica de alto nivel.
 
-## 🛠️ Próximos Pasos (v0.24.0)
-- **Migración de Demos**: Recuperación sistemática de las demostraciones en la nueva arquitectura.
-- **Unificación de Assets**: Implementación de carga de texturas (`Texture2D`) nativas de Raylib.
-- **Optimización Mobile**: Pruebas de rendimiento en drivers Adreno (Qualcomm) vía Termux-X11.
+## 🛠️ Próximos Pasos (v0.25.0)
+- **Demos Gráficos de Prueba**: Creación de nuevos demos que exploten el potencial del ensamblador y RLGL.
+- **Editor v1.0 Alpha**: Primera versión funcional del editor con capacidad de diseño visual directo.
+- **Migración de Assets**: Carga nativa de texturas Raylib para optimizar el pipeline de arte.
 
 ---
-**Filosofía**: *Low-End First, High-End Performance.* Diseñado para brillar donde otros motores fallan.
+**Filosofía**: *Modularidad Extrema, Control Total.* Un motor para ensamblar el futuro del desarrollo híbrido.

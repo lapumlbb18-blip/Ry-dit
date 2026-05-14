@@ -16,7 +16,14 @@ fn main() {
     editor.engine.start();
 
     // 4. Bucle Principal
+    let mut last_time = std::time::Instant::now();
+
     while !gfx.should_close() {
+        // Calcular delta time
+        let now = std::time::Instant::now();
+        let dt = now.duration_since(last_time).as_secs_f32();
+        last_time = now;
+
         // --- LÓGICA DE INPUT (Sincronización Automática en SDL2 Mode) ---
         gfx.procesar_eventos_sdl2();
         
@@ -72,7 +79,7 @@ fn main() {
         }
 
         // 6. Update del editor
-        editor.update(&mut gfx);
+        editor.update(&mut gfx, dt);
         
         // 7. Definir layout del editor con migui
         editor.gui.begin_frame();

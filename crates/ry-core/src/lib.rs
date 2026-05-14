@@ -152,6 +152,15 @@ pub trait RyditModule: Send + Sync {
         }
     }
 
+    /// Hook llamado al inicializar el módulo (v0.24.0+)
+    fn on_init(&mut self) {}
+
+    /// Hook llamado en cada frame para actualizar la lógica (v0.24.0+)
+    fn on_update(&mut self, _dt: f32) {}
+
+    /// Hook llamado en cada frame para dibujar (v0.24.0+)
+    fn on_draw(&mut self) {}
+
     /// Hook llamado antes de recargar el módulo (hot reload)
     ///
     /// Permite limpiar recursos o guardar estado antes de una recarga.
@@ -184,6 +193,15 @@ impl RyditModule for Box<dyn RyditModule> {
     fn metadata(&self) -> ModuleMetadata {
         self.as_ref().metadata()
     }
+    fn on_init(&mut self) {
+        self.as_mut().on_init()
+    }
+    fn on_update(&mut self, dt: f32) {
+        self.as_mut().on_update(dt)
+    }
+    fn on_draw(&mut self) {
+        self.as_mut().on_draw()
+    }
     fn on_reload(&mut self) {
         self.as_mut().on_reload()
     }
@@ -208,10 +226,25 @@ impl ModuleRegistry {
         }
     }
 
-    /// Registra un módulo
-    pub fn register<M: RyditModule + 'static>(&mut self, module: M) {
+    /// Registra un módulo e inicializa (v0.24.0+)
+    pub fn register<M: RyditModule + 'static>(&mut self, mut module: M) {
         let name = module.name().to_string();
+        module.on_init();
         self.modules.insert(name, Box::new(module));
+    }
+
+    /// Actualiza todos los módulos registrados (v0.24.0+)
+    pub fn update_all(&mut self, dt: f32) {
+        for module in self.modules.values_mut() {
+            module.on_update(dt);
+        }
+    }
+
+    /// Dibuja todos los módulos registrados (v0.24.0+)
+    pub fn draw_all(&mut self) {
+        for module in self.modules.values_mut() {
+            module.on_draw();
+        }
     }
 
     /// Obtiene un módulo por nombre

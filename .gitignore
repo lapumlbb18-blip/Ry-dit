@@ -22,10 +22,10 @@ SESSION_STATE*.md
 CONTEXT*.md
 
 # ============================================================================
-# DOCUMENTACIÓN DE SESIONES (NO SUBIR - SOLO INTERNO)
+# DOCUMENTACIÓN DE SESIONES (Novedad v0.24.0: Ahora visible para inspiración)
 # ============================================================================
 docs/
-informe_analisis/
+# informe_analisis/ (LIBERADO)
 
 # ============================================================================
 # BUILD ARTIFACTS (NO SUBIR - GENERADOS)

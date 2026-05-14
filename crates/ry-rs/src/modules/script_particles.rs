@@ -217,9 +217,69 @@ pub fn draw_particles_with_handle_velocity<'a>(d: &mut ry_gfx::DrawHandle, max_s
     });
 }
 
+// ============================================================================
+// RYDIT MODULE IMPLEMENTATION (v0.24.0+)
+// ============================================================================
+
+use ry_core::{ModuleMetadata, RyditModule, ModuleResult, ModuleError};
+use serde_json::json;
+
+pub struct ParticleModule;
+
+impl RyditModule for ParticleModule {
+    fn name(&self) -> &'static str {
+        "particles"
+    }
+
+    fn version(&self) -> &'static str {
+        "1.0.0"
+    }
+
+    fn register(&self) -> std::collections::HashMap<&'static str, &'static str> {
+        let mut cmds = std::collections::HashMap::new();
+        cmds.insert("create_emitter", "Crear emisor (nombre, x, y, rate)");
+        cmds.insert("clear", "Limpiar todas las partículas");
+        cmds
+    }
+
+    fn execute(&self, command: &str, _params: serde_json::Value) -> ModuleResult {
+        match command {
+            "clear" => {
+                clear_particles();
+                Ok(json!({"status": "cleared"}))
+            }
+            _ => Err(ModuleError {
+                code: "NOT_IMPLEMENTED".to_string(),
+                message: "Comando no implementado en bridge".to_string(),
+            }),
+        }
+    }
+
+    fn on_update(&mut self, dt: f32) {
+        // ✅ ACTUALIZACIÓN AUTOMÁTICA (Ensamblador)
+        PARTICLES.with(|p| {
+            let mut system = p.borrow_mut();
+            system.update(dt);
+        });
+    }
+
+    fn on_draw(&mut self) {
+        // Nota: El dibujo de partículas actualmente requiere un DrawHandle de ry-gfx.
+        // El trait RyditModule::on_draw() podría necesitar ser extendido o
+        // usar un estado global para el DrawHandle.
+        // Por ahora se mantiene el dibujo manual en executor.rs hasta unificar el contexto de dibujo.
+    }
+
+    fn metadata(&self) -> ModuleMetadata {
+        ModuleMetadata::new()
+            .with_name("particles")
+            .with_version("1.0.0")
+            .with_description("Sistema de partículas integrado")
+    }
+}
+
 /// Limpiar partículas al iniciar un nuevo script
-#[allow(dead_code)] // Para futura limpieza manual de partículas
-pub fn clear_particles<'a>() {
+pub fn clear_particles() {
     PARTICLES.with(|p| {
         let mut system = p.borrow_mut();
         system.clear();

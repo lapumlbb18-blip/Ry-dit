@@ -9,6 +9,8 @@ ry-gfx = { path = "../ry-gfx", features = ["migui"] }
 migui = { path = "../migui" }
 
 # Núcleo Inteligente y Estilo
+ry-core = { path = "../ry-core" }
+ry-rs = { path = "../ry-rs" }
 rybot = { path = "../rybot" }
 ry-anim = { path = "../ry-anim" }
 ry-art = { path = "../ry-art" }

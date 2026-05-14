@@ -67,6 +67,11 @@ pub fn ejecutar_programa_gfx<'a>(
     let mut rybot = RyBot::new();
     rybot.info("RyBot", "Game loop iniciado");
 
+    // 🆕 ENSAMBLADOR: Registro de módulos integrados
+    let mut registry = ry_core::ModuleRegistry::new();
+    registry.register(crate::modules::physics::PhysicsWorldModule);
+    registry.register(crate::modules::script_particles::ParticleModule);
+
     // Contexto de imports: módulos cargados y stack de imports en progreso
     let mut loaded_modules: HashSet<String> = HashSet::new();
     let mut importing_stack: Vec<String> = Vec::new();
@@ -157,23 +162,8 @@ pub fn ejecutar_programa_gfx<'a>(
                         break;
                     }
 
-                    // === FASE 1: Actualizar física ===
-                    // ✅ v0.19.2: Physics world update en cada frame
-                    if let Some(blast_core::Valor::Bool(true)) = executor.leer("__PHYSICS_ENABLED__") {
-                        use crate::modules::physics::get_physics_world;
-                        let world = get_physics_world();
-                        let mut world_ref = world.borrow_mut();
-                        world_ref.update(dt);
-
-                        // ✅ Gravitación Newtoniana entre cuerpos (si hay 2+)
-                        if let Some(blast_core::Valor::Bool(true)) = executor.leer("__NEWTON_GRAVITY__") {
-                            let g_constant: f64 = match executor.leer("__GRAVITY_G__") {
-                                Some(blast_core::Valor::Num(g)) => g,
-                                _ => 100.0, // G escalado para juego
-                            };
-                            world_ref.apply_newtonian_gravity(dt, g_constant);
-                        }
-                    }
+                    // === FASE 1: Actualizar Módulos (Ensamblador) ===
+                    registry.update_all(dt);
 
                     // === FASE 2: Acumular comandos en Render Queue ===
 
@@ -310,19 +300,8 @@ pub fn ejecutar_programa_gfx<'a>(
                     last_time = now;
                     executor.guardar("__DT__", blast_core::Valor::Num(dt as f64));
 
-                    // ✅ v0.19.2: Physics update en Block game loop
-                    if let Some(blast_core::Valor::Bool(true)) = executor.leer("__PHYSICS_ENABLED__") {
-                        use crate::modules::physics::get_physics_world;
-                        let world = get_physics_world();
-                        let mut world_ref = world.borrow_mut();
-                        world_ref.update(dt);
-                        if let Some(blast_core::Valor::Bool(true)) = executor.leer("__NEWTON_GRAVITY__") {
-                            let g: f64 = match executor.leer("__GRAVITY_G__") {
-                                Some(blast_core::Valor::Num(g)) => g, _ => 100.0,
-                            };
-                            world_ref.apply_newtonian_gravity(dt, g);
-                        }
-                    }
+                    // === FASE 1: Actualizar Módulos (Ensamblador) ===
+                    registry.update_all(dt);
 
                     // Clear queue
                     queue.clear();
