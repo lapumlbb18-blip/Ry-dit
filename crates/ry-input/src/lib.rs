@@ -32,6 +32,7 @@
 
 use std::collections::HashMap;
 use std::fmt;
+use std::time::Instant;
 
 // ============================================================================
 // INPUT SOURCE — Qué puede disparar una acción
@@ -315,6 +316,10 @@ pub struct InputState {
     keys: HashMap<String, KeyState>,
     /// Referencia al mapa de acciones
     map: InputMap,
+    /// Ventana de gracia para teclas (ms) — resuelve Termux-X11 sin KeyRepeat
+    grace_ms: u64,
+    /// Timestamps de último KeyDown por tecla
+    last_press_times: HashMap<String, Instant>,
 }
 
 impl InputState {
@@ -323,7 +328,15 @@ impl InputState {
         Self {
             keys: HashMap::new(),
             map: map.clone(),
+            grace_ms: 150, // Ventana de gracia para Termux-X11 (sin KeyRepeat)
+            last_press_times: HashMap::new(),
         }
+    }
+
+    /// Configurar ventana de gracia en milisegundos (0 = desactivar)
+    /// Útil para Termux-X11 donde el teclado Android no envía KeyRepeat
+    pub fn set_grace_ms(&mut self, ms: u64) {
+        self.grace_ms = ms;
     }
 
     /// Obtener referencia al mapa
@@ -342,6 +355,10 @@ impl InputState {
     pub fn update_key(&mut self, key: &str, pressed: bool) {
         let entry = self.keys.entry(key.to_string()).or_default();
         entry.pressed = pressed;
+        // Registrar timestamp de KeyDown para la ventana de gracia
+        if pressed {
+            self.last_press_times.insert(key.to_string(), Instant::now());
+        }
     }
 
     /// Actualizar botón del ratón
@@ -425,8 +442,23 @@ impl InputState {
     }
 
     /// Verificar si una tecla o botón específico está presionado (por su label)
+    /// Incluye ventana de gracia para Termux-X11 (sin KeyRepeat)
     pub fn is_key_pressed(&self, label: &str) -> bool {
-        self.keys.get(label).map(|k| k.is_pressed()).unwrap_or(false)
+        // Verificar estado actual
+        if let Some(k) = self.keys.get(label) {
+            if k.is_pressed() {
+                return true;
+            }
+        }
+        // Ventana de gracia: si la tecla fue presionada hace < grace_ms, sigue "activa"
+        if self.grace_ms > 0 {
+            if let Some(last_time) = self.last_press_times.get(label) {
+                if last_time.elapsed().as_millis() < self.grace_ms as u128 {
+                    return true;
+                }
+            }
+        }
+        false
     }
 }
 

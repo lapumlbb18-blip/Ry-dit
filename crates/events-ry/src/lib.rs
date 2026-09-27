@@ -41,6 +41,7 @@
 mod input_event;
 mod key_code;
 mod backend;
+mod gamepad;
 
 // ============================================================================
 // BACKEND SDL2 (feature-gated)
@@ -68,9 +69,12 @@ mod manager;
 // ============================================================================
 // Export público
 // ============================================================================
-pub use input_event::{InputEvent, MouseButton};
+pub use input_event::{InputEvent, MouseButton, GamepadButton, GamepadAxis};
 pub use key_code::Key;
 pub use backend::InputBackend;
+pub use gamepad::{GamepadState, apply_radial_dead_zone, apply_trigger_dead_zone};
+#[cfg(feature = "sdl2-backend")]
+pub use gamepad::GamepadManager;
 pub use text_input::{TextInput, TextInputAction};
-pub use shell::{Shell, ShellCommand, ShellResult, CommandHandler};
+pub use shell::{Shell, ShellCommand, ShellResult, CommandHandler, ConsoleLine, ConsoleKind};
 pub use manager::InputManager;

@@ -29,7 +29,8 @@ impl Renderer for Sdl2Renderer {
     }
 
     fn present(&mut self) {
-        // En el modo híbrido, el swap lo maneja SDL2 a través de window.gl_swap_window()
-        // Este método del trait se mantiene para compatibilidad pero está vacío aquí.
+        unsafe {
+            ffi::rlDrawRenderBatchActive();
+        }
     }
 }

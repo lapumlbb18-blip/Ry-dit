@@ -404,10 +404,7 @@ impl AudioMixer {
 impl Drop for AudioMixer {
     fn drop(&mut self) {
         self.stop_all();
-        unsafe {
-            crate::sdl2_ffi::Mix_CloseAudio();
-            crate::sdl2_ffi::Mix_Quit();
-        }
+        // AudioFFI::drop() se encarga de Mix_CloseAudio/Mix_Quit
         println!("🔊 Audio Mixer cerrado");
     }
 }

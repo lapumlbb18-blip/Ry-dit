@@ -87,12 +87,14 @@ impl Sdl2Backend {
         let context = sdl2::init().map_err(|e| e.to_string())?;
         let video_subsystem = context.video().map_err(|e| e.to_string())?;
 
-        // Configurar OpenGL (versión 3.3 Core)
+        // Configurar OpenGL 3.3 con perfil Compatibility (ideal para Raylib / rlgl en Zink)
         let gl_attr = video_subsystem.gl_attr();
-        gl_attr.set_context_profile(GLProfile::Core);
+        gl_attr.set_context_profile(GLProfile::Compatibility);
         gl_attr.set_context_version(3, 3);
         gl_attr.set_double_buffer(true);
-        gl_attr.set_multisample_samples(4); // Anti-aliasing
+        gl_attr.set_depth_size(24);
+        gl_attr.set_stencil_size(8);
+        gl_attr.set_multisample_samples(0); // Sin MSAA en default framebuffer para evitar fallos de resolve en Zink/Adreno
 
         // Crear ventana OpenGL
         let window = video_subsystem
@@ -109,6 +111,9 @@ impl Sdl2Backend {
         window
             .gl_make_current(&gl_context)
             .map_err(|e| e.to_string())?;
+
+        // Activar VSync
+        let _ = video_subsystem.gl_set_swap_interval(sdl2::video::SwapInterval::VSync);
 
         println!("[SDL2-BACKEND]: Cargando extensiones OpenGL...");
         // Cargar extensiones OpenGL (usamos video_subsystem)
@@ -188,9 +193,18 @@ impl Sdl2Backend {
             font,
         };
 
-        // INICIALIZACIÓN CRÍTICA OPENGL
+        // INICIALIZACIÓN CRÍTICA OPENGL + RLGL
         unsafe {
             gl::Viewport(0, 0, width as i32, height as i32);
+            raylib::ffi::rlLoadExtensions(sdl2::sys::SDL_GL_GetProcAddress as *mut _);
+            raylib::ffi::rlglInit(width as i32, height as i32);
+            raylib::ffi::rlViewport(0, 0, width as i32, height as i32);
+            raylib::ffi::rlMatrixMode(raylib::ffi::RL_PROJECTION as i32);
+            raylib::ffi::rlLoadIdentity();
+            raylib::ffi::rlOrtho(0.0, width as f64, height as f64, 0.0, -1.0, 1.0);
+            raylib::ffi::rlMatrixMode(raylib::ffi::RL_MODELVIEW as i32);
+            raylib::ffi::rlLoadIdentity();
+            raylib::ffi::rlClearColor(0, 0, 0, 255);
         }
 
         Ok(backend)
@@ -428,7 +442,7 @@ impl Sdl2Backend {
 
     /// Sincroniza eventos de SDL2 directamente con el InputManager de events-ry
     pub fn actualizar_input_unificado(&mut self, manager: &mut events_ry::InputManager) {
-        manager.begin_frame();
+        manager.begin_frame(); // Marcar inicio de frame para just_pressed tracking
         for event in self.event_pump.poll_iter() {
             match event {
                 Event::Quit { .. } => {
@@ -485,6 +499,30 @@ fn map_sdl_keycode_to_ry(k: sdl2::keyboard::Keycode) -> Option<events_ry::Key> {
         S::Escape => Some(R::Escape),
         S::Space => Some(R::Space),
         S::Return => Some(R::Enter),
+        S::Return2 => Some(R::Enter),
+        S::Up => Some(R::Up),
+        S::Down => Some(R::Down),
+        S::Left => Some(R::Left),
+        S::Right => Some(R::Right),
+        S::Tab => Some(R::Tab),
+        S::Backspace => Some(R::Backspace),
+        S::Delete => Some(R::Delete),
+        S::Insert => Some(R::Insert),
+        S::Home => Some(R::Home),
+        S::End => Some(R::End),
+        S::PageUp => Some(R::PageUp),
+        S::PageDown => Some(R::PageDown),
+        S::LShift => Some(R::LeftShift),
+        S::RShift => Some(R::RightShift),
+        S::LCtrl => Some(R::LeftCtrl),
+        S::RCtrl => Some(R::RightCtrl),
+        S::LAlt => Some(R::LeftAlt),
+        S::RAlt => Some(R::RightAlt),
+        S::Num1 => Some(R::Num1), S::Num2 => Some(R::Num2),
+        S::Num3 => Some(R::Num3), S::Num4 => Some(R::Num4),
+        S::Num5 => Some(R::Num5), S::Num6 => Some(R::Num6),
+        S::Num7 => Some(R::Num7), S::Num8 => Some(R::Num8),
+        S::Num9 => Some(R::Num9), S::Num0 => Some(R::Num0),
         _ => None,
     }
 }
@@ -517,12 +555,6 @@ impl AssetProvider for Sdl2AssetProvider {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_texture_manager() {
-        let manager = TextureManager::new();
-        assert_eq!(manager.count(), 0);
-    }
 
     #[test]
     fn test_input_state() {

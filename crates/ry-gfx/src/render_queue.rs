@@ -40,19 +40,22 @@
 //! ## Uso
 //!
 //! ```rust,no_run
-//! use ry_gfx::render_queue::{RenderQueue, DrawCommand};
+//! use ry_gfx::render_queue::{RenderQueue, DrawCommand, RyditGfxExt};
+//! use ry_gfx::ColorRydit;
 //!
 //! let mut queue = RenderQueue::with_capacity(8192);
 //!
 //! // Acumular comandos (front buffer - lógica)
-//! queue.push(DrawCommand::Circle { x: 400, y: 300, radius: 50, color: "rojo" });
-//! queue.push(DrawCommand::Rect { x: 100, y: 100, w: 100, h: 100, color: "verde" });
+//! queue.push(DrawCommand::Circle { x: 400, y: 300, radius: 50, color: ColorRydit::Rojo });
+//! queue.push(DrawCommand::Rect { x: 100, y: 100, w: 100, h: 100, color: ColorRydit::Verde });
 //!
+//! # let mut gfx: ry_gfx::RyditGfx = unimplemented!();
+//! # let assets: ry_gfx::Assets = unimplemented!();
 //! // Ejecutar todos los comandos (back buffer - render)
-//! queue.execute(&mut gfx);
+//! queue.execute(&mut gfx, &assets);
 //!
 //! // Platform sync (X11)
-//! queue.platform_sync();
+//! gfx.platform_sync();
 //! ```
 
 use crate::Assets;

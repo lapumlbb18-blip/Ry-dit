@@ -111,7 +111,8 @@ fn main() -> Result<(), String> {
         // Engine update on migui
         migui.begin_frame();
         if gui_state.open {
-            gui_state.draw(&mut migui, &engine);
+            let stats = engine.get_stats(0.0, 0.0, 1.0);
+            gui_state.draw(&mut migui, &stats, engine.scene());
         }
         migui.end_frame();
 
@@ -167,6 +168,7 @@ fn render_migui_commands(d: &mut RaylibDrawHandle, commands: &[migui::DrawComman
                         *x1 as i32, *y1 as i32 + 1, *x2 as i32, *y2 as i32 + 1, c);
                 }
             }
+            migui::DrawCommand::DrawViewport3D { .. } => {}
         }
     }
 }

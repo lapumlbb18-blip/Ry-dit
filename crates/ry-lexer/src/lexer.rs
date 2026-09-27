@@ -11,7 +11,7 @@ use crate::token::{Span, Token, TokenKind};
 /// # Ejemplos
 ///
 /// ```
-/// use ry_lexer::Lexer;
+/// use ry_lexer::{Lexer, TokenKind};
 ///
 /// let source = "shield.init dark.slot x = 100";
 /// let lexer = Lexer::new(source);

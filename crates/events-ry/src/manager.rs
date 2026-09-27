@@ -218,12 +218,14 @@ impl InputManager {
 
     /// Verificar si una tecla está presionada ahora
     pub fn is_key_down(&self, key: Key) -> bool {
-        self.backend.is_key_down(key)
+        // Usar input_state interno (actualizado vía inject_event/update_action_state)
+        // en vez del backend que puede ser MockBackend
+        self.input_state.is_key_pressed(key.name())
     }
 
     /// Verificar si una tecla fue presionada este frame
     pub fn is_key_just_pressed(&self, key: Key) -> bool {
-        self.backend.is_key_just_pressed(key)
+        self.input_state.is_action_just_pressed(key.name())
     }
 
     /// Obtener posición del mouse (ahora rastreada)

@@ -39,6 +39,7 @@ pub mod rybot_stub;
 pub mod interpreter;
 
 // El Prelude maestro para inicializar el motor en una sola línea
+pub mod tui;
 pub mod prelude {
     pub use crate::RybotEngine;
     pub use crate::InputManager;

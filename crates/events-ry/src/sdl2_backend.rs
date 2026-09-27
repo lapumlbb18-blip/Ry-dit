@@ -5,7 +5,9 @@
 #[cfg(feature = "sdl2-backend")]
 use crate::backend::InputBackend;
 #[cfg(feature = "sdl2-backend")]
-use crate::input_event::{GamepadAxis, GamepadButton, InputEvent, MouseButton};
+use crate::gamepad::{sdl_axis_to_ry, sdl_button_to_ry, GamepadManager};
+#[cfg(feature = "sdl2-backend")]
+use crate::input_event::{InputEvent, MouseButton};
 #[cfg(feature = "sdl2-backend")]
 use crate::key_code::Key;
 
@@ -23,6 +25,7 @@ pub struct Sdl2InputBackend {
     keys_down: HashSet<Key>,
     mouse_state: HashSet<MouseButton>,
     text_input_enabled: bool,
+    gamepads: Option<GamepadManager>,
 }
 
 #[cfg(feature = "sdl2-backend")]
@@ -34,7 +37,25 @@ impl Sdl2InputBackend {
             keys_down: HashSet::new(),
             mouse_state: HashSet::new(),
             text_input_enabled: false,
+            gamepads: None,
         }
+    }
+
+    /// Activar soporte de gamepads (requiere el subsystem SDL2)
+    pub fn enable_gamepads(&mut self, subsystem: sdl2::GameControllerSubsystem) {
+        let mut manager = GamepadManager::new(subsystem, 0.15);
+        let _ = manager.open_all();
+        self.gamepads = Some(manager);
+    }
+
+    /// Manager de gamepads (si está activado)
+    pub fn gamepads(&self) -> Option<&GamepadManager> {
+        self.gamepads.as_ref()
+    }
+
+    /// Manager de gamepads mutable (si está activado)
+    pub fn gamepads_mut(&mut self) -> Option<&mut GamepadManager> {
+        self.gamepads.as_mut()
     }
 
     /// Obtener referencia al event pump (para otros usos)
@@ -135,46 +156,6 @@ fn sdl_mouse_button_to_ry(button: sdl2::mouse::MouseButton) -> MouseButton {
 }
 
 // ============================================================================
-// CONVERSIÓN: SDL2 Gamepad → events_ry
-// ============================================================================
-
-#[cfg(feature = "sdl2-backend")]
-fn sdl_gamepad_button_to_ry(button: sdl2::controller::Button) -> GamepadButton {
-    use sdl2::controller::Button;
-    match button {
-        Button::A => GamepadButton::FaceDown,
-        Button::B => GamepadButton::FaceRight,
-        Button::X => GamepadButton::FaceLeft,
-        Button::Y => GamepadButton::FaceUp,
-        Button::LeftShoulder => GamepadButton::LeftShoulder,
-        Button::RightShoulder => GamepadButton::RightShoulder,
-        Button::LeftStick => GamepadButton::LeftStick,
-        Button::RightStick => GamepadButton::RightStick,
-        Button::Back => GamepadButton::Back,
-        Button::Start => GamepadButton::Start,
-        Button::DPadUp => GamepadButton::DPadUp,
-        Button::DPadDown => GamepadButton::DPadDown,
-        Button::DPadLeft => GamepadButton::DPadLeft,
-        Button::DPadRight => GamepadButton::DPadRight,
-        _ => GamepadButton::FaceDown,
-    }
-}
-
-#[cfg(feature = "sdl2-backend")]
-fn sdl_gamepad_axis_to_ry(axis: sdl2::controller::Axis) -> GamepadAxis {
-    use sdl2::controller::Axis;
-    match axis {
-        Axis::LeftX => GamepadAxis::LeftX,
-        Axis::LeftY => GamepadAxis::LeftY,
-        Axis::RightX => GamepadAxis::RightX,
-        Axis::RightY => GamepadAxis::RightY,
-        Axis::TriggerLeft => GamepadAxis::LeftTrigger,
-        Axis::TriggerRight => GamepadAxis::RightTrigger,
-        _ => GamepadAxis::LeftX,
-    }
-}
-
-// ============================================================================
 // IMPLEMENTACIÓN DEL TRAIT InputBackend
 // ============================================================================
 
@@ -186,8 +167,9 @@ impl InputBackend for Sdl2InputBackend {
 
     fn poll_events(&mut self) -> Vec<InputEvent> {
         let mut events = Vec::new();
+        let sdl_events: Vec<Event> = self.event_pump.poll_iter().collect();
 
-        for sdl_event in self.event_pump.poll_iter() {
+        for sdl_event in sdl_events {
             match sdl_event {
                 // --- Teclado ---
                 Event::KeyDown {
@@ -284,25 +266,56 @@ impl InputBackend for Sdl2InputBackend {
                 }
 
                 // --- Gamepad ---
-                Event::ControllerButtonDown { button, .. } => {
+                Event::ControllerDeviceAdded { which, .. } => {
+                    let instance_id = match self.gamepads.as_mut() {
+                        Some(gm) => gm.open(which).ok(),
+                        None => None,
+                    };
+                    if let Some(instance_id) = instance_id {
+                        events.push(InputEvent::GamepadConnected { instance_id });
+                    }
+                }
+                Event::ControllerDeviceRemoved { which, .. } => {
+                    if let Some(gm) = self.gamepads.as_mut() {
+                        gm.close(which);
+                    }
+                    events.push(InputEvent::GamepadDisconnected {
+                        instance_id: which,
+                    });
+                }
+                Event::ControllerButtonDown {
+                    which, button, ..
+                } => {
+                    let b = sdl_button_to_ry(button);
+                    if let Some(gm) = self.gamepads.as_mut() {
+                        gm.update_button(which, b, true);
+                    }
                     events.push(InputEvent::GamepadButtonPressed {
-                        button: sdl_gamepad_button_to_ry(button),
+                        button: b,
                         state: true,
                     });
                 }
-                Event::ControllerButtonUp { button, .. } => {
+                Event::ControllerButtonUp {
+                    which, button, ..
+                } => {
+                    let b = sdl_button_to_ry(button);
+                    if let Some(gm) = self.gamepads.as_mut() {
+                        gm.update_button(which, b, false);
+                    }
                     events.push(InputEvent::GamepadButtonPressed {
-                        button: sdl_gamepad_button_to_ry(button),
+                        button: b,
                         state: false,
                     });
                 }
                 Event::ControllerAxisMotion {
-                    axis, value, ..
+                    which, axis, value, ..
                 } => {
-                    events.push(InputEvent::GamepadAxisMoved {
-                        axis: sdl_gamepad_axis_to_ry(axis),
-                        value: value as f32 / 32767.0,
-                    });
+                    let a = sdl_axis_to_ry(axis);
+                    let v = value as f32 / 32767.0;
+                    if let Some(gm) = self.gamepads.as_mut() {
+                        gm.update_axis(which, a, v);
+                    }
+                    events.push(InputEvent::GamepadAxisMoved { axis: a, value: v });
                 }
 
                 // --- Ventana ---

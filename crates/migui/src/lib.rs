@@ -185,6 +185,13 @@ pub enum Key {
     Num7,
     Num8,
     Num9,
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    Backquote,
+    Tab,
 }
 
 // ============================================================================
@@ -426,6 +433,7 @@ pub struct Migui {
 
     draw_commands: Vec<DrawCommand>,
     frame_count: u64,
+    events: Vec<Event>,
 }
 
 impl Migui {
@@ -443,6 +451,7 @@ impl Migui {
             layout_states: std::collections::HashMap::new(),
             draw_commands: Vec::new(),
             frame_count: 0,
+            events: Vec::new(),
         }
     }
 
@@ -452,6 +461,7 @@ impl Migui {
 
     pub fn begin_frame(&mut self) {
         self.draw_commands.clear();
+        self.events.clear();
         self.mouse_pressed = false;
         self.mouse_released = false;
         self.frame_count += 1;
@@ -462,6 +472,8 @@ impl Migui {
     }
 
     pub fn handle_event(&mut self, event: Event) {
+        // Almacenar evento para consumo externo (ej: TUI)
+        self.events.push(event.clone());
         match event {
             Event::MouseMove { x, y } => {
                 self.mouse_x = x;
@@ -528,6 +540,21 @@ impl Migui {
 
     pub fn draw_commands(&self) -> &[DrawCommand] {
         &self.draw_commands
+    }
+
+    /// Drenar eventos almacenados (para consumir por TUI u otros)
+    pub fn drain_events(&mut self) -> Vec<Event> {
+        std::mem::take(&mut self.events)
+    }
+
+    /// Extender draw_commands con comandos externos (ej: TUI)
+    pub fn extend_draw_commands(&mut self, cmds: Vec<DrawCommand>) {
+        self.draw_commands.extend(cmds);
+    }
+
+    /// Push un DrawCommand individual
+    pub fn push_draw_command(&mut self, cmd: DrawCommand) {
+        self.draw_commands.push(cmd);
     }
 
     // ========================================================================

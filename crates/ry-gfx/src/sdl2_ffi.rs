@@ -70,8 +70,15 @@ extern "C" {
     pub fn Mix_FadeInMusic(music: *mut Mix_Music, loops: c_int, ms: u32, volume: c_int) -> c_int;
 }
 
+#[link(name = "SDL2")]
+extern "C" {
+    fn SDL_Init(flags: u32) -> c_int;
+    fn SDL_QuitSubSystem(flags: u32);
+}
+
 const MIX_INIT_OGG: c_int = 0x00000002;
 const MIX_INIT_MP3: c_int = 0x00000008;
+const SDL_INIT_AUDIO: u32 = 0x00000010;
 
 // ============================================================================
 // TIPOS SDL2
@@ -183,25 +190,26 @@ pub struct AudioFFI {
 }
 
 impl AudioFFI {
-    /// Inicializar SDL2_mixer
+    /// Inicializar SDL2_mixer usando el crate sdl2 (ya inicializado)
     pub fn init() -> Result<Self, String> {
         unsafe {
-            let result = Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3);
-            if result == 0 {
-                return Err("Error inicializando SDL2_mixer".to_string());
-            }
+            // Usar FFI crudo directo — probado que funciona en Termux
+            // NO usar sdl2::mixer::init() que puede fallar con el contexto del crate sdl2
+
+            // Mix_Init: OGG/MP3 son opcionales, WAV no necesita codecs
+            Mix_Init(0);
 
             let audio_result = Mix_OpenAudio(44100, 0x8010, 2, 1024);
             if audio_result != 0 {
-                Mix_Quit();
-                return Err("Error abriendo audio".to_string());
+                return Err(format!("Mix_OpenAudio falló (code: {})", audio_result));
             }
+            println!("✅ Mix_OpenAudio OK (44100Hz, S16, stereo)");
 
             Ok(AudioFFI { initialized: true })
         }
     }
 
-    /// Cargar sonido
+    /// Cargar sonido (WAV)
     pub fn load_sound(&self, path: &str) -> Result<*mut Mix_Chunk, String> {
         unsafe {
             let c_path = CString::new(path).map_err(|e| e.to_string())?;
@@ -278,7 +286,6 @@ impl Drop for AudioFFI {
         if self.initialized {
             unsafe {
                 Mix_CloseAudio();
-                Mix_Quit();
             }
         }
     }

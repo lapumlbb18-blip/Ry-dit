@@ -383,7 +383,8 @@ mod tests {
 
     #[test]
     fn test_engine_creation() {
-        let engine = RybotEngine::new();
+        let mut engine = RybotEngine::new();
+        engine.start();
         assert!(engine.is_running());
         assert_eq!(engine.frame(), 0);
         assert_eq!(engine.scene().node_count(), 1); // root node
@@ -392,6 +393,7 @@ mod tests {
     #[test]
     fn test_pause_resume() {
         let mut engine = RybotEngine::new();
+        engine.start();
         assert!(engine.is_running());
 
         engine.pause();
@@ -404,6 +406,7 @@ mod tests {
     #[test]
     fn test_update_increments_frame() {
         let mut engine = RybotEngine::new();
+        engine.start();
         assert_eq!(engine.frame(), 0);
 
         engine.update(0.016);
@@ -445,9 +448,10 @@ mod tests {
     #[test]
     fn test_stats() {
         let mut engine = RybotEngine::new();
+        engine.start();
         engine.update(0.016);
 
-        let stats = engine.get_stats();
+        let stats = engine.get_stats(0.0, 0.0, 1.0);
         assert_eq!(stats.frame, 1);
         assert!(matches!(stats.state, EngineState::Running));
         assert_eq!(stats.target_fps, 60);
@@ -456,7 +460,7 @@ mod tests {
     #[test]
     fn test_stats_display() {
         let engine = RybotEngine::new();
-        let stats = engine.get_stats();
+        let stats = engine.get_stats(0.0, 0.0, 1.0);
         let output = format!("{}", stats);
         assert!(output.contains("Rybot Engine Stats"));
         assert!(output.contains("Frame: 0"));

@@ -640,7 +640,7 @@ mod tests {
         assert!(!gui.open);
         assert!(gui.show_inspector);
         assert!(gui.show_scene_tree);
-        assert!(gui.show_stats);
+        assert!(!gui.show_stats);
     }
 
     #[test]

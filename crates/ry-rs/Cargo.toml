@@ -15,7 +15,7 @@ ry-tilemap = { path = "../ry-tilemap" }
 ry-science = { path = "../ry-science" }
 ry-physics = { path = "../ry-physics" }
 ry-anim = { path = "../ry-anim" }
-events-ry = { path = "../events-ry" }  # 🆕 v0.13.0: Input unificado + TextInput + Shell
+events-ry = { path = "../events-ry", features = ["sdl2-backend"] }  # 🆕 v0.13.0: Input unificado + TextInput + Shell
 # 🗑️ ry-ecs eliminado v0.13.1
 ry-vm = { path = "../ry-vm" }  # 🆕 v0.11.2: Bytecode VM
 lizer = { path = "../lizer" }  # Wrapper backward compat
@@ -113,6 +113,10 @@ path = "src/bin/demo_new_standard.rs"
 [[bin]]
 name = "demo_test_gameloop"
 path = "src/bin/demo_test_gameloop.rs"
+
+[[bin]]
+name = "demo_test1"
+path = "src/bin/demo_test1.rs"
 
 [[bin]]
 name = "demo_ryart_cyberpunk"

@@ -195,15 +195,27 @@ pub fn cache_clear() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Mutex;
+
+    // La caché es global (process-wide): los tests deben ejecutarse en serie
+    // para que las cuentas de `cache_stats()` sean deterministas.
+    static CACHE_LOCK: Mutex<()> = Mutex::new(());
+
+    fn lock_cache() -> std::sync::MutexGuard<'static, ()> {
+        // Si un test panicó con el lock tomado, continuar (lock envenenado)
+        CACHE_LOCK.lock().unwrap_or_else(|e| e.into_inner())
+    }
 
     #[test]
     fn test_lizer_wrapper() {
+        let _g = lock_cache();
         let tokens = Lexer::new("shield.init").scan();
         assert_eq!(tokens.len(), 1);
     }
 
     #[test]
     fn test_parser_wrapper() {
+        let _g = lock_cache();
         let mut parser = Parser::from_source("dark.slot x = 100");
         let (program, errors) = parser.parse();
         assert!(errors.is_empty());
@@ -212,6 +224,7 @@ mod tests {
 
     #[test]
     fn test_parse_cached_first_call() {
+        let _g = lock_cache();
         cache_clear();
         let result = parse_cached("dark.slot x = 100");
         assert!(result.is_ok());
@@ -220,6 +233,7 @@ mod tests {
 
     #[test]
     fn test_parse_cached_hit() {
+        let _g = lock_cache();
         let source = "dark.slot x = 999";
         let r = parse_cached(source);
         assert!(r.is_ok());
@@ -228,6 +242,7 @@ mod tests {
 
     #[test]
     fn test_parse_cached_multiple() {
+        let _g = lock_cache();
         let r1 = parse_cached("lizer_multi_a_1 = 1");
         let r2 = parse_cached("lizer_multi_b_2 = 2");
         assert!(r1.is_ok());
@@ -236,6 +251,7 @@ mod tests {
 
     #[test]
     fn test_parse_cached_error() {
+        let _g = lock_cache();
         cache_clear();
         // El parser con error recovery no siempre genera errores
         // Usar source que definitivamente causa error
@@ -246,10 +262,11 @@ mod tests {
 
     #[test]
     fn test_cache_clear() {
+        let _g = lock_cache();
         cache_clear();
         parse_cached("dark.slot x = 1").unwrap();
         assert_eq!(cache_stats().entries, 1);
-        
+
         cache_clear();
         assert_eq!(cache_stats().entries, 0);
     }

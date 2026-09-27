@@ -131,8 +131,12 @@ impl TtfFont {
     }
 
     pub fn render_text(&self, text: &str, color: SdlColor) -> Option<TextTexture> {
+        self.render_text_with_size(text, color, self.font_size)
+    }
+
+    pub fn render_text_with_size(&self, text: &str, color: SdlColor, size: u16) -> Option<TextTexture> {
         let ttf = sdl2::ttf::init().ok()?;
-        let font = ttf.load_font(&self.font_path, self.font_size).ok()?;
+        let font = ttf.load_font(&self.font_path, size).ok()?;
         let surface = font.render(text).blended(color).ok()?;
         let (w, h) = surface.size();
         let texture = self.texture_creator.create_texture_from_surface(&surface).ok()?;
@@ -141,12 +145,16 @@ impl TtfFont {
     }
 
     pub fn measure_text(&self, text: &str) -> (u32, u32) {
+        self.measure_text_with_size(text, self.font_size)
+    }
+
+    pub fn measure_text_with_size(&self, text: &str, size: u16) -> (u32, u32) {
         if let Ok(ttf) = sdl2::ttf::init() {
-            if let Ok(font) = ttf.load_font(&self.font_path, self.font_size) {
+            if let Ok(font) = ttf.load_font(&self.font_path, size) {
                 return font.size_of(text).unwrap_or((0, 0));
             }
         }
-        (text.len() as u32 * 8, self.font_size as u32)
+        (text.len() as u32 * 8, size as u32)
     }
 }
 
@@ -160,7 +168,9 @@ pub struct Sdl2Core {
     pub mouse: MouseState,
     pub texture_creator: std::rc::Rc<TextureCreator<sdl2::video::WindowContext>>,
     pub font: Option<TtfFont>,
-    pub width: i32, pub height: i32,
+    pub width: i32,
+    pub height: i32,
+    pub sdl: sdl2::Sdl,
 }
 
 impl Sdl2Core {
@@ -187,7 +197,12 @@ impl Sdl2Core {
 
         let font = Self::load_system_font(std::rc::Rc::clone(&texture_creator));
 
-        Ok(Self { canvas, event_pump, mouse: MouseState::new(), texture_creator, font, width, height })
+        Ok(Self { canvas, event_pump, mouse: MouseState::new(), texture_creator, font, width, height, sdl })
+    }
+
+    /// Obtener el subsystem de gamepads SDL2 (hotplug, botones, ejes, rumble)
+    pub fn game_controller(&self) -> Result<sdl2::GameControllerSubsystem, String> {
+        self.sdl.game_controller()
     }
 
     fn load_system_font(tc: std::rc::Rc<TextureCreator<sdl2::video::WindowContext>>) -> Option<TtfFont> {

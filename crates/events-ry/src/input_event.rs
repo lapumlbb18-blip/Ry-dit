@@ -41,6 +41,10 @@ pub enum InputEvent {
     GamepadButtonPressed { button: GamepadButton, state: bool },
     /// Eje de gamepad movido
     GamepadAxisMoved { axis: GamepadAxis, value: f32 },
+    /// Gamepad conectado (hotplug)
+    GamepadConnected { instance_id: u32 },
+    /// Gamepad desconectado (hotplug)
+    GamepadDisconnected { instance_id: u32 },
 
     // --- Sistema ---
     /// Ventana redimensionada
@@ -150,7 +154,10 @@ impl InputEvent {
     pub fn is_gamepad(&self) -> bool {
         matches!(
             self,
-            InputEvent::GamepadButtonPressed { .. } | InputEvent::GamepadAxisMoved { .. }
+            InputEvent::GamepadButtonPressed { .. }
+                | InputEvent::GamepadAxisMoved { .. }
+                | InputEvent::GamepadConnected { .. }
+                | InputEvent::GamepadDisconnected { .. }
         )
     }
 

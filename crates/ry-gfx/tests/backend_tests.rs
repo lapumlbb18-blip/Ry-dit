@@ -1,4 +1,3 @@
-use ry_gfx::backend_sdl2::Sdl2Backend;
 use sdl2::pixels::Color;
 
 #[test]
@@ -10,7 +9,7 @@ fn test_backend_struct_initialization() {
 fn test_input_state_logic() {
     // Verificar que el backend se crea correctamente (si hay display)
     // O simplemente verificar que la lógica de InputState es accesible
-    let input = ry_gfx::backend_sdl2::InputState::new();
+    let input = ry_gfx::input_sdl2::InputState::new();
     assert!(!input.alguna_tecla_presionada());
     println!("✅ Lógica de InputState verificada");
 }

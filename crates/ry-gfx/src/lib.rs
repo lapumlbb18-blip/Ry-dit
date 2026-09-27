@@ -1890,6 +1890,10 @@ mod tests {
     fn test_mouse_functions_exist() {
         // Solo verificamos que las funciones existen y compilan
         // No podemos probar mouse real sin ventana
+        if std::env::var_os("DISPLAY").is_none() && std::env::var_os("WAYLAND_DISPLAY").is_none() {
+            eprintln!("sin display: skip test_mouse_functions_exist");
+            return;
+        }
         let _ = RyditGfx::new("Test", 800, 600);
         // gfx.get_mouse_position()  // Retorna (i32, i32)
         // gfx.is_mouse_button_pressed(0)  // Retorna bool
@@ -1912,6 +1916,10 @@ mod tests {
     #[test]
     fn test_migui_backend_exists() {
         // Verificar que RyditGfx implementa MiguiBackend
+        if std::env::var_os("DISPLAY").is_none() && std::env::var_os("WAYLAND_DISPLAY").is_none() {
+            eprintln!("sin display: skip test_migui_backend_exists");
+            return;
+        }
         let _ = RyditGfx::new("Test", 800, 600);
         // El backend existe y compila
     }

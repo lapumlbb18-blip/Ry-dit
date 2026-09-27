@@ -198,6 +198,15 @@ impl Shell {
         }
     }
 
+    /// Autocompletar comando por prefix
+    pub fn complete(&self, prefix: &str) -> Vec<String> {
+        let prefix_lower = prefix.to_lowercase();
+        self.handlers.keys()
+            .filter(|k| k.to_lowercase().starts_with(&prefix_lower))
+            .cloned()
+            .collect()
+    }
+
     /// Agregar línea a consola
     fn add_console_line(&mut self, text: &str, kind: ConsoleKind) {
         self.console_lines.push(ConsoleLine {

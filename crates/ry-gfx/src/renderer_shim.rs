@@ -10,7 +10,16 @@ impl crate::backend_sdl2::Sdl2Backend {
     
     pub fn clear(&mut self) {
         if let Some(c) = self.last_color {
-            self.renderer.clear(c.r, c.g, c.b);
+            unsafe {
+                raylib::ffi::rlViewport(0, 0, self.width, self.height);
+                raylib::ffi::rlMatrixMode(raylib::ffi::RL_PROJECTION as i32);
+                raylib::ffi::rlLoadIdentity();
+                raylib::ffi::rlOrtho(0.0, self.width as f64, self.height as f64, 0.0, -1.0, 1.0);
+                raylib::ffi::rlMatrixMode(raylib::ffi::RL_MODELVIEW as i32);
+                raylib::ffi::rlLoadIdentity();
+
+                raylib::ffi::ClearBackground(raylib::ffi::Color { r: c.r, g: c.g, b: c.b, a: 255 });
+            }
         }
     }
 
@@ -34,5 +43,9 @@ impl crate::backend_sdl2::Sdl2Backend {
 
     pub fn present(&mut self) {
         self.renderer.present();
+        unsafe {
+            gl::Finish();
+        }
+        self.window.gl_swap_window();
     }
 }

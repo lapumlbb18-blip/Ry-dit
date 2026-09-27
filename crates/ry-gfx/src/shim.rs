@@ -33,7 +33,7 @@ impl Sdl2Backend {
     }
 
     pub fn present(&mut self) {
-        // self.renderer.present(); // Ya no es necesario
+        self.renderer.present(); // Flush rlgl batch antes del swap
         self.window.gl_swap_window();
     }
 }

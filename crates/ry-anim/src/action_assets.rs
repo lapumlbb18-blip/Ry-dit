@@ -132,8 +132,22 @@ pub fn animation_state_machine(_current_state: &str, _states: &[String], _state_
     json!({ "error": "Not implemented in legacy wrapper" })
 }
 
-pub fn animation_blend(_a: f64, _b: f64, _f: f64, _d: f64, _t: f64) -> Value {
-    json!({ "error": "Not implemented in legacy wrapper" })
+pub fn animation_blend(a: f64, b: f64, factor: f64, duration: f64, t: f64) -> Value {
+    // Progreso normalizado 0..1 de la transición
+    let progress = if duration <= 0.0 {
+        if t >= 0.0 { 1.0 } else { 0.0 }
+    } else {
+        (t / duration).clamp(0.0, 1.0)
+    };
+    // Factor efectivo: factor de blend modulado por el avance de la transición
+    let effective = factor * progress;
+    let blended = a + (b - a) * effective;
+    json!({
+        "blended_progress": blended,
+        "blend_factor": effective,
+        "is_complete": progress >= 1.0,
+        "progress": progress,
+    })
 }
 
 pub fn sprite_events(_etype: &str, _f: usize, _tf: usize, _s: &str, _p: f64) -> Value {

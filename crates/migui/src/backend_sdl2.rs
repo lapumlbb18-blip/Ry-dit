@@ -20,7 +20,7 @@ use ry_backend::sdl2::keyboard::Keycode;
 #[cfg(feature = "sdl2")]
 pub struct MiguiSdl2Backend {
     core: Sdl2Core,
-
+    raw_events: Vec<ry_backend::sdl2::event::Event>,
 }
 
 #[cfg(feature = "sdl2")]
@@ -30,7 +30,13 @@ impl MiguiSdl2Backend {
         let core = Sdl2Core::new(title, width, height)?;
         
         println!("[MIGUI] Backend SDL2 creado con ry-backend Sdl2Core");
-        Ok(Self { core })
+        Ok(Self { core, raw_events: Vec::new() })
+    }
+
+    /// Consumir eventos SDL2 crudos de este frame (para gamepads, etc.).
+    /// Llamar después de `process_events()`.
+    pub fn take_raw_events(&mut self) -> Vec<ry_backend::sdl2::event::Event> {
+        std::mem::take(&mut self.raw_events)
     }
 
     /// Procesar eventos SDL2 y actualizar estado de MiGUI
@@ -163,6 +169,9 @@ impl MiguiSdl2Backend {
                     _ => {}
                 }
             }
+
+            // Conservar evento crudo para consumidores externos (gamepads, etc.)
+            self.raw_events.push(event);
         }
 
         should_close
@@ -198,7 +207,8 @@ impl MiguiSdl2Backend {
                     // Texto real con TTF profesional (ry-backend)
                     if let Some(ref font) = self.core.font {
                         let sdl_color = ry_backend::sdl2::pixels::Color::RGBA(color.r, color.g, color.b, color.a);
-                        if let Some(tex) = font.render_text(text, sdl_color) {
+                        let font_size = (*size as u16).max(6);
+                        if let Some(tex) = font.render_text_with_size(text, sdl_color, font_size) {
                             let _ = self.core.canvas.copy(
                                 &tex.texture,
                                 None,
@@ -249,6 +259,13 @@ fn keycode_to_migui_key(kc: Keycode) -> Option<Key> {
         Keycode::Down => Some(Key::ArrowDown),
         Keycode::Left => Some(Key::ArrowLeft),
         Keycode::Right => Some(Key::ArrowRight),
+        Keycode::F1 => Some(Key::F1),
+        Keycode::F2 => Some(Key::F2),
+        Keycode::F3 => Some(Key::F3),
+        Keycode::F4 => Some(Key::F4),
+        Keycode::F5 => Some(Key::F5),
+        Keycode::Backquote => Some(Key::Backquote),
+        Keycode::Tab => Some(Key::Tab),
         Keycode::A => Some(Key::A), Keycode::B => Some(Key::B),
         Keycode::C => Some(Key::C), Keycode::D => Some(Key::D),
         Keycode::E => Some(Key::E), Keycode::F => Some(Key::F),
@@ -262,6 +279,11 @@ fn keycode_to_migui_key(kc: Keycode) -> Option<Key> {
         Keycode::U => Some(Key::U), Keycode::V => Some(Key::V),
         Keycode::W => Some(Key::W), Keycode::X => Some(Key::X),
         Keycode::Y => Some(Key::Y), Keycode::Z => Some(Key::Z),
+        Keycode::Num0 => Some(Key::Num0), Keycode::Num1 => Some(Key::Num1),
+        Keycode::Num2 => Some(Key::Num2), Keycode::Num3 => Some(Key::Num3),
+        Keycode::Num4 => Some(Key::Num4), Keycode::Num5 => Some(Key::Num5),
+        Keycode::Num6 => Some(Key::Num6), Keycode::Num7 => Some(Key::Num7),
+        Keycode::Num8 => Some(Key::Num8), Keycode::Num9 => Some(Key::Num9),
         _ => None,
     }
 }
