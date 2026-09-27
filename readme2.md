@@ -192,7 +192,7 @@ Ry-Dit usa IA como **herramienta de síntesis bajo dirección del autor**, no co
 
 ### Metodología real
 
-El autor actúa como **arquitecto y guía**. Las IA (Claude, Qwen) aportan:
+El autor actúa como **arquitecto y guía**. Las IA (Claude, OpenCode) aportan:
 - Síntesis de patrones técnicos
 - Revisión de código propuesto
 - Análisis comparativo de opciones de diseño
@@ -204,7 +204,7 @@ Lo que **no hacen las IA**: decidir arquitectura, elegir qué entra al proyecto,
 | IA | Uso en RyDit | Fortaleza real | Limitación real |
 |----|-------------|----------------|-----------------|
 | **Claude** | Arquitectura, análisis técnico profundo, feedback sin filtros | Razonamiento técnico con contexto largo | Sin acceso directo al repo en tiempo real |
-| **Qwen** | Sesiones de código en Termux, bitácora técnica | Disponible sin suscripción, útil en mobile | Tiende a generar código sin validar arquitectura |
+| **OpenCode · mimo v2.6** | Sesiones de código en Termux, fixes de tests, memoria procedural (YAML) | Corre local en Termux sin suscripción, conoce el repo y sus registros | Modelo flash: para tareas grandes se apoya en la memoria por versión |
 
 > Los tests, demos y benchmarks en este repo son la prueba de que el código funciona.  
 > No hay afirmaciones sin evidencia ejecutable.

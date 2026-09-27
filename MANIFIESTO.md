@@ -6,7 +6,7 @@
 
 ## Qué es
 
-**Ry-Dit** es un motor de creación (juegos, animaciones, emuladores, herramientas) escrito **completamente desde un celular Android** con Termux, usando **Rust** y la colaboración de una IA (Qwen Code).
+**Ry-Dit** es un motor de creación (juegos, animaciones, emuladores, herramientas) escrito **completamente desde un celular Android** con Termux, usando **Rust** y la colaboración de una IA (OpenCode · mimo v2.6).
 
 No es un port. No es una versión reducida. **Nació aquí.**
 
@@ -65,7 +65,7 @@ Necesitas que un estudiante sin PC de escritorio pueda **crear su primer proyect
 ## De dónde venimos
 
 - **Un solo humano**, sin equipo, sin empresa, sin inversión
-- **Una IA como colaboradora** (Qwen Code) — escribe código, investiga, documenta
+- **Una IA como colaboradora** (OpenCode · mimo v2.6) — escribe código, investiga, documenta
 - **Desde Termux en Android** — sin PC de escritorio
 - **25 crates** en un solo workspace, compilando sin errores
 - **8 demos funcionales** corriendo en Termux-X11
@@ -171,7 +171,7 @@ El mundo necesita más cosas que funcionen con poco. No más cosas que necesiten
 
 **🛡️ Ry-Dit — Low-End First**
 
-*Creado con Termux · Rust · Qwen Code · Sin PC*
+*Creado con Termux · Rust · OpenCode mimo v2.6 · Sin PC*
 
 *[GitHub](https://github.com/lapumlbb18-blip/Ry-dit) · [Discord] · [YouTube] · [X] · [Reddit]*
 
