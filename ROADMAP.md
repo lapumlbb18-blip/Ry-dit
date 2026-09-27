@@ -48,6 +48,7 @@ Ry-Dit **no compite con motores de escritorio** (Godot, Bevy, Love2D). Su alcanc
 | **HUDs y UI** | Health bars, paneles, botones, menús (migui) | 🔄 ~25% |
 | **Assets Reales** | Sprites PNG, fuentes TTF, pipeline de carga tipado | 🔄 ~20% |
 | **Toolkits y Apps** | Herramientas construidas con el motor (no solo juegos) | ⏳ 0% |
+| **CI en GitHub Actions** | Runners multiplataforma en paralelo a los demos: variante *tests headless* (SDL dummy, sin display) y variante *demos smoke* (Xvfb). Linux estricto; macOS y Windows experimentales hasta verde. Plataformas de Rust+SDL2+raylib: Linux, macOS, Windows (Termux/Android se valida local) | 🔄 `ci.yml` creado |
 
 ---
 
@@ -91,7 +92,7 @@ Progreso v0.26.0: ████████████████████ 1
 v0.24.0   ████████████████████ 100%
 v0.25.0   ████████████████████ 100%
 v0.26.0   ████████████████████ 100%
-v0.27.0   █████████░░░░░░░░░░░  45% (TUI ✅ Joysticks ✅ Tests ✅ | Texto/HUDs/Assets en curso)
+v0.27.0   ██████████░░░░░░░░░░  50% (TUI ✅ Joysticks ✅ Tests ✅ CI 🔄 | Texto/HUDs/Assets en curso)
 v0.28.0   ░░░░░░░░░░░░░░░░░░░░   0% (Memoria + MCP)
 v0.29.0   ░░░░░░░░░░░░░░░░░░░░   0% (Modelo local + SDK)
 v1.0.0    ░░░░░░░░░░░░░░░░░░░░   0%

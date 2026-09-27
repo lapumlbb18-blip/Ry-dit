@@ -2,6 +2,8 @@
 
 **Motor de juegos 2D + lenguaje de scripting `.rydit`, escrito en Rust y diseñado para Termux/Android (gama baja, low-end first).**
 
+[![CI](https://github.com/lapumlbb18-blip/Ry-dit/actions/workflows/ci.yml/badge.svg)](https://github.com/lapumlbb18-blip/Ry-dit/actions/workflows/ci.yml)
+
 `v0.27.0 (en curso)` · 25 crates · ~79,000 líneas Rust · **586 tests: 575 ✓ / 0 ✗ / 11 ignored**
 
 ---
@@ -82,7 +84,7 @@ Ry-Dit no compite con editores de escritorio (Godot/Bevy): su alcance es **SDK d
 | Versión | Foco | Estado |
 |---------|------|--------|
 | v0.24–v0.26 | Ensamblador, input Termux, audio+render | ✅ |
-| **v0.27.0** | TUI, Joysticks, Texto, HUDs, Assets | 🔄 45% (TUI ✅ Joysticks ✅ tests ✅) |
+| **v0.27.0** | TUI, Joysticks, Texto, HUDs, Assets, CI | 🔄 50% (TUI ✅ Joysticks ✅ tests ✅ CI 🔄) |
 | v0.28.0 | Memoria procedural + MCPs | ⏳ |
 | v0.29.0 | Modelo local (Colab) + SDK `rydit agent` | ⏳ |
 | v1.0.0 | Motor universal estable | ⏳ |

@@ -1,0 +1,123 @@
+name: CI
+
+# Compilación multiplataforma para los runners de GitHub Actions.
+# Variantes:
+#   - tests: headless (SDL_VIDEODRIVER=dummy, sin DISPLAY -> tests de ventana se skippean)
+#   - demos: smoke bajo Xvfb (el bin debe vivir N segundos; si crashea al arrancar, falla)
+# Plataformas donde Rust + SDL2 + raylib corren: Linux (estricto), macOS y Windows
+# (experimentales hasta quitar continue-on-error). Termux/Android no tiene runner:
+# se valida localmente con `cargo build --release`.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  SDL_VIDEODRIVER: dummy
+  SDL_AUDIODRIVER: dummy
+
+jobs:
+  linux:
+    name: Linux — build + tests headless + demos smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias (SDL2 + GL + Xvfb)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config cmake \
+            libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev \
+            xorg-dev libgl1-mesa-dev xvfb
+
+      - name: raylib 5.5 desde código fuente (misma versión que los bindings)
+        run: |
+          git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git "$RUNNER_TEMP/raylib"
+          cmake -S "$RUNNER_TEMP/raylib" -B "$RUNNER_TEMP/raylib/build" \
+            -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF \
+            -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+          cmake --build "$RUNNER_TEMP/raylib/build" -j "$(nproc)"
+          cmake --install "$RUNNER_TEMP/raylib/build"
+          echo "LIBRARY_PATH=$HOME/.local/lib" >> "$GITHUB_ENV"
+          echo "LD_LIBRARY_PATH=$HOME/.local/lib" >> "$GITHUB_ENV"
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build release (workspace, variante Linux)
+        run: cargo build --release --workspace
+
+      - name: Tests (variante headless)
+        run: cargo test --workspace --no-fail-fast
+
+      - name: Demos (variante smoke en Xvfb)
+        run: |
+          set -e
+          for bin in demo_tui demo_gamepad; do
+            echo "=== smoke: $bin (8s) ==="
+            code=0
+            timeout -s TERM 8 xvfb-run -a "./target/release/$bin" || code=$?
+            if [ "$code" != "124" ]; then
+              echo "::error::$bin terminó con código $code (esperado 124 = seguía vivo)"
+              exit 1
+            fi
+            echo "$bin OK (vivo 8s)"
+          done
+
+  macos:
+    name: macOS — build + tests headless (experimental)
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias (Homebrew)
+        run: |
+          brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer raylib pkg-config cmake || true
+
+      - name: Entornos pkg-config / librerías
+        run: |
+          echo "PKG_CONFIG_PATH=$(brew --prefix)/opt/sdl2/lib/pkgconfig:$(brew --prefix)/opt/sdl2_image/lib/pkgconfig:$(brew --prefix)/opt/sdl2_ttf/lib/pkgconfig:$(brew --prefix)/opt/sdl2_mixer/lib/pkgconfig:$(brew --prefix)/lib/pkgconfig" >> "$GITHUB_ENV"
+          echo "LIBRARY_PATH=$(brew --prefix)/lib:$(brew --prefix)/opt/raylib/lib" >> "$GITHUB_ENV"
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build release (workspace, variante macOS)
+        run: cargo build --release --workspace
+
+      - name: Tests (variante headless)
+        run: cargo test --workspace --no-fail-fast
+
+  windows:
+    name: Windows — build + tests headless (experimental)
+    runs-on: windows-latest
+    continue-on-error: true
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: vcpkg (SDL2 + addons + raylib)
+        run: vcpkg install sdl2 sdl2-image sdl2-ttf sdl2-mixer raylib --triplet x64-windows
+
+      - name: Entornos de link (LIB) y DLLs (PATH)
+        shell: pwsh
+        run: |
+          $root = "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows"
+          "LIB=$root\lib;$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "$root\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build release (workspace, variante Windows)
+        run: cargo build --release --workspace
+
+      - name: Tests (variante headless)
+        run: cargo test --workspace --no-fail-fast
