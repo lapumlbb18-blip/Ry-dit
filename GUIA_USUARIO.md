@@ -1,7 +1,7 @@
 # 🛡️ Ry-Dit - Guía del Usuario
 
-**Versión**: v0.22.0
-**Última actualización**: 2026-04-17
+**Versión**: v0.27.0 (en curso)
+**Última actualización**: 2026-09-27
 
 ---
 
@@ -13,9 +13,12 @@
 4. [Instalación](#instalación)
 5. [Ejecutar Demos](#ejecutar-demos)
 6. [Controles de los Demos](#controles-de-los-demos)
-7. [Scripting .rydit](#scripting-rydit)
-8. [Crear Niveles con .rydit](#crear-niveles-con-rydit)
-9. [Troubleshooting](#troubleshooting)
+7. [Mandos y Joysticks (nuevo v0.27.0)](#mandos-y-joysticks-nuevo-v0270)
+8. [TUI en Línea de Comandos (nuevo v0.27.0)](#tui-en-línea-de-comandos-nuevo-v0270)
+9. [Scripting .rydit](#scripting-rydit)
+10. [Crear Niveles con .rydit](#crear-niveles-con-rydit)
+11. [Tests y Memoria Procedimental](#tests-y-memoria-procedimental)
+12. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -26,12 +29,15 @@ Ry-Dit es un **motor de juegos 2D + lenguaje de scripting en Rust**, diseñado p
 ### Características principales
 
 - **Motor 2D completo**: Sprites PNG, texto TTF, física, colisiones, audio
+- **Gamepads y joysticks** (v0.27.0): soporte SDL2 GameController con dead zones, rumble y hotplug
+- **TUI** (v0.27.0): widgets de terminal renderizados vía SDL (estilo Go bubbletea)
 - **Lenguaje de scripting .rydit**: Scripting en español con matemáticas, arrays, Vec2
 - **GPU Instancing**: Hasta 150K partículas en un solo draw call
 - **FSR 1.0**: Upscaling AMD para mejorar rendimiento
 - **Health Bars + HUD**: Sistema de HUD world-space con color dinámico
 - **Cámara 2D avanzada**: Zoom, rotación, follow suave, límites de mapa
-- **25 crates publicados** en crates.io
+- **25 crates** en workspace
+- **Suite de tests verde**: 586 tests (575 ✓ / 0 ✗) con registro en `ry-memory/*.yaml`
 - **Multi-plataforma**: Android/Termux, Linux, Windows
 
 ---
@@ -287,6 +293,10 @@ cargo run -p ry-rs --bin demo_anime_ry --release
 | `demo_platformer_completo` | Plataformas + gravedad + salto |
 | `demo_50k_particulas` | 50K partículas simples |
 | `demo_colisiones` | Sistema de colisiones |
+| `demo_input_gracia` | Test WASD/flechas con ventana de gracia (Termux-X11) |
+| `demo_war_spacio_v2` | Galaga con audio procedural 8-bit + input completo |
+| `demo_gamepad` | Panel de gamepad: botones, ejes con dead zone, rumble, hotplug |
+| `demo_tui` | TUI: consola, input con historial, shell integrada |
 
 ---
 
@@ -343,6 +353,89 @@ cargo run -p ry-rs --bin demo_anime_ry --release
 |-------|--------|
 | 1-4 | Cambiar panel (Screen, Console, Input, Controls) |
 | ESC | Salir |
+
+---
+
+## Mandos y Joysticks (nuevo v0.27.0)
+
+Soporte completo de **gamepads SDL2 GameController** en la Capa 1 de input (`events-ry`): botones, ejes analógicos, triggers, rumble y conexión/desconexión en caliente.
+
+### Ejecutar el demo
+
+```bash
+cargo build --release -p ry-rs
+./target/release/demo_gamepad
+```
+
+### Controles del demo_gamepad
+
+| Elemento | Acción |
+|----------|--------|
+| Botones A/B/X/Y/Start/Back/Shoulders | Se iluminan al presionar |
+| Stick izquierdo/derecho | Visual radial + valores de ejes X/Y con dead zone |
+| Triggers LT/RT | Barras de valor (0.0 → 1.0) |
+| R o Start | Rumble (vibración) — requiere mando con soporte |
+| Conectar/Desconectar | Hotplug: el mando aparece/desaparece en vivo |
+| ESC | Salir |
+
+### API para desarrolladores
+
+```rust
+use events_ry::GamepadManager;
+
+// Habilitar gamepads en el backend SDL2:
+//   backend.enable_gamepads(sdl.game_controller()?);
+let mut gamepads = GamepadManager::new(subsystem, 0.15); // dead zone 15%
+gamepads.open_all()?; // detectar mandos conectados
+
+// En el loop:
+gamepads.handle_event(&event); // SDL2 → botones, ejes y hotplug
+gamepads.poll(); // estados activos y desconexiones
+if gamepads.is_button_down_on(id, GamepadButton::A) { /* ... */ }
+let x = gamepads.axis_value_on(id, GamepadAxis::LeftX); // con dead zone radial
+gamepads.rumble(id, 0xFFFF, 0x8000, 300)?; // low, high, duración ms
+// o vibrar todos: gamepads.rumble_all(0xFFFF, 0x8000, 300);
+```
+
+Detalles técnicos:
+- Dead zone **radial** (no por eje) para sticks — evita deriva diagonal.
+- Triggers con dead zone propia (0.1 por defecto).
+- `GamepadState` expone `buttons`, `axes` y `connected` por mando.
+- Backend agnóstico: fuera de SDL2, el input sigue funcionando con mock (tests sin ventana).
+
+---
+
+## TUI en Línea de Comandos (nuevo v0.27.0)
+
+Widgets de terminal renderizados vía SDL video driver (estilo **Go bubbletea**), sin depender de ncurses: sirve para editores, consolas y menús dentro del motor.
+
+### Ejecutar el demo
+
+```bash
+./target/release/demo_tui
+```
+
+### Qué incluye
+
+| Componente | Descripción |
+|------------|-------------|
+| `TuiSystem` | Estado unificado: consola, input, historial, autocompletado y keybindings |
+| Panel | Fondo con borde y título (vía migui) |
+| Consola | Líneas con severidad (info/warn/error) + scroll |
+| Input | Edición de una línea con historial (↑↓) y autocompletado (Tab) |
+| Shell integrada | Comandos `:help`, carga de assets, reutiliza `events_ry::Shell` |
+| Status bar | Barra de estado inferior (`render_tui_status`) |
+
+### API
+
+```rust
+// Módulo: ry-rs/src/tui/
+use ry_rs::tui::{TuiSystem, render_tui, render_tui_status};
+
+let mut tui = TuiSystem::new();
+tui.execute_command(":help");          // shell integrada
+let cmds = render_tui(&tui, 10.0, 10.0, 395.0, h); // → Vec<DrawCommand>
+```
 
 ---
 
@@ -503,6 +596,68 @@ hud {
 
 ---
 
+## Audio en Termux-X11
+
+### Requisitos
+- `pulseaudio` instalado: `pkg install pulseaudio`
+- `sdl2-mixer` instalado: `pkg install sdl2-mixer`
+
+### Cómo funciona
+Ry-Dit usa SDL2_mixer con FFI crudo. Al iniciar un demo, `ensure_pulseaudio()` verifica que PulseAudio esté corriendo. El audio procedural genera WAV en memoria (tonos, ruido, sweeps) sin necesidad de archivos externos.
+
+### Variables de entorno (NO forzar)
+```bash
+# NO pongas esto — SDL2 detecta PulseAudio solo:
+# export PULSE_SERVER=...
+# export SDL_AUDIODRIVER=pulse
+
+# Si audio no funciona, prueba:
+unset PULSE_SERVER
+unset SDL_AUDIODRIVER
+./target/release/demo_war_spacio_v2
+```
+
+### Audio procedural disponible
+| Sonido | Tipo | Frecuencia |
+|--------|------|-----------|
+| shoot | Tonos descendentes con envolvente | 120 Hz |
+| explosion | Ruido + envolvente exponencial | 150 Hz |
+| ambient | Drone bajo modulado en loop | 65 Hz |
+| music | Secuencia melódica C-E-G-C' | 220 Hz |
+
+---
+
+## Termux-X11: Ventana de Gracia (150ms)
+
+En Termux-X11, el teclado Android **no envía eventos KeyDown continuos** al mantener presionada una tecla (sin KeyRepeat). Esto hace que WASD/flechas no funcionen para movimiento continuo.
+
+### Solución: Ventana de Gracia
+
+Ry-Dit v0.25.0 implementa una **ventana de gracia de 150ms**: al presionar una tecla, se registra el timestamp. Si la tecla se suelta antes de 150ms, `is_key_pressed()` sigue retornando `true` durante ese período.
+
+```
+Presionaste W → KeyDown registrado → timestamp guardado
+Soltaste W    → KeyUp → pressed = false
+100ms después → is_key_down(W) → 100ms < 150ms → retorna TRUE
+160ms después → 160ms > 150ms → retorna FALSE (expiró)
+```
+
+### Configurar el valor de gracia
+
+```rust
+// En tu código, ajustar según necesidad:
+engine.input_mut().input_state_mut().set_grace_ms(200); // 200ms para teclado lento
+```
+
+### Probar el input
+
+```bash
+# Demo de prueba para WASD + flechas con ventana de gracia
+cargo run --bin demo_input_gracia --release
+```
+
+---
+
 ## Troubleshooting
 
 ### Error: SDL2 no encontrado
@@ -597,8 +752,8 @@ cargo build -p ry-rs --release
 # Verificar workspace
 cargo check --workspace
 
-# Ejecutar tests
-cargo test --workspace
+# Ejecutar tests (verde = 0 fallos; -j 4 evita crashes de linker en Termux)
+cargo test --workspace --no-fail-fast -j 4
 ```
 
 ### Problemas con crates.io
@@ -616,26 +771,71 @@ cargo search v-shield
 
 ---
 
+## Tests y Memoria Procedimental
+
+Cada versión del motor deja un **registro de memoria** en `ry-memory/`: el estado real de los tests, comprimido en YAML. Este registro es el insumo para agentes de IA (nube o locales) y para el modelo propio que se entrenará en Colab.
+
+### Ejecutar la suite completa
+
+```bash
+cargo test --workspace --no-fail-fast -j 4
+echo $?   # 0 = verde
+```
+
+Estado actual (v0.27.0): **586 tests: 575 ✓ / 0 ✗ / 11 ignored**.
+
+### Estructura de `ry-memory/`
+
+```
+ry-memory/
+├── raw-test-output.txt    # log crudo de cargo test (se queda local, *.txt ignorado)
+├── test-report.yaml       # reporte estructurado: meta, summary, suites, tests, fallos
+└── parse_cargo_test.py    # parser reproducible: crudo → YAML
+```
+
+### Regenerar el registro tras cada cambio importante
+
+```bash
+cargo test --workspace --no-fail-fast -j 4 > ry-memory/raw-test-output.txt 2>&1
+python3 ry-memory/parse_cargo_test.py \
+    ry-memory/raw-test-output.txt \
+    ry-memory/test-report.yaml --exit-code $?
+```
+
+### Contenido del YAML (resumen)
+
+```yaml
+meta:     # comando, fecha, exit_code
+summary:  # suites, tests, passed, failed, ignored, warnings
+failures: # lista plana de fallos (vacía en verde)
+suites:   # por binario/doc-test: nombre, tipo, lista de tests con estado
+```
+
+Para congelar la memoria de una versión, copiar el YAML a `ry-memory/vX.Y.Z/test-report.yaml` junto con un snapshot del `ROADMAP.md` — así el modelo local recibe el estado de la versión sin releer el código completo.
+
+---
+
 ## Recursos Adicionales
 
 | Recurso | URL |
 |---------|-----|
 | **Repositorio** | `https://github.com/lapumlbb18-blip/Ry-dit` |
-| **Documentación técnica** | `QWEN.md` |
-| **Estructura del proyecto** | `ESTRUCTURA.md` |
+| **README** | `README.md` |
 | **Roadmap** | `ROADMAP.md` |
+| **Estructura del proyecto** | `ESTRUCTURA.md` |
 | **Tareas pendientes** | `TASKS.md` |
 | **Manifiesto** | `MANIFIESTO.md` |
+| **Memoria de tests (YAML)** | `ry-memory/test-report.yaml` |
 | **crates.io** | `https://crates.io/crates/ry-anim` |
 
 ---
 
 <div align="center">
 
-**🛡️ Ry-Dit v0.22.0 - Guía del Usuario**
+**🛡️ Ry-Dit v0.27.0 - Guía del Usuario**
 
 *Construido sin prisa, madurado con paciencia*
 
-*26 crates · 12 publicados · ~260 tests · 25+ demos · 0 errores · Low-End First*
+*25 crates · 586 tests (575 ✓ / 0 ✗) · TUI + Joysticks nuevos · 27+ demos · 0 errores · Low-End First*
 
 </div>
